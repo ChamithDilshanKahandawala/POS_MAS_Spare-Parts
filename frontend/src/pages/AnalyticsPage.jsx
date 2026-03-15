@@ -4,6 +4,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, PieChart, Pie, Cell, Legend, AreaChart, Area,
 } from 'recharts';
+import { useAuth } from '../context/AuthContext';
 import { TrendingUp, DollarSign, ShoppingBag, Target, Award, Percent } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -13,6 +14,12 @@ const PERIODS = [
   { label: 'This Month', value: 'monthly' },
   { label: 'This Year', value: 'yearly' },
   { label: 'All Time', value: 'alltime' },
+];
+
+const SOURCES = [
+  { label: 'All Sales (Shop + Online)', value: 'all' },
+  { label: 'Shop Only', value: 'shop' },
+  { label: 'Online Only', value: 'online' },
 ];
 
 const PIE_COLORS = ['#6366f1', '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
@@ -34,7 +41,11 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function AnalyticsPage() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+
   const [period, setPeriod] = useState('monthly');
+  const [saleSource, setSaleSource] = useState('all');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -42,7 +53,7 @@ export default function AnalyticsPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await getAnalytics(period);
+        const res = await getAnalytics(period, saleSource);
         setData(res.data);
       } catch {
         toast.error('Failed to load analytics');
@@ -51,7 +62,7 @@ export default function AnalyticsPage() {
       }
     };
     fetchData();
-  }, [period]);
+  }, [period, saleSource]);
 
   const fmt = (v) => `Rs. ${Number(v || 0).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   const fmtShort = (v) => {
@@ -67,11 +78,11 @@ export default function AnalyticsPage() {
   const avgTransaction = summary.avg_transaction || 0;
 
   const stats = [
-    { label: 'Total Revenue', value: fmt(summary.total_revenue), short: fmtShort(summary.total_revenue || 0), color: 'purple', icon: DollarSign, sub: 'Gross sales' },
-    { label: 'Net Profit', value: fmt(summary.total_profit), short: fmtShort(summary.total_profit || 0), color: 'green', icon: TrendingUp, sub: `${profitMargin}% margin` },
-    { label: 'Total Cost', value: fmt(summary.total_cost), short: fmtShort(summary.total_cost || 0), color: 'blue', icon: Target, sub: 'Cost of goods sold' },
-    { label: 'Transactions', value: String(summary.total_transactions ?? 0), short: String(summary.total_transactions ?? 0), color: 'yellow', icon: ShoppingBag, sub: `Avg ${fmt(avgTransaction)}` },
-  ];
+    { label: 'Total Revenue', value: fmt(summary.total_revenue), short: fmtShort(summary.total_revenue || 0), color: 'purple', icon: DollarSign, sub: 'Gross sales', show: true },
+    { label: 'Net Profit', value: fmt(summary.total_profit), short: fmtShort(summary.total_profit || 0), color: 'green', icon: TrendingUp, sub: `${profitMargin}% margin`, show: isAdmin },
+    { label: 'Total Cost', value: fmt(summary.total_cost), short: fmtShort(summary.total_cost || 0), color: 'blue', icon: Target, sub: 'Cost of goods sold', show: isAdmin },
+    { label: 'Transactions', value: String(summary.total_transactions ?? 0), short: String(summary.total_transactions ?? 0), color: 'yellow', icon: ShoppingBag, sub: `Avg ${fmt(avgTransaction)}`, show: true },
+  ].filter(s => s.show);
 
   const chartData = data?.chartData || [];
   const chartLabel = data?.groupLabel || 'Date';
@@ -84,8 +95,22 @@ export default function AnalyticsPage() {
           <h1 className="page-title">Analytics</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '4px' }}>Sales performance & profit insights</p>
         </div>
-        {/* Period Switcher */}
-        <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          {/* Source Switcher */}
+          <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
+            {SOURCES.map(s => (
+              <button key={s.value} onClick={() => setSaleSource(s.value)}
+                style={{
+                  padding: '7px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: 600,
+                  cursor: 'pointer', border: 'none', transition: 'all 0.2s', whiteSpace: 'nowrap',
+                  background: saleSource === s.value ? 'linear-gradient(135deg, #10b981, #059669)' : 'transparent',
+                  color: saleSource === s.value ? 'white' : 'var(--text-muted)',
+                }}>{s.label}</button>
+            ))}
+          </div>
+
+          {/* Period Switcher */}
+          <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
           {PERIODS.map(p => (
             <button key={p.value} onClick={() => setPeriod(p.value)}
               style={{
@@ -96,10 +121,11 @@ export default function AnalyticsPage() {
               }}>{p.label}</button>
           ))}
         </div>
+        </div>
       </div>
 
       {/* Stat Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px', marginBottom: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${stats.length}, 1fr)`, gap: '14px', marginBottom: '20px' }}>
         {stats.map(s => (
           <div key={s.label} className={`stat-card ${s.color}`}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
@@ -154,7 +180,7 @@ export default function AnalyticsPage() {
                 <Tooltip content={<CustomTooltip />} />
                 <Legend wrapperStyle={{ fontSize: '12px' }} />
                 <Area type="monotone" dataKey="revenue" stroke="#6366f1" fill="url(#revGrad)" strokeWidth={2} name="Revenue" />
-                <Area type="monotone" dataKey="profit" stroke="#10b981" fill="url(#profGrad)" strokeWidth={2} name="Profit" />
+                {isAdmin && <Area type="monotone" dataKey="profit" stroke="#10b981" fill="url(#profGrad)" strokeWidth={2} name="Profit" />}
               </AreaChart>
             </ResponsiveContainer>
           )}
@@ -258,7 +284,7 @@ export default function AnalyticsPage() {
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
                       <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>Rs. {Number(p.revenue).toLocaleString()}</div>
-                      <div style={{ fontSize: '10px', color: '#10b981' }}>+Rs. {Number(p.profit).toLocaleString()}</div>
+                      {isAdmin && <div style={{ fontSize: '10px', color: '#10b981' }}>+Rs. {Number(p.profit).toLocaleString()}</div>}
                     </div>
                   </div>
                 ))}

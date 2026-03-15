@@ -109,7 +109,7 @@ export default function DashboardPage() {
             {[
               { label: '🛒 New Sale / POS', path: '/pos', color: '#6366f1', desc: 'Start a new billing session', show: true },
               { label: '📦 Add Product', path: '/inventory', color: '#10b981', desc: 'Add spare part to inventory', show: true },
-              { label: '📊 View Analytics', path: '/analytics', color: '#3b82f6', desc: 'Detailed profit reports', show: user?.role === 'admin' },
+              { label: '📊 View Analytics', path: '/analytics', color: '#3b82f6', desc: 'Detailed sales reports', show: true },
               { label: '👥 Manage Staff', path: '/users', color: '#8b5cf6', desc: 'Approve or manage users', show: user?.role === 'admin' },
             ].filter(a => a.show).map((a) => (
               <button key={a.path} onClick={() => navigate(a.path)} style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '12px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', textAlign: 'left' }}>

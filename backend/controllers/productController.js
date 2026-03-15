@@ -19,10 +19,18 @@ const getProducts = async (req, res) => {
     }
 
     const total = await Product.countDocuments(query);
-    const products = await Product.find(query)
+    const rawProducts = await Product.find(query)
       .sort({ updatedAt: -1 })
       .skip((page - 1) * limit)
-      .limit(Number(limit));
+      .limit(Number(limit))
+      .lean();
+
+    const products = rawProducts.map(p => {
+      if (!req.user || req.user.role !== 'admin') {
+        delete p.buying_price;
+      }
+      return p;
+    });
 
     res.json({ products, total, page: Number(page), pages: Math.ceil(total / limit) });
   } catch (err) {
@@ -33,9 +41,14 @@ const getProducts = async (req, res) => {
 // GET /api/products/:id
 const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: 'Product not found' });
-    res.json(product);
+    const rawProduct = await Product.findById(req.params.id).lean();
+    if (!rawProduct) return res.status(404).json({ message: 'Product not found' });
+    
+    if (!req.user || req.user.role !== 'admin') {
+      delete rawProduct.buying_price;
+    }
+    
+    res.json(rawProduct);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

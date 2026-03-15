@@ -8,27 +8,35 @@ const generateToken = (id) =>
 // POST /api/auth/register
 const register = async (req, res) => {
   try {
-    const { name, email, password, shop } = req.body;
+    const { name, email, password, shop, role } = req.body;
     if (!name || !email || !password) return res.status(400).json({ message: 'All fields required' });
 
     const exists = await User.findOne({ email: email.toLowerCase() });
     if (exists) return res.status(400).json({ message: 'Email already registered' });
 
     const hashed = await bcrypt.hash(password, 10);
+    const userRole = role === 'customer' ? 'customer' : 'staff';
     const user = await User.create({
       name,
       email,
       password: hashed,
-      role:     'staff',
-      status:   'pending',
-      isActive: false,
+      role:     userRole,
       shop:     shop || 'Main Branch',
     });
 
-    res.status(201).json({
-      message: 'Registration submitted! Waiting for admin approval.',
-      status:  'pending',
-    });
+    if (userRole === 'customer') {
+      const token = generateToken(user._id);
+      res.status(201).json({
+        message: 'Registration successful!',
+        token,
+        user: { _id: user._id, name: user.name, email: user.email, role: user.role }
+      });
+    } else {
+      res.status(201).json({
+        message: 'Registration submitted! Waiting for admin approval.',
+        status:  'pending',
+      });
+    }
   } catch (err) { res.status(500).json({ message: err.message }); }
 };
 

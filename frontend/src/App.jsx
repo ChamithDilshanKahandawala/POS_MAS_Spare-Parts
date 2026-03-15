@@ -15,6 +15,7 @@ import AlertsPage from './pages/AlertsPage';
 import CustomersPage from './pages/CustomersPage';
 import SuppliersPage from './pages/SuppliersPage';
 import UsersPage from './pages/UsersPage'; 
+import WebOrdersPage from './pages/WebOrdersPage';
 
 // --- Standard Private Route (Check login) ---
 const PrivateRoute = ({ children }) => {
@@ -41,12 +42,13 @@ function AppRoutes() {
         <Route path="inventory" element={<InventoryPage />} />
         <Route path="pos" element={<POSPage />} />
         <Route path="sales" element={<SalesHistoryPage />} />
+        <Route path="web-orders" element={<WebOrdersPage />} />
+        <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="alerts" element={<AlertsPage />} />
         <Route path="customers" element={<CustomersPage />} />
         <Route path="suppliers" element={<SuppliersPage />} />
 
         {/* --- 🔐 ADMIN ONLY ROUTES --- */}
-        <Route path="analytics" element={<AdminRoute><AnalyticsPage /></AdminRoute>} />
         <Route path="users" element={<AdminRoute><UsersPage /></AdminRoute>} />
       </Route>
 

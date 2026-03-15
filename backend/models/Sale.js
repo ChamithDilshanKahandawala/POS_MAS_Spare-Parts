@@ -26,8 +26,20 @@ const saleSchema = new mongoose.Schema(
       enum: ['Cash', 'Card', 'Online'],
       default: 'Cash',
     },
+    sale_source: {
+      type: String,
+      enum: ['shop', 'online'],
+      default: 'shop',
+    },
     customer_name: { type: String, default: 'Walk-in Customer' },
     customer_phone: { type: String, default: '' },
+    customer: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    order_status: {
+      type: String,
+      enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+      default: 'Delivered', // Default to Delivered for POS Shop sales
+    },
+    shipping_address: { type: String, default: '' },
     cashier: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     cashier_name: { type: String },
     shop: { type: String, default: 'Main Branch' },

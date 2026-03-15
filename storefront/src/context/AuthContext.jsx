@@ -6,7 +6,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('posUser')) || null;
+      return JSON.parse(localStorage.getItem('storeUser')) || null;
     } catch {
       return null;
     }
@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data } = await loginUser({ email, password });
       setUser(data);
-      localStorage.setItem('posUser', JSON.stringify(data));
+      localStorage.setItem('storeUser', JSON.stringify(data));
       return { success: true, user: data };
     } catch (err) {
       return { success: false, message: err.response?.data?.message || 'Login failed' };
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('posUser');
+    localStorage.removeItem('storeUser');
   };
 
   const isAdmin = user?.role === 'admin';

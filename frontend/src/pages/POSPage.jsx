@@ -6,12 +6,14 @@ import {
   CreditCard, Banknote, Smartphone, X, CheckCircle, Receipt
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const CATEGORIES = ['All', 'Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road'];
 
 export default function POSPage() {
   const { user } = useAuth(); // 👈 Log wela inna user wa gaththa
   const isAdmin = user?.role === 'admin'; // 👈 Admin check eka boolean ekak widiyata
+  const navigate = useNavigate();
 
   const [products, setProducts]           = useState([]);
   const [search, setSearch]               = useState('');
@@ -21,6 +23,7 @@ export default function POSPage() {
   const [paymentMethod, setPaymentMethod] = useState('Cash');
   const [customerName, setCustomerName]   = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [saleSource, setSaleSource]       = useState('shop');
   const [processing, setProcessing]       = useState(false);
   const [successSale, setSuccessSale]     = useState(null); 
   const [loading, setLoading]             = useState(false);
@@ -51,6 +54,7 @@ export default function POSPage() {
       }
       return [...prev, { ...product, qty: 1, itemDiscount: 0 }];
     });
+    setSearch('');
   };
 
   const updateQty = (id, delta) =>
@@ -71,6 +75,7 @@ export default function POSPage() {
     setCustomerName('');
     setCustomerPhone('');
     setPaymentMethod('Cash');
+    setSaleSource('shop');
   };
 
   // ── Totals ──────────────────────────────────────────────────────────────────
@@ -95,6 +100,7 @@ export default function POSPage() {
         })),
         total_discount: Number(billDiscount),
         payment_method: paymentMethod,
+        sale_source:    saleSource,
         customer_name:  customerName  || 'Walk-in Customer',
         customer_phone: customerPhone || '',
       };
@@ -190,10 +196,16 @@ export default function POSPage() {
       {/* RIGHT: Cart */}
       <div style={{ display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '16px', overflow: 'hidden', height: '100%' }}>
 
-        <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <ShoppingCart size={18} color="var(--accent-primary)" />
-          <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>Cart</span>
-          {cart.length > 0 && <span className="badge badge-purple" style={{ fontSize: '11px' }}>{cart.length}</span>}
+        <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <ShoppingCart size={18} color="var(--accent-primary)" />
+            <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>Cart</span>
+            {cart.length > 0 && <span className="badge badge-purple" style={{ fontSize: '11px' }}>{cart.length}</span>}
+          </div>
+          <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+            <button onClick={() => setSaleSource('shop')} style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700, border: 'none', cursor: 'pointer', background: saleSource === 'shop' ? '#10b981' : 'transparent', color: saleSource === 'shop' ? 'white' : 'var(--text-muted)' }}>Shop</button>
+            <button onClick={() => setSaleSource('online')} style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700, border: 'none', cursor: 'pointer', background: saleSource === 'online' ? '#3b82f6' : 'transparent', color: saleSource === 'online' ? 'white' : 'var(--text-muted)' }}>Online</button>
+          </div>
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '10px' }}>
@@ -285,14 +297,23 @@ export default function POSPage() {
             <CheckCircle size={32} color="#10b981" style={{ margin: '0 auto 16px' }} />
             <h2 style={{ fontSize: '20px', fontWeight: 800 }}>Sale Saved! ✅</h2>
             
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', margin: '20px 0', textAlign: 'left' }}>
-              <div style={{ background: 'var(--bg-secondary)', padding: '12px', borderRadius: '10px' }}>
-                <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Invoice No</div>
-                <div style={{ fontSize: '13px', fontWeight: 700 }}>{successSale.invoice_number}</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', margin: '20px 0', textAlign: 'left' }}>
+              <div style={{ background: 'var(--bg-secondary)', padding: '10px', borderRadius: '10px' }}>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Invoice No</div>
+                <div style={{ fontSize: '12px', fontWeight: 700 }}>{successSale.invoice_number}</div>
               </div>
-              <div style={{ background: 'var(--bg-secondary)', padding: '12px', borderRadius: '10px' }}>
-                <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Total Amount</div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: '#10b981' }}>{fmtRs(successSale.total_amount)}</div>
+              <div style={{ background: 'var(--bg-secondary)', padding: '10px', borderRadius: '10px' }}>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Discount</div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: '#ef4444' }}>
+                  {fmtRs(
+                    (successSale.total_discount || 0) + 
+                    (successSale.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0)
+                  )}
+                </div>
+              </div>
+              <div style={{ background: 'var(--bg-secondary)', padding: '10px', borderRadius: '10px' }}>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Total Amount</div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: '#10b981' }}>{fmtRs(successSale.total_amount)}</div>
               </div>
               
               {/* 🔐 2. Profit in modal for Admins only */}

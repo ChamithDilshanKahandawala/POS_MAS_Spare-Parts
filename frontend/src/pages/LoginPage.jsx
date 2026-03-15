@@ -15,8 +15,13 @@ export default function LoginPage() {
     e.preventDefault();
     const result = await login(email, password);
     if (result.success) {
-      toast.success('Welcome back! 👋');
-      navigate('/');
+      if (result.user?.role === 'customer') {
+        toast.error('Customers cannot login to the POS portal.');
+        // Don't navigate, let them read the error
+      } else {
+        toast.success('Welcome back! 👋');
+        navigate('/');
+      }
     } else {
       toast.error(result.message);
     }

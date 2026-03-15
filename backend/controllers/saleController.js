@@ -4,7 +4,7 @@ const Product = require('../models/Product');
 // POST /api/sales  - Create a new sale
 const createSale = async (req, res) => {
   try {
-    const { items, total_discount, payment_method, customer_name, customer_phone, notes } = req.body;
+    const { items, total_discount, payment_method, customer_name, customer_phone, notes, sale_source, shipping_address } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({ message: 'No items in cart' });
@@ -59,13 +59,22 @@ const createSale = async (req, res) => {
       total_cost,
       total_profit: finalProfit,
       payment_method: payment_method || 'Cash',
-      customer_name: customer_name || 'Walk-in Customer',
+      sale_source: sale_source || 'shop',
+      customer_name: customer_name || (req.user.role === 'customer' ? req.user.name : 'Walk-in Customer'),
       customer_phone: customer_phone || '',
-      cashier: req.user._id,
-      cashier_name: req.user.name,
+      customer: req.user.role === 'customer' ? req.user._id : undefined,
+      order_status: sale_source === 'online' ? 'Pending' : 'Delivered',
+      shipping_address: shipping_address || '',
+      cashier: req.user.role !== 'customer' ? req.user._id : undefined,
+      cashier_name: req.user.role !== 'customer' ? req.user.name : undefined,
       shop: req.user.shop || 'Main Branch',
       notes: notes || '',
     });
+
+    if (req.user.role === 'customer') {
+      const User = require('../models/User');
+      await User.findByIdAndUpdate(req.user._id, { $push: { orderHistory: sale._id } });
+    }
 
     res.status(201).json(sale);
   } catch (err) {
@@ -76,7 +85,7 @@ const createSale = async (req, res) => {
 // GET /api/sales
 const getSales = async (req, res) => {
   try {
-    const { page = 1, limit = 20, from, to, payment_method } = req.query;
+    const { page = 1, limit = 20, from, to, payment_method, sale_source } = req.query;
     const query = {};
 
     if (from || to) {
@@ -89,14 +98,57 @@ const getSales = async (req, res) => {
       }
     }
     if (payment_method) query.payment_method = payment_method;
+    if (sale_source) query.sale_source = sale_source;
 
     const total = await Sale.countDocuments(query);
-    const sales = await Sale.find(query)
+    const rawSales = await Sale.find(query)
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
-      .limit(Number(limit));
+      .limit(Number(limit))
+      .lean();
+
+    const sales = rawSales.map(sale => {
+      if (req.user && req.user.role !== 'admin') {
+        delete sale.total_profit;
+        delete sale.total_cost;
+        if (sale.items) {
+          sale.items = sale.items.map(item => {
+            delete item.buying_price;
+            delete item.line_profit;
+            return item;
+          });
+        }
+      }
+      return sale;
+    });
 
     res.json({ sales, total, page: Number(page), pages: Math.ceil(total / limit) });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// GET /api/sales/my-orders
+const getMyOrders = async (req, res) => {
+  try {
+    const rawSales = await Sale.find({ customer: req.user._id })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const orders = rawSales.map(sale => {
+      delete sale.total_profit;
+      delete sale.total_cost;
+      if (sale.items) {
+        sale.items = sale.items.map(item => {
+          delete item.buying_price;
+          delete item.line_profit;
+          return item;
+        });
+      }
+      return sale;
+    });
+
+    res.json(orders);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -105,8 +157,36 @@ const getSales = async (req, res) => {
 // GET /api/sales/:id
 const getSaleById = async (req, res) => {
   try {
-    const sale = await Sale.findById(req.params.id);
+    const rawSale = await Sale.findById(req.params.id).lean();
+    if (!rawSale) return res.status(404).json({ message: 'Sale not found' });
+    
+    if (req.user && req.user.role !== 'admin') {
+      delete rawSale.total_profit;
+      delete rawSale.total_cost;
+      if (rawSale.items) {
+        rawSale.items = rawSale.items.map(item => {
+          delete item.buying_price;
+          delete item.line_profit;
+          return item;
+        });
+      }
+    }
+    
+    res.json(rawSale);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// PUT /api/sales/:id/status
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { order_status } = req.body;
+    if (!order_status) return res.status(400).json({ message: 'Missing status' });
+
+    const sale = await Sale.findByIdAndUpdate(req.params.id, { order_status }, { new: true });
     if (!sale) return res.status(404).json({ message: 'Sale not found' });
+    
     res.json(sale);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -116,7 +196,7 @@ const getSaleById = async (req, res) => {
 // GET /api/sales/analytics/summary  (daily | weekly | monthly | yearly)
 const getAnalytics = async (req, res) => {
   try {
-    const { period } = req.query;
+    const { period, sale_source } = req.query;
     const now = new Date();
     let startDate;
     let groupFormat;
@@ -146,9 +226,14 @@ const getAnalytics = async (req, res) => {
       groupLabel = 'Hour';
     }
 
+    const matchStage = { createdAt: { $gte: startDate } };
+    if (sale_source && sale_source !== 'all') {
+      matchStage.sale_source = sale_source;
+    }
+
     // Summary totals
     const result = await Sale.aggregate([
-      { $match: { createdAt: { $gte: startDate } } },
+      { $match: matchStage },
       {
         $group: {
           _id: null,
@@ -164,7 +249,7 @@ const getAnalytics = async (req, res) => {
 
     // Time-series chart data
     const chartData = await Sale.aggregate([
-      { $match: { createdAt: { $gte: startDate } } },
+      { $match: matchStage },
       {
         $group: {
           _id: { $dateToString: { format: groupFormat, date: '$createdAt' } },
@@ -179,7 +264,7 @@ const getAnalytics = async (req, res) => {
 
     // Category-wise breakdown
     const categoryData = await Sale.aggregate([
-      { $match: { createdAt: { $gte: startDate } } },
+      { $match: matchStage },
       { $unwind: '$items' },
       {
         $lookup: {
@@ -203,7 +288,7 @@ const getAnalytics = async (req, res) => {
 
     // Top selling products
     const topProducts = await Sale.aggregate([
-      { $match: { createdAt: { $gte: startDate } } },
+      { $match: matchStage },
       { $unwind: '$items' },
       {
         $group: {
@@ -219,7 +304,7 @@ const getAnalytics = async (req, res) => {
 
     // Payment method breakdown
     const paymentData = await Sale.aggregate([
-      { $match: { createdAt: { $gte: startDate } } },
+      { $match: matchStage },
       {
         $group: {
           _id: '$payment_method',
@@ -230,7 +315,7 @@ const getAnalytics = async (req, res) => {
       { $sort: { revenue: -1 } },
     ]);
 
-    res.json({
+    const responseData = {
       summary: result[0] || {
         total_revenue: 0, total_profit: 0, total_cost: 0,
         total_transactions: 0, avg_transaction: 0, total_discount: 0,
@@ -242,10 +327,38 @@ const getAnalytics = async (req, res) => {
       period,
       startDate,
       groupLabel,
-    });
+    };
+
+    if (req.user && req.user.role !== 'admin') {
+      delete responseData.summary.total_profit;
+      delete responseData.summary.total_cost;
+      
+      responseData.chartData = responseData.chartData.map(d => {
+        delete d.profit;
+        delete d.cost;
+        return d;
+      });
+      
+      responseData.categoryData = responseData.categoryData.map(d => {
+        delete d.profit;
+        return d;
+      });
+      
+      responseData.topProducts = responseData.topProducts.map(d => {
+        delete d.profit;
+        return d;
+      });
+    }
+
+    res.json(responseData);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-module.exports = { createSale, getSales, getSaleById, getAnalytics };
+module.exports = { createSale,  getSales,
+  getMyOrders,
+  getSaleById,
+  updateOrderStatus,
+  getAnalytics,
+};

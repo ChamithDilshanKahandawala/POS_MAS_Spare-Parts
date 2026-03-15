@@ -15,22 +15,23 @@ export default function SalesHistoryPage() {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [paymentFilter, setPaymentFilter] = useState('');
+  const [sourceFilter, setSourceFilter] = useState('');
   const [loading, setLoading] = useState(true);
   const [viewSale, setViewSale] = useState(null);
 
   const fetchSales = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await getSales({ page, limit: 15, from, to, payment_method: paymentFilter });
+      const { data } = await getSales({ page, limit: 15, from, to, payment_method: paymentFilter, sale_source: sourceFilter });
       setSales(data.sales);
       setTotal(data.total);
       setPages(data.pages);
     } catch { toast.error('Failed to load sales'); }
     finally { setLoading(false); }
-  }, [page, from, to, paymentFilter]);
+  }, [page, from, to, paymentFilter, sourceFilter]);
 
   useEffect(() => { fetchSales(); }, [fetchSales]);
-  useEffect(() => { setPage(1); }, [from, to, paymentFilter]);
+  useEffect(() => { setPage(1); }, [from, to, paymentFilter, sourceFilter]);
 
   const fmt = (v) => `Rs. ${Number(v || 0).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -53,14 +54,19 @@ export default function SalesHistoryPage() {
           <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>To</span>
           <input type="date" className="input-field" value={to} onChange={e => setTo(e.target.value)} style={{ width: '150px', padding: '8px 12px', fontSize: '13px' }} />
         </div>
+        <select className="select-field" value={sourceFilter} onChange={e => setSourceFilter(e.target.value)} style={{ width: '140px', padding: '8px 12px', fontSize: '13px' }}>
+          <option value="">All Sources</option>
+          <option value="shop">Shop Orders</option>
+          <option value="online">Online Orders</option>
+        </select>
         <select className="select-field" value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} style={{ width: '140px', padding: '8px 12px', fontSize: '13px' }}>
           <option value="">All Payments</option>
           <option value="Cash">Cash</option>
           <option value="Card">Card</option>
           <option value="Online">Online</option>
         </select>
-        {(from || to || paymentFilter) && (
-          <button className="btn-secondary" onClick={() => { setFrom(''); setTo(''); setPaymentFilter(''); }} style={{ padding: '8px 12px', fontSize: '13px' }}>
+        {(from || to || paymentFilter || sourceFilter) && (
+          <button className="btn-secondary" onClick={() => { setFrom(''); setTo(''); setPaymentFilter(''); setSourceFilter(''); }} style={{ padding: '8px 12px', fontSize: '13px' }}>
             <X size={14} /> Clear
           </button>
         )}
@@ -75,7 +81,9 @@ export default function SalesHistoryPage() {
                 <th>Invoice</th>
                 <th>Date & Time</th>
                 <th>Customer</th>
+                <th style={{ textAlign: 'center' }}>Source</th>
                 <th style={{ textAlign: 'center' }}>Items</th>
+                <th>Discount</th>
                 <th>Total</th>
                 {/* 🔐 Admin Only Header */}
                 {isAdmin && <th>Profit</th>} 
@@ -86,9 +94,9 @@ export default function SalesHistoryPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={isAdmin ? 9 : 8} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading...</td></tr>
+                <tr><td colSpan={isAdmin ? 11 : 10} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading...</td></tr>
               ) : sales.length === 0 ? (
-                <tr><td colSpan={isAdmin ? 9 : 8} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No sales found</td></tr>
+                <tr><td colSpan={isAdmin ? 11 : 10} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No sales found</td></tr>
               ) : sales.map(s => (
                 <tr key={s._id}>
                   <td><span style={{ fontFamily: 'monospace', fontSize: '12px', color: 'var(--accent-primary)', fontWeight: 700 }}>{s.invoice_number}</span></td>
@@ -97,7 +105,17 @@ export default function SalesHistoryPage() {
                     <span style={{ color: 'var(--text-muted)' }}>{new Date(s.createdAt).toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' })}</span>
                   </td>
                   <td style={{ fontSize: '13px' }}>{s.customer_name}</td>
+                  <td style={{ textAlign: 'center' }}>
+                    <span className={`badge ${s.sale_source === 'online' ? 'badge-blue' : 'badge-green'}`} style={{ fontSize: '10px' }}>
+                      {s.sale_source === 'online' ? 'Online' : 'Shop'}
+                    </span>
+                  </td>
                   <td style={{ fontSize: '13px', textAlign: 'center' }}>{s.items?.length}</td>
+                  <td style={{ fontWeight: 600, color: '#ef4444', fontSize: '13px' }}>
+                    {((s.total_discount || 0) + (s.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0)) > 0 
+                      ? `- ${fmt((s.total_discount || 0) + (s.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0))}` 
+                      : '-'}
+                  </td>
                   <td style={{ fontWeight: 700 }}>{fmt(s.total_amount)}</td>
                   
                   {/* 🔐 Admin Only Cell */}
@@ -140,10 +158,11 @@ export default function SalesHistoryPage() {
               <button onClick={() => setViewSale(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X size={20} /></button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '16px', background: 'var(--bg-secondary)', borderRadius: '10px', padding: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginBottom: '16px', background: 'var(--bg-secondary)', borderRadius: '10px', padding: '12px' }}>
               {[
                 ['Customer', viewSale.customer_name],
                 ['Date', new Date(viewSale.createdAt).toLocaleString('en-LK')],
+                ['Source', viewSale.sale_source === 'online' ? 'Online' : 'Shop'],
                 ['Payment', viewSale.payment_method],
                 ['Cashier', viewSale.cashier_name],
               ].map(([k, v]) => (
@@ -187,7 +206,9 @@ export default function SalesHistoryPage() {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                 <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Discount</span>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: '#ef4444' }}>- {fmt(viewSale.total_discount)}</span>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: '#ef4444' }}>
+                  - {fmt((viewSale.total_discount || 0) + (viewSale.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0))}
+                </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid var(--border-light)' }}>
                 <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>TOTAL AMOUNT</span>

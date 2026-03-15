@@ -169,12 +169,12 @@ export default function InventoryPage() {
               <button className="btn-secondary" onClick={handleExport} disabled={exporting} style={{gap:'6px',borderColor:'rgba(34,197,94,0.3)',color:'#22c55e'}}>
                 <Download size={15}/> {exporting?'Exporting...':'Export Excel'}
               </button>
-              {/* Add */}
-              <button className="btn-primary" onClick={openAdd}>
-                <Plus size={16} /> Add Product
-              </button>
             </>
           )}
+          {/* Add Product (Available for Admin & Staff) */}
+          <button className="btn-primary" onClick={openAdd}>
+            <Plus size={16} /> Add Product
+          </button>
         </div>
       </div>
 
@@ -212,9 +212,9 @@ export default function InventoryPage() {
                 <th>Product</th>
                 <th>SKU</th>
                 <th>Category</th>
-                <th>Buying</th>
+                {isAdmin && <th>Buying</th>}
                 <th>Selling</th>
-                <th>Margin</th>
+                {isAdmin && <th>Margin</th>}
                 <th>Stock</th>
                 <th>Supplier</th>
                 {isAdmin && <th>Actions</th>}
@@ -236,9 +236,9 @@ export default function InventoryPage() {
                   </td>
                   <td><span style={{ fontFamily: 'monospace', fontSize: '12px', color: 'var(--accent-primary)' }}>{p.sku_code}</span></td>
                   <td><span className="badge badge-purple">{p.category}</span></td>
-                  <td style={{ color: 'var(--text-secondary)' }}>Rs. {p.buying_price.toLocaleString()}</td>
+                  {isAdmin && <td style={{ color: 'var(--text-secondary)' }}>Rs. {p.buying_price.toLocaleString()}</td>}
                   <td style={{ fontWeight: 600 }}>Rs. {p.selling_price.toLocaleString()}</td>
-                  <td><span className="badge badge-green">{margin(p.buying_price, p.selling_price)}%</span></td>
+                  {isAdmin && <td><span className="badge badge-green">{margin(p.buying_price, p.selling_price)}%</span></td>}
                   <td>
                     <span className={`badge ${p.stock_quantity === 0 ? 'badge-red' : p.stock_quantity <= p.low_stock_threshold ? 'badge-yellow' : 'badge-green'}`}>
                       {p.stock_quantity} units
