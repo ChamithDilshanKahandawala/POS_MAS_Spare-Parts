@@ -76,6 +76,14 @@ const createSale = async (req, res) => {
       await User.findByIdAndUpdate(req.user._id, { $push: { orderHistory: sale._id } });
     }
 
+    // Emit Socket.io event for POS dashboard
+    if (sale_source === 'online') {
+      const io = req.app.get('io');
+      if (io) {
+        io.emit('new_web_order', sale);
+      }
+    }
+
     res.status(201).json(sale);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -181,10 +189,13 @@ const getSaleById = async (req, res) => {
 // PUT /api/sales/:id/status
 const updateOrderStatus = async (req, res) => {
   try {
-    const { order_status } = req.body;
+    const { order_status, tracking_number } = req.body;
     if (!order_status) return res.status(400).json({ message: 'Missing status' });
 
-    const sale = await Sale.findByIdAndUpdate(req.params.id, { order_status }, { new: true });
+    const updateData = { order_status };
+    if (tracking_number !== undefined) updateData.tracking_number = tracking_number;
+
+    const sale = await Sale.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!sale) return res.status(404).json({ message: 'Sale not found' });
     
     res.json(sale);

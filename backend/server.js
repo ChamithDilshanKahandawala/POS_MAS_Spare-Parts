@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const http = require('http');
+const { Server } = require('socket.io');
 
 // Middleware imports
 const { protect, adminOnly } = require('./middleware/authMiddleware');
@@ -10,6 +12,7 @@ dotenv.config();
 connectDB();
 
 const app = express();
+const server = http.createServer(app);
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -21,6 +24,10 @@ const corsOptions = {
   },
   credentials: true,
 };
+
+const io = new Server(server, { cors: corsOptions });
+app.set('io', io);
+
 app.use(cors(corsOptions));
 app.use(express.json());
 
@@ -58,4 +65,4 @@ app.use((err, req, res, next) => {
 
 // Port configuration (MacBook friendly 5001)
 const PORT = process.env.PORT || 5001; 
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+server.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT} with Socket.io`));

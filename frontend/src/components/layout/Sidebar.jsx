@@ -1,12 +1,14 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import {
   LayoutDashboard, Package, ShoppingCart, BarChart3,
-  History, LogOut, AlertTriangle, Users, Truck,
+  History, LogOut, AlertTriangle, Users, Truck, Sun, Moon
 } from 'lucide-react';
 
 export default function Sidebar() {
   const { user, logout } = useAuth(); 
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   // 1. Base nav items (Staff and Admin both can see)
@@ -115,11 +117,18 @@ export default function Sidebar() {
             }}>{user?.role}</div>
           </div>
         </div>
-        <button onClick={handleLogout} className="btn-secondary"
-          style={{ width: '100%', justifyContent: 'center', padding: '8px' }}>
-          <LogOut size={15} />
-          Logout
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button onClick={toggleTheme} className="btn-secondary"
+            style={{ flex: 1, justifyContent: 'center', padding: '8px' }}
+            title="Toggle Theme">
+            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+          </button>
+          <button onClick={handleLogout} className="btn-secondary"
+            style={{ flex: 3, justifyContent: 'center', padding: '8px' }}>
+            <LogOut size={15} />
+            Logout
+          </button>
+        </div>
       </div>
     </aside>
   );

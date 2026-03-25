@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getMyOrders } from '../api/services';
 import toast from 'react-hot-toast';
-import { Package, Truck, Clock, CheckCircle } from 'lucide-react';
+import { Package, Truck, Clock, CheckCircle, Navigation } from 'lucide-react';
 
 export default function CustomerOrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -73,11 +73,19 @@ export default function CustomerOrdersPage() {
                     {new Date(o.createdAt).toLocaleString('en-LK', { dateStyle: 'medium', timeStyle: 'short' })}
                   </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: getStatusColor(o.order_status || 'Pending'), padding: '6px 12px', borderRadius: '20px' }}>
-                  {getStatusIcon(o.order_status || 'Pending')}
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: getStatusTextColor(o.order_status || 'Pending') }}>
-                    {o.order_status || 'Pending'}
-                  </span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: getStatusColor(o.order_status || 'Pending'), padding: '6px 12px', borderRadius: '20px' }}>
+                    {getStatusIcon(o.order_status || 'Pending')}
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: getStatusTextColor(o.order_status || 'Pending') }}>
+                      {o.order_status || 'Pending'}
+                    </span>
+                  </div>
+                  {o.tracking_number && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)', background: 'var(--bg-secondary)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                      <Navigation size={12} color="var(--accent-primary)" style={{ transform: 'rotate(45deg)' }} />
+                      Tracking: <strong style={{ fontFamily: 'monospace', color: 'var(--text-primary)' }}>{o.tracking_number}</strong>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -100,7 +108,22 @@ export default function CustomerOrdersPage() {
                 ))}
               </div>
 
-              <div style={{ borderTop: '1px dashed var(--border)', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ padding: '16px', background: 'var(--bg-secondary)', borderRadius: '12px', marginBottom: '20px', display: 'flex', flexWrap: 'wrap', gap: '24px', border: '1px solid var(--border-light)' }}>
+                <div style={{ flex: '1 1 120px' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Payment Info</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{o.payment_method === 'Cash' ? 'Cash on Delivery' : 'Online / Card'}</div>
+                </div>
+                <div style={{ flex: '1 1 120px' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Contact Number</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{o.customer_phone || 'N/A'}</div>
+                </div>
+                <div style={{ flex: '1 1 120px' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Store & Delivery</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Standard Shipping</div>
+                </div>
+              </div>
+
+              <div style={{ borderTop: '1px dashed var(--border)', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
                 <div>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Delivery Address</div>
                   <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '2px', maxWidth: '300px' }}>{o.shipping_address || 'N/A'}</div>

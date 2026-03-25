@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getProducts, createSale } from '../api/services';
+import { getProducts } from '../api/services';
 import toast from 'react-hot-toast';
-import { Search, ShoppingCart, Plus, Minus, X, Check, Truck, Star, ArrowRight, Info } from 'lucide-react';
+import { Search, ShoppingCart, Plus, Minus, X, Star, ArrowRight, Info, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import AuthModal from '../components/AuthModal';
 
 const CATEGORIES = ['All', 'Three-wheel', 'Bike', 'Car', 'Van'];
 
@@ -12,14 +14,11 @@ export default function StorefrontPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
-  const [cart, setCart] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [shippingAddress, setShippingAddress] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   
   const { user } = useAuth();
+  const { cart, addToCart, updateQty, removeFromCart, totalAmount, isCartOpen, setIsCartOpen } = useCart();
   const navigate = useNavigate();
 
   const fetchProducts = useCallback(async () => {
@@ -36,70 +35,18 @@ export default function StorefrontPage() {
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
-  const addToCart = (product) => {
-    if (product.stock_quantity <= 0) { toast.error('Out of stock!'); return; }
-    setCart(prev => {
-      const existing = prev.find(i => i._id === product._id);
-      if (existing) {
-        if (existing.qty >= product.stock_quantity) { toast.error('Max stock reached!'); return prev; }
-        return prev.map(i => i._id === product._id ? { ...i, qty: i.qty + 1 } : i);
-      }
-      return [...prev, { ...product, qty: 1 }];
-    });
-    toast.success(`${product.name} added to cart`);
-  };
-
-  const updateQty = (id, delta) => {
-    setCart(prev => prev.map(i => {
-      if (i._id === id) {
-        const newQty = i.qty + delta;
-        if (newQty > i.stock_quantity) { toast.error('Not enough stock'); return i; }
-        if (newQty < 1) return i;
-        return { ...i, qty: newQty };
-      }
-      return i;
-    }));
-  };
-
-  const removeFromCart = (id) => setCart(prev => prev.filter(i => i._id !== id));
-
-  const totalAmount = cart.reduce((sum, item) => sum + (item.selling_price * item.qty), 0);
-
-  const handleCheckout = async () => {
+  const handleProceedToCheckout = () => {
     if (!user) {
-      toast.error('Please login to place an order');
-      navigate('/login');
+      toast.error('Please login to continue to checkout');
+      setIsAuthModalOpen(true);
       return;
     }
     if (user.role !== 'customer') {
-      toast.error('Only customers can place online orders here');
+      toast.error('Only customers can place online orders');
       return;
     }
-    if (!shippingAddress.trim()) {
-      toast.error('Shipping address is required');
-      return;
-    }
-    
-    setIsCheckingOut(true);
-    try {
-      const payload = {
-        items: cart.map(i => ({ product_id: i._id, quantity: i.qty, discount: 0 })),
-        payment_method: paymentMethod === 'card' ? 'Online' : 'Cash',
-        sale_source: 'online',
-        shipping_address: shippingAddress,
-      };
-      
-      await createSale(payload);
-      toast.success('Order placed successfully!');
-      setCart([]);
-      setIsCartOpen(false);
-      setShippingAddress('');
-      fetchProducts(); // Refresh stock
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Checkout failed');
-    } finally {
-      setIsCheckingOut(false);
-    }
+    setIsCartOpen(false);
+    navigate('/checkout');
   };
 
   return (
@@ -263,36 +210,21 @@ export default function StorefrontPage() {
             </div>
 
             <div style={{ padding: '20px', borderTop: '1px solid var(--border)', background: 'var(--bg-secondary)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontSize: '18px', fontWeight: 800 }}>
-                <span>Total:</span>
-                <span style={{ color: 'var(--accent-primary)' }}>Rs. {totalAmount.toLocaleString()}</span>
+              <div style={{ paddingBottom: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '18px', fontWeight: 800 }}>
+                  <span>Total:</span>
+                  <span style={{ color: 'var(--accent-primary)' }}>Rs. {totalAmount.toLocaleString()}</span>
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '24px' }}>Shipping calculated at checkout.</div>
               </div>
               
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '6px' }}><Truck size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} /> Shipping Address</label>
-                <textarea 
-                   className="input-field"
-                  placeholder="Enter your full address..."
-                  style={{ width: '100%', borderRadius: '12px', minHeight: '80px', resize: 'vertical' }}
-                  value={shippingAddress} onChange={e => setShippingAddress(e.target.value)}
-                />
-              </div>
-
-              <div style={{ marginBottom: '24px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '6px' }}>Payment Method (Simulated)</label>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  <button onClick={() => setPaymentMethod('card')} className={paymentMethod === 'card' ? 'btn-primary' : 'btn-secondary'} style={{ flex: 1, padding: '10px', justifyContent: 'center' }}>💳 PayHere / Card</button>
-                  <button onClick={() => setPaymentMethod('cod')} className={paymentMethod === 'cod' ? 'btn-primary' : 'btn-secondary'} style={{ flex: 1, padding: '10px', justifyContent: 'center', background: paymentMethod === 'cod' ? '#10b981' : '' }}>💵 Cash on Delivery</button>
-                </div>
-              </div>
-
               <button 
                 className="btn-primary" 
-                onClick={handleCheckout}
-                disabled={cart.length === 0 || isCheckingOut || !shippingAddress.trim()}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '16px', fontWeight: 700, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+                onClick={handleProceedToCheckout}
+                disabled={cart.length === 0}
+                style={{ width: '100%', padding: '16px', borderRadius: '14px', fontSize: '16px', fontWeight: 800, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
               >
-                {isCheckingOut ? 'Processing...' : <><Check size={18} /> Place Order</>}
+                <ShieldCheck size={20} /> Proceed to Checkout
               </button>
             </div>
           </div>
@@ -347,6 +279,9 @@ export default function StorefrontPage() {
           </div>
         </div>
       )}
+
+      {/* Auth Modal required for checking out logged out customers */}
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </>
   );
 }

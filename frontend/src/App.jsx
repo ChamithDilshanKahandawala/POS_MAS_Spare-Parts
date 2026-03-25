@@ -1,6 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { io } from 'socket.io-client';
+import { useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Layout from './components/layout/Layout';
 
 // Pages
@@ -28,6 +31,51 @@ const AdminRoute = ({ children }) => {
   const { user } = useAuth();
   return user?.role === 'admin' ? children : <Navigate to="/" replace />;
 };
+
+function GlobalSocketManager() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) return;
+
+    const socket = io(import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5001', {
+       transports: ['websocket', 'polling']
+    });
+
+    socket.on('new_web_order', (sale) => {
+      // Create HTML Audio element for a simple notification ping
+      try {
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        audio.play().catch(e => console.log('Audio play prevented by browser policy'));
+      } catch (err) {}
+
+      toast((t) => (
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div>
+             <div style={{ fontWeight: 'bold' }}>New Web Order! 🛍️</div>
+             <div style={{ fontSize: '12px' }}>{sale.invoice_number} - Rs. {sale.total_amount?.toLocaleString() || '0'}</div>
+          </div>
+          <button 
+             onClick={() => {
+               toast.dismiss(t.id);
+               navigate('/web-orders');
+             }}
+             style={{ background: '#10b981', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>
+            View
+          </button>
+        </div>
+      ), { duration: 15000 });
+      
+      // Dispatch custom event for real-time refetching locally
+      window.dispatchEvent(new CustomEvent('web_order_received'));
+    });
+
+    return () => socket.disconnect();
+  }, [user, navigate]);
+  
+  return null;
+}
 
 function AppRoutes() {
   return (
@@ -59,16 +107,18 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <GlobalSocketManager />
+          <AppRoutes />
         <Toaster
           position="top-right"
           toastOptions={{
             style: {
-              background: '#1a2235',
-              color: '#f1f5f9',
-              border: '1px solid #2d3748',
+              background: 'var(--bg-card)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border-light)',
               borderRadius: '12px',
               fontSize: '14px',
             },
@@ -76,7 +126,8 @@ export default function App() {
             error: { iconTheme: { primary: '#ef4444', secondary: 'white' } },
           }}
         />
-      </BrowserRouter>
-    </AuthProvider>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

@@ -2,7 +2,27 @@
 
 @import "tailwindcss";
 
+/* Light Mode Variables */
 :root {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --accent-primary: #6366f1;
+  --accent-secondary: #8b5cf6;
+  --accent-green: #10b981;
+  --accent-red: #ef4444;
+  --accent-yellow: #f59e0b;
+  --accent-blue: #3b82f6;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --border: #e2e8f0;
+  --border-light: #cbd5e1;
+}
+
+/* Dark Mode Variables */
+[data-theme='dark'] {
   --bg-primary: #0a0f1e;
   --bg-secondary: #111827;
   --bg-card: #1a2235;
@@ -34,6 +54,7 @@ body,
   background-color: var(--bg-primary);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Scrollbar */
@@ -161,7 +182,7 @@ body,
   font-size: 14px;
   width: 100%;
   outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.3s ease;
 }
 .input-field:focus {
   border-color: var(--accent-primary);
@@ -182,7 +203,7 @@ body,
   width: 100%;
   outline: none;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: all 0.3s ease;
 }
 .select-field:focus {
   border-color: var(--accent-primary);
@@ -242,12 +263,14 @@ body,
   letter-spacing: 0.8px;
   text-transform: uppercase;
   border-bottom: 1px solid var(--border-light);
+  transition: all 0.3s ease;
 }
 .data-table td {
   padding: 14px 16px;
   font-size: 14px;
   color: var(--text-primary);
   border-bottom: 1px solid var(--border);
+  transition: all 0.3s ease;
 }
 .data-table tr:hover td {
   background: rgba(99, 102, 241, 0.04);
@@ -364,7 +387,7 @@ body,
   font-size: 24px;
   font-weight: 800;
   color: var(--text-primary);
-  background: linear-gradient(135deg, #f1f5f9, #94a3b8);
+  background: linear-gradient(135deg, var(--text-primary), var(--text-muted));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

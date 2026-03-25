@@ -3,17 +3,32 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff, UserPlus, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
-  const { login, loading } = useAuth();
+  const { login, handleGoogleAuth, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await login(email, password);
+    if (result.success) {
+      if (result.user?.role !== 'customer') {
+        toast.error('Staff/Admin should login through the POS Portal.');
+      } else {
+        toast.success('Welcome back to the Store! 👋');
+        navigate('/');
+      }
+    } else {
+      toast.error(result.message);
+    }
+  };
+
+  const onGoogleSuccess = async (credentialResponse) => {
+    const result = await handleGoogleAuth(credentialResponse.credential);
     if (result.success) {
       if (result.user?.role !== 'customer') {
         toast.error('Staff/Admin should login through the POS Portal.');
@@ -63,6 +78,22 @@ export default function LoginPage() {
               {loading ? 'Signing in...' : 'Sign In →'}
             </button>
           </form>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '24px 0' }}>
+            <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }}></div>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>OR</span>
+            <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }}></div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+            <GoogleLogin
+              onSuccess={onGoogleSuccess}
+              onError={() => toast.error('Google Login Failed')}
+              useOneTap
+              shape="rectangular"
+              theme="filled_black"
+            />
+          </div>
 
           <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--border-light)', textAlign: 'center', fontSize: '13px' }}>
             <p style={{ color: 'var(--text-muted)', marginBottom: '8px' }}>Not a member yet?</p>

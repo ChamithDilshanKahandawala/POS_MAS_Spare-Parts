@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser } from '../api/services';
+import { loginUser, googleLogin } from '../api/services';
 
 const AuthContext = createContext(null);
 
@@ -27,6 +27,20 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const handleGoogleAuth = async (token) => {
+    setLoading(true);
+    try {
+      const { data } = await googleLogin({ token });
+      setUser(data);
+      localStorage.setItem('storeUser', JSON.stringify(data));
+      return { success: true, user: data };
+    } catch (err) {
+       return { success: false, message: err.response?.data?.message || 'Google Auth failed' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('storeUser');
@@ -35,7 +49,7 @@ export const AuthProvider = ({ children }) => {
   const isAdmin = user?.role === 'admin';
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading, isAdmin }}>
+    <AuthContext.Provider value={{ user, login, handleGoogleAuth, logout, loading, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

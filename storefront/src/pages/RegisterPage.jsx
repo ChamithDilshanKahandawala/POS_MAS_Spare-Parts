@@ -3,10 +3,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { registerUser } from '../api/services';
 import toast from 'react-hot-toast';
 import { User, Mail, Lock, ArrowRight, CheckCircle2, ShoppingBag } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
+import { useAuth } from '../context/AuthContext';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'customer' });
   const [loading, setLoading] = useState(false);
+  const { handleGoogleAuth } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -20,6 +23,20 @@ export default function RegisterPage() {
       toast.error(err.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const onGoogleSuccess = async (credentialResponse) => {
+    const result = await handleGoogleAuth(credentialResponse.credential);
+    if (result.success) {
+      if (result.user?.role !== 'customer') {
+        toast.error('Staff/Admin should login through the POS Portal.');
+      } else {
+        toast.success('Registration/Login with Google successful! 👋');
+        navigate('/');
+      }
+    } else {
+      toast.error(result.message);
     }
   };
 
@@ -56,7 +73,24 @@ export default function RegisterPage() {
               {loading ? 'Processing...' : 'Create Account'} {!loading && <ArrowRight size={18} />}
             </button>
           </form>
-          <div style={{ marginTop: '24px', padding: '12px', background: 'rgba(16,185,129,0.05)', borderRadius: '12px', border: '1px dashed rgba(16,185,129,0.2)' }}>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '24px 0' }}>
+            <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }}></div>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>OR</span>
+            <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }}></div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+            <GoogleLogin
+              onSuccess={onGoogleSuccess}
+              onError={() => toast.error('Google Registration Failed')}
+              useOneTap
+              shape="rectangular"
+              theme="filled_black"
+            />
+          </div>
+
+          <div style={{ marginTop: '0', padding: '12px', background: 'rgba(16,185,129,0.05)', borderRadius: '12px', border: '1px dashed rgba(16,185,129,0.2)' }}>
              <p style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', gap: '6px' }}><CheckCircle2 size={14} style={{ color: '#10b981', flexShrink: 0 }} />Instant Account Access: Buy parts immediately after registering!</p>
           </div>
         </div>

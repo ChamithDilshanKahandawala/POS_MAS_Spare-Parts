@@ -3,6 +3,7 @@ import api from './axios';
 // --- AUTH ---
 export const loginUser   = (data) => api.post('/auth/login', data);
 export const registerUser= (data) => api.post('/auth/register', data);
+export const googleLogin = (data) => api.post('/auth/google', data);
 export const getMe       = ()     => api.get('/auth/me');
 
 // --- STAFF / USER MANAGEMENT (NEW) ---
@@ -44,7 +45,7 @@ export const createSale  = (data)   => api.post('/sales', data);
 export const getSales    = (params) => api.get('/sales', { params });
 export const getSaleById = (id)     => api.get(`/sales/${id}`);
 export const getAnalytics= (period, sale_source) => api.get('/sales/analytics/summary', { params: { period, sale_source } });
-export const getMyOrders = ()       => api.get('/sales/customer/my-orders');
+export const getMyOrders = ()       => api.get('/sales/my-orders');
 
 // --- CUSTOMERS ---
 export const getCustomers    = (params)    => api.get('/customers', { params });
