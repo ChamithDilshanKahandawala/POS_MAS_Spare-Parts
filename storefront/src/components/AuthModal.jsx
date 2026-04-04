@@ -92,7 +92,7 @@ export default function AuthModal({ isOpen, onClose }) {
 
         <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-muted)' }}>
           {isLogin ? "Don't have an account? " : "Already have an account? "}
-          <button type="button" onClick={() => setIsLogin(!isLogin)} style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontWeight: 700, cursor: 'pointer' }}>
+          <button type="button" onClick={() => setIsLogin(!isLogin)} style={{ background: 'none', border: 'none', color: '#e67e22', fontWeight: 700, cursor: 'pointer' }}>
             {isLogin ? 'Sign Up' : 'Sign In'}
           </button>
         </div>

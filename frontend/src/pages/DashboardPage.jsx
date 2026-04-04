@@ -4,8 +4,10 @@ import { useAuth } from '../context/AuthContext';
 import { TrendingUp, DollarSign, ShoppingBag, AlertTriangle, ArrowRight, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import useIsMobile from '../hooks/useIsMobile';
 
 export default function DashboardPage() {
+  const isMobile = useIsMobile();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [summary, setSummary] = useState(null);
@@ -84,7 +86,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Top Stat Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${stats.length}, 1fr)`, gap: '14px', marginBottom: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : `repeat(${stats.length}, 1fr)`, gap: '12px', marginBottom: '20px' }}>
         {stats.map((s) => (
           <div key={s.label} className={`stat-card ${s.color}`} style={{ cursor: s.onClick ? 'pointer' : 'default' }} onClick={s.onClick}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
@@ -101,7 +103,7 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '14px' }}>
         {/* Quick Actions */}
         <div className="glass-card" style={{ padding: '22px' }}>
           <h2 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '14px' }}>Quick Actions</h2>

@@ -13,6 +13,7 @@ const createSale = async (req, res) => {
     let subtotal = 0;
     let total_cost = 0;
     const saleItems = [];
+    const stockUpdates = []; // collect real-time stock changes
 
     for (const item of items) {
       const product = await Product.findById(item.product_id);
@@ -43,6 +44,12 @@ const createSale = async (req, res) => {
 
       await Product.findByIdAndUpdate(product._id, {
         $inc: { stock_quantity: -item.quantity },
+      });
+
+      // Track new stock level for real-time broadcast
+      stockUpdates.push({
+        productId: product._id.toString(),
+        newQuantity: product.stock_quantity - item.quantity,
       });
     }
 
@@ -76,10 +83,14 @@ const createSale = async (req, res) => {
       await User.findByIdAndUpdate(req.user._id, { $push: { orderHistory: sale._id } });
     }
 
-    // Emit Socket.io event for POS dashboard
-    if (sale_source === 'online') {
-      const io = req.app.get('io');
-      if (io) {
+    // Emit Socket.io events
+    const io = req.app.get('io');
+    if (io) {
+      // Always broadcast stock changes so storefront updates in real-time
+      io.emit('stock_updated', stockUpdates);
+
+      // Notify POS dashboard of new online orders
+      if (sale_source === 'online') {
         io.emit('new_web_order', sale);
       }
     }
@@ -93,7 +104,7 @@ const createSale = async (req, res) => {
 // GET /api/sales
 const getSales = async (req, res) => {
   try {
-    const { page = 1, limit = 20, from, to, payment_method, sale_source } = req.query;
+    const { page = 1, limit = 20, from, to, payment_method, sale_source, order_status } = req.query;
     const query = {};
 
     if (from || to) {
@@ -107,6 +118,7 @@ const getSales = async (req, res) => {
     }
     if (payment_method) query.payment_method = payment_method;
     if (sale_source) query.sale_source = sale_source;
+    if (order_status) query.order_status = order_status;
 
     const total = await Sale.countDocuments(query);
     const rawSales = await Sale.find(query)
@@ -195,8 +207,32 @@ const updateOrderStatus = async (req, res) => {
     const updateData = { order_status };
     if (tracking_number !== undefined) updateData.tracking_number = tracking_number;
 
+    const oldSale = await Sale.findById(req.params.id);
+    if (!oldSale) return res.status(404).json({ message: 'Sale not found' });
+
+    const isRevertedStatus = order_status === 'Cancelled' || order_status === 'Returned';
+    const stockUpdates = [];
+
+    if (isRevertedStatus && !oldSale.is_stock_restored) {
+      for (const item of oldSale.items) {
+        const product = await Product.findByIdAndUpdate(item.product, { $inc: { stock_quantity: item.quantity } }, { new: true });
+        if (product) stockUpdates.push({ productId: product._id, newQuantity: product.stock_quantity });
+      }
+      updateData.is_stock_restored = true;
+    } else if (!isRevertedStatus && oldSale.is_stock_restored) {
+      for (const item of oldSale.items) {
+        const product = await Product.findByIdAndUpdate(item.product, { $inc: { stock_quantity: -item.quantity } }, { new: true });
+        if (product) stockUpdates.push({ productId: product._id, newQuantity: product.stock_quantity });
+      }
+      updateData.is_stock_restored = false;
+    }
+
     const sale = await Sale.findByIdAndUpdate(req.params.id, updateData, { new: true });
-    if (!sale) return res.status(404).json({ message: 'Sale not found' });
+
+    if (stockUpdates.length > 0) {
+      const io = req.app.get('io');
+      if (io) io.emit('stock_updated', stockUpdates);
+    }
     
     res.json(sale);
   } catch (err) {
@@ -237,7 +273,10 @@ const getAnalytics = async (req, res) => {
       groupLabel = 'Hour';
     }
 
-    const matchStage = { createdAt: { $gte: startDate } };
+    const matchStage = { 
+      createdAt: { $gte: startDate },
+      order_status: { $nin: ['Cancelled', 'Returned'] } 
+    };
     if (sale_source && sale_source !== 'all') {
       matchStage.sale_source = sale_source;
     }

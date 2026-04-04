@@ -36,9 +36,10 @@ const saleSchema = new mongoose.Schema(
     customer: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     order_status: {
       type: String,
-      enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+      enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returned'],
       default: 'Delivered', // Default to Delivered for POS Shop sales
     },
+    is_stock_restored: { type: Boolean, default: false },
     tracking_number: { type: String, default: '' },
     shipping_address: { type: String, default: '' },
     cashier: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

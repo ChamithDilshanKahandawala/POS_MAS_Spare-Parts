@@ -2,6 +2,11 @@
 
 @import "tailwindcss";
 
+/* Ant Design theme override — ensure it uses our CSS vars */
+.ant-tooltip-inner {
+  font-family: 'Inter', sans-serif !important;
+}
+
 /* Light Mode Variables */
 :root {
   --bg-primary: #f8fafc;
@@ -424,3 +429,80 @@ body,
 .receipt-paper .receipt-item-name { font-size: 11px; max-width: 180px; word-break: break-word; }
 .receipt-paper .receipt-center { text-align: center; font-size: 10px; color: #555; margin-top: 4px; }
 .receipt-paper .receipt-thank { text-align: center; font-weight: 700; margin-top: 6px; font-size: 12px; }
+
+/* =============================================
+   LAYOUT & SIDEBAR RESPONSIVE UTILITIES
+   ============================================= */
+
+/* Smooth sidebar width transition for main content */
+.layout-main-transition {
+  transition: margin-left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Sidebar group divider text */
+.sidebar-group-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 10px 10px 4px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Top header shimmer for active breadcrumb */
+.header-breadcrumb-active {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* =============================================
+   MOBILE RESPONSIVE — Global Rules
+   ============================================= */
+
+@media (max-width: 767px) {
+  /* Smaller page title on mobile */
+  .page-title {
+    font-size: 20px !important;
+  }
+
+  /* Tables: always horizontally scrollable */
+  .glass-card .data-table {
+    min-width: 520px;
+  }
+
+  /* Stat cards: tighter padding */
+  .stat-card {
+    padding: 14px 16px !important;
+  }
+
+  /* Modals: full-screen feel on mobile */
+  .modal-box {
+    width: 95% !important;
+    padding: 20px !important;
+    border-radius: 16px !important;
+    max-height: 92vh !important;
+  }
+
+  /* Buttons in header areas */
+  .btn-primary, .btn-secondary, .btn-danger, .btn-success {
+    font-size: 13px !important;
+    padding: 9px 14px !important;
+  }
+
+  /* Input fields: larger touch target */
+  .input-field, .select-field {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+    padding: 12px 14px !important;
+  }
+
+  /* Page header flex wrap */
+  .page-header-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: '10px' !important;
+  }
+}
