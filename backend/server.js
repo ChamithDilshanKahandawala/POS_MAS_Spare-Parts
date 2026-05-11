@@ -14,9 +14,16 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
+    const allowedPatterns = [
+      /^http:\/\/localhost:\d+$/,
+      new RegExp(`^${FRONTEND_URL.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}$`)
+    ];
+    
+    if (!origin || allowedPatterns.some(pattern => pattern.test(origin))) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));

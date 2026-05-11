@@ -28,7 +28,10 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
           {
-            urlPattern: /^http:\/\/localhost:5001\/api\/.*/i,
+            urlPattern: ({ url }) => {
+              const apiBase = process.env.VITE_API_URL || 'http://localhost:5001';
+              return url.href.startsWith(`${apiBase}/api/`);
+            },
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',
