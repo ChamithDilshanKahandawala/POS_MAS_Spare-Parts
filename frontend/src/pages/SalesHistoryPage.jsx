@@ -1,12 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
-import { getSales } from '../api/services';
+import { getSales, deleteSale } from '../api/services';
 import { useAuth } from '../context/AuthContext'; // 👈 Auth context eka gaththa
-import { Search, Eye, ChevronLeft, ChevronRight, X, TrendingUp } from 'lucide-react';
+import { Search, Eye, ChevronLeft, ChevronRight, X, TrendingUp, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function SalesHistoryPage() {
   const { user } = useAuth(); // User role eka check karanna
-  const isAdmin = user?.role === 'admin'; // Boolean flag ekak hadagaththa lesiyata
+  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin'; // Boolean flag ekak hadagaththa lesiyata
 
   const [sales, setSales] = useState([]);
   const [total, setTotal] = useState(0);
@@ -35,6 +35,17 @@ export default function SalesHistoryPage() {
 
   const fmt = (v) => `Rs. ${Number(v || 0).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
+  const handleDeleteSale = async (id) => {
+    if (!window.confirm('Delete this sale? This will also return the stock back to the inventory.')) return;
+    try {
+      await deleteSale(id);
+      toast.success('Sale deleted and stock restored');
+      fetchSales();
+    } catch {
+      toast.error('Failed to delete sale');
+    }
+  };
+
   return (
     <div className="animate-fade">
       <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
@@ -54,11 +65,21 @@ export default function SalesHistoryPage() {
           <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>To</span>
           <input type="date" className="input-field" value={to} onChange={e => setTo(e.target.value)} style={{ width: '150px', padding: '8px 12px', fontSize: '13px' }} />
         </div>
-        <select className="select-field" value={sourceFilter} onChange={e => setSourceFilter(e.target.value)} style={{ width: '140px', padding: '8px 12px', fontSize: '13px' }}>
-          <option value="">All Sources</option>
-          <option value="shop">Shop Orders</option>
-          <option value="online">Online Orders</option>
-        </select>
+        <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
+          {[
+            { value: '', label: 'All', color: '#6366f1' },
+            { value: 'shop', label: 'Shop', color: '#8b5cf6' },
+            { value: 'online', label: 'Web', color: '#3b82f6' },
+            { value: 'whatsapp', label: 'WhatsApp', color: '#22c55e' },
+          ].map(s => (
+            <button key={s.value} onClick={() => setSourceFilter(s.value)} style={{
+              padding: '6px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: 700,
+              border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+              background: sourceFilter === s.value ? s.color : 'transparent',
+              color: sourceFilter === s.value ? 'white' : 'var(--text-muted)',
+            }}>{s.label}</button>
+          ))}
+        </div>
         <select className="select-field" value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} style={{ width: '140px', padding: '8px 12px', fontSize: '13px' }}>
           <option value="">All Payments</option>
           <option value="Cash">Cash</option>
@@ -83,6 +104,7 @@ export default function SalesHistoryPage() {
                 <th>Customer</th>
                 <th style={{ textAlign: 'center' }}>Source</th>
                 <th style={{ textAlign: 'center' }}>Items</th>
+                <th>Subtotal</th>
                 <th>Discount</th>
                 <th>Total</th>
                 {/* 🔐 Admin Only Header */}
@@ -106,17 +128,18 @@ export default function SalesHistoryPage() {
                   </td>
                   <td style={{ fontSize: '13px' }}>{s.customer_name}</td>
                   <td style={{ textAlign: 'center' }}>
-                    <span className={`badge ${s.sale_source === 'online' ? 'badge-blue' : 'badge-green'}`} style={{ fontSize: '10px' }}>
-                      {s.sale_source === 'online' ? 'Online' : 'Shop'}
+                    <span className={`badge ${s.sale_source === 'whatsapp' ? 'badge-green' : s.sale_source === 'online' ? 'badge-blue' : 'badge-purple'}`} style={{ fontSize: '10px' }}>
+                      {s.sale_source === 'whatsapp' ? 'WhatsApp' : s.sale_source === 'online' ? 'Online' : 'Shop'}
                     </span>
                   </td>
                   <td style={{ fontSize: '13px', textAlign: 'center' }}>{s.items?.length}</td>
+                  <td style={{ fontWeight: 600 }}>{fmt(s.subtotal)}</td>
                   <td style={{ fontWeight: 600, color: '#ef4444', fontSize: '13px' }}>
                     {((s.total_discount || 0) + (s.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0)) > 0 
                       ? `- ${fmt((s.total_discount || 0) + (s.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0))}` 
                       : '-'}
                   </td>
-                  <td style={{ fontWeight: 700 }}>{fmt(s.total_amount)}</td>
+                  <td style={{ fontWeight: 700, color: 'var(--accent-primary)' }}>{fmt(s.total_amount)}</td>
                   
                   {/* 🔐 Admin Only Cell */}
                   {isAdmin && (
@@ -134,9 +157,16 @@ export default function SalesHistoryPage() {
                   </td>
                   <td style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{s.cashier_name}</td>
                   <td style={{ textAlign: 'center' }}>
-                    <button onClick={() => setViewSale(s)} style={{ padding: '6px', background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: '8px', cursor: 'pointer', color: '#6366f1' }}>
-                      <Eye size={14} />
-                    </button>
+                    <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                      <button onClick={() => setViewSale(s)} style={{ padding: '6px', background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: '8px', cursor: 'pointer', color: '#6366f1' }}>
+                        <Eye size={14} />
+                      </button>
+                      {user?.role === 'super_admin' && (
+                        <button onClick={() => handleDeleteSale(s._id)} style={{ padding: '6px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', cursor: 'pointer', color: '#ef4444' }}>
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -162,7 +192,7 @@ export default function SalesHistoryPage() {
               {[
                 ['Customer', viewSale.customer_name],
                 ['Date', new Date(viewSale.createdAt).toLocaleString('en-LK')],
-                ['Source', viewSale.sale_source === 'online' ? 'Online' : 'Shop'],
+                ['Source', viewSale.sale_source === 'whatsapp' ? 'WhatsApp' : viewSale.sale_source === 'online' ? 'Online' : 'Shop'],
                 ['Payment', viewSale.payment_method],
                 ['Cashier', viewSale.cashier_name],
               ].map(([k, v]) => (
@@ -211,9 +241,55 @@ export default function SalesHistoryPage() {
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid var(--border-light)' }}>
-                <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>TOTAL AMOUNT</span>
+                <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>PRODUCT TOTAL</span>
                 <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--accent-primary)' }}>{fmt(viewSale.total_amount)}</span>
               </div>
+
+              {/* Delivery and Logistics Block */}
+              {(viewSale.shipping_cost_charged > 0 || viewSale.actual_shipping_cost > 0 || viewSale.paid_amount > 0 || viewSale.cod_amount > 0) && (
+                <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px dashed var(--border-light)' }}>
+                  <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>Logistics & COD</div>
+                  
+                  {(viewSale.shipping_cost_charged > 0) && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Delivery Fee Charged</span>
+                      <span style={{ fontSize: '12px', fontWeight: 600 }}>{fmt(viewSale.shipping_cost_charged)}</span>
+                    </div>
+                  )}
+                  {isAdmin && viewSale.actual_shipping_cost !== undefined && viewSale.actual_shipping_cost > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '12px', color: '#ef4444' }}>Courier Cost (Actual)</span>
+                      <span style={{ fontSize: '12px', fontWeight: 600, color: '#ef4444' }}>{fmt(viewSale.actual_shipping_cost)}</span>
+                    </div>
+                  )}
+                  {(viewSale.paid_amount > 0) && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Paid Amount (Advance)</span>
+                      <span style={{ fontSize: '12px', fontWeight: 600, color: '#3b82f6' }}>{fmt(viewSale.paid_amount)}</span>
+                    </div>
+                  )}
+                  {(viewSale.cod_amount > 0) && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', background: 'rgba(245,158,11,0.08)', padding: '6px 8px', borderRadius: '8px' }}>
+                      <span style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 700 }}>COD TO COLLECT</span>
+                      <span style={{ fontSize: '12px', fontWeight: 800, color: '#f59e0b' }}>{fmt(viewSale.cod_amount)}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* KOKO Charge Block */}
+              {viewSale.koko_charge > 0 && (
+                <div style={{ marginTop: '10px', background: 'rgba(168,85,247,0.08)', padding: '8px 10px', borderRadius: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '11px', color: '#a855f7', fontWeight: 700 }}>KOKO Charge ({viewSale.koko_percentage || 10}%)</span>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#a855f7' }}>+{fmt(viewSale.koko_charge)}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#a855f7' }}>KOKO Final Total</span>
+                    <span style={{ fontSize: '13px', fontWeight: 800, color: '#a855f7' }}>{fmt(viewSale.total_amount + viewSale.koko_charge + (viewSale.shipping_cost_charged || 0))}</span>
+                  </div>
+                </div>
+              )}
 
               {/* 🔐 Admin Only Profit in Modal */}
               {isAdmin && (

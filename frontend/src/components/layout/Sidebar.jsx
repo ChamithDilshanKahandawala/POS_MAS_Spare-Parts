@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Package, ShoppingCart, BarChart3,
   History, LogOut, AlertTriangle, Users, Truck,
   Sun, Moon, ChevronLeft, ChevronRight, Globe,
-  Settings, Menu
+  Settings, Menu, MessageCircle
 } from 'lucide-react';
 
 const NAV_GROUPS = [
@@ -32,6 +32,7 @@ const NAV_GROUPS = [
       { to: '/suppliers', icon: Truck, label: 'Suppliers' },
       { to: '/sales', icon: History, label: 'Sales History' },
       { to: '/web-orders', icon: Globe, label: 'Web Orders' },
+      { to: '/whatsapp-orders', icon: MessageCircle, label: 'WhatsApp Orders' },
     ],
   },
   {
@@ -46,6 +47,7 @@ const ADMIN_GROUP = {
   label: 'Admin',
   items: [
     { to: '/users', icon: Settings, label: 'Staff Management' },
+    { to: '/ecommerce-customers', icon: Globe, label: 'Web Customers' },
   ],
 };
 
@@ -55,7 +57,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
   const navigate = useNavigate();
   const location = useLocation();
 
-  const groups = user?.role === 'admin'
+  const groups = (user?.role === 'admin' || user?.role === 'super_admin')
     ? [...NAV_GROUPS, ADMIN_GROUP]
     : NAV_GROUPS;
 
@@ -241,7 +243,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
           }}>
             <div style={{
               width: '34px', height: '34px', borderRadius: '50%', flexShrink: 0,
-              background: user?.role === 'admin'
+              background: (user?.role === 'admin' || user?.role === 'super_admin')
                 ? 'linear-gradient(135deg, #ef4444, #b91c1c)'
                 : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -255,7 +257,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
               </div>
               <div style={{
                 fontSize: '10px',
-                color: user?.role === 'admin' ? '#ef4444' : 'var(--text-muted)',
+                color: (user?.role === 'admin' || user?.role === 'super_admin') ? '#ef4444' : 'var(--text-muted)',
                 fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px',
               }}>
                 {user?.role}
@@ -269,7 +271,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
           <Tooltip title={`${user?.name} (${user?.role})`} placement="right">
             <div style={{
               width: '36px', height: '36px', borderRadius: '50%',
-              background: user?.role === 'admin'
+              background: (user?.role === 'admin' || user?.role === 'super_admin')
                 ? 'linear-gradient(135deg, #ef4444, #b91c1c)'
                 : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',

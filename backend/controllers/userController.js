@@ -4,7 +4,15 @@ const bcrypt  = require('bcryptjs');
 // GET /api/users  — list all users (admin only)
 const getUsers = async (req, res) => {
   try {
-    const users = await User.find({}, '-password').sort({ createdAt: -1 });
+    const users = await User.find({ role: { $ne: 'customer' } }, '-password').sort({ createdAt: -1 });
+    res.json({ users, total: users.length });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+};
+
+// GET /api/users/customers — list only e-commerce customers
+const getEcommerceCustomers = async (req, res) => {
+  try {
+    const users = await User.find({ role: 'customer' }, '-password').sort({ createdAt: -1 });
     res.json({ users, total: users.length });
   } catch (err) { res.status(500).json({ message: err.message }); }
 };
@@ -75,4 +83,4 @@ const deleteUser = async (req, res) => {
   } catch (err) { res.status(500).json({ message: err.message }); }
 };
 
-module.exports = { getUsers, approveUser, rejectUser, promoteUser, toggleUser, deleteUser };
+module.exports = { getUsers, getEcommerceCustomers, approveUser, rejectUser, promoteUser, toggleUser, deleteUser };

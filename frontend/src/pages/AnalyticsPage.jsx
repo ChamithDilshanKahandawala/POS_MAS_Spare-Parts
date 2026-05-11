@@ -21,6 +21,7 @@ const SOURCES = [
   { label: 'All Sales', value: 'all' },
   { label: 'Shop', value: 'shop' },
   { label: 'Online', value: 'online' },
+  { label: 'WhatsApp', value: 'whatsapp' },
 ];
 
 const PIE_COLORS = ['#6366f1', '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
@@ -43,7 +44,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function AnalyticsPage() {
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
   const isMobile = useIsMobile();
 
   const [period, setPeriod] = useState('monthly');

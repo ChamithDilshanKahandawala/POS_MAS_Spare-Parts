@@ -127,7 +127,7 @@ export default function Layout() {
           </div>
 
           {/* Right side — clock */}
-          <LiveClock />
+          {/* <LiveClock /> */}
         </header>
 
         {/* ── Page Content ── */}

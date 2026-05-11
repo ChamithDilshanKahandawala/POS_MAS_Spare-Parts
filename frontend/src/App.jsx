@@ -18,7 +18,9 @@ import AlertsPage from './pages/AlertsPage';
 import CustomersPage from './pages/CustomersPage';
 import SuppliersPage from './pages/SuppliersPage';
 import UsersPage from './pages/UsersPage'; 
+import EcommerceCustomersPage from './pages/EcommerceCustomersPage';
 import WebOrdersPage from './pages/WebOrdersPage';
+import WhatsAppOrdersPage from './pages/WhatsAppOrdersPage';
 
 // --- Standard Private Route (Check login) ---
 const PrivateRoute = ({ children }) => {
@@ -29,7 +31,7 @@ const PrivateRoute = ({ children }) => {
 // --- Admin Only Route (Check role) ---
 const AdminRoute = ({ children }) => {
   const { user } = useAuth();
-  return user?.role === 'admin' ? children : <Navigate to="/" replace />;
+  return (user?.role === 'admin' || user?.role === 'super_admin') ? children : <Navigate to="/" replace />;
 };
 
 function GlobalSocketManager() {
@@ -91,6 +93,7 @@ function AppRoutes() {
         <Route path="pos" element={<POSPage />} />
         <Route path="sales" element={<SalesHistoryPage />} />
         <Route path="web-orders" element={<WebOrdersPage />} />
+        <Route path="whatsapp-orders" element={<WhatsAppOrdersPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="alerts" element={<AlertsPage />} />
         <Route path="customers" element={<CustomersPage />} />
@@ -98,6 +101,7 @@ function AppRoutes() {
 
         {/* --- 🔐 ADMIN ONLY ROUTES --- */}
         <Route path="users" element={<AdminRoute><UsersPage /></AdminRoute>} />
+        <Route path="ecommerce-customers" element={<AdminRoute><EcommerceCustomersPage /></AdminRoute>} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

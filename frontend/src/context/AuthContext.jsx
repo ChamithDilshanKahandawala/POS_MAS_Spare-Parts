@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('posUser');
   };
 
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
 
   return (
     <AuthContext.Provider value={{ user, login, logout, loading, isAdmin }}>

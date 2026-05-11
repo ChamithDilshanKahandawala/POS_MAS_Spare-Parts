@@ -8,6 +8,7 @@ export const getMe       = ()     => api.get('/auth/me');
 // --- STAFF / USER MANAGEMENT (NEW) ---
 // Admin ta usersla list ekama ganna
 export const fetchAllUsers = () => api.get('/users');
+export const fetchEcommerceCustomers = () => api.get('/users/customers');
 
 // User kenekwa approve karanna
 export const approveUser = (id) => api.put(`/users/${id}/approve`);
@@ -43,6 +44,7 @@ export const exportProductsExcel = () =>
 export const createSale  = (data)   => api.post('/sales', data);
 export const getSales    = (params) => api.get('/sales', { params });
 export const getSaleById = (id)     => api.get(`/sales/${id}`);
+export const deleteSale  = (id)     => api.delete(`/sales/${id}`);
 export const getAnalytics= (period, sale_source) => api.get('/sales/analytics/summary', { params: { period, sale_source } });
 
 // --- CUSTOMERS ---

@@ -4,7 +4,7 @@ const Product = require('../models/Product');
 // POST /api/sales  - Create a new sale
 const createSale = async (req, res) => {
   try {
-    const { items, total_discount, payment_method, customer_name, customer_phone, notes, sale_source, shipping_address } = req.body;
+    const { items, total_discount, payment_method, customer_name, customer_phone, notes, sale_source, shipping_address, shipping_cost_charged, actual_shipping_cost, tracking_number, cod_amount, paid_amount, koko_charge, koko_percentage } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({ message: 'No items in cart' });
@@ -53,15 +53,25 @@ const createSale = async (req, res) => {
       });
     }
 
-    const billDiscount = total_discount || 0;
     const itemsTotalAfterItemDiscounts = saleItems.reduce((acc, i) => acc + i.line_total, 0);
+
+    const billDiscount = total_discount || 0;
+    const shipping_charged = Number(shipping_cost_charged) || 0;
+    const actual_shipping = Number(actual_shipping_cost) || 0;
+    
     const finalTotal = itemsTotalAfterItemDiscounts - billDiscount;
-    const finalProfit = saleItems.reduce((acc, i) => acc + i.line_profit, 0) - billDiscount;
+    const finalProfit = saleItems.reduce((acc, i) => acc + i.line_profit, 0) - billDiscount + shipping_charged - actual_shipping;
 
     const sale = await Sale.create({
       items: saleItems,
       subtotal,
       total_discount: billDiscount,
+      shipping_cost_charged: shipping_charged,
+      actual_shipping_cost: actual_shipping,
+      cod_amount: Number(cod_amount) || 0,
+      paid_amount: Number(paid_amount) || 0,
+      koko_charge: Number(koko_charge) || 0,
+      koko_percentage: Number(koko_percentage) || 0,
       total_amount: finalTotal,
       total_cost,
       total_profit: finalProfit,
@@ -70,12 +80,13 @@ const createSale = async (req, res) => {
       customer_name: customer_name || (req.user.role === 'customer' ? req.user.name : 'Walk-in Customer'),
       customer_phone: customer_phone || '',
       customer: req.user.role === 'customer' ? req.user._id : undefined,
-      order_status: sale_source === 'online' ? 'Pending' : 'Delivered',
+      order_status: (sale_source === 'online' || sale_source === 'whatsapp') ? 'Pending' : 'Delivered',
       shipping_address: shipping_address || '',
       cashier: req.user.role !== 'customer' ? req.user._id : undefined,
       cashier_name: req.user.role !== 'customer' ? req.user.name : undefined,
       shop: req.user.shop || 'Main Branch',
       notes: notes || '',
+      tracking_number: tracking_number || '',
     });
 
     if (req.user.role === 'customer') {
@@ -128,7 +139,7 @@ const getSales = async (req, res) => {
       .lean();
 
     const sales = rawSales.map(sale => {
-      if (req.user && req.user.role !== 'admin') {
+      if (req.user && (req.user.role !== 'admin' && req.user.role !== 'super_admin')) {
         delete sale.total_profit;
         delete sale.total_cost;
         if (sale.items) {
@@ -180,7 +191,7 @@ const getSaleById = async (req, res) => {
     const rawSale = await Sale.findById(req.params.id).lean();
     if (!rawSale) return res.status(404).json({ message: 'Sale not found' });
     
-    if (req.user && req.user.role !== 'admin') {
+    if (req.user && (req.user.role !== 'admin' && req.user.role !== 'super_admin')) {
       delete rawSale.total_profit;
       delete rawSale.total_cost;
       if (rawSale.items) {
@@ -296,7 +307,6 @@ const getAnalytics = async (req, res) => {
         },
       },
     ]);
-
     // Time-series chart data
     const chartData = await Sale.aggregate([
       { $match: matchStage },
@@ -311,7 +321,6 @@ const getAnalytics = async (req, res) => {
       },
       { $sort: { _id: 1 } },
     ]);
-
     // Category-wise breakdown
     const categoryData = await Sale.aggregate([
       { $match: matchStage },
@@ -379,7 +388,7 @@ const getAnalytics = async (req, res) => {
       groupLabel,
     };
 
-    if (req.user && req.user.role !== 'admin') {
+    if (req.user && (req.user.role !== 'admin' && req.user.role !== 'super_admin')) {
       delete responseData.summary.total_profit;
       delete responseData.summary.total_cost;
       
@@ -406,9 +415,40 @@ const getAnalytics = async (req, res) => {
   }
 };
 
+// DELETE /api/sales/:id (Super Admin only)
+const deleteSale = async (req, res) => {
+  try {
+    const sale = await Sale.findById(req.params.id);
+    if (!sale) return res.status(404).json({ message: 'Sale not found' });
+
+    // Restore stock if not already restored
+    if (!sale.is_stock_restored) {
+      const stockUpdates = [];
+      for (const item of sale.items) {
+        const product = await Product.findByIdAndUpdate(item.product, { $inc: { stock_quantity: item.quantity } }, { new: true });
+        if (product) stockUpdates.push({ productId: product._id, newQuantity: product.stock_quantity });
+      }
+      const io = req.app.get('io');
+      if (io && stockUpdates.length > 0) io.emit('stock_updated', stockUpdates);
+    }
+
+    await Sale.findByIdAndDelete(req.params.id);
+
+    if (sale.customer) {
+      const User = require('../models/User');
+      await User.findByIdAndUpdate(sale.customer, { $pull: { orderHistory: sale._id } });
+    }
+
+    res.json({ message: 'Sale deleted and stock restored' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 module.exports = { createSale,  getSales,
   getMyOrders,
   getSaleById,
   updateOrderStatus,
   getAnalytics,
+  deleteSale,
 };

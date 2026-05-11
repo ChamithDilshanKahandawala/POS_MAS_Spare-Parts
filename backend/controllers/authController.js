@@ -52,7 +52,7 @@ const login = async (req, res) => {
 
     // --- 🔐 NEW SECURITY LOGIC ---
     // User admin nemei nam vitharak me status check karanna
-    if (user.role !== 'admin') {
+    if (user.role !== 'admin' && user.role !== 'super_admin') {
       const statusClean = user.status?.trim(); // Space thibbath trim karanawa safety ekata
 
       if (statusClean === 'pending') {
@@ -118,7 +118,7 @@ const googleLogin = async (req, res) => {
       });
     }
 
-    if (user.role !== 'admin') {
+    if (user.role !== 'admin' && user.role !== 'super_admin') {
       const statusClean = user.status?.trim();
       if (statusClean === 'pending') {
         return res.status(403).json({ message: 'Account pending admin approval. Please wait.' });

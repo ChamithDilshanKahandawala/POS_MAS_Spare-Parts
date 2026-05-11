@@ -27,10 +27,17 @@ const protect = async (req, res, next) => {
 };
 
 const adminOnly = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
+  if (req.user && (req.user.role === 'admin' || req.user.role === 'super_admin')) {
     return next();
   }
   return res.status(403).json({ message: 'Access denied: Admins only' });
+};
+
+const superAdminOnly = (req, res, next) => {
+  if (req.user && req.user.role === 'super_admin') {
+    return next();
+  }
+  return res.status(403).json({ message: 'Access denied: Super Admins only' });
 };
 
 const optionalAuth = async (req, res, next) => {
@@ -53,5 +60,4 @@ const optionalAuth = async (req, res, next) => {
   return next();
 };
 
-module.exports = { protect, adminOnly, optionalAuth };
-
+module.exports = { protect, adminOnly, superAdminOnly, optionalAuth };

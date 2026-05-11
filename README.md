@@ -8,6 +8,13 @@
 
 A professional-grade, multi-platform ecosystem designed for vehicle spare parts businesses. This system seamlessly integrates an **Internal POS (Point of Sale)** and a **Public E-commerce Storefront** into a single central management hub, ensuring 100% inventory accuracy and financial privacy.
 
+> [!NOTE]
+> Detailed technical documentation is available in the following files:
+> - [Software Requirements Specification (SRS)](file:///Users/chamithdilshan/Desktop/Learning/My%20Projects/IN%202/SRS_Document.md)
+> - [API Documentation](file:///Users/chamithdilshan/Desktop/Learning/My%20Projects/IN%202/API_Documentation.md)
+> - [Deployment Guide](file:///Users/chamithdilshan/Desktop/Learning/My%20Projects/IN%202/Deployment_Guide.md)
+> - [Database Design Specification](file:///Users/chamithdilshan/Desktop/Learning/My%20Projects/IN%202/Database_Design_Specification.md)
+
 ---
 
 ## 🏗️ System Architecture

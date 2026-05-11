@@ -46,7 +46,7 @@ function getDateRange(period) {
   return from ? from.toISOString().split('T')[0] : undefined;
 }
 
-export default function WebOrdersPage() {
+export default function WhatsAppOrdersPage() {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
   const isMobile = useIsMobile();
@@ -68,7 +68,7 @@ export default function WebOrdersPage() {
   const fetchOnlineOrders = useCallback(async () => {
     setLoading(true);
     try {
-      const params = { sale_source: 'online', limit: 200 };
+      const params = { sale_source: 'whatsapp', limit: 200 };
       const from = getDateRange(periodFilter);
       if (from) params.from = from;
       // Fetch ALL orders for the given date period so that the status tab counts work correctly
@@ -76,7 +76,7 @@ export default function WebOrdersPage() {
       const { data } = await getSales(params);
       setOrders(data.sales || []);
     } catch {
-      toast.error('Failed to load web orders');
+      toast.error('Failed to load WhatsApp orders');
     } finally {
       setLoading(false);
     }
@@ -85,8 +85,8 @@ export default function WebOrdersPage() {
   useEffect(() => {
     fetchOnlineOrders();
     const handleNewOrder = () => fetchOnlineOrders();
-    window.addEventListener('web_order_received', handleNewOrder);
-    return () => window.removeEventListener('web_order_received', handleNewOrder);
+    window.addEventListener('whatsapp_order_received', handleNewOrder);
+    return () => window.removeEventListener('whatsapp_order_received', handleNewOrder);
   }, [fetchOnlineOrders]);
 
   // ── Client-side search and status filter ──────────────────────────────────
@@ -163,9 +163,9 @@ export default function WebOrdersPage() {
         {/* ── Header ── */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
           <div>
-            <h1 className="page-title">Web Orders</h1>
+            <h1 className="page-title">WhatsApp Orders</h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>
-              {orders.length} online orders · Manage order lifecycle
+              {orders.length} WhatsApp orders · Manage order lifecycle
             </p>
           </div>
           <button onClick={fetchOnlineOrders} disabled={loading} className="btn-secondary" style={{ padding: '8px 14px', gap: '6px' }}>
@@ -266,7 +266,7 @@ export default function WebOrdersPage() {
             <ShoppingBag size={40} style={{ margin: '0 auto 12px', opacity: 0.15 }} />
             <p style={{ fontSize: '14px', fontWeight: 600 }}>No orders found</p>
             <p style={{ fontSize: '12px', marginTop: '4px' }}>
-              {statusFilter !== 'All' ? `No "${statusFilter}" orders in this period` : 'No web orders yet'}
+              {statusFilter !== 'All' ? `No "${statusFilter}" orders in this period` : 'No WhatsApp orders yet'}
             </p>
           </div>
         ) : (
@@ -512,13 +512,59 @@ export default function WebOrdersPage() {
                 </div>
               )}
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid var(--border-light)' }}>
-                <span style={{ fontSize: '15px', fontWeight: 700 }}>TOTAL</span>
+                <span style={{ fontSize: '15px', fontWeight: 700 }}>PRODUCT TOTAL</span>
                 <span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--accent-primary)' }}>{fmtRs(detailModal.total_amount)}</span>
               </div>
+
+              {/* Delivery and Logistics Block */}
+              {(detailModal.shipping_cost_charged > 0 || detailModal.actual_shipping_cost > 0 || detailModal.paid_amount > 0 || detailModal.cod_amount > 0) && (
+                <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px dashed var(--border-light)' }}>
+                  <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>Logistics & COD</div>
+                  
+                  {(detailModal.shipping_cost_charged > 0) && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Delivery Fee Charged</span>
+                      <span style={{ fontSize: '12px', fontWeight: 600 }}>{fmtRs(detailModal.shipping_cost_charged)}</span>
+                    </div>
+                  )}
+                  {isAdmin && detailModal.actual_shipping_cost !== undefined && detailModal.actual_shipping_cost > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '12px', color: '#ef4444' }}>Courier Cost (Actual)</span>
+                      <span style={{ fontSize: '12px', fontWeight: 600, color: '#ef4444' }}>{fmtRs(detailModal.actual_shipping_cost)}</span>
+                    </div>
+                  )}
+                  {(detailModal.paid_amount > 0) && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Paid Amount (Advance)</span>
+                      <span style={{ fontSize: '12px', fontWeight: 600, color: '#3b82f6' }}>{fmtRs(detailModal.paid_amount)}</span>
+                    </div>
+                  )}
+                  {(detailModal.cod_amount > 0) && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', background: 'rgba(245,158,11,0.08)', padding: '6px 8px', borderRadius: '8px' }}>
+                      <span style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 700 }}>COD TO COLLECT</span>
+                      <span style={{ fontSize: '12px', fontWeight: 800, color: '#f59e0b' }}>{fmtRs(detailModal.cod_amount)}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* KOKO Charge Block */}
+              {detailModal.koko_charge > 0 && (
+                <div style={{ marginTop: '10px', background: 'rgba(168,85,247,0.08)', padding: '8px 10px', borderRadius: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '11px', color: '#a855f7', fontWeight: 700 }}>KOKO Charge ({detailModal.koko_percentage || 10}%)</span>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#a855f7' }}>+{fmtRs(detailModal.koko_charge)}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#a855f7' }}>KOKO Final Total</span>
+                    <span style={{ fontSize: '13px', fontWeight: 800, color: '#a855f7' }}>{fmtRs(detailModal.total_amount + detailModal.koko_charge + (detailModal.shipping_cost_charged || 0))}</span>
+                  </div>
+                </div>
+              )}
+
               {isAdmin && detailModal.total_profit !== undefined && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', background: 'rgba(16,185,129,0.08)', padding: '6px 8px', borderRadius: '8px' }}>
-                  <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 700 }}>Profit</span>
-                  <span style={{ fontSize: '11px', fontWeight: 800, color: '#10b981' }}>{fmtRs(detailModal.total_profit)}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', background: 'rgba(16,185,129,0.08)', padding: '8px 10px', borderRadius: '8px' }}>
+                  <span style={{ fontSize: '12px', color: '#10b981', fontWeight: 700 }}>Final Net Profit</span>
+                  <span style={{ fontSize: '13px', fontWeight: 800, color: '#10b981' }}>{fmtRs(detailModal.total_profit)}</span>
                 </div>
               )}
             </div>

@@ -26,7 +26,7 @@ const getProducts = async (req, res) => {
       .lean();
 
     const products = rawProducts.map(p => {
-      if (!req.user || req.user.role !== 'admin') {
+      if (!req.user || (req.user.role !== 'admin' && req.user.role !== 'super_admin')) {
         delete p.buying_price;
       }
       return p;
@@ -44,8 +44,8 @@ const getProductById = async (req, res) => {
     const rawProduct = await Product.findById(req.params.id).lean();
     if (!rawProduct) return res.status(404).json({ message: 'Product not found' });
     
-    if (!req.user || req.user.role !== 'admin') {
-      delete rawProduct.buying_price;
+    if (!req.user || (req.user.role !== 'admin' && req.user.role !== 'super_admin')) {
+        delete rawProduct.buying_price;
     }
     
     res.json(rawProduct);

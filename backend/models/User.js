@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
     name:     { type: String, required: true },
     email:    { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true },
-    role:     { type: String, enum: ['admin', 'staff', 'customer'], default: 'customer' },
+    role:     { type: String, enum: ['super_admin', 'admin', 'staff', 'customer'], default: 'customer' },
     status:   { type: String, enum: ['pending', 'active', 'rejected'], default: 'active' }, // Default active for customers, pending logic handled in registration
     shop:     { type: String, default: 'Main Branch' },
     isActive: { type: Boolean, default: true }, // Default true for customers
