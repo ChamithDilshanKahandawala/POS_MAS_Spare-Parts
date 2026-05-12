@@ -19,13 +19,19 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 const corsOptions = {
   origin: (origin, callback) => {
     const allowedPatterns = [
-      /^http:\/\/localhost:\d+$/,
-      new RegExp(`^${FRONTEND_URL.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}$`)
+      /^http:\/\/localhost:\d+$/,            // any localhost port (dev)
+      /^https:\/\/.*\.vercel\.app$/,         // any Vercel preview/production URL
+      /^https:\/\/.*\.railway\.app$/,        // Railway internal calls
     ];
-    
-    if (!origin || allowedPatterns.some(pattern => pattern.test(origin))) {
+    // Also allow the explicitly configured FRONTEND_URL
+    if (FRONTEND_URL.startsWith('https://')) {
+      allowedPatterns.push(new RegExp(`^${FRONTEND_URL.replace(/[.]/g, '\\.')}$`));
+    }
+
+    if (!origin || allowedPatterns.some(p => p.test(origin))) {
       callback(null, true);
     } else {
+      console.warn(`CORS blocked origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },

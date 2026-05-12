@@ -8,6 +8,10 @@ export default defineConfig(({ mode }) => {
   const API_URL = env.VITE_API_URL || 'http://localhost:5001';
 
   return {
+    define: {
+      // Inject API_URL as a global constant so service worker can access it
+      'API_URL': JSON.stringify(API_URL),
+    },
     plugins: [
       react(),
       tailwindcss(),
@@ -32,13 +36,13 @@ export default defineConfig(({ mode }) => {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
           runtimeCaching: [
             {
-              urlPattern: ({ url }) => {
-                return url.href.startsWith(`${API_URL}/api/`);
-              },
+              // Matches both localhost:5001 and *.up.railway.app API calls
+              urlPattern: /\/api\//,
               handler: 'NetworkFirst',
               options: {
                 cacheName: 'api-cache',
-                expiration: { maxEntries: 50, maxAgeSeconds: 60 * 5 }, // 5 min
+                expiration: { maxEntries: 50, maxAgeSeconds: 60 * 5 },
+                networkTimeoutSeconds: 10,
               },
             },
           ],

@@ -41,7 +41,7 @@ function GlobalSocketManager() {
   useEffect(() => {
     if (!user) return;
 
-    const socket = io(import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5001', {
+    const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5001', {
        transports: ['websocket', 'polling']
     });
 
