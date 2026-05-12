@@ -23,8 +23,16 @@ export default function RegisterPage() {
     }
   };
 
-  const inputWrapperStyle = { position: 'relative', marginBottom: '18px' };
-  const iconStyle = { position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' };
+  const inputWrapperStyle = {
+    display: 'flex', alignItems: 'center',
+    background: 'var(--bg-secondary)',
+    border: '1px solid var(--border-light)',
+    borderRadius: '10px',
+    marginBottom: '18px',
+    paddingLeft: '14px',
+    transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+  };
+  const iconStyle = { color: 'var(--text-muted)', flexShrink: 0, marginRight: '8px' };
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(circle at top right, rgba(99,102,241,0.1), transparent), radial-gradient(circle at bottom left, rgba(220,38,38,0.05), transparent), var(--bg-primary)', padding: '20px' }}>
@@ -41,19 +49,38 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit}>
             <div style={inputWrapperStyle}>
               <User size={18} style={iconStyle} />
-              <input type="text" placeholder="Full Name" required className="input-field" style={{ paddingLeft: '44px' }} value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+              <input
+                type="text" placeholder="Full Name" required
+                value={formData.name}
+                onChange={e => setFormData({...formData, name: e.target.value})}
+                style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', padding: '12px 14px 12px 0', fontSize: '14px', color: 'var(--text-primary)' }}
+              />
             </div>
             <div style={inputWrapperStyle}>
               <Mail size={18} style={iconStyle} />
-              <input type="email" placeholder="Email Address" required className="input-field" style={{ paddingLeft: '44px' }} value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+              <input
+                type="email" placeholder="Email Address" required
+                value={formData.email}
+                onChange={e => setFormData({...formData, email: e.target.value})}
+                style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', padding: '12px 14px 12px 0', fontSize: '14px', color: 'var(--text-primary)' }}
+              />
             </div>
             <div style={inputWrapperStyle}>
               <Lock size={18} style={iconStyle} />
-              <input type="password" placeholder="Secure Password" required className="input-field" style={{ paddingLeft: '44px' }} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+              <input
+                type="password" placeholder="Secure Password" required
+                value={formData.password}
+                onChange={e => setFormData({...formData, password: e.target.value})}
+                style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', padding: '12px 14px 12px 0', fontSize: '14px', color: 'var(--text-primary)' }}
+              />
             </div>
             <div style={inputWrapperStyle}>
               <Store size={18} style={iconStyle} />
-              <select className="input-field" style={{ paddingLeft: '44px' }} value={formData.shop} onChange={e => setFormData({...formData, shop: e.target.value})}>
+              <select
+                value={formData.shop}
+                onChange={e => setFormData({...formData, shop: e.target.value})}
+                style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', padding: '12px 14px 12px 0', fontSize: '14px', color: 'var(--text-primary)', cursor: 'pointer' }}
+              >
                 <option value="Main Branch">Main Branch - Headquarters</option>
                 <option value="Mirigama Branch">Mirigama Shop</option>
               </select>

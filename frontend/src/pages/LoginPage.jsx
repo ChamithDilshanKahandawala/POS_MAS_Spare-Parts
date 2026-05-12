@@ -5,8 +5,8 @@ import { Eye, EyeOff, UserPlus } from 'lucide-react'; // 👈 UserPlus icon eka 
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('admin@spareparts.lk');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const { login, loading } = useAuth();
   const navigate = useNavigate();
@@ -70,7 +70,7 @@ export default function LoginPage() {
                 className="input-field"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="admin@spareparts.lk"
+                placeholder="Enter your email"
                 required
               />
             </div>
