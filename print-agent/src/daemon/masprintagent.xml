@@ -1,0 +1,31 @@
+<service>
+	<id>masprintagent.exe</id>
+	<name>MAS Print Agent</name>
+	<description>Mudiyanse Auto Solutions — Local thermal receipt printer agent for POS system</description>
+	<executable>C:\nvm4w\nodejs\node.exe</executable>
+	<argument>F:\MAS Inventory\POS_MAS_Spare-Parts\print-agent\node_modules\node-windows\lib\wrapper.js</argument>
+	<argument>--file</argument>
+	<argument>F:\MAS Inventory\POS_MAS_Spare-Parts\print-agent\src\index.js</argument>
+	<argument>--scriptoptions=</argument>
+	<argument>--log</argument>
+	<argument>MAS Print Agent wrapper</argument>
+	<argument>--grow</argument>
+	<argument>0.25</argument>
+	<argument>--wait</argument>
+	<argument>1</argument>
+	<argument>--maxrestarts</argument>
+	<argument>3</argument>
+	<argument>--abortonerror</argument>
+	<argument>n</argument>
+	<argument>--stopparentfirst</argument>
+	<argument>undefined</argument>
+	<logmode>rotate</logmode>
+	<stoptimeout>30sec</stoptimeout>
+	<env name="NODE_ENV" value="production"/>
+	<serviceaccount>
+		<domain>DESKTOP-KR9L0QV</domain>
+		<user>LocalSystem</user>
+		<password></password>
+	</serviceaccount>
+	<workingdirectory>F:\MAS Inventory\POS_MAS_Spare-Parts\print-agent</workingdirectory>
+</service>

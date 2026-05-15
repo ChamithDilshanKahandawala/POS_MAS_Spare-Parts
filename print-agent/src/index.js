@@ -9,23 +9,36 @@ import { printReceipt, printTestReceipt, openDrawer, checkPrinterReachable } fro
 
 const PORT          = process.env.AGENT_PORT    || 9100;
 const PRINTER_PATH  = process.env.WINDOWS_PRINTER_PATH || '\\\\DESKTOP-KR9L0QV\\POS-80C';
-const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173')
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173')
   .split(',')
-  .map(o => o.trim());
+  .map(o => o.trim())
+  .filter(Boolean);
 
 const app = express();
 
 // ── CORS ────────────────────────────────────────────────────────────────────
-app.use(cors({
-  origin: (origin, cb) => {
-    // Allow requests with no origin (Postman, curl, same-machine fetch)
-    if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
-    logger.warn('CORS blocked', { origin });
-    cb(new Error(`CORS: ${origin} not allowed`));
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (curl, mobile apps, server-to-server)
+    if (!origin) return callback(null, true)
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true)
+    }
+    
+    logger.warn(`[CORS] Blocked origin: ${origin}`)
+    callback(new Error(`Origin ${origin} not allowed by CORS`))
   },
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
-}));
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200  // For legacy browsers
+}
+
+app.use(cors(corsOptions))
+
+// Explicitly handle preflight for all routes
+app.options('*', cors(corsOptions))
 
 app.use(express.json({ limit: '1mb' }));
 
