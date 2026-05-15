@@ -1,13 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { getProducts, createSale } from '../api/services';
 import { useAuth } from '../context/AuthContext';
 import {
   Search, Trash2, ShoppingCart,
-  X, CheckCircle, Package
+  X, CheckCircle, Package, Printer
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import useIsMobile from '../hooks/useIsMobile';
+import { printReceipt } from '../services/printService';
 
 const CATEGORIES = ['All', 'Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road'];
 
@@ -16,6 +17,7 @@ export default function POSPage() {
   const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const searchInputRef = useRef(null);
 
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState('');
@@ -50,6 +52,12 @@ export default function POSPage() {
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
+  useEffect(() => {
+    if (!successSale && !loading) {
+      searchInputRef.current?.focus();
+    }
+  }, [successSale, loading]);
+
   const addToCart = (product) => {
     if (product.stock_quantity <= 0) { toast.error('Out of stock!'); return; }
     setCart(prev => {
@@ -63,6 +71,9 @@ export default function POSPage() {
     setSearch('');
     if (isMobile) setMobileTab('cart'); // auto-switch to cart tab on mobile
   };
+
+
+
 
   const updateQty = (id, delta) =>
     setCart(prev => prev.map(i =>
@@ -131,6 +142,11 @@ export default function POSPage() {
       setSuccessSale(data);
       clearAll();
       toast.success('Sale saved! ✅');
+      
+      // Auto-print fire-and-forget
+      printReceipt(data, true).catch(err => {
+        console.error('[POSPage] Print failed:', err);
+      });
     } catch (err) {
       toast.error(err.response?.data?.message || 'Checkout failed — try again');
     } finally {
@@ -140,6 +156,33 @@ export default function POSPage() {
 
   const fmtRs = (v) =>
     `Rs. ${Number(v || 0).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter') {
+        // If success modal is open, Enter closes it and resets for a new sale
+        if (successSale) {
+          setSuccessSale(null);
+          if (isMobile) setMobileTab('products');
+          return;
+        }
+
+        const activeTag = document.activeElement.tagName.toLowerCase();
+        const isInput = activeTag === 'input' || activeTag === 'textarea';
+        
+        if (!processing && cart.length > 0 && !isInput) {
+          handleCheckout();
+        } else if (!processing && cart.length > 0 && isInput) {
+           // even if in input, maybe they want to complete? Let's allow it but blur the input first
+           document.activeElement.blur();
+           handleCheckout();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [cart, processing, successSale, totalAmount, paymentMethod, saleSource, customerName, customerPhone, whatsappShippingCharged, whatsappActualShipping, whatsappTracking, whatsappPaidAmount, kokoPercentage, handleCheckout]);
 
   // ── Product grid panel ──────────────────────────────────────────────────────
   const ProductsPanel = (
@@ -154,6 +197,7 @@ export default function POSPage() {
       <div style={{ position: 'relative' }}>
         <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
         <input
+          ref={searchInputRef}
           className="input-field"
           placeholder="Search spare parts by name or SKU..."
           value={search}
@@ -478,11 +522,15 @@ export default function POSPage() {
             </div>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button className="btn-primary" onClick={() => { setSuccessSale(null); if (isMobile) setMobileTab('products'); }} style={{ flex: 1 }}>New Sale</button>
+              <button className="btn-secondary" onClick={() => printReceipt(successSale)} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Printer size={16} /> Print
+              </button>
               <button className="btn-secondary" onClick={() => navigate('/sales')}>History</button>
             </div>
           </div>
         </div>
       )}
+      
     </>
   );
 }

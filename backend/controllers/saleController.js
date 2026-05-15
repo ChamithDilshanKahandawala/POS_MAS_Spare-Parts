@@ -1,6 +1,31 @@
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
 
+const formatColomboTime = (dateInput) => {
+  const d = dateInput ? new Date(dateInput) : new Date();
+  return new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Asia/Colombo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  }).format(d).replace('T', ' ');
+};
+
+const formatReceiptData = (sale) => {
+  const data = sale.toObject ? sale.toObject() : sale;
+  const shouldKickDrawer = data.payment_method === 'Cash';
+  const change = shouldKickDrawer ? Math.max(0, (data.paid_amount || 0) - (data.total_amount || 0)) : 0;
+  
+  return {
+    ...data,
+    createdAt: formatColomboTime(data.createdAt),
+    change
+  };
+};
+
 // POST /api/sales  - Create a new sale
 const createSale = async (req, res) => {
   try {
@@ -106,7 +131,7 @@ const createSale = async (req, res) => {
       }
     }
 
-    res.status(201).json(sale);
+    res.status(201).json(formatReceiptData(sale));
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -204,6 +229,17 @@ const getSaleById = async (req, res) => {
     }
     
     res.json(rawSale);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// GET /api/sales/:id/receipt
+const getSaleReceipt = async (req, res) => {
+  try {
+    const sale = await Sale.findById(req.params.id);
+    if (!sale) return res.status(404).json({ message: 'Sale not found' });
+    res.json(formatReceiptData(sale));
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -448,6 +484,7 @@ const deleteSale = async (req, res) => {
 module.exports = { createSale,  getSales,
   getMyOrders,
   getSaleById,
+  getSaleReceipt,
   updateOrderStatus,
   getAnalytics,
   deleteSale,

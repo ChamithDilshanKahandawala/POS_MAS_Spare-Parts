@@ -1,8 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
 import { getSales, deleteSale } from '../api/services';
 import { useAuth } from '../context/AuthContext'; // 👈 Auth context eka gaththa
-import { Search, Eye, ChevronLeft, ChevronRight, X, TrendingUp, Trash2 } from 'lucide-react';
+import { Search, Eye, ChevronLeft, ChevronRight, X, TrendingUp, Trash2, Printer } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
+import Receipt from '../components/Receipt';
 
 export default function SalesHistoryPage() {
   const { user } = useAuth(); // User role eka check karanna
@@ -18,6 +21,11 @@ export default function SalesHistoryPage() {
   const [sourceFilter, setSourceFilter] = useState('');
   const [loading, setLoading] = useState(true);
   const [viewSale, setViewSale] = useState(null);
+
+  const receiptRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => receiptRef.current,
+  });
 
   const fetchSales = useCallback(async () => {
     setLoading(true);
@@ -185,7 +193,12 @@ export default function SalesHistoryPage() {
                 <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>Invoice Detail</h2>
                 <p style={{ fontSize: '13px', color: 'var(--accent-primary)', fontFamily: 'monospace', marginTop: '2px' }}>{viewSale.invoice_number}</p>
               </div>
-              <button onClick={() => setViewSale(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X size={20} /></button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <button onClick={handlePrint} className="btn-secondary" style={{ padding: '6px 12px', fontSize: '12px' }}>
+                  <Printer size={14} /> Print
+                </button>
+                <button onClick={() => setViewSale(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X size={20} /></button>
+              </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginBottom: '16px', background: 'var(--bg-secondary)', borderRadius: '10px', padding: '12px' }}>
@@ -304,6 +317,11 @@ export default function SalesHistoryPage() {
           </div>
         </div>
       )}
+
+      {/* Hidden receipt element for printing */}
+      <div style={{ display: 'none' }}>
+        <Receipt ref={receiptRef} sale={viewSale} />
+      </div>
     </div>
   );
 }
