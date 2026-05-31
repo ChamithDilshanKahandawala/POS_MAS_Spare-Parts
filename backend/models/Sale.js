@@ -59,11 +59,24 @@ const saleSchema = new mongoose.Schema(
 // Auto-generate invoice number before saving
 saleSchema.pre('save', async function () {
   if (!this.invoice_number) {
-    const count = await mongoose.model('Sale').countDocuments();
     const date = new Date();
     const year  = date.getFullYear().toString().slice(-2);
     const month = String(date.getMonth() + 1).padStart(2, '0');
-    this.invoice_number = `INV-${year}${month}-${String(count + 1).padStart(4, '0')}`;
+    
+    const lastSale = await mongoose.model('Sale').findOne().sort({ _id: -1 });
+    let nextCount = 1;
+    
+    if (lastSale && lastSale.invoice_number) {
+      const parts = lastSale.invoice_number.split('-');
+      if (parts.length === 3 && !isNaN(parseInt(parts[2], 10))) {
+        nextCount = parseInt(parts[2], 10) + 1;
+      } else {
+        const count = await mongoose.model('Sale').countDocuments();
+        nextCount = count + 1;
+      }
+    }
+    
+    this.invoice_number = `INV-${year}${month}-${String(nextCount).padStart(4, '0')}`;
   }
   // No next() needed — Mongoose 7+ resolves async hooks via the returned Promise
 });
