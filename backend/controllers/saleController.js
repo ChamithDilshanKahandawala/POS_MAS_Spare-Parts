@@ -35,6 +35,13 @@ const createSale = async (req, res) => {
       return res.status(400).json({ message: 'No items in cart' });
     }
 
+    if (tracking_number && tracking_number.trim() !== '') {
+      const existingSale = await Sale.findOne({ tracking_number: tracking_number.trim() });
+      if (existingSale) {
+        return res.status(400).json({ message: 'Tracking number already exists for another order' });
+      }
+    }
+
     let subtotal = 0;
     let total_cost = 0;
     const saleItems = [];
@@ -105,7 +112,7 @@ const createSale = async (req, res) => {
       customer_name: customer_name || (req.user.role === 'customer' ? req.user.name : 'Walk-in Customer'),
       customer_phone: customer_phone || '',
       customer: req.user.role === 'customer' ? req.user._id : undefined,
-      order_status: (sale_source === 'online' || sale_source === 'whatsapp') ? 'Pending' : 'Delivered',
+      order_status: (sale_source === 'online' || sale_source === 'whatsapp') ? (tracking_number ? 'Shipped' : 'Pending') : 'Delivered',
       shipping_address: shipping_address || '',
       cashier: req.user.role !== 'customer' ? req.user._id : undefined,
       cashier_name: req.user.role !== 'customer' ? req.user.name : undefined,
@@ -250,6 +257,13 @@ const updateOrderStatus = async (req, res) => {
   try {
     const { order_status, tracking_number } = req.body;
     if (!order_status) return res.status(400).json({ message: 'Missing status' });
+
+    if (tracking_number && tracking_number.trim() !== '') {
+      const existingSale = await Sale.findOne({ tracking_number: tracking_number.trim(), _id: { $ne: req.params.id } });
+      if (existingSale) {
+        return res.status(400).json({ message: 'Tracking number already exists for another order' });
+      }
+    }
 
     const updateData = { order_status };
     if (tracking_number !== undefined) updateData.tracking_number = tracking_number;
