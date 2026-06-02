@@ -19,21 +19,32 @@ const app = express();
 // ── CORS ────────────────────────────────────────────────────────────────────
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (curl, mobile apps, server-to-server)
     if (!origin) return callback(null, true)
-    
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true)
-    }
-    
+
+    // Exact match from .env ALLOWED_ORIGINS
+    if (allowedOrigins.includes(origin)) return callback(null, true)
+
+    // Allow ALL Vercel deployments from this project (production + previews)
+    if (
+      origin.includes('pos-mas-spare-parts') &&
+      origin.endsWith('.vercel.app')
+    ) return callback(null, true)
+
+    // Allow localhost any port (local dev)
+    if (
+      origin.startsWith('http://localhost') ||
+      origin.startsWith('https://localhost')
+    ) return callback(null, true)
+
     logger.warn(`[CORS] Blocked origin: ${origin}`)
     callback(new Error(`Origin ${origin} not allowed by CORS`))
   },
   credentials: true,
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200  // For legacy browsers
+  optionsSuccessStatus: 200
 }
+
 
 app.use(cors(corsOptions))
 
