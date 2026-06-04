@@ -64,17 +64,20 @@ function fmtDateTime(isoString) {
 }
 
 /**
- * Build one item row. Layout (48 chars):
- *   Name (max 24 chars)    Qty   Price    Total
- *   Wheel Cap Toyota Aqu     2  1500.00  3000.00
- * Column widths: name=24, qty=4, price=9, total=9 → total = 48 (with 2 gaps)
+ * Build one item row. Multi-line layout to prevent truncation:
+ * Line 1: Full Item Name
+ * Line 2: right-aligned Qty, Price, Total
+ * Line 3: blank (for line gap)
  */
 function buildItemRow(item) {
-  const name    = padRight(truncate(item.name || item.product_name, 22), 22);
-  const qty     = padLeft(String(item.qty ?? item.quantity), 3);
-  const price   = padLeft(fmtAmount(item.unitPrice ?? item.selling_price), 9);
-  const total   = padLeft(fmtAmount(item.lineTotal ?? item.line_total), 9);
-  return `${name} ${qty} ${price} ${total}`;
+  const name    = String(item.name || item.product_name || 'Item');
+  const qty     = padLeft(String(item.qty ?? item.quantity), 4);
+  const price   = padLeft(fmtAmount(item.unitPrice ?? item.selling_price), 10);
+  const total   = padLeft(fmtAmount(item.lineTotal ?? item.line_total), 11);
+  
+  const valuesLine = padLeft(`${qty} ${price} ${total}`, LINE_WIDTH);
+  
+  return `${name}\n${valuesLine}`;
 }
 
 /**

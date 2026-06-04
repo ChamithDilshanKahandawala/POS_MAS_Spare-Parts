@@ -4,15 +4,16 @@ const Product = require('./models/Product');
 
 const inventoryData = 
 
+
 [
   {
-    "sku_code": "TWLO11",
-    "name": "NR Long Light Pati",
-    "buying_price": 200,
-    "selling_price": 350,
-    "stock_quantity": 5,
-    "sub_category": "Other Lights",
-    "category": "Three-Wheel"
+    "sku_code": "BP75",
+    "name": "KOSO Handle Grip 3311",
+    "buying_price": 400,
+    "selling_price": 650,
+    "stock_quantity": 2,
+    "sub_category": "",
+    "category": "Bike"
   }
 ]
 ;
