@@ -138,17 +138,19 @@ async function buildEscPosBuffer(saleData) {
 
   // ── ITEMS HEADER ──────────────────────────────────────────────────────────
   printer.println('Item');
-  printer.println(padLeft(`${padLeft('Qty', 4)} ${padLeft('Price', 10)} ${padLeft('Total', 11)}`, LINE_WIDTH));
+  printer.println(padLeft(`${'Qty'}   ${'Unit Price'}   ${'Total'}`, LINE_WIDTH));
   printer.println(DIVIDER_LIGHT);
 
   // ── LINE ITEMS ────────────────────────────────────────────────────────────
   for (const item of items) {
-    printer.println(buildItemRow(item));
+    printer.println('');                      // spacer BEFORE item (top breathing room)
+    printer.println(buildItemRow(item));      // name lines + values line
     if (item.discount > 0) {
-      printer.println(padLeft(`Disc: -${fmtAmount(item.discount * (item.qty ?? item.quantity))}`, LINE_WIDTH));
+      printer.println(padLeft(`Disc: -Rs. ${fmtAmount(item.discount * (item.qty ?? 1))}`, LINE_WIDTH));
     }
-    printer.println(''); // Add blank line for visual gap
+    printer.println('');                      // spacer AFTER item (bottom breathing room)
   }
+
   printer.println(DIVIDER_LIGHT);
 
   // ── TOTALS ────────────────────────────────────────────────────────────────
