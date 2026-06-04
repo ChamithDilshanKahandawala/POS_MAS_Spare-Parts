@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Plus, Search, Edit2, Trash2, X, Package, ChevronLeft, ChevronRight, Upload, Download, Scan } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const CATEGORIES = ['Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road'];
+const CATEGORIES = ['Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road', 'KeyTag', 'Toys', 'Ornaments'];
 const EMPTY_FORM = {
   name: '', sku_code: '', category: 'Car', sub_category: '',
   buying_price: '', selling_price: '', stock_quantity: '',

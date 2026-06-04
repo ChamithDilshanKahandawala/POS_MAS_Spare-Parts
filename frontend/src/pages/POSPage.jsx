@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import useIsMobile from '../hooks/useIsMobile';
 import { printReceipt } from '../services/printService';
 
-const CATEGORIES = ['All', 'Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road'];
+const CATEGORIES = ['All', 'Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road', 'KeyTag', 'Toys', 'Ornaments'];
 
 export default function POSPage() {
   const { user } = useAuth();

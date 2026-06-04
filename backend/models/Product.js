@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ['Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road'],
+      enum: ['Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road', 'KeyTag', 'Toys', 'Ornaments'],
     },
     sub_category:        { type: String, default: '' },
     unit:                { type: String, enum: ['Units', 'Liters', 'Packets', 'Meters', 'Sets', 'Pairs', 'Kg'], default: 'Units' },

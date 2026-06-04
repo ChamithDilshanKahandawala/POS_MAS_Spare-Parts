@@ -8,7 +8,7 @@ import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import AuthModal from '../components/AuthModal';
 
-const CATEGORIES = ['All', 'Three-wheel', 'Bike', 'Car', 'Van'];
+const CATEGORIES = ['All', 'Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road', 'KeyTag', 'Toys', 'Ornaments'];
 
 export default function StorefrontPage() {
   const [products, setProducts] = useState([]);
