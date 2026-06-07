@@ -364,8 +364,10 @@ body,
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  overflow-y: auto;
+  padding: 40px 16px;
   z-index: 1000;
   animation: fadeIn 0.2s ease;
 }
@@ -374,10 +376,10 @@ body,
   border: 1px solid var(--border-light);
   border-radius: 20px;
   padding: 32px;
-  width: 90%;
+  width: 100%;
   max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
+  margin: auto;
+  position: relative;
   animation: fadeIn 0.3s ease;
 }
 
@@ -481,10 +483,9 @@ body,
 
   /* Modals: full-screen feel on mobile */
   .modal-box {
-    width: 95% !important;
+    width: 100% !important;
     padding: 20px !important;
     border-radius: 16px !important;
-    max-height: 92vh !important;
   }
 
   /* Buttons in header areas */
