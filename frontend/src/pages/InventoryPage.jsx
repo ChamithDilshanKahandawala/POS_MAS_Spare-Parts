@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { getProducts, createProduct, updateProduct, deleteProduct, importProductsExcel, exportProductsExcel } from '../api/services';
 import { useAuth } from '../context/AuthContext';
 import { Plus, Search, Edit2, Trash2, X, Package, ChevronLeft, ChevronRight, Upload, Download, Scan } from 'lucide-react';
@@ -278,7 +279,7 @@ export default function InventoryPage() {
       </div>
 
       {/* Modal */}
-      {modalOpen && (
+      {modalOpen && createPortal(
         <div className="modal-overlay" onClick={() => setModalOpen(false)}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
@@ -336,7 +337,8 @@ export default function InventoryPage() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { getProducts, createSale } from '../api/services';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -473,7 +474,7 @@ export default function POSPage() {
       )}
 
       {/* SUCCESS MODAL */}
-      {successSale && (
+      {successSale && createPortal(
         <div className="modal-overlay">
           <div className="modal-box" style={{ maxWidth: '420px', textAlign: 'center' }}>
             <CheckCircle size={32} color="#10b981" style={{ margin: '0 auto 16px' }} />
@@ -528,7 +529,8 @@ export default function POSPage() {
               <button className="btn-secondary" onClick={() => navigate('/sales')}>History</button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       
     </>
