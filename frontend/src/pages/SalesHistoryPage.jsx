@@ -30,7 +30,7 @@ export default function SalesHistoryPage() {
   const fetchSales = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await getSales({ page, limit: 15, from, to, payment_method: paymentFilter, sale_source: sourceFilter });
+      const { data } = await getSales({ page, limit: 1000, from, to, payment_method: paymentFilter, sale_source: sourceFilter });
       setSales(data.sales);
       setTotal(data.total);
       setPages(data.pages);
@@ -103,9 +103,9 @@ export default function SalesHistoryPage() {
 
       {/* Table */}
       <div className="glass-card" style={{ overflow: 'hidden', padding: 0 }}>
-        <div style={{ overflowX: 'auto' }}>
+        <div style={{ overflowX: 'auto', maxHeight: 'calc(100vh - 250px)', overflowY: 'auto' }}>
           <table className="data-table">
-            <thead>
+            <thead style={{ position: 'sticky', top: 0, background: 'var(--bg-card)', zIndex: 10 }}>
               <tr>
                 <th>Invoice</th>
                 <th>Date & Time</th>

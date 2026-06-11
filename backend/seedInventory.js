@@ -3,20 +3,37 @@ require('dotenv').config();
 const Product = require('./models/Product');
 
 const inventoryData = 
-
-
 [
+  
   {
-    "sku_code": "BP75",
-    "name": "KOSO Handle Grip 3311",
-    "buying_price": 400,
-    "selling_price": 650,
-    "stock_quantity": 2,
-    "sub_category": "",
-    "category": "Bike"
+    "sku_code": "TWLFL09",
+    "name": "Two Pic Fog Light 1 PCS",
+    "buying_price": 325,
+    "selling_price": 600,
+    "stock_quantity": 20,
+    "sub_category": "Fog Light",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWLWL12",
+    "name": "Wellampiti Full Light Set Blue",
+    "buying_price": 5000,
+    "selling_price": 6850,
+    "stock_quantity": null,
+    "sub_category": "Wellampiti Light",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWLWL13",
+    "name": "Wellampiti Full Light Set Green",
+    "buying_price": 5000,
+    "selling_price": 6850,
+    "stock_quantity": null,
+    "sub_category": "Wellampiti Light",
+    "category": "Three-Wheel"
   }
-]
-;
+
+];
 
 async function seedInventory() {
   try {
