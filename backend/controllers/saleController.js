@@ -407,7 +407,7 @@ const getAnalytics = async (req, res) => {
           profit: { $sum: '$items.line_profit' },
         },
       },
-      { $sort: { revenue: -1 } },
+      { $sort: { quantity: -1 } },
       { $limit: 10 },
     ]);
 
