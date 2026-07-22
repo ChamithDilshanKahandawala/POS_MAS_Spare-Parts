@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import api from '../api/axios';
 import useIsMobile from '../hooks/useIsMobile';
+import { getFiscalMonthRange } from '../utils/fiscalDate';
 
 // ── Status config ─────────────────────────────────────────────────────────────
 const STATUSES = [
@@ -32,18 +33,24 @@ const PERIOD_OPTIONS = [
 function getDateRange(period) {
   const now = new Date();
   let from = null;
+  let to = undefined;
   if (period === 'today') {
     from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   } else if (period === 'week') {
     from = new Date(now);
     from.setDate(now.getDate() - 7);
   } else if (period === 'month') {
-    from = new Date(now.getFullYear(), now.getMonth(), 1);
+    const fiscalRange = getFiscalMonthRange(now);
+    from = fiscalRange.start;
+    to = fiscalRange.end;
   } else if (period === 'quarter') {
     from = new Date(now);
     from.setMonth(now.getMonth() - 3);
   }
-  return from ? from.toISOString().split('T')[0] : undefined;
+  return from ? {
+    from: from.toISOString().split('T')[0],
+    to: to ? to.toISOString().split('T')[0] : undefined,
+  } : undefined;
 }
 
 export default function WebOrdersPage() {
@@ -69,8 +76,9 @@ export default function WebOrdersPage() {
     setLoading(true);
     try {
       const params = { sale_source: 'online', limit: 200 };
-      const from = getDateRange(periodFilter);
-      if (from) params.from = from;
+      const dateRange = getDateRange(periodFilter);
+      if (dateRange?.from) params.from = dateRange.from;
+      if (dateRange?.to) params.to = dateRange.to;
       // Fetch ALL orders for the given date period so that the status tab counts work correctly
 
       const { data } = await getSales(params);

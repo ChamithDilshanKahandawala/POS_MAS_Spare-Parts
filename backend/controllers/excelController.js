@@ -30,8 +30,9 @@ const importProducts = async (req, res) => {
 
     for (const row of rows) {
       try {
+        const skuValue = String(row['SKU'] || row['sku_code'] || '').trim();
+
         const data = {
-          sku_code:           String(row['SKU'] || row['sku_code'] || '').trim(),
           name:               String(row['Name'] || row['name'] || '').trim(),
           category:           String(row['Category'] || row['category'] || 'Three-Wheel').trim(),
           buying_price:       Number(row['Buying Price'] || row['buying_price'] || 0),
@@ -41,6 +42,11 @@ const importProducts = async (req, res) => {
           low_stock_threshold:Number(row['Low Stock'] || row['low_stock_threshold'] || 5),
           description:        String(row['Description'] || row['description'] || '').trim(),
         };
+
+        // IMPORTANT: only set sku_code when it actually has a value.
+        // Setting it to '' for every SKU-less row causes duplicate-key
+        // errors on a unique index after the first such row is inserted.
+        if (skuValue) data.sku_code = skuValue;
 
         if (!data.name) { errors.push(`Row skipped — no name`); continue; }
 
@@ -67,40 +73,61 @@ const importProducts = async (req, res) => {
 // GET /api/products/export  — Download all products as Excel
 const exportProducts = async (req, res) => {
   try {
-    const products = await Product.find({ isDeleted: { $ne: true } }).sort({ category: 1, name: 1 });
+    const products = await Product.find({}).sort({ category: 1, name: 1 }).lean();
 
-    const rows = products.map((p, i) => ({
-      '#':             i + 1,
-      'SKU':           p.sku_code,
-      'Name':          p.name,
-      'Category':      p.category,
-      'Unit':          p.unit || 'Units',
-      'Buying Price':  p.buying_price,
-      'Selling Price': p.selling_price,
-      'Profit/Unit':   p.selling_price - p.buying_price,
-      'Margin %':      p.selling_price > 0 ? ((( p.selling_price - p.buying_price) / p.selling_price) * 100).toFixed(1) : 0,
-      'Stock':         p.stock_quantity,
-      'Low Stock Threshold': p.low_stock_threshold,
-      'Description':   p.description,
-    }));
+    if (!products.length) {
+      return res.status(404).json({ message: 'No products found to export' });
+    }
+
+    const rows = products.map((p, i) => {
+      const buyingPrice  = p.buying_price ?? 0;
+      const sellingPrice = p.selling_price ?? 0;
+      const profit       = sellingPrice - buyingPrice;
+      const margin       = sellingPrice > 0 ? Number(((profit / sellingPrice) * 100).toFixed(1)) : 0;
+
+      return {
+        '#':                    i + 1,
+        'SKU':                  p.sku_code || '',
+        'Name':                 p.name || '',
+        'Category':             p.category || '',
+        'Sub Category':         p.sub_category || '',
+        'Unit':                 p.unit || 'Units',
+        'Buying Price':         buyingPrice,
+        'Selling Price':        sellingPrice,
+        'Profit/Unit':          profit,
+        'Margin %':             margin,
+        'Stock':                p.stock_quantity ?? 0,
+        'Low Stock Threshold':  p.low_stock_threshold ?? 5,
+        'Supplier':             p.supplier || '',
+        'Description':          p.description || '',
+        'Active':               p.is_active ? 'Yes' : 'No',
+        'Shop':                 p.shop || '',
+        'Created At':           p.createdAt ? new Date(p.createdAt).toISOString() : '',
+        'Updated At':           p.updatedAt ? new Date(p.updatedAt).toISOString() : '',
+      };
+    });
 
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.json_to_sheet(rows);
 
-    // Column widths
+    // Column widths (matches the 18 columns above, in order)
     ws['!cols'] = [
-      { wch: 4 }, { wch: 18 }, { wch: 35 }, { wch: 14 }, { wch: 8 },
-      { wch: 13 }, { wch: 13 }, { wch: 12 }, { wch: 10 }, { wch: 8 },
-      { wch: 18 }, { wch: 30 },
+      { wch: 4 }, { wch: 18 }, { wch: 35 }, { wch: 14 }, { wch: 18 },
+      { wch: 10 }, { wch: 13 }, { wch: 13 }, { wch: 12 }, { wch: 10 },
+      { wch: 8 }, { wch: 18 }, { wch: 18 }, { wch: 30 }, { wch: 10 },
+      { wch: 16 }, { wch: 22 }, { wch: 22 },
     ];
 
     XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
     const buffer = XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' });
 
-    res.setHeader('Content-Type',        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', `attachment; filename=Mudiyanse_Inventory_${new Date().toISOString().slice(0,10)}.xlsx`);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=Mudiyanse_Inventory_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    res.setHeader('Content-Length', buffer.length);
     res.send(buffer);
-  } catch (err) { res.status(500).json({ message: err.message }); }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 module.exports = { importProducts, exportProducts, upload };

@@ -1,5 +1,6 @@
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
+const { getFiscalMonthRange } = require('../utils/fiscalDate');
 
 const formatColomboTime = (dateInput) => {
   const d = dateInput ? new Date(dateInput) : new Date();
@@ -29,7 +30,7 @@ const formatReceiptData = (sale) => {
 // POST /api/sales  - Create a new sale
 const createSale = async (req, res) => {
   try {
-    const { items, total_discount, payment_method, customer_name, customer_phone, notes, sale_source, shipping_address, shipping_cost_charged, actual_shipping_cost, tracking_number, cod_amount, paid_amount, koko_charge, koko_percentage } = req.body;
+    const { items, total_discount, payment_method, customer_name, customer_phone,customer_details, notes, sale_source, shipping_address, shipping_cost_charged, actual_shipping_cost, tracking_number, cod_amount, paid_amount, koko_charge, koko_percentage } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({ message: 'No items in cart' });
@@ -111,6 +112,7 @@ const createSale = async (req, res) => {
       sale_source: sale_source || 'shop',
       customer_name: customer_name || (req.user.role === 'customer' ? req.user.name : 'Walk-in Customer'),
       customer_phone: customer_phone || '',
+      customer_details: customer_details || '',
       customer: req.user.role === 'customer' ? req.user._id : undefined,
       order_status: (sale_source === 'online' || sale_source === 'whatsapp') ? (tracking_number ? 'Shipped' : 'Pending') : 'Delivered',
       shipping_address: shipping_address || '',
@@ -255,7 +257,7 @@ const getSaleReceipt = async (req, res) => {
 // PUT /api/sales/:id/status
 const updateOrderStatus = async (req, res) => {
   try {
-    const { order_status, tracking_number } = req.body;
+    const { order_status, tracking_number, money_received } = req.body;
     if (!order_status) return res.status(400).json({ message: 'Missing status' });
 
     if (tracking_number && tracking_number.trim() !== '') {
@@ -267,6 +269,7 @@ const updateOrderStatus = async (req, res) => {
 
     const updateData = { order_status };
     if (tracking_number !== undefined) updateData.tracking_number = tracking_number;
+    if (money_received !== undefined) updateData.money_received = Boolean(money_received);
 
     const oldSale = await Sale.findById(req.params.id);
     if (!oldSale) return res.status(404).json({ message: 'Sale not found' });
@@ -316,7 +319,9 @@ const getAnalytics = async (req, res) => {
       groupFormat = '%Y-%m-%d';
       groupLabel = 'Day';
     } else if (period === 'monthly') {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      // Fiscal month runs from the 11th of one month to the 10th of the next month.
+      const fiscalRange = getFiscalMonthRange(now);
+      startDate = fiscalRange.start;
       groupFormat = '%Y-%m-%d';
       groupLabel = 'Day';
     } else if (period === 'yearly') {
@@ -334,10 +339,13 @@ const getAnalytics = async (req, res) => {
       groupLabel = 'Hour';
     }
 
-    const matchStage = { 
+    const matchStage = {
       createdAt: { $gte: startDate },
-      order_status: { $nin: ['Cancelled', 'Returned'] } 
+      order_status: { $nin: ['Cancelled', 'Returned'] }
     };
+    if (period === 'monthly') {
+      matchStage.createdAt.$lte = getFiscalMonthRange(now).end;
+    }
     if (sale_source && sale_source !== 'all') {
       matchStage.sale_source = sale_source;
     }

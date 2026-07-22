@@ -57,13 +57,6 @@ app.use('/api/customers', require('./routes/customerRoutes'));
 app.use('/api/suppliers', require('./routes/supplierRoutes'));
 app.use('/api/returns',   require('./routes/returnRoutes'));
 
-// Excel import/export (Admins only for data safety)
-const { importProducts, exportProducts, upload } = require('./controllers/excelController');
-
-// Mektath adminOnly middleware eka add kala security ekata
-app.post('/api/products/import', protect, adminOnly, upload.single('file'), importProducts);
-app.get('/api/products/export',  protect, adminOnly, exportProducts);
-
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'OK', time: new Date() }));
 

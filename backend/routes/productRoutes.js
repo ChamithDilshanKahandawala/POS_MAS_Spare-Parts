@@ -8,9 +8,12 @@ const {
   deleteProduct,
   getLowStockAlerts,
 } = require('../controllers/productController');
+const { importProducts, exportProducts, upload } = require('../controllers/excelController');
 const { protect, adminOnly, optionalAuth } = require('../middleware/authMiddleware');
 
 router.get('/low-stock/alerts', protect, getLowStockAlerts);
+router.post('/import', protect, adminOnly, upload.single('file'), importProducts);
+router.get('/export', protect, adminOnly, exportProducts);
 router.get('/', optionalAuth, getProducts);
 router.get('/:id', optionalAuth, getProductById);
 router.post('/', protect, createProduct);

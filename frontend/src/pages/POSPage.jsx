@@ -38,6 +38,7 @@ export default function POSPage() {
   const [successSale, setSuccessSale] = useState(null);
   const [loading, setLoading] = useState(false);
   const [mobileTab, setMobileTab] = useState('products'); // 'products' | 'cart'
+  const [whatsappCustomerDetails, setWhatsappCustomerDetails] = useState('');
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -88,7 +89,7 @@ export default function POSPage() {
 
   const removeFromCart = (id) => setCart(prev => prev.filter(i => i._id !== id));
 
-  const clearAll = () => {
+  const clearAll = useCallback(() => {
     setCart([]);
     setBillDiscount(0);
     setCustomerName('');
@@ -100,7 +101,8 @@ export default function POSPage() {
     setWhatsappTracking('');
     setWhatsappPaidAmount('');
     setKokoPercentage(10);
-  };
+    setWhatsappCustomerDetails('');
+  }, []);
 
   const subtotal = cart.reduce((s, i) => s + i.selling_price * i.qty, 0);
   const itemDiscount = cart.reduce((s, i) => s + i.itemDiscount * i.qty, 0);
@@ -119,7 +121,7 @@ export default function POSPage() {
 
   const computedCodAmount = saleSource === 'whatsapp' ? Math.max(0, totalAmount + Number(whatsappShippingCharged) - Number(whatsappPaidAmount)) : 0;
 
-  const handleCheckout = async () => {
+  const handleCheckout = useCallback(async () => {
     if (cart.length === 0) { toast.error('Cart is empty!'); return; }
     if (totalAmount < 0) { toast.error('Discount exceeds total!'); return; }
     setProcessing(true);
@@ -131,6 +133,7 @@ export default function POSPage() {
         sale_source: saleSource,
         customer_name: customerName || 'Walk-in Customer',
         customer_phone: customerPhone || '',
+        customer_details: saleSource === 'whatsapp' ? whatsappCustomerDetails : '', 
         shipping_cost_charged: saleSource === 'whatsapp' ? Number(whatsappShippingCharged) : 0,
         actual_shipping_cost: saleSource === 'whatsapp' ? Number(whatsappActualShipping) : 0,
         paid_amount: saleSource === 'whatsapp' ? Number(whatsappPaidAmount) : 0,
@@ -153,7 +156,7 @@ export default function POSPage() {
     } finally {
       setProcessing(false);
     }
-  };
+  }, [cart, totalAmount, billDiscount, paymentMethod, saleSource, customerName, customerPhone, whatsappShippingCharged, whatsappActualShipping, whatsappPaidAmount, whatsappTracking, computedCodAmount,whatsappCustomerDetails, kokoCharge, kokoPercentage, clearAll]);
 
   const fmtRs = (v) =>
     `Rs. ${Number(v || 0).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -183,7 +186,7 @@ export default function POSPage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [cart, processing, successSale, totalAmount, paymentMethod, saleSource, customerName, customerPhone, whatsappShippingCharged, whatsappActualShipping, whatsappTracking, whatsappPaidAmount, kokoPercentage, handleCheckout]);
+  }, [cart, processing, successSale, totalAmount, paymentMethod, saleSource, customerName, customerPhone, whatsappShippingCharged, whatsappActualShipping, whatsappTracking, whatsappPaidAmount, kokoPercentage, handleCheckout, isMobile]);
 
   // ── Product grid panel ──────────────────────────────────────────────────────
   const ProductsPanel = (
@@ -320,6 +323,7 @@ export default function POSPage() {
           <input className="input-field" placeholder="Customer name" value={customerName} onChange={e => setCustomerName(e.target.value)} style={{ fontSize: '12px' }} />
           <input className="input-field" placeholder="Phone" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} style={{ fontSize: '12px', width: '100px' }} />
         </div>
+        
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
           <span style={{ fontSize: '11px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Bill Disc.</span>
@@ -340,6 +344,19 @@ export default function POSPage() {
         {saleSource === 'whatsapp' && (
           <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', padding: '10px', borderRadius: '10px', marginBottom: '10px' }}>
             <h4 style={{ fontSize: '11px', color: '#22c55e', textTransform: 'uppercase', marginBottom: '8px' }}>WhatsApp Order Details</h4>
+            <div style={{ marginBottom: '10px' }}>
+                <label style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Customer Details (Name, Phone, Address)
+                </label>
+                <textarea
+                  placeholder={"e.g.\nKamal Perera\n0771234567\nNo. 45, Galle Road, Colombo 06"}
+                  className="input-field"
+                  rows={4}
+                  style={{ fontSize: '12px', width: '100%', resize: 'vertical', fontFamily: 'inherit' }}
+                  value={whatsappCustomerDetails}
+                  onChange={e => setWhatsappCustomerDetails(e.target.value)}
+                />
+              </div>  
             <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
               <div style={{ flex: 1 }}>
                 <label style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Delivery Fee Charged (Rs)</label>
@@ -373,15 +390,22 @@ export default function POSPage() {
           <div style={{ background: 'rgba(168,85,247,0.1)', border: '1px solid rgba(168,85,247,0.2)', padding: '10px', borderRadius: '10px', marginBottom: '10px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
               <h4 style={{ fontSize: '11px', color: '#a855f7', textTransform: 'uppercase', margin: 0 }}>KOKO Charge</h4>
-              {saleSource === 'whatsapp' && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <input type="number" min="0" max="100" value={kokoPercentage} onChange={e => setKokoPercentage(e.target.value)} className="input-field" style={{ width: '50px', fontSize: '11px', padding: '3px 6px', textAlign: 'center' }} />
-                  <span style={{ fontSize: '11px', color: '#a855f7', fontWeight: 700 }}>%</span>
-                </div>
-              )}
-              {saleSource !== 'whatsapp' && (
-                <span style={{ fontSize: '10px', color: '#a855f7', fontWeight: 600 }}>10%</span>
-              )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={kokoPercentage}
+                  onChange={e => setKokoPercentage(e.target.value)}
+                  className="input-field"
+                  style={{ width: '54px', fontSize: '11px', padding: '3px 6px', textAlign: 'center' }}
+                />
+                <span style={{ fontSize: '11px', color: '#a855f7', fontWeight: 700 }}>%</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Editable rate for this bill</span>
+              <span style={{ fontSize: '10px', color: '#a855f7', fontWeight: 600 }}>{saleSource === 'whatsapp' ? 'WhatsApp order' : 'Shop order'}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
               <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Base Amount</span>

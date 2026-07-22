@@ -5,10 +5,11 @@ import toast from 'react-hot-toast';
 import {
   Truck, Package, CheckCircle, Clock, Phone, X, Navigation,
   Search, RefreshCw, ShoppingBag, DollarSign, XCircle,
-  Calendar, Filter, ChevronDown, Eye, MapPin, User, CreditCard, RotateCcw,
+  Calendar, Filter, ChevronDown, Eye, MapPin, User, CreditCard, RotateCcw, TrendingUp,
 } from 'lucide-react';
 import api from '../api/axios';
 import useIsMobile from '../hooks/useIsMobile';
+import { getFiscalMonthRange } from '../utils/fiscalDate';
 
 // ── Status config ─────────────────────────────────────────────────────────────
 const STATUSES = [
@@ -17,6 +18,7 @@ const STATUSES = [
   { value: 'Processing', label: 'Processing',  color: '#3b82f6',            bg: 'rgba(59,130,246,0.12)',             icon: Package },
   { value: 'Shipped',    label: 'Shipped',     color: '#8b5cf6',            bg: 'rgba(139,92,246,0.12)',             icon: Truck },
   { value: 'Delivered',  label: 'Delivered',    color: '#10b981',            bg: 'rgba(16,185,129,0.12)',             icon: CheckCircle },
+  { value: 'MoneyReceived', label: 'Money Received', color: '#10b981',      bg: 'rgba(16,185,129,0.16)',             icon: DollarSign },
   { value: 'Cancelled',  label: 'Cancelled',   color: '#ef4444',            bg: 'rgba(239,68,68,0.12)',              icon: XCircle },
   { value: 'Returned',   label: 'Returned',    color: '#db2777',            bg: 'rgba(219,39,119,0.12)',             icon: RotateCcw },
 ];
@@ -32,18 +34,24 @@ const PERIOD_OPTIONS = [
 function getDateRange(period) {
   const now = new Date();
   let from = null;
+  let to = undefined;
   if (period === 'today') {
     from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   } else if (period === 'week') {
     from = new Date(now);
     from.setDate(now.getDate() - 7);
   } else if (period === 'month') {
-    from = new Date(now.getFullYear(), now.getMonth(), 1);
+    const fiscalRange = getFiscalMonthRange(now);
+    from = fiscalRange.start;
+    to = fiscalRange.end;
   } else if (period === 'quarter') {
     from = new Date(now);
     from.setMonth(now.getMonth() - 3);
   }
-  return from ? from.toISOString().split('T')[0] : undefined;
+  return from ? {
+    from: from.toISOString().split('T')[0],
+    to: to ? to.toISOString().split('T')[0] : undefined,
+  } : undefined;
 }
 
 export default function WhatsAppOrdersPage() {
@@ -62,6 +70,7 @@ export default function WhatsAppOrdersPage() {
   // Modals
   const [trackingModal, setTrackingModal] = useState({ isOpen: false, orderId: null });
   const [trackingInput, setTrackingInput] = useState('');
+  const [deliveryModal, setDeliveryModal] = useState({ isOpen: false, orderId: null, moneyReceived: false });
   const [detailModal, setDetailModal] = useState(null);
 
   // ── Fetch ─────────────────────────────────────────────────────────────────
@@ -69,8 +78,9 @@ export default function WhatsAppOrdersPage() {
     setLoading(true);
     try {
       const params = { sale_source: 'whatsapp', limit: 200 };
-      const from = getDateRange(periodFilter);
-      if (from) params.from = from;
+      const dateRange = getDateRange(periodFilter);
+      if (dateRange?.from) params.from = dateRange.from;
+      if (dateRange?.to) params.to = dateRange.to;
       // Fetch ALL orders for the given date period so that the status tab counts work correctly
 
       const { data } = await getSales(params);
@@ -92,7 +102,9 @@ export default function WhatsAppOrdersPage() {
   // ── Client-side search and status filter ──────────────────────────────────
   const filteredOrders = useMemo(() => {
     let result = orders;
-    if (statusFilter !== 'All') {
+    if (statusFilter === 'MoneyReceived') {
+      result = result.filter(o => (o.order_status || 'Pending') === 'Delivered' && Boolean(o.money_received));
+    } else if (statusFilter !== 'All') {
       result = result.filter(o => (o.order_status || 'Pending') === statusFilter);
     }
     if (searchQuery.trim()) {
@@ -115,34 +127,50 @@ export default function WhatsAppOrdersPage() {
     orders.forEach(o => {
       const st = o.order_status || 'Pending';
       if (counts[st] !== undefined) counts[st]++;
+      if (st === 'Delivered' && o.money_received) counts.MoneyReceived++;
     });
     return counts;
   }, [orders]);
 
   // ── Status update ─────────────────────────────────────────────────────────
-  const updateStatus = async (id, newStatus, trackingNum = undefined) => {
+  const updateStatus = async (id, newStatus, trackingNum = undefined, moneyReceived = undefined) => {
     try {
-      await api.put(`/sales/${id}/status`, { order_status: newStatus, tracking_number: trackingNum });
+      const payload = { order_status: newStatus };
+      if (trackingNum !== undefined) payload.tracking_number = trackingNum;
+      if (moneyReceived !== undefined) payload.money_received = moneyReceived;
+
+      await api.put(`/sales/${id}/status`, payload);
       toast.success(`Order → ${newStatus}`);
       fetchOnlineOrders();
       if (trackingModal.isOpen) setTrackingModal({ isOpen: false, orderId: null });
+      if (deliveryModal.isOpen) setDeliveryModal({ isOpen: false, orderId: null, moneyReceived: false });
     } catch {
       toast.error('Failed to update status');
     }
   };
 
-  const handleStatusChange = (id, newStatus) => {
+  const handleStatusChange = (order, newStatus) => {
     if (newStatus === 'Shipped') {
-      setTrackingInput('');
-      setTrackingModal({ isOpen: true, orderId: id });
+      setTrackingInput(order.tracking_number || '');
+      setTrackingModal({ isOpen: true, orderId: order._id });
+    } else if (newStatus === 'Delivered') {
+      setDeliveryModal({ isOpen: true, orderId: order._id, moneyReceived: Boolean(order.money_received) });
     } else {
-      updateStatus(id, newStatus);
+      updateStatus(order._id, newStatus);
     }
   };
 
   const submitTracking = () => {
     if (!trackingInput.trim()) { toast.error('Enter a tracking number'); return; }
     updateStatus(trackingModal.orderId, 'Shipped', trackingInput);
+  };
+
+  const submitDelivery = () => {
+    updateStatus(deliveryModal.orderId, 'Delivered', undefined, deliveryModal.moneyReceived);
+  };
+
+  const markMoneyReceived = (order) => {
+    updateStatus(order._id, 'Delivered', undefined, true);
   };
 
   const getStatusConfig = (status) => STATUSES.find(s => s.value === status) || STATUSES[1];
@@ -153,6 +181,7 @@ export default function WhatsAppOrdersPage() {
 
   // ── Summary stats ─────────────────────────────────────────────────────────
   const totalRevenue = orders.reduce((s, o) => s + (o.total_amount || 0), 0);
+  const totalProfit = orders.reduce((s, o) => s + Number(o.total_profit || 0), 0);
   const pendingCount = statusCounts['Pending'] || 0;
   const shippedCount = statusCounts['Shipped'] || 0;
   const deliveredCount = statusCounts['Delivered'] || 0;
@@ -175,13 +204,15 @@ export default function WhatsAppOrdersPage() {
         </div>
 
         {/* ── Summary Mini-Cards ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: '10px', marginBottom: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: '10px', marginBottom: '16px' }}>
           {[
             { label: 'Total Revenue', value: fmtRs(totalRevenue), color: 'purple', icon: DollarSign },
+            { label: 'Net Profit', value: fmtRs(totalProfit), color: 'green', icon: TrendingUp, show: isAdmin },
             { label: 'Pending', value: pendingCount, color: 'yellow', icon: Clock },
             { label: 'Shipped', value: shippedCount, color: 'purple', icon: Truck },
             { label: 'Delivered', value: deliveredCount, color: 'green', icon: CheckCircle },
-          ].map(s => (
+            { label: 'Money Received', value: statusCounts.MoneyReceived || 0, color: 'green', icon: DollarSign },
+          ].filter(s => s.show !== false).map(s => (
             <div key={s.label} className={`stat-card ${s.color}`}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
@@ -313,12 +344,20 @@ export default function WhatsAppOrdersPage() {
                     </div>
 
                     {/* Address */}
-                    {order.shipping_address && (
-                      <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px', display: 'flex', alignItems: 'flex-start', gap: '5px' }}>
-                        <MapPin size={12} style={{ flexShrink: 0, marginTop: '1px' }} />
-                        <span>{order.shipping_address}</span>
-                      </div>
-                    )}
+                   
+                      {order.shipping_address && (
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px', display: 'flex', alignItems: 'flex-start', gap: '5px' }}>
+                          <MapPin size={12} style={{ flexShrink: 0, marginTop: '1px' }} />
+                          <span>{order.shipping_address}</span>
+                        </div>
+                      )}
+                    {/* Customer Details (pasted block) */}
+                      {order.customer_details && (
+                        <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.15)', borderRadius: '8px', padding: '8px 10px', marginBottom: '10px', whiteSpace: 'pre-wrap' }}>
+                          <div style={{ fontSize: '9px', color: '#22c55e', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px', letterSpacing: '0.5px' }}>Customer Details</div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-primary)' }}>{order.customer_details}</div>
+                        </div>
+                      )}
 
                     {/* Items preview */}
                     <div style={{ background: 'var(--bg-secondary)', padding: '10px 12px', borderRadius: '10px', marginBottom: '12px' }}>
@@ -354,7 +393,22 @@ export default function WhatsAppOrdersPage() {
                           <Navigation size={10} /> {order.tracking_number}
                         </span>
                       )}
+                      {order.order_status === 'Delivered' && (
+                        <span className="badge badge-green" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '10px' }}>
+                          <DollarSign size={10} /> Money {order.money_received ? 'Received' : 'Pending'}
+                        </span>
+                      )}
                     </div>
+
+                    {order.order_status === 'Delivered' && !order.money_received && (
+                      <button
+                        onClick={() => markMoneyReceived(order)}
+                        className="btn-success"
+                        style={{ width: '100%', justifyContent: 'center', marginBottom: '10px', padding: '8px 10px', fontSize: '12px' }}
+                      >
+                        <DollarSign size={14} /> Mark Money Received
+                      </button>
+                    )}
                   </div>
 
                   {/* Card Footer — Actions */}
@@ -362,13 +416,14 @@ export default function WhatsAppOrdersPage() {
                     <select
                       className="select-field"
                       value={order.order_status || 'Pending'}
-                      onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                      onChange={(e) => handleStatusChange(order, e.target.value)}
                       style={{ flex: 1, padding: '8px 10px', fontSize: '12px', borderRadius: '8px' }}
                     >
                       <option value="Pending">⏳ Pending</option>
                       <option value="Processing">📦 Processing</option>
                       <option value="Shipped">🚚 Shipped</option>
                       <option value="Delivered">✅ Delivered</option>
+                      <option value="MoneyReceived">💰 Money Received</option>
                       <option value="Cancelled">❌ Cancelled</option>
                       <option value="Returned">🔄 Returned</option>
                     </select>
@@ -429,6 +484,42 @@ export default function WhatsAppOrdersPage() {
         </div>
       )}
 
+      {/* ── Delivery Confirmation Modal ── */}
+      {deliveryModal.isOpen && (
+        <div className="modal-overlay" onClick={() => setDeliveryModal({ isOpen: false, orderId: null, moneyReceived: false })}>
+          <div className="modal-box glass-card animate-fade" onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '420px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <CheckCircle size={20} color="#10b981" /> Mark as Delivered
+              </h2>
+              <button onClick={() => setDeliveryModal({ isOpen: false, orderId: null, moneyReceived: false })} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                <X size={20} />
+              </button>
+            </div>
+            <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.18)', borderRadius: '10px', padding: '12px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={deliveryModal.moneyReceived}
+                  onChange={(e) => setDeliveryModal(prev => ({ ...prev, moneyReceived: e.target.checked }))}
+                  style={{ width: '16px', height: '16px', accentColor: '#10b981' }}
+                />
+                <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>Money received from customer</span>
+              </label>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px' }}>
+                Check this only when the customer has already paid for the delivered order.
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button className="btn-secondary" onClick={() => setDeliveryModal({ isOpen: false, orderId: null, moneyReceived: false })} style={{ flex: 1 }}>Cancel</button>
+              <button className="btn-primary" onClick={submitDelivery} style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+                <CheckCircle size={16} /> Confirm Delivered
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Order Detail Modal ── */}
       {detailModal && (
         <div className="modal-overlay" onClick={() => setDetailModal(null)}>
@@ -471,6 +562,14 @@ export default function WhatsAppOrdersPage() {
                 </div>
               ))}
             </div>
+
+            {/* Customer Details (pasted block) — full width, separate from grid */}
+              {detailModal.customer_details && (
+                <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.18)', borderRadius: '10px', padding: '12px', marginBottom: '16px', whiteSpace: 'pre-wrap' }}>
+                  <div style={{ fontSize: '10px', color: '#22c55e', fontWeight: 700, textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.5px' }}>Customer Details</div>
+                  <div style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{detailModal.customer_details}</div>
+                </div>
+              )}
 
             {/* Items Table */}
             <div style={{ maxHeight: '220px', overflowY: 'auto', marginBottom: '16px', border: '1px solid var(--border-light)', borderRadius: '10px' }}>
@@ -537,6 +636,14 @@ export default function WhatsAppOrdersPage() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                       <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Paid Amount (Advance)</span>
                       <span style={{ fontSize: '12px', fontWeight: 600, color: '#3b82f6' }}>{fmtRs(detailModal.paid_amount)}</span>
+                    </div>
+                  )}
+                  {detailModal.order_status === 'Delivered' && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Money Received</span>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: detailModal.money_received ? '#10b981' : '#ef4444' }}>
+                        {detailModal.money_received ? 'Yes' : 'No'}
+                      </span>
                     </div>
                   )}
                   {(detailModal.cod_amount > 0) && (

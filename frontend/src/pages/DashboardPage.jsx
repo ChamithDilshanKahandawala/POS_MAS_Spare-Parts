@@ -20,7 +20,7 @@ export default function DashboardPage() {
     setError(false);
     try {
       const [analyticsRes, alertsRes] = await Promise.all([
-        getAnalytics('daily'),
+        getAnalytics('daily', 'shop'),
         getLowStockAlerts(),
       ]);
       setSummary(analyticsRes.data.summary);

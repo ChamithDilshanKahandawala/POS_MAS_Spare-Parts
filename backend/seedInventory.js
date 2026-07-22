@@ -2,28 +2,28 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const Product = require('./models/Product');
 
-const inventoryData = 
-
-  [
+const inventoryData =
+[
   {
-    "sku_code": "CI06",
-    "name": "DASH TIRE GLOSS 200ML",
-    "buying_price": 412,
-    "selling_price": 520,
-    "stock_quantity": 16,
-    "sub_category": "DASH",
-    "category": "Company Item"
+    "sku_code": "TWI47",
+    "name": "JP STEERING WHEEL COVER",
+    "buying_price": 900,
+    "selling_price": 1350,
+    "stock_quantity": 5,
+    "sub_category": "INSIDE",
+    "category": "Three-Wheel"
   },
   {
-    "sku_code": "CI07",
-    "name": "DASH AIR POCKET AIR FRESHNER 10G",
-    "buying_price": 276,
-    "selling_price": 320,
-    "stock_quantity": 12,
-    "sub_category": "DASH",
-    "category": "Company Item"
+    "sku_code": "TWS19",
+    "name": "MODIFY SIDE DOOR WITH NICKEL PLATE",
+    "buying_price": 2200,
+    "selling_price": 3500,
+    "stock_quantity": 3,
+    "sub_category": "Side",
+    "category": "Three-Wheel"
   }
 ];
+
 
 async function seedInventory() {
   try {
@@ -42,7 +42,7 @@ async function seedInventory() {
           buying_price: item.buying_price,
           selling_price: item.selling_price,
           sub_category: item.sub_category,
-          stock_quantity: item.stock_quantity, 
+          stock_quantity: item.stock_quantity,
           category: item.category,
         });
         console.log(`  ↺ Updated : ${item.sku_code} | ${item.name}`);

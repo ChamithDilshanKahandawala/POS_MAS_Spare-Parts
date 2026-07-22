@@ -33,6 +33,7 @@ const saleSchema = new mongoose.Schema(
     },
     customer_name: { type: String, default: 'Walk-in Customer' },
     customer_phone: { type: String, default: '' },
+    customer_details: { type: String, default: '' }, // For WhatsApp sales, store additional customer details
     customer: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     order_status: {
       type: String,
@@ -45,6 +46,7 @@ const saleSchema = new mongoose.Schema(
     actual_shipping_cost: { type: Number, default: 0 },
     cod_amount: { type: Number, default: 0 },
     paid_amount: { type: Number, default: 0 },
+    money_received: { type: Boolean, default: false },
     koko_charge: { type: Number, default: 0 },
     koko_percentage: { type: Number, default: 0 },
     shipping_address: { type: String, default: '' },
