@@ -89,6 +89,77 @@ export default function POSPage() {
 
   const removeFromCart = (id) => setCart(prev => prev.filter(i => i._id !== id));
 
+    // Parses pasted customer details (any format — single line or multi-line) and extracts name + phone
+const parseCustomerDetails = (text) => {
+  if (!text || !text.trim()) return { name: '', phone: '' };
+
+  // Strip WhatsApp export prefix: "[2026-07-25, 22:29:43] Hutch 4: "
+  const waPrefixRegex = /^\[[^\]]*\]\s*[^:]*:\s*/;
+
+  // ── Step 1: Insert a newline before every recognized label ──────────────
+  // This handles both single-line ("Name : X Address : Y Phone : Z")
+  // and multi-line pasted formats the same way.
+  const labelSplitRegex = /(?=\b(?:name|address|city|town|phone(?:\s*number)?\s*\d*|mobile\s*\d*|නම|ලිපිනය|නගරය|දුරකථන\s*(?:අංකය)?\s*\d*)\s*[:\-])/gi;
+
+  const normalizedText = text.replace(labelSplitRegex, '\n');
+
+  // Explicit label patterns (English + Sinhala)
+  const nameLabelRegex = /^(?:name|නම)\s*[:\-]\s*(.+)$/i;
+  const phoneLabelRegex = /^(?:phone(?:\s*number)?\s*\d*|දුරකථන\s*(?:අංකය)?\s*\d*|mobile\s*\d*)\s*[:\-]\s*(.+)$/i;
+
+  const rawLines = normalizedText
+    .split('\n')
+    .map(l => l.replace(waPrefixRegex, '').trim())
+    .filter(Boolean);
+
+  let name = '';
+  const phones = [];
+  const usedIdx = new Set();
+
+  // Pass 1 — explicit labels (highest priority)
+  rawLines.forEach((line, idx) => {
+    const nameMatch = line.match(nameLabelRegex);
+    if (nameMatch && !name) {
+      name = nameMatch[1].trim();
+      usedIdx.add(idx);
+      return;
+    }
+    const phoneMatch = line.match(phoneLabelRegex);
+    if (phoneMatch) {
+      const digits = phoneMatch[1].replace(/[^\d+]/g, '');
+      if (digits) phones.push(digits);
+      usedIdx.add(idx);
+    }
+  });
+
+  // Pass 2 — fallback: a line that's JUST a phone number (no labels)
+  const isPhoneLike = (line) => {
+    const cleaned = line.replace(/[\s\-]/g, '');
+    return /^(?:\+?94|0)?7\d{8}$/.test(cleaned);
+  };
+
+  rawLines.forEach((line, idx) => {
+    if (usedIdx.has(idx)) return;
+    if (isPhoneLike(line)) {
+      phones.push(line.replace(/[\s\-]/g, ''));
+      usedIdx.add(idx);
+    }
+  });
+
+  // Pass 3 — name fallback: first remaining unused line
+  if (!name) {
+    const fallbackLine = rawLines.find((line, idx) => !usedIdx.has(idx));
+    if (fallbackLine) name = fallbackLine;
+  }
+
+  // Normalize phone: strip spaces, convert +94/94 prefix to 0
+  let phone = (phones[0] || '').replace(/\s+/g, '');
+  phone = phone.replace(/^\+?94/, '0');
+  if (phone && !phone.startsWith('0')) phone = '0' + phone;
+
+  return { name, phone };
+};
+
   const clearAll = useCallback(() => {
     setCart([]);
     setBillDiscount(0);
@@ -349,14 +420,21 @@ export default function POSPage() {
                   Customer Details (Name, Phone, Address)
                 </label>
                 <textarea
-                  placeholder={"e.g.\nKamal Perera\n0771234567\nNo. 45, Galle Road, Colombo 06"}
-                  className="input-field"
-                  rows={4}
-                  style={{ fontSize: '12px', width: '100%', resize: 'vertical', fontFamily: 'inherit' }}
-                  value={whatsappCustomerDetails}
-                  onChange={e => setWhatsappCustomerDetails(e.target.value)}
-                />
-              </div>  
+                        placeholder={"Paste customer details here (any format)"}
+                        className="input-field"
+                        rows={5}
+                        style={{ fontSize: '12px', width: '100%', resize: 'vertical', fontFamily: 'inherit' }}
+                        value={whatsappCustomerDetails}
+                        onChange={e => {
+                          const text = e.target.value;
+                          setWhatsappCustomerDetails(text);
+
+                          const { name, phone } = parseCustomerDetails(text);
+                          if (name) setCustomerName(name);
+                          if (phone) setCustomerPhone(phone);
+                        }}
+                  /> 
+              </div>
             <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
               <div style={{ flex: 1 }}>
                 <label style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Delivery Fee Charged (Rs)</label>

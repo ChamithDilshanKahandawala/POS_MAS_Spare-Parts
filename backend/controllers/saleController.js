@@ -2,6 +2,8 @@ const Sale = require('../models/Sale');
 const Product = require('../models/Product');
 const { getFiscalMonthRange } = require('../utils/fiscalDate');
 
+
+
 const formatColomboTime = (dateInput) => {
   const d = dateInput ? new Date(dateInput) : new Date();
   return new Intl.DateTimeFormat('sv-SE', {

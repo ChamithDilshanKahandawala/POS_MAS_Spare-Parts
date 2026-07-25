@@ -2,6 +2,7 @@ const Product = require('../models/Product');
 const XLSX    = require('xlsx');
 const multer  = require('multer');
 const path    = require('path');
+const { normalizeProductPayload } = require('../utils/productSearch');
 
 // Multer — memory storage (no disk write needed)
 const upload = multer({
@@ -41,6 +42,9 @@ const importProducts = async (req, res) => {
           unit:               String(row['Unit'] || row['unit'] || 'Units').trim(),
           low_stock_threshold:Number(row['Low Stock'] || row['low_stock_threshold'] || 5),
           description:        String(row['Description'] || row['description'] || '').trim(),
+          barcode:            String(row['Barcode'] || row['barcode'] || '').trim(),
+          brand:              String(row['Brand'] || row['brand'] || '').trim(),
+          tags:               String(row['Tags'] || row['tags'] || '').split(',').map(tag => tag.trim()).filter(Boolean),
         };
 
         // IMPORTANT: only set sku_code when it actually has a value.
@@ -53,14 +57,15 @@ const importProducts = async (req, res) => {
         if (data.sku_code) {
           const existing = await Product.findOne({ sku_code: data.sku_code });
           if (existing) {
-            await Product.findByIdAndUpdate(existing._id, data);
+            existing.set(normalizeProductPayload(data));
+            await existing.save();
             updated++;
           } else {
-            await Product.create(data);
+            await Product.create(normalizeProductPayload(data));
             created++;
           }
         } else {
-          await Product.create(data);
+          await Product.create(normalizeProductPayload(data));
           created++;
         }
       } catch (e) { errors.push(`Row error: ${e.message}`); }
@@ -99,6 +104,9 @@ const exportProducts = async (req, res) => {
         'Stock':                p.stock_quantity ?? 0,
         'Low Stock Threshold':  p.low_stock_threshold ?? 5,
         'Supplier':             p.supplier || '',
+        'Brand':                p.brand || '',
+        'Barcode':              p.barcode || '',
+        'Tags':                 Array.isArray(p.tags) ? p.tags.join(', ') : '',
         'Description':          p.description || '',
         'Active':               p.is_active ? 'Yes' : 'No',
         'Shop':                 p.shop || '',
@@ -110,12 +118,12 @@ const exportProducts = async (req, res) => {
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.json_to_sheet(rows);
 
-    // Column widths (matches the 18 columns above, in order)
+    // Column widths (matches the columns above, in order)
     ws['!cols'] = [
       { wch: 4 }, { wch: 18 }, { wch: 35 }, { wch: 14 }, { wch: 18 },
       { wch: 10 }, { wch: 13 }, { wch: 13 }, { wch: 12 }, { wch: 10 },
-      { wch: 8 }, { wch: 18 }, { wch: 18 }, { wch: 30 }, { wch: 10 },
-      { wch: 16 }, { wch: 22 }, { wch: 22 },
+      { wch: 8 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 },
+      { wch: 30 }, { wch: 10 }, { wch: 16 }, { wch: 22 }, { wch: 22 },
     ];
 
     XLSX.utils.book_append_sheet(wb, ws, 'Inventory');

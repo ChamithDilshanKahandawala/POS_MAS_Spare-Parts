@@ -1,18 +1,36 @@
 const Product = require('../models/Product');
+const { executeProductSearch } = require('../services/productSearchService');
+const { normalizeProductPayload } = require('../utils/productSearch');
 
 // GET /api/products  (with search, category filter, pagination)
 const getProducts = async (req, res) => {
   try {
     const { search, category, page = 1, limit = 20, lowStock } = req.query;
+
+    if (search && String(search).trim()) {
+      const result = await executeProductSearch({
+        query: search,
+        category,
+        lowStock,
+        page,
+        limit,
+      });
+
+      const products = result.products.map((product) => {
+        if (!req.user || (req.user.role !== 'admin' && req.user.role !== 'super_admin')) {
+          delete product.buying_price;
+        }
+        delete product.search_text;
+        delete product.search_terms;
+        delete product.search_ngrams;
+        return product;
+      });
+
+      return res.json({ ...result, products });
+    }
+
     const query = { is_active: true };
 
-    if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { sku_code: { $regex: search, $options: 'i' } },
-        { supplier: { $regex: search, $options: 'i' } },
-      ];
-    }
     if (category && category !== 'All') query.category = category;
     if (lowStock === 'true') {
       query.$expr = { $lte: ['$stock_quantity', '$low_stock_threshold'] };
@@ -29,10 +47,41 @@ const getProducts = async (req, res) => {
       if (!req.user || (req.user.role !== 'admin' && req.user.role !== 'super_admin')) {
         delete p.buying_price;
       }
+      delete p.search_text;
+      delete p.search_terms;
+      delete p.search_ngrams;
       return p;
     });
 
     res.json({ products, total, page: Number(page), pages: Math.ceil(total / limit) });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// GET /api/products/search  (smart autocomplete/search)
+const searchProducts = async (req, res) => {
+  try {
+    const { q = '', category = 'All', page = 1, limit = 10, lowStock } = req.query;
+    const result = await executeProductSearch({
+      query: q,
+      category,
+      lowStock,
+      page,
+      limit,
+    });
+
+    const products = result.products.map((product) => {
+      if (!req.user || (req.user.role !== 'admin' && req.user.role !== 'super_admin')) {
+        delete product.buying_price;
+      }
+      delete product.search_text;
+      delete product.search_terms;
+      delete product.search_ngrams;
+      return product;
+    });
+
+    res.json({ ...result, products });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -57,7 +106,7 @@ const getProductById = async (req, res) => {
 // POST /api/products
 const createProduct = async (req, res) => {
   try {
-    const product = await Product.create(req.body);
+    const product = await Product.create(normalizeProductPayload(req.body));
     res.status(201).json(product);
   } catch (err) {
     if (err.code === 11000) {
@@ -70,11 +119,10 @@ const createProduct = async (req, res) => {
 // PUT /api/products/:id
 const updateProduct = async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
+    product.set(normalizeProductPayload(req.body));
+    await product.save();
     res.json(product);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -104,4 +152,4 @@ const getLowStockAlerts = async (req, res) => {
   }
 };
 
-module.exports = { getProducts, getProductById, createProduct, updateProduct, deleteProduct, getLowStockAlerts };
+module.exports = { getProducts, searchProducts, getProductById, createProduct, updateProduct, deleteProduct, getLowStockAlerts };
