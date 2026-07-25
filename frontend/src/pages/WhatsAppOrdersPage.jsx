@@ -64,8 +64,11 @@ export default function WhatsAppOrdersPage() {
 
   // Filter state
   const [statusFilter, setStatusFilter] = useState('All');
-  const [periodFilter, setPeriodFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+const [periodFilter, setPeriodFilter] = useState('all');
+const [searchQuery, setSearchQuery] = useState('');
+const [customFrom, setCustomFrom] = useState('');
+const [customTo, setCustomTo] = useState('');
+  
 
   // Modals
   const [trackingModal, setTrackingModal] = useState({ isOpen: false, orderId: null });
@@ -74,23 +77,30 @@ export default function WhatsAppOrdersPage() {
   const [detailModal, setDetailModal] = useState(null);
 
   // ── Fetch ─────────────────────────────────────────────────────────────────
-  const fetchOnlineOrders = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = { sale_source: 'whatsapp', limit: 200 };
+ const fetchOnlineOrders = useCallback(async () => {
+  setLoading(true);
+  try {
+    const params = { sale_source: 'whatsapp', limit: 200 };
+
+    // Custom date range takes priority over preset period buttons
+    if (customFrom || customTo) {
+      if (customFrom) params.from = customFrom;
+      if (customTo) params.to = customTo;
+    } else {
       const dateRange = getDateRange(periodFilter);
       if (dateRange?.from) params.from = dateRange.from;
       if (dateRange?.to) params.to = dateRange.to;
-      // Fetch ALL orders for the given date period so that the status tab counts work correctly
-
-      const { data } = await getSales(params);
-      setOrders(data.sales || []);
-    } catch {
-      toast.error('Failed to load WhatsApp orders');
-    } finally {
-      setLoading(false);
     }
-  }, [periodFilter]);
+    // Fetch ALL orders for the given date period so that the status tab counts work correctly
+
+    const { data } = await getSales(params);
+    setOrders(data.sales || []);
+  } catch {
+    toast.error('Failed to load WhatsApp orders');
+  } finally {
+    setLoading(false);
+  }
+}, [periodFilter, customFrom, customTo]);
 
   useEffect(() => {
     fetchOnlineOrders();
@@ -240,18 +250,53 @@ const filteredOrders = useMemo(() => {
             />
           </div>
 
+          
           {/* Period filter */}
           <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '3px', borderRadius: '10px', border: '1px solid var(--border-light)', flexWrap: 'wrap' }}>
             {PERIOD_OPTIONS.map(p => (
-              <button key={p.value} onClick={() => setPeriodFilter(p.value)} style={{
+              <button key={p.value} onClick={() => { setPeriodFilter(p.value); setCustomFrom(''); setCustomTo(''); }} style={{
                 padding: isMobile ? '5px 8px' : '6px 12px', borderRadius: '8px', fontSize: '11px', fontWeight: 600,
                 cursor: 'pointer', border: 'none', whiteSpace: 'nowrap', transition: 'all 0.2s',
-                background: periodFilter === p.value ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'transparent',
-                color: periodFilter === p.value ? 'white' : 'var(--text-muted)',
+                background: (!customFrom && !customTo && periodFilter === p.value) ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'transparent',
+                color: (!customFrom && !customTo && periodFilter === p.value) ? 'white' : 'var(--text-muted)',
               }}>{p.label}</button>
             ))}
           </div>
-        </div>
+
+          {/* Custom Date Range Picker */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+            <input
+              type="date"
+              className="input-field"
+              value={customFrom}
+              onChange={e => setCustomFrom(e.target.value)}
+              style={{ fontSize: '12px', padding: '7px 10px', width: 'auto' }}
+              max={customTo || undefined}
+            />
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>to</span>
+            <input
+              type="date"
+              className="input-field"
+              value={customTo}
+              onChange={e => setCustomTo(e.target.value)}
+              style={{ fontSize: '12px', padding: '7px 10px', width: 'auto' }}
+              min={customFrom || undefined}
+            />
+            {(customFrom || customTo) && (
+              <button
+                onClick={() => { setCustomFrom(''); setCustomTo(''); }}
+                title="Clear custom range"
+                style={{
+                  background: 'var(--bg-secondary)', border: '1px solid var(--border-light)',
+                  borderRadius: '8px', padding: '7px 10px', cursor: 'pointer', color: '#ef4444',
+                  display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 600,
+                }}
+              >
+                <X size={12} /> Clear
+              </button>
+            )}
+          </div>
+          </div>
 
         {/* ── Status Tab Bar ── */}
         <div style={{
