@@ -286,7 +286,8 @@ const filteredOrders = useMemo(() => {
           })}
         </div>
 
-        {/* ── Orders Grid ── */}
+        {/* ── Orders Table ── */}
+        {/* ── Orders Grid / Table ── */}
         {loading ? (
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(340px, 1fr))', gap: '16px' }}>
             {[1, 2, 3, 4].map(i => (
@@ -301,14 +302,14 @@ const filteredOrders = useMemo(() => {
               {statusFilter !== 'All' ? `No "${statusFilter}" orders in this period` : 'No WhatsApp orders yet'}
             </p>
           </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(360px, 1fr))', gap: '16px' }}>
+        ) : isMobile ? (
+          // ── MOBILE: Card view (unchanged) ──────────────────────────────
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }}>
             {filteredOrders.map(order => {
               const statusConf = getStatusConfig(order.order_status || 'Pending');
               const StatusIcon = statusConf.icon;
               return (
                 <div key={order._id} className="glass-card" style={{ padding: '0', borderRadius: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                  {/* Card Header */}
                   <div style={{
                     padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                     borderBottom: '1px solid var(--border)',
@@ -325,9 +326,7 @@ const filteredOrders = useMemo(() => {
                     </span>
                   </div>
 
-                  {/* Card Body */}
                   <div style={{ padding: '16px 18px', flex: 1 }}>
-                    {/* Customer info */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                       <div>
                         <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -344,23 +343,19 @@ const filteredOrders = useMemo(() => {
                       </div>
                     </div>
 
-                    {/* Address */}
-                   
-                      {order.shipping_address && (
-                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px', display: 'flex', alignItems: 'flex-start', gap: '5px' }}>
-                          <MapPin size={12} style={{ flexShrink: 0, marginTop: '1px' }} />
-                          <span>{order.shipping_address}</span>
-                        </div>
-                      )}
-                    {/* Customer Details (pasted block) */}
-                      {order.customer_details && (
-                        <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.15)', borderRadius: '8px', padding: '8px 10px', marginBottom: '10px', whiteSpace: 'pre-wrap' }}>
-                          <div style={{ fontSize: '9px', color: '#22c55e', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px', letterSpacing: '0.5px' }}>Customer Details</div>
-                          <div style={{ fontSize: '11px', color: 'var(--text-primary)' }}>{order.customer_details}</div>
-                        </div>
-                      )}
+                    {order.shipping_address && (
+                      <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px', display: 'flex', alignItems: 'flex-start', gap: '5px' }}>
+                        <MapPin size={12} style={{ flexShrink: 0, marginTop: '1px' }} />
+                        <span>{order.shipping_address}</span>
+                      </div>
+                    )}
+                    {order.customer_details && (
+                      <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.15)', borderRadius: '8px', padding: '8px 10px', marginBottom: '10px', whiteSpace: 'pre-wrap' }}>
+                        <div style={{ fontSize: '9px', color: '#22c55e', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px', letterSpacing: '0.5px' }}>Customer Details</div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-primary)' }}>{order.customer_details}</div>
+                      </div>
+                    )}
 
-                    {/* Items preview */}
                     <div style={{ background: 'var(--bg-secondary)', padding: '10px 12px', borderRadius: '10px', marginBottom: '12px' }}>
                       <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>
                         Items ({order.items?.length})
@@ -384,7 +379,6 @@ const filteredOrders = useMemo(() => {
                       </div>
                     </div>
 
-                    {/* Payment + Tracking */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '6px' }}>
                       <span className="badge badge-blue" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '10px' }}>
                         <CreditCard size={10} /> {order.payment_method || 'N/A'}
@@ -412,7 +406,6 @@ const filteredOrders = useMemo(() => {
                     )}
                   </div>
 
-                  {/* Card Footer — Actions */}
                   <div style={{ padding: '12px 18px', borderTop: '1px solid var(--border)', display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <select
                       className="select-field"
@@ -443,9 +436,156 @@ const filteredOrders = useMemo(() => {
               );
             })}
           </div>
+        ) : (
+          // ── DESKTOP: Table view ─────────────────────────────────────────
+          <div className="glass-card" style={{ padding: 0, borderRadius: '16px', overflow: 'hidden' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table className="data-table" style={{ margin: 0, width: '100%', minWidth: '1100px' }}>
+                <thead style={{ position: 'sticky', top: 0, background: 'var(--bg-card)', zIndex: 1 }}>
+                  <tr>
+                    <th>Invoice</th>
+                    <th>Date / Time</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Details</th>
+                    <th>Items</th>
+                    <th style={{ textAlign: 'right' }}>Total</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Tracking No</th>
+                    <th style={{ textAlign: 'right' }}>COD</th>
+                    <th style={{ textAlign: 'center' }}>Money</th>
+                    {isAdmin && <th style={{ textAlign: 'right' }}>Profit</th>}
+                    <th style={{ textAlign: 'center' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredOrders.map(order => {
+                    const statusConf = getStatusConfig(order.order_status || 'Pending');
+                    const StatusIcon = statusConf.icon;
+                    return (
+                      <tr key={order._id}>
+                        <td style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--accent-primary)', fontSize: '12px', whiteSpace: 'nowrap' }}>
+                          {order.invoice_number}
+                        </td>
+                        <td style={{ whiteSpace: 'nowrap', fontSize: '12px' }}>
+                          <div>{fmtDate(order.createdAt)}</div>
+                          <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{fmtTime(order.createdAt)}</div>
+                        </td>
+                        <td style={{ fontSize: '12px', fontWeight: 600, maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {order.customer_name}
+                        </td>
+
+                        <td style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>{order.customer_phone || 'N/A'}</td>
+                        <td style={{ fontSize: '11px', maxWidth: '150px' }}>
+                          {order.customer_details ? (
+                            <div
+                              title={order.customer_details}
+                              onClick={() => setDetailModal(order)}
+                              style={{
+                                color: 'var(--text-muted)', cursor: 'pointer',
+                                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                display: 'flex', alignItems: 'center', gap: '4px',
+                              }}
+                            >
+                              <MapPin size={11} style={{ flexShrink: 0, color: '#22c55e' }} />
+                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {order.customer_details.replace(/\n/g, ' · ')}
+                              </span>
+                            </div>
+                          ) : (
+                            <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>—</span>
+                          )}
+                        </td>
+                        <td style={{ fontSize: '12px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                          {order.items?.length || 0} item{order.items?.length !== 1 ? 's' : ''}
+                        </td>
+                        <td style={{ textAlign: 'right', fontSize: '13px', fontWeight: 700, color: 'var(--accent-primary)', whiteSpace: 'nowrap' }}>
+                          {fmtRs(order.total_amount)}
+                        </td>
+                        <td style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>
+                          <span className="badge badge-blue" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '10px' }}>
+                            <CreditCard size={10} /> {order.payment_method || 'N/A'}
+                          </span>
+                        </td>
+                        <td style={{ whiteSpace: 'nowrap' }}>
+                          <span style={{
+                            display: 'inline-flex', alignItems: 'center', gap: '5px',
+                            padding: '4px 9px', borderRadius: '999px', fontSize: '10px', fontWeight: 700,
+                            background: statusConf.bg, color: statusConf.color, textTransform: 'uppercase',
+                          }}>
+                            <StatusIcon size={11} /> {order.order_status || 'Pending'}
+                          </span>
+                        </td>
+                        <td style={{ fontSize: '11px', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
+                          {order.tracking_number || '—'}
+                        </td>
+                        <td style={{ textAlign: 'right', fontSize: '12px', fontWeight: 600, color: order.cod_amount > 0 ? '#f59e0b' : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                          {order.cod_amount > 0 ? fmtRs(order.cod_amount) : '—'}
+                        </td>
+                        <td style={{ textAlign: 'center' }}>
+                          {order.order_status === 'Delivered' ? (
+                            order.money_received ? (
+                              <CheckCircle size={16} color="#10b981" style={{ display: 'inline' }} />
+                            ) : (
+                              <button
+                                onClick={() => markMoneyReceived(order)}
+                                title="Mark money received"
+                                style={{ background: 'none', border: '1px solid #f59e0b', color: '#f59e0b', borderRadius: '6px', padding: '3px 8px', fontSize: '10px', fontWeight: 700, cursor: 'pointer' }}
+                              >
+                                Mark
+                              </button>
+                            )
+                          ) : (
+                            <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>—</span>
+                          )}
+                        </td>
+                        {isAdmin && (
+                          <td style={{ textAlign: 'right', fontSize: '12px', fontWeight: 700, color: '#10b981', whiteSpace: 'nowrap' }}>
+                            {fmtRs(order.total_profit)}
+                          </td>
+                        )}
+                        <td>
+                          <div style={{ display: 'flex', gap: '6px', alignItems: 'center', justifyContent: 'center' }}>
+                            <select
+                              className="select-field"
+                              value={order.order_status || 'Pending'}
+                              onChange={(e) => handleStatusChange(order, e.target.value)}
+                              style={{ padding: '5px 6px', fontSize: '11px', borderRadius: '6px', minWidth: '110px' }}
+                            >
+                              <option value="Pending">⏳ Pending</option>
+                              <option value="Processing">📦 Processing</option>
+                              <option value="Shipped">🚚 Shipped</option>
+                              <option value="Delivered">✅ Delivered</option>
+                              <option value="MoneyReceived">💰 Money Received</option>
+                              <option value="Cancelled">❌ Cancelled</option>
+                              <option value="Returned">🔄 Returned</option>
+                            </select>
+                            <button
+                              onClick={() => setDetailModal(order)}
+                              title="View details"
+                              style={{
+                                padding: '6px 8px', borderRadius: '6px', border: '1px solid var(--border-light)',
+                                background: 'var(--bg-secondary)', cursor: 'pointer', color: 'var(--accent-primary)',
+                                display: 'flex', alignItems: 'center', flexShrink: 0,
+                              }}
+                            >
+                              <Eye size={13} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
         )}
       </div>
 
+      
+        
       {/* ── Tracking Number Modal ── */}
       {trackingModal.isOpen && (
         <div className="modal-overlay" onClick={() => setTrackingModal({ isOpen: false, orderId: null })}>
