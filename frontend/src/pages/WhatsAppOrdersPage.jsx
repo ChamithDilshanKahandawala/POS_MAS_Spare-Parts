@@ -100,23 +100,24 @@ export default function WhatsAppOrdersPage() {
   }, [fetchOnlineOrders]);
 
   // ── Client-side search and status filter ──────────────────────────────────
-  const filteredOrders = useMemo(() => {
-    let result = orders;
-    if (statusFilter === 'MoneyReceived') {
-      result = result.filter(o => (o.order_status || 'Pending') === 'Delivered' && Boolean(o.money_received));
-    } else if (statusFilter !== 'All') {
-      result = result.filter(o => (o.order_status || 'Pending') === statusFilter);
-    }
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(o =>
-        o.invoice_number?.toLowerCase().includes(q) ||
-        o.customer_name?.toLowerCase().includes(q) ||
-        o.customer_phone?.includes(q)
-      );
-    }
-    return result;
-  }, [orders, statusFilter, searchQuery]);
+const filteredOrders = useMemo(() => {
+  let result = orders;
+  if (statusFilter === 'MoneyReceived') {
+    result = result.filter(o => (o.order_status || 'Pending') === 'Delivered' && Boolean(o.money_received));
+  } else if (statusFilter !== 'All') {
+    result = result.filter(o => (o.order_status || 'Pending') === statusFilter);
+  }
+  if (searchQuery.trim()) {
+    const q = searchQuery.toLowerCase();
+    result = result.filter(o =>
+      o.invoice_number?.toLowerCase().includes(q) ||
+      o.customer_name?.toLowerCase().includes(q) ||
+      o.customer_phone?.includes(q) ||
+      o.tracking_number?.toLowerCase().includes(q)
+    );
+  }
+  return result;
+}, [orders, statusFilter, searchQuery]);
 
   // ── Status counts for badges ──────────────────────────────────────────────
   const statusCounts = useMemo(() => {
@@ -232,7 +233,7 @@ export default function WhatsAppOrdersPage() {
             <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               className="input-field"
-              placeholder="Search invoice, name, phone..."
+              placeholder="Search tracking, name, phone, invoice..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               style={{ paddingLeft: '34px', fontSize: '13px' }}
