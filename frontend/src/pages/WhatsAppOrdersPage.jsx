@@ -183,6 +183,9 @@ const filteredOrders = useMemo(() => {
   const markMoneyReceived = (order) => {
     updateStatus(order._id, 'Delivered', undefined, true);
   };
+  const markLossAcknowledged = (order) => {
+  updateStatus(order._id, 'Returned', undefined, true);
+};
 
   const getStatusConfig = (status) => STATUSES.find(s => s.value === status) || STATUSES[1];
 
@@ -606,10 +609,25 @@ const deliveredCount = statusCounts['Delivered'] || 0;
                                 Mark
                               </button>
                             )
+                          ) : order.order_status === 'Returned' ? (
+                            order.money_received ? (
+                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#ef4444', fontSize: '10px', fontWeight: 700, background: 'rgba(239,68,68,0.1)', padding: '3px 8px', borderRadius: '6px' }}>
+                                <XCircle size={12} /> Lost
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => markLossAcknowledged(order)}
+                                title="Mark as lost"
+                                style={{ background: 'none', border: '1px solid #f59e0b', color: '#f59e0b', borderRadius: '6px', padding: '3px 8px', fontSize: '10px', fontWeight: 700, cursor: 'pointer' }}
+                              >
+                                Mark
+                              </button>
+                            )
                           ) : (
                             <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>—</span>
                           )}
                         </td>
+
                         {isAdmin && (
                           <td style={{ textAlign: 'right', fontSize: '12px', fontWeight: 700, color: '#10b981', whiteSpace: 'nowrap' }}>
                             {fmtRs(order.total_profit)}

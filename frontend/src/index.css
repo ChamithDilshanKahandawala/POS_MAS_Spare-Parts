@@ -314,6 +314,9 @@ body,
 .stat-card.blue::before {
   background: linear-gradient(90deg, #3b82f6, #2563eb);
 }
+.stat-card.red::before {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
 .stat-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
