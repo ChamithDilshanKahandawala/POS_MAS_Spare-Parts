@@ -191,11 +191,15 @@ const filteredOrders = useMemo(() => {
   const fmtTime = (d) => new Date(d).toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' });
 
   // ── Summary stats ─────────────────────────────────────────────────────────
-  const totalRevenue = orders.reduce((s, o) => s + (o.total_amount || 0), 0);
-  const totalProfit = orders.reduce((s, o) => s + Number(o.total_profit || 0), 0);
-  const pendingCount = statusCounts['Pending'] || 0;
-  const shippedCount = statusCounts['Shipped'] || 0;
-  const deliveredCount = statusCounts['Delivered'] || 0;
+// ── Summary stats ─────────────────────────────────────────────────────────
+const totalRevenue = orders.reduce((s, o) => s + (o.total_amount || 0), 0);
+const totalProfit = orders.reduce((s, o) => s + Number(o.total_profit || 0), 0);
+const totalDeliveryLoss = orders
+  .filter(o => o.order_status === 'Returned')
+  .reduce((s, o) => s + Number(o.actual_shipping_cost || 0), 0);
+const pendingCount = statusCounts['Pending'] || 0;
+const shippedCount = statusCounts['Shipped'] || 0;
+const deliveredCount = statusCounts['Delivered'] || 0;
 
   return (
     <>
@@ -214,23 +218,25 @@ const filteredOrders = useMemo(() => {
           </button>
         </div>
 
+
         {/* ── Summary Mini-Cards ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: '10px', marginBottom: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(7, 1fr)', gap: '10px', marginBottom: '16px' }}>
           {[
             { label: 'Total Revenue', value: fmtRs(totalRevenue), color: 'purple', icon: DollarSign },
             { label: 'Net Profit', value: fmtRs(totalProfit), color: 'green', icon: TrendingUp, show: isAdmin },
-            { label: 'Pending', value: pendingCount, color: 'yellow', icon: Clock },
-            { label: 'Shipped', value: shippedCount, color: 'purple', icon: Truck },
-            { label: 'Delivered', value: deliveredCount, color: 'green', icon: CheckCircle },
-            { label: 'Money Received', value: statusCounts.MoneyReceived || 0, color: 'green', icon: DollarSign },
-          ].filter(s => s.show !== false).map(s => (
+            { label: 'Delivery Loss', value: fmtRs(totalDeliveryLoss), color: 'red', icon: XCircle, show: isAdmin },
+              { label: 'Pending', value: pendingCount, color: 'yellow', icon: Clock },
+              { label: 'Shipped', value: shippedCount, color: 'purple', icon: Truck },
+              { label: 'Delivered', value: deliveredCount, color: 'green', icon: CheckCircle },
+              { label: 'Money Received', value: statusCounts.MoneyReceived || 0, color: 'green', icon: DollarSign },
+            ].filter(s => s.show !== false).map(s => (
             <div key={s.label} className={`stat-card ${s.color}`}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <p style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px', marginBottom: '5px' }}>{s.label}</p>
                   <p style={{ fontSize: isMobile ? '15px' : '18px', fontWeight: 800, color: 'var(--text-primary)' }}>{loading ? '—' : s.value}</p>
                 </div>
-                <s.icon size={16} color={s.color === 'purple' ? '#6366f1' : s.color === 'green' ? '#10b981' : '#f59e0b'} />
+                <s.icon size={16} color={s.color === 'purple' ? '#6366f1' : s.color === 'green' ? '#10b981' : s.color === 'red' ? '#ef4444' : '#f59e0b'} />
               </div>
             </div>
           ))}
@@ -499,6 +505,7 @@ const filteredOrders = useMemo(() => {
                     <th>Status</th>
                     <th>Tracking No</th>
                     <th style={{ textAlign: 'right' }}>COD</th>
+                    <th style={{ textAlign: 'right' }}>Net Settlement</th>
                     <th style={{ textAlign: 'center' }}>Money</th>
                     {isAdmin && <th style={{ textAlign: 'right' }}>Profit</th>}
                     <th style={{ textAlign: 'center' }}>Actions</th>
@@ -568,6 +575,20 @@ const filteredOrders = useMemo(() => {
                         <td style={{ textAlign: 'right', fontSize: '12px', fontWeight: 600, color: order.cod_amount > 0 ? '#f59e0b' : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
                           {order.cod_amount > 0 ? fmtRs(order.cod_amount) : '—'}
                         </td>
+                        <td style={{ textAlign: 'right', fontSize: '12px', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                          {order.order_status === 'Delivered' ? (
+                            <span style={{ color: '#10b981' }}>
+                              +{fmtRs((order.cod_amount || 0) - (order.actual_shipping_cost || 0))}
+                            </span>
+                          ) : order.order_status === 'Returned' ? (
+                            <span style={{ color: '#ef4444' }}>
+                              -{fmtRs(order.actual_shipping_cost || 0)}
+                            </span>
+                          ) : (
+                            <span style={{ color: 'var(--text-muted)' }}>—</span>
+                          )}
+                        </td>
+
                         <td style={{ textAlign: 'center' }}>
                           {order.order_status === 'Delivered' ? (
                             order.money_received ? (
