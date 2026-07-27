@@ -190,10 +190,12 @@ const filteredOrders = useMemo(() => {
   const fmtDate = (d) => new Date(d).toLocaleDateString('en-LK', { day: '2-digit', month: 'short', year: 'numeric' });
   const fmtTime = (d) => new Date(d).toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' });
 
-  // ── Summary stats ─────────────────────────────────────────────────────────
 // ── Summary stats ─────────────────────────────────────────────────────────
 const totalRevenue = orders.reduce((s, o) => s + (o.total_amount || 0), 0);
 const totalProfit = orders.reduce((s, o) => s + Number(o.total_profit || 0), 0);
+const totalReturnLoss = orders
+  .filter(o => o.order_status === 'Returned')
+  .reduce((s, o) => s + Number(o.total_profit || 0), 0);
 const totalDeliveryLoss = orders
   .filter(o => o.order_status === 'Returned')
   .reduce((s, o) => s + Number(o.actual_shipping_cost || 0), 0);
@@ -219,11 +221,13 @@ const deliveredCount = statusCounts['Delivered'] || 0;
         </div>
 
 
+    
         {/* ── Summary Mini-Cards ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(7, 1fr)', gap: '10px', marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(8, 1fr)', gap: '10px', marginBottom: '16px' }}>
           {[
             { label: 'Total Revenue', value: fmtRs(totalRevenue), color: 'purple', icon: DollarSign },
             { label: 'Net Profit', value: fmtRs(totalProfit), color: 'green', icon: TrendingUp, show: isAdmin },
+             { label: 'Return Loss', value: fmtRs(totalReturnLoss), color: 'red', icon: RotateCcw, show: isAdmin },
             { label: 'Delivery Loss', value: fmtRs(totalDeliveryLoss), color: 'red', icon: XCircle, show: isAdmin },
               { label: 'Pending', value: pendingCount, color: 'yellow', icon: Clock },
               { label: 'Shipped', value: shippedCount, color: 'purple', icon: Truck },
