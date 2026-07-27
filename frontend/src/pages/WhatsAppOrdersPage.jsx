@@ -197,11 +197,12 @@ const filteredOrders = useMemo(() => {
 const totalRevenue = orders.reduce((s, o) => s + (o.total_amount || 0), 0);
 const totalProfit = orders.reduce((s, o) => s + Number(o.total_profit || 0), 0);
 const totalReturnLoss = orders
-  .filter(o => o.order_status === 'Returned')
+  .filter(o => o.order_status === 'Returned' && o.money_received)
   .reduce((s, o) => s + Number(o.total_profit || 0), 0);
 const totalDeliveryLoss = orders
-  .filter(o => o.order_status === 'Returned')
+  .filter(o => o.order_status === 'Returned' && o.money_received)
   .reduce((s, o) => s + Number(o.actual_shipping_cost || 0), 0);
+const netProfit = totalProfit - totalReturnLoss - totalDeliveryLoss;
 const pendingCount = statusCounts['Pending'] || 0;
 const shippedCount = statusCounts['Shipped'] || 0;
 const deliveredCount = statusCounts['Delivered'] || 0;
@@ -226,15 +227,17 @@ const deliveredCount = statusCounts['Delivered'] || 0;
 
     
         {/* ── Summary Mini-Cards ── */}
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(8, 1fr)', gap: '10px', marginBottom: '16px' }}>
-          {[
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(10, 1fr)', gap: '10px', marginBottom: '16px' }}>
+         {[
             { label: 'Total Revenue', value: fmtRs(totalRevenue), color: 'purple', icon: DollarSign },
-            { label: 'Net Profit', value: fmtRs(totalProfit), color: 'green', icon: TrendingUp, show: isAdmin },
-             { label: 'Return Loss', value: fmtRs(totalReturnLoss), color: 'red', icon: RotateCcw, show: isAdmin },
+            { label: 'Profit', value: fmtRs(totalProfit), color: 'green', icon: TrendingUp, show: isAdmin },
+            { label: 'Return Loss', value: fmtRs(totalReturnLoss), color: 'red', icon: RotateCcw, show: isAdmin },
             { label: 'Delivery Loss', value: fmtRs(totalDeliveryLoss), color: 'red', icon: XCircle, show: isAdmin },
+            { label: 'Net Profit', value: fmtRs(netProfit), color: 'green', icon: TrendingUp, show: isAdmin },
               { label: 'Pending', value: pendingCount, color: 'yellow', icon: Clock },
               { label: 'Shipped', value: shippedCount, color: 'purple', icon: Truck },
               { label: 'Delivered', value: deliveredCount, color: 'green', icon: CheckCircle },
+              { label: 'Returned', value: statusCounts.Returned || 0, color: 'red', icon: RotateCcw },
               { label: 'Money Received', value: statusCounts.MoneyReceived || 0, color: 'green', icon: DollarSign },
             ].filter(s => s.show !== false).map(s => (
             <div key={s.label} className={`stat-card ${s.color}`}>
