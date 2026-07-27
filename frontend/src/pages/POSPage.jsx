@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import useIsMobile from '../hooks/useIsMobile';
 import { printReceipt } from '../services/printService';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const CATEGORIES = ['All', 'Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road', 'KeyTag', 'Toys', 'Ornaments'];
 
@@ -304,21 +305,27 @@ const parseCustomerDetails = (text) => {
           <p style={{ gridColumn: '1/-1', textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading products…</p>
         ) : products.length === 0 ? (
           <p style={{ gridColumn: '1/-1', textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No products found</p>
-        ) : products.map(p => {
-          const inCart = cart.find(i => i._id === p._id);
-          const outOfStock = p.stock_quantity <= 0;
-          return (
-            <button
-              key={p._id}
-              onClick={() => addToCart(p)}
-              disabled={outOfStock}
-              style={{
-                background: inCart ? 'rgba(99,102,241,0.12)' : 'var(--bg-card)',
-                border: `1px solid ${inCart ? 'var(--accent-primary)' : 'var(--border-light)'}`,
-                borderRadius: '12px', padding: '12px', cursor: outOfStock ? 'not-allowed' : 'pointer',
-                textAlign: 'left', transition: 'all 0.2s ease', opacity: outOfStock ? 0.45 : 1,
-              }}
-            >
+        ) : products.map((p, index) => {
+              const inCart = cart.find(i => i._id === p._id);
+              const outOfStock = p.stock_quantity <= 0;
+              return (
+                <motion.button
+                  key={p._id}
+                  onClick={() => addToCart(p)}
+                  disabled={outOfStock}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.02, duration: 0.2 }}
+                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: outOfStock ? 1 : 1.03 }}
+                  style={{
+                    background: inCart ? 'rgba(99,102,241,0.12)' : 'var(--bg-card)',
+                    border: `1px solid ${inCart ? 'var(--accent-primary)' : 'var(--border-light)'}`,
+                    borderRadius: '12px', padding: '12px', cursor: outOfStock ? 'not-allowed' : 'pointer',
+                    textAlign: 'left', opacity: outOfStock ? 0.45 : 1,
+                  }}
+                >
+                 
               <div style={{ fontSize: '10px', color: 'var(--accent-primary)', fontWeight: 600, marginBottom: '4px', fontFamily: 'monospace' }}>{p.sku_code}</div>
               <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px', lineHeight: 1.3 }}>{p.name}</div>
               <span className="badge badge-purple" style={{ fontSize: '9px', marginBottom: '6px', padding: '2px 6px' }}>{p.category}</span>
@@ -326,7 +333,7 @@ const parseCustomerDetails = (text) => {
               <div style={{ fontSize: '10px', color: outOfStock ? '#ef4444' : p.stock_quantity <= p.low_stock_threshold ? '#f59e0b' : 'var(--text-muted)' }}>
                 {outOfStock ? '❌ Out of stock' : `${p.stock_quantity} in stock`}
               </div>
-            </button>
+            </motion.button>
           );
         })}
       </div>
@@ -345,13 +352,50 @@ const parseCustomerDetails = (text) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <ShoppingCart size={18} color="var(--accent-primary)" />
           <span style={{ fontSize: '15px', fontWeight: 700 }}>Cart</span>
-          {cart.length > 0 && <span className="badge badge-purple" style={{ fontSize: '11px' }}>{cart.length}</span>}
+          <AnimatePresence>
+                {cart.length > 0 && (
+                  <motion.span
+                    key={cart.length}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+                    className="badge badge-purple"
+                    style={{ fontSize: '11px' }}
+                  >
+                    {cart.length}
+                  </motion.span>
+                )}
+              </AnimatePresence>
         </div>
-        <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
-          <button onClick={() => { setSaleSource('shop'); setPaymentMethod('Cash'); }} style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700, border: 'none', cursor: 'pointer', background: saleSource === 'shop' ? '#10b981' : 'transparent', color: saleSource === 'shop' ? 'white' : 'var(--text-muted)' }}>Shop</button>
-          <button onClick={() => { setSaleSource('online'); setPaymentMethod('Online'); }} style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700, border: 'none', cursor: 'pointer', background: saleSource === 'online' ? '#3b82f6' : 'transparent', color: saleSource === 'online' ? 'white' : 'var(--text-muted)' }}>Web</button>
-          <button onClick={() => { setSaleSource('whatsapp'); setPaymentMethod('COD'); }} style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700, border: 'none', cursor: 'pointer', background: saleSource === 'whatsapp' ? '#22c55e' : 'transparent', color: saleSource === 'whatsapp' ? 'white' : 'var(--text-muted)' }}>WhatsApp</button>
-        </div>
+        <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-light)', position: 'relative' }}>
+            {['shop', 'online', 'whatsapp'].map(src => (
+              <button
+                key={src}
+                onClick={() => {
+                  setSaleSource(src);
+                  setPaymentMethod(src === 'whatsapp' ? 'COD' : src === 'online' ? 'Online' : 'Cash');
+                }}
+                style={{
+                  position: 'relative', padding: '4px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700,
+                  border: 'none', cursor: 'pointer', background: 'transparent',
+                  color: saleSource === src ? 'white' : 'var(--text-muted)', zIndex: 1,
+                }}
+              >
+                {saleSource === src && (
+                  <motion.div
+                    layoutId="sourceIndicator"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    style={{
+                      position: 'absolute', inset: 0, borderRadius: '6px', zIndex: -1,
+                      background: src === 'shop' ? '#10b981' : src === 'online' ? '#3b82f6' : '#22c55e',
+                    }}
+                  />
+                )}
+                {src === 'shop' ? 'Shop' : src === 'online' ? 'Web' : 'WhatsApp'}
+              </button>
+            ))}
+          </div>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '10px' }}>
@@ -361,32 +405,44 @@ const parseCustomerDetails = (text) => {
             <p style={{ fontSize: '13px' }}>Cart is empty</p>
             {isMobile && <button onClick={() => setMobileTab('products')} className="btn-primary" style={{ marginTop: '12px', padding: '8px 16px', fontSize: '12px' }}>Browse Products</button>}
           </div>
-        ) : cart.map(item => (
-          <div key={item._id} style={{ background: 'var(--bg-secondary)', borderRadius: '10px', padding: '10px', marginBottom: '8px', border: '1px solid var(--border)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '12px', fontWeight: 600 }}>{item.name}</div>
-              </div>
-              <button onClick={() => removeFromCart(item._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}>
-                <Trash2 size={13} />
-              </button>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <button onClick={() => updateQty(item._id, -1)} className="btn-secondary" style={{ padding: '2px 8px' }}>-</button>
-                <span style={{ fontSize: '13px', fontWeight: 700, minWidth: '20px', textAlign: 'center' }}>{item.qty}</span>
-                <button onClick={() => updateQty(item._id, 1)} className="btn-secondary" style={{ padding: '2px 8px' }}>+</button>
-              </div>
-              <input
-                type="number" min="0" value={item.itemDiscount}
-                onChange={e => updateDiscount(item._id, e.target.value)}
-                placeholder="Disc."
-                style={{ width: '55px', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '6px', padding: '2px 5px', fontSize: '11px', color: 'var(--text-primary)' }}
-              />
-              <div style={{ fontSize: '12px', fontWeight: 700 }}>{fmtRs((item.selling_price - item.itemDiscount) * item.qty)}</div>
-            </div>
-          </div>
-        ))}
+        ) : (
+          <AnimatePresence>
+            {cart.map(item => (
+              <motion.div
+                key={item._id}
+                layout
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20, height: 0 }}
+                transition={{ duration: 0.2 }}
+                style={{ background: 'var(--bg-secondary)', borderRadius: '10px', padding: '10px', marginBottom: '8px', border: '1px solid var(--border)' }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '12px', fontWeight: 600 }}>{item.name}</div>
+                  </div>
+                  <button onClick={() => removeFromCart(item._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}>
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <button onClick={() => updateQty(item._id, -1)} className="btn-secondary" style={{ padding: '2px 8px' }}>-</button>
+                    <span style={{ fontSize: '13px', fontWeight: 700, minWidth: '20px', textAlign: 'center' }}>{item.qty}</span>
+                    <button onClick={() => updateQty(item._id, 1)} className="btn-secondary" style={{ padding: '2px 8px' }}>+</button>
+                  </div>
+                  <input
+                    type="number" min="0" value={item.itemDiscount}
+                    onChange={e => updateDiscount(item._id, e.target.value)}
+                    placeholder="Disc."
+                    style={{ width: '55px', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '6px', padding: '2px 5px', fontSize: '11px', color: 'var(--text-primary)' }}
+                  />
+                  <div style={{ fontSize: '12px', fontWeight: 700 }}>{fmtRs((item.selling_price - item.itemDiscount) * item.qty)}</div>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        )}
       </div>
 
       <div style={{ padding: '14px', borderTop: '1px solid var(--border-light)' }}>
@@ -412,56 +468,66 @@ const parseCustomerDetails = (text) => {
           ))}
         </div>
 
-        {saleSource === 'whatsapp' && (
-          <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', padding: '10px', borderRadius: '10px', marginBottom: '10px' }}>
-            <h4 style={{ fontSize: '11px', color: '#22c55e', textTransform: 'uppercase', marginBottom: '8px' }}>WhatsApp Order Details</h4>
-            <div style={{ marginBottom: '10px' }}>
-                <label style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Customer Details (Name, Phone, Address)
-                </label>
-                <textarea
-                        placeholder={"Paste customer details here (any format)"}
-                        className="input-field"
-                        rows={5}
-                        style={{ fontSize: '12px', width: '100%', resize: 'vertical', fontFamily: 'inherit' }}
-                        value={whatsappCustomerDetails}
-                        onChange={e => {
-                          const text = e.target.value;
-                          setWhatsappCustomerDetails(text);
+        <AnimatePresence>
+  {saleSource === 'whatsapp' && (
+    <motion.div
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+      transition={{ duration: 0.25 }}
+      style={{ overflow: 'hidden' }}
+    >
+      <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', padding: '10px', borderRadius: '10px', marginBottom: '10px' }}>
+        <h4 style={{ fontSize: '11px', color: '#22c55e', textTransform: 'uppercase', marginBottom: '8px' }}>WhatsApp Order Details</h4>
+        <div style={{ marginBottom: '10px' }}>
+            <label style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Customer Details (Name, Phone, Address)
+            </label>
+            <textarea
+                    placeholder={"Paste customer details here (any format)"}
+                    className="input-field"
+                    rows={5}
+                    style={{ fontSize: '12px', width: '100%', resize: 'vertical', fontFamily: 'inherit' }}
+                    value={whatsappCustomerDetails}
+                    onChange={e => {
+                      const text = e.target.value;
+                      setWhatsappCustomerDetails(text);
 
-                          const { name, phone } = parseCustomerDetails(text);
-                          if (name) setCustomerName(name);
-                          if (phone) setCustomerPhone(phone);
-                        }}
-                  /> 
-              </div>
-            <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
-              <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Delivery Fee Charged (Rs)</label>
-                <input type="number" min="0" placeholder="0.00" className="input-field" style={{ fontSize: '11px', width: '100%' }} value={whatsappShippingCharged} onChange={e => setWhatsappShippingCharged(e.target.value)} />
-              </div>
-              <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Actual Courier Cost (Rs)</label>
-                <input type="number" min="0" placeholder="0.00" className="input-field" style={{ fontSize: '11px', width: '100%' }} value={whatsappActualShipping} onChange={e => setWhatsappActualShipping(e.target.value)} />
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
-              <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Paid Amount (Rs)</label>
-                <input type="number" min="0" placeholder="0.00" className="input-field" style={{ fontSize: '11px', width: '100%' }} value={whatsappPaidAmount} onChange={e => setWhatsappPaidAmount(e.target.value)} />
-              </div>
-              <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tracking Number</label>
-                <input type="text" placeholder="e.g. DPX-12345" className="input-field" style={{ fontSize: '11px', width: '100%' }} value={whatsappTracking} onChange={e => setWhatsappTracking(e.target.value)} />
-              </div>
-            </div>
-            
-            <div style={{ marginTop: '8px', padding: '6px 8px', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-               <span style={{ fontSize: '10px', fontWeight: 700, color: '#f59e0b' }}>COD TO COLLECT:</span>
-               <span style={{ fontSize: '14px', fontWeight: 800, color: '#f59e0b' }}>{fmtRs(computedCodAmount)}</span>
-            </div>
+                      const { name, phone } = parseCustomerDetails(text);
+                      if (name) setCustomerName(name);
+                      if (phone) setCustomerPhone(phone);
+                    }}
+              /> 
           </div>
-        )}
+        <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
+          <div style={{ flex: 1 }}>
+            <label style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Delivery Fee Charged (Rs)</label>
+            <input type="number" min="0" placeholder="0.00" className="input-field" style={{ fontSize: '11px', width: '100%' }} value={whatsappShippingCharged} onChange={e => setWhatsappShippingCharged(e.target.value)} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Actual Courier Cost (Rs)</label>
+            <input type="number" min="0" placeholder="0.00" className="input-field" style={{ fontSize: '11px', width: '100%' }} value={whatsappActualShipping} onChange={e => setWhatsappActualShipping(e.target.value)} />
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
+          <div style={{ flex: 1 }}>
+            <label style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Paid Amount (Rs)</label>
+            <input type="number" min="0" placeholder="0.00" className="input-field" style={{ fontSize: '11px', width: '100%' }} value={whatsappPaidAmount} onChange={e => setWhatsappPaidAmount(e.target.value)} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label style={{ display: 'block', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tracking Number</label>
+            <input type="text" placeholder="e.g. DPX-12345" className="input-field" style={{ fontSize: '11px', width: '100%' }} value={whatsappTracking} onChange={e => setWhatsappTracking(e.target.value)} />
+          </div>
+        </div>
+        
+        <div style={{ marginTop: '8px', padding: '6px 8px', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+           <span style={{ fontSize: '10px', fontWeight: 700, color: '#f59e0b' }}>COD TO COLLECT:</span>
+           <span style={{ fontSize: '14px', fontWeight: 800, color: '#f59e0b' }}>{fmtRs(computedCodAmount)}</span>
+        </div>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
 
         {/* KOKO Charge Section */}
         {paymentMethod === 'KOKO' && (
@@ -577,9 +643,25 @@ const parseCustomerDetails = (text) => {
 
       {/* SUCCESS MODAL */}
       {successSale && createPortal(
-        <div className="modal-overlay">
-          <div className="modal-box" style={{ maxWidth: '420px', textAlign: 'center' }}>
-            <CheckCircle size={32} color="#10b981" style={{ margin: '0 auto 16px' }} />
+          <motion.div
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <motion.div
+              className="modal-box"
+              initial={{ opacity: 0, scale: 0.85, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+              style={{ maxWidth: '420px', textAlign: 'center' }}
+            >
+              <motion.div
+                initial={{ scale: 0, rotate: -90 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ delay: 0.15, type: 'spring', stiffness: 400 }}
+              >
+                <CheckCircle size={32} color="#10b981" style={{ margin: '0 auto 16px' }} />
+              </motion.div>
             <h2 style={{ fontSize: '20px', fontWeight: 800 }}>Sale Saved! ✅</h2>
             <div style={{ margin: '20px 0', textAlign: 'left' }}>
               <div style={{ background: 'var(--bg-secondary)', padding: '14px', borderRadius: '12px' }}>
@@ -629,11 +711,12 @@ const parseCustomerDetails = (text) => {
                 <Printer size={16} /> Print
               </button>
               <button className="btn-secondary" onClick={() => navigate('/sales')}>History</button>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
+              </div>
+            </motion.div>
+      </motion.div>,
+      document.body
+    )}
+      
       
     </>
   );
