@@ -145,20 +145,31 @@ const filteredOrders = useMemo(() => {
 
   // ── Status update ─────────────────────────────────────────────────────────
   const updateStatus = async (id, newStatus, trackingNum = undefined, moneyReceived = undefined) => {
-    try {
-      const payload = { order_status: newStatus };
-      if (trackingNum !== undefined) payload.tracking_number = trackingNum;
-      if (moneyReceived !== undefined) payload.money_received = moneyReceived;
+  // Instantly update local state — no full page refresh/flicker
+  setOrders(prev => prev.map(o => {
+    if (o._id !== id) return o;
+    const updated = { ...o, order_status: newStatus };
+    if (trackingNum !== undefined) updated.tracking_number = trackingNum;
+    if (moneyReceived !== undefined) updated.money_received = moneyReceived;
+    return updated;
+  }));
 
-      await api.put(`/sales/${id}/status`, payload);
-      toast.success(`Order → ${newStatus}`);
-      fetchOnlineOrders();
-      if (trackingModal.isOpen) setTrackingModal({ isOpen: false, orderId: null });
-      if (deliveryModal.isOpen) setDeliveryModal({ isOpen: false, orderId: null, moneyReceived: false });
-    } catch {
-      toast.error('Failed to update status');
-    }
-  };
+  if (trackingModal.isOpen) setTrackingModal({ isOpen: false, orderId: null });
+  if (deliveryModal.isOpen) setDeliveryModal({ isOpen: false, orderId: null, moneyReceived: false });
+
+  try {
+    const payload = { order_status: newStatus };
+    if (trackingNum !== undefined) payload.tracking_number = trackingNum;
+    if (moneyReceived !== undefined) payload.money_received = moneyReceived;
+
+    await api.put(`/sales/${id}/status`, payload);
+    toast.success(`Order → ${newStatus}`);
+  } catch {
+    toast.error('Failed to update status');
+    // Revert to true server state only if the request actually failed
+    fetchOnlineOrders();
+  }
+};
 
   const handleStatusChange = (order, newStatus) => {
     if (newStatus === 'Shipped') {
