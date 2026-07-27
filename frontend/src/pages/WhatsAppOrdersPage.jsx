@@ -643,10 +643,10 @@ const deliveredCount = statusCounts['Delivered'] || 0;
                         </td>
 
                         {isAdmin && (
-                          <td style={{ textAlign: 'right', fontSize: '12px', fontWeight: 700, color: '#10b981', whiteSpace: 'nowrap' }}>
-                            {fmtRs(order.total_profit)}
-                          </td>
-                        )}
+                            <td style={{ textAlign: 'right', fontSize: '12px', fontWeight: 700, color: order.order_status === 'Returned' ? '#ef4444' : '#10b981', whiteSpace: 'nowrap' }}>
+                              {fmtRs(order.total_profit)}
+                            </td>
+                          )}
                         <td>
                           <div style={{ display: 'flex', gap: '6px', alignItems: 'center', justifyContent: 'center' }}>
                             <select
@@ -912,11 +912,16 @@ const deliveredCount = statusCounts['Delivered'] || 0;
               )}
 
               {isAdmin && detailModal.total_profit !== undefined && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', background: 'rgba(16,185,129,0.08)', padding: '8px 10px', borderRadius: '8px' }}>
-                  <span style={{ fontSize: '12px', color: '#10b981', fontWeight: 700 }}>Final Net Profit</span>
-                  <span style={{ fontSize: '13px', fontWeight: 800, color: '#10b981' }}>{fmtRs(detailModal.total_profit)}</span>
-                </div>
-              )}
+                  <div style={{
+                    display: 'flex', justifyContent: 'space-between', marginTop: '10px',
+                    background: detailModal.order_status === 'Returned' ? 'rgba(239,68,68,0.08)' : 'rgba(16,185,129,0.08)',
+                    padding: '8px 10px', borderRadius: '8px'
+                  }}>
+                    <span style={{ fontSize: '12px', color: detailModal.order_status === 'Returned' ? '#ef4444' : '#10b981', fontWeight: 700 }}>Final Net Profit</span>
+                    <span style={{ fontSize: '13px', fontWeight: 800, color: detailModal.order_status === 'Returned' ? '#ef4444' : '#10b981' }}>{fmtRs(detailModal.total_profit)}</span>
+                  </div>
+                )}
+                            
             </div>
           </div>
         </div>
