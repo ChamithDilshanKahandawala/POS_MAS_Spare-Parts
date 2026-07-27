@@ -309,13 +309,33 @@ const updateOrderStatus = async (req, res) => {
 // GET /api/sales/analytics/summary  (daily | weekly | monthly | yearly)
 const getAnalytics = async (req, res) => {
   try {
-    const { period, sale_source } = req.query;
+    const { period, sale_source, from, to } = req.query;
     const now = new Date();
     let startDate;
+    let endDate;
     let groupFormat;
     let groupLabel;
 
-    if (period === 'weekly') {
+    if (period === 'custom' && (from || to)) {
+      // Custom date range selected by the user
+      startDate = from ? new Date(from) : new Date('2020-01-01');
+      if (to) {
+        endDate = new Date(to);
+        endDate.setHours(23, 59, 59, 999);
+      }
+      // Choose grouping granularity based on range length
+      const daySpan = endDate ? (endDate - startDate) / (1000 * 60 * 60 * 24) : 9999;
+      if (daySpan <= 2) {
+        groupFormat = '%H:00';
+        groupLabel = 'Hour';
+      } else if (daySpan <= 62) {
+        groupFormat = '%Y-%m-%d';
+        groupLabel = 'Day';
+      } else {
+        groupFormat = '%Y-%m';
+        groupLabel = 'Month';
+      }
+    } else if (period === 'weekly') {
       startDate = new Date(now);
       startDate.setDate(now.getDate() - 7);
       groupFormat = '%Y-%m-%d';
@@ -324,6 +344,7 @@ const getAnalytics = async (req, res) => {
       // Fiscal month runs from the 11th of one month to the 10th of the next month.
       const fiscalRange = getFiscalMonthRange(now);
       startDate = fiscalRange.start;
+      endDate = fiscalRange.end;
       groupFormat = '%Y-%m-%d';
       groupLabel = 'Day';
     } else if (period === 'yearly') {
@@ -345,13 +366,14 @@ const getAnalytics = async (req, res) => {
       createdAt: { $gte: startDate },
       order_status: { $nin: ['Cancelled', 'Returned'] }
     };
-    if (period === 'monthly') {
-      matchStage.createdAt.$lte = getFiscalMonthRange(now).end;
+    if (endDate) {
+      matchStage.createdAt.$lte = endDate;
     }
     if (sale_source && sale_source !== 'all') {
       matchStage.sale_source = sale_source;
     }
 
+    
     // Summary totals
     const result = await Sale.aggregate([
       { $match: matchStage },

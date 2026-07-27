@@ -5,129 +5,30 @@ const Product = require('./models/Product');
 const inventoryData =
 [
   {
-    "sku_code": "BP08",
-    "name": "DIO NICKEL SILANCER GUARD",
-    "buying_price": 1100,
-    "selling_price": 1830,
-    "stock_quantity": 3,
-    "sub_category": "DIO",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BP09",
-    "name": "BAJAJ NICKEL SILANCER GUARD",
-    "buying_price": 1050,
-    "selling_price": 1830,
-    "stock_quantity": 2,
-    "sub_category": "BAJAJ",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BP10",
-    "name": "NTORQE NICKEL SILANCER GUARD",
-    "buying_price": 1200,
-    "selling_price": 1830,
-    "stock_quantity": 2,
-    "sub_category": "NTORQE",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BP11",
-    "name": "FZ NICKEL SILANCER GUARD",
-    "buying_price": 1000,
-    "selling_price": 1830,
-    "stock_quantity": 1,
-    "sub_category": "FZ",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BP12",
-    "name": "ZR NICKEL SILANCER GUARD",
-    "buying_price": 1050,
-    "selling_price": 1830,
-    "stock_quantity": 2,
-    "sub_category": "ZR",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BP13",
-    "name": "CT100 NICKEL SILANCER GUARD",
-    "buying_price": 1050,
-    "selling_price": 1830,
-    "stock_quantity": 7,
-    "sub_category": "CT100",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BH09",
-    "name": "ACTIVE UP2",
-    "buying_price": 3350,
-    "selling_price": 4350,
-    "stock_quantity": 2,
-    "sub_category": "HELMAT",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BH10",
-    "name": "CHALLENGER DOUBLE VISOR HELMET BLACK MAT",
-    "buying_price": 4450,
-    "selling_price": 5500,
-    "stock_quantity": 1,
-    "sub_category": "HELMAT",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BH11",
-    "name": "SSG HELMET",
-    "buying_price": 2650,
-    "selling_price": 3700,
-    "stock_quantity": 1,
-    "sub_category": "HELMAT",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BH12",
-    "name": "ACHIEVE HELMET",
-    "buying_price": 2250,
-    "selling_price": 3300,
-    "stock_quantity": 1,
-    "sub_category": "HELMAT",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BH13",
-    "name": "LS2 STICKER LADIES HELMET",
-    "buying_price": 1650,
-    "selling_price": 2700,
-    "stock_quantity": 1,
-    "sub_category": "HELMAT",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BH14",
-    "name": "LS2 LADIES HELMET",
-    "buying_price": 1550,
-    "selling_price": 2500,
-    "stock_quantity": 1,
-    "sub_category": "HELMAT",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BP136",
-    "name": "NS200 BLACK RADIATOR GUARD",
-    "buying_price": 1350,
-    "selling_price": 2000,
-    "stock_quantity": 1,
-    "sub_category": "NS",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BP137",
-    "name": "NEW DIO NICKEL SILANCER GUARD",
-    "buying_price": 1300,
-    "selling_price": 2000,
+    "sku_code": "BP22",
+    "name": "RPM METER",
+    "buying_price": 1600,
+    "selling_price": 2200,
     "stock_quantity": 5,
-    "sub_category": "DIO",
+    "sub_category": "METER",
+    "category": "Bike"
+  },
+  {
+    "sku_code": "BP23",
+    "name": "ANALOG SPEED METER BLACK",
+    "buying_price": 1550,
+    "selling_price": 2200,
+    "stock_quantity": 5,
+    "sub_category": "METER",
+    "category": "Bike"
+  },
+  {
+    "sku_code": "BP24",
+    "name": "ANALOG SPEED METER NICKEL",
+    "buying_price": 1600,
+    "selling_price": 2500,
+    "stock_quantity": 4,
+    "sub_category": "METER",
     "category": "Bike"
   }
 ];

@@ -15,6 +15,7 @@ const PERIODS = [
   { label: 'Month', value: 'monthly' },
   { label: 'Year', value: 'yearly' },
   { label: 'All', value: 'alltime' },
+  { label: 'Custom', value: 'custom' },
 ];
 
 const SOURCES = [
@@ -51,21 +52,29 @@ export default function AnalyticsPage() {
   const [saleSource, setSaleSource] = useState('all');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [customFrom, setCustomFrom] = useState('');
+  const [customTo, setCustomTo] = useState('');
+
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await getAnalytics(period, saleSource);
-        setData(res.data);
-      } catch {
-        toast.error('Failed to load analytics');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [period, saleSource]);
+  // If "custom" is selected but no dates picked yet, don't fetch
+  if (period === 'custom' && !customFrom && !customTo) return;
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = period === 'custom'
+        ? await getAnalytics(period, saleSource, customFrom, customTo)
+        : await getAnalytics(period, saleSource);
+      setData(res.data);
+    } catch {
+      toast.error('Failed to load analytics');
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchData();
+}, [period, saleSource, customFrom, customTo]);
 
   const fmt = (v) => `Rs. ${Number(v || 0).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   const fmtShort = (v) => {
@@ -117,18 +126,41 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Period */}
-        <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '10px', border: '1px solid var(--border-light)', flexWrap: 'wrap' }}>
-          {PERIODS.map(p => (
-            <button key={p.value} onClick={() => setPeriod(p.value)}
-              style={{
-                padding: isMobile ? '6px 10px' : '7px 14px',
-                borderRadius: '8px', fontSize: isMobile ? '11px' : '12px', fontWeight: 600,
-                cursor: 'pointer', border: 'none', transition: 'all 0.2s', whiteSpace: 'nowrap',
-                background: period === p.value ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'transparent',
-                color: period === p.value ? 'white' : 'var(--text-muted)',
-              }}>{p.label}</button>
-          ))}
-        </div>
+<div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '10px', border: '1px solid var(--border-light)', flexWrap: 'wrap' }}>
+  {PERIODS.map(p => (
+    <button key={p.value} onClick={() => setPeriod(p.value)}
+      style={{
+        padding: isMobile ? '6px 10px' : '7px 14px',
+        borderRadius: '8px', fontSize: isMobile ? '11px' : '12px', fontWeight: 600,
+        cursor: 'pointer', border: 'none', transition: 'all 0.2s', whiteSpace: 'nowrap',
+        background: period === p.value ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'transparent',
+        color: period === p.value ? 'white' : 'var(--text-muted)',
+      }}>{p.label}</button>
+  ))}
+</div>
+
+        {/* Custom Date Range Picker — only shown when "Custom" is selected */}
+        {period === 'custom' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+            <input
+              type="date"
+              className="input-field"
+              value={customFrom}
+              onChange={e => setCustomFrom(e.target.value)}
+              style={{ fontSize: '12px', padding: '7px 10px', width: 'auto' }}
+              max={customTo || undefined}
+            />
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>to</span>
+            <input
+              type="date"
+              className="input-field"
+              value={customTo}
+              onChange={e => setCustomTo(e.target.value)}
+              style={{ fontSize: '12px', padding: '7px 10px', width: 'auto' }}
+              min={customFrom || undefined}
+            />
+          </div>
+        )}
       </div>
 
       {/* Stat Cards — 2 cols on mobile */}
