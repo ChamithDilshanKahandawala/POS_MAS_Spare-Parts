@@ -1,6 +1,16 @@
+const mongoose = require('mongoose');
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
 const { getFiscalMonthRange } = require('../utils/fiscalDate');
+
+// Lets a handler bail out mid-transaction with the same status code the
+// old code used to send directly via res.status(...).json(...).
+class RequestError extends Error {
+  constructor(statusCode, message) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
 
 
 
@@ -31,120 +41,132 @@ const formatReceiptData = (sale) => {
 
 // POST /api/sales  - Create a new sale
 const createSale = async (req, res) => {
+  const session = await mongoose.startSession();
+  let createdSale;
+  let stockUpdates;
+
   try {
-    const { items, total_discount, payment_method, customer_name, customer_phone,customer_details, notes, sale_source, shipping_address, shipping_cost_charged, actual_shipping_cost, tracking_number, cod_amount, paid_amount, koko_charge, koko_percentage } = req.body;
+    await session.withTransaction(async () => {
+      const { items, total_discount, payment_method, customer_name, customer_phone,customer_details, notes, sale_source, shipping_address, shipping_cost_charged, actual_shipping_cost, tracking_number, cod_amount, paid_amount, koko_charge, koko_percentage } = req.body;
 
-    if (!items || items.length === 0) {
-      return res.status(400).json({ message: 'No items in cart' });
-    }
-
-    if (tracking_number && tracking_number.trim() !== '') {
-      const existingSale = await Sale.findOne({ tracking_number: tracking_number.trim() });
-      if (existingSale) {
-        return res.status(400).json({ message: 'Tracking number already exists for another order' });
-      }
-    }
-
-    let subtotal = 0;
-    let total_cost = 0;
-    const saleItems = [];
-    const stockUpdates = []; // collect real-time stock changes
-
-    for (const item of items) {
-      const product = await Product.findById(item.product_id);
-      if (!product) return res.status(404).json({ message: `Product not found: ${item.product_id}` });
-      if (product.stock_quantity < item.quantity) {
-        return res.status(400).json({ message: `Insufficient stock for: ${product.name}` });
+      if (!items || items.length === 0) {
+        throw new RequestError(400, 'No items in cart');
       }
 
-      const lineDiscount = item.discount || 0;
-      const effectivePrice = product.selling_price - lineDiscount;
-      const line_total = effectivePrice * item.quantity;
-      const line_profit = (effectivePrice - product.buying_price) * item.quantity;
+      if (tracking_number && tracking_number.trim() !== '') {
+        const existingSale = await Sale.findOne({ tracking_number: tracking_number.trim() }).session(session);
+        if (existingSale) {
+          throw new RequestError(400, 'Tracking number already exists for another order');
+        }
+      }
 
-      subtotal += product.selling_price * item.quantity;
-      total_cost += product.buying_price * item.quantity;
+      let subtotal = 0;
+      let total_cost = 0;
+      const saleItems = [];
+      stockUpdates = []; // collect real-time stock changes
 
-      saleItems.push({
-        product: product._id,
-        product_name: product.name,
-        sku_code: product.sku_code,
-        quantity: item.quantity,
-        buying_price: product.buying_price,
-        selling_price: product.selling_price,
-        discount: lineDiscount,
-        line_total,
-        line_profit,
-      });
+      for (const item of items) {
+        const product = await Product.findById(item.product_id).session(session);
+        if (!product) throw new RequestError(404, `Product not found: ${item.product_id}`);
 
-      await Product.findByIdAndUpdate(product._id, {
-        $inc: { stock_quantity: -item.quantity },
-      });
+        // Atomic check-and-decrement: only succeeds if enough stock remains at
+        // the moment of the write, so two concurrent sales can never both pass.
+        const updatedProduct = await Product.findOneAndUpdate(
+          { _id: item.product_id, stock_quantity: { $gte: item.quantity } },
+          { $inc: { stock_quantity: -item.quantity } },
+          { new: true, session }
+        );
+        if (!updatedProduct) throw new RequestError(400, `Insufficient stock for: ${product.name}`);
 
-      // Track new stock level for real-time broadcast
-      stockUpdates.push({
-        productId: product._id.toString(),
-        newQuantity: product.stock_quantity - item.quantity,
-      });
-    }
+        const lineDiscount = item.discount || 0;
+        const effectivePrice = product.selling_price - lineDiscount;
+        const line_total = effectivePrice * item.quantity;
+        const line_profit = (effectivePrice - product.buying_price) * item.quantity;
 
-    const itemsTotalAfterItemDiscounts = saleItems.reduce((acc, i) => acc + i.line_total, 0);
+        subtotal += product.selling_price * item.quantity;
+        total_cost += product.buying_price * item.quantity;
 
-    const billDiscount = total_discount || 0;
-    const shipping_charged = Number(shipping_cost_charged) || 0;
-    const actual_shipping = Number(actual_shipping_cost) || 0;
-    
-    const finalTotal = itemsTotalAfterItemDiscounts - billDiscount;
-    const finalProfit = saleItems.reduce((acc, i) => acc + i.line_profit, 0) - billDiscount + shipping_charged - actual_shipping;
+        saleItems.push({
+          product: product._id,
+          product_name: product.name,
+          sku_code: product.sku_code,
+          quantity: item.quantity,
+          buying_price: product.buying_price,
+          selling_price: product.selling_price,
+          discount: lineDiscount,
+          line_total,
+          line_profit,
+        });
 
-    const sale = await Sale.create({
-      items: saleItems,
-      subtotal,
-      total_discount: billDiscount,
-      shipping_cost_charged: shipping_charged,
-      actual_shipping_cost: actual_shipping,
-      cod_amount: Number(cod_amount) || 0,
-      paid_amount: Number(paid_amount) || 0,
-      koko_charge: Number(koko_charge) || 0,
-      koko_percentage: Number(koko_percentage) || 0,
-      total_amount: finalTotal,
-      total_cost,
-      total_profit: finalProfit,
-      payment_method: payment_method || 'Cash',
-      sale_source: sale_source || 'shop',
-      customer_name: customer_name || (req.user.role === 'customer' ? req.user.name : 'Walk-in Customer'),
-      customer_phone: customer_phone || '',
-      customer_details: customer_details || '',
-      customer: req.user.role === 'customer' ? req.user._id : undefined,
-      order_status: (sale_source === 'online' || sale_source === 'whatsapp') ? (tracking_number ? 'Shipped' : 'Pending') : 'Delivered',
-      shipping_address: shipping_address || '',
-      cashier: req.user.role !== 'customer' ? req.user._id : undefined,
-      cashier_name: req.user.role !== 'customer' ? req.user.name : undefined,
-      shop: req.user.shop || 'Main Branch',
-      notes: notes || '',
-      tracking_number: tracking_number || '',
+        // Track new stock level for real-time broadcast
+        stockUpdates.push({
+          productId: updatedProduct._id.toString(),
+          newQuantity: updatedProduct.stock_quantity,
+        });
+      }
+
+      const itemsTotalAfterItemDiscounts = saleItems.reduce((acc, i) => acc + i.line_total, 0);
+
+      const billDiscount = total_discount || 0;
+      const shipping_charged = Number(shipping_cost_charged) || 0;
+      const actual_shipping = Number(actual_shipping_cost) || 0;
+
+      const finalTotal = itemsTotalAfterItemDiscounts - billDiscount;
+      const finalProfit = saleItems.reduce((acc, i) => acc + i.line_profit, 0) - billDiscount + shipping_charged - actual_shipping;
+
+      const [sale] = await Sale.create([{
+        items: saleItems,
+        subtotal,
+        total_discount: billDiscount,
+        shipping_cost_charged: shipping_charged,
+        actual_shipping_cost: actual_shipping,
+        cod_amount: Number(cod_amount) || 0,
+        paid_amount: Number(paid_amount) || 0,
+        koko_charge: Number(koko_charge) || 0,
+        koko_percentage: Number(koko_percentage) || 0,
+        total_amount: finalTotal,
+        total_cost,
+        total_profit: finalProfit,
+        payment_method: payment_method || 'Cash',
+        sale_source: sale_source || 'shop',
+        customer_name: customer_name || (req.user.role === 'customer' ? req.user.name : 'Walk-in Customer'),
+        customer_phone: customer_phone || '',
+        customer_details: customer_details || '',
+        customer: req.user.role === 'customer' ? req.user._id : undefined,
+        order_status: (sale_source === 'online' || sale_source === 'whatsapp') ? (tracking_number ? 'Shipped' : 'Pending') : 'Delivered',
+        shipping_address: shipping_address || '',
+        cashier: req.user.role !== 'customer' ? req.user._id : undefined,
+        cashier_name: req.user.role !== 'customer' ? req.user.name : undefined,
+        shop: req.user.shop || 'Main Branch',
+        notes: notes || '',
+        tracking_number: tracking_number || '',
+      }], { session });
+
+      if (req.user.role === 'customer') {
+        const User = require('../models/User');
+        await User.findByIdAndUpdate(req.user._id, { $push: { orderHistory: sale._id } }, { session });
+      }
+
+      createdSale = sale;
     });
 
-    if (req.user.role === 'customer') {
-      const User = require('../models/User');
-      await User.findByIdAndUpdate(req.user._id, { $push: { orderHistory: sale._id } });
-    }
-
-    // Emit Socket.io events
+    // Emit Socket.io events only after the transaction has committed
     const io = req.app.get('io');
     if (io) {
       // Always broadcast stock changes so storefront updates in real-time
       io.emit('stock_updated', stockUpdates);
 
       // Notify POS dashboard of new online orders
-      if (sale_source === 'online') {
-        io.emit('new_web_order', sale);
+      if (createdSale.sale_source === 'online') {
+        io.emit('new_web_order', createdSale);
       }
     }
 
-    res.status(201).json(formatReceiptData(sale));
+    res.status(201).json(formatReceiptData(createdSale));
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(err.statusCode || 500).json({ message: err.message });
+  } finally {
+    session.endSession();
   }
 };
 
@@ -258,51 +280,63 @@ const getSaleReceipt = async (req, res) => {
 
 // PUT /api/sales/:id/status
 const updateOrderStatus = async (req, res) => {
+  const session = await mongoose.startSession();
+  let sale;
+  const stockUpdates = [];
+
   try {
-    const { order_status, tracking_number, money_received } = req.body;
-    if (!order_status) return res.status(400).json({ message: 'Missing status' });
+    await session.withTransaction(async () => {
+      const { order_status, tracking_number, money_received } = req.body;
+      if (!order_status) throw new RequestError(400, 'Missing status');
 
-    if (tracking_number && tracking_number.trim() !== '') {
-      const existingSale = await Sale.findOne({ tracking_number: tracking_number.trim(), _id: { $ne: req.params.id } });
-      if (existingSale) {
-        return res.status(400).json({ message: 'Tracking number already exists for another order' });
+      if (tracking_number && tracking_number.trim() !== '') {
+        const existingSale = await Sale.findOne({ tracking_number: tracking_number.trim(), _id: { $ne: req.params.id } }).session(session);
+        if (existingSale) {
+          throw new RequestError(400, 'Tracking number already exists for another order');
+        }
       }
-    }
 
-    const updateData = { order_status };
-    if (tracking_number !== undefined) updateData.tracking_number = tracking_number;
-    if (money_received !== undefined) updateData.money_received = Boolean(money_received);
+      const updateData = { order_status };
+      if (tracking_number !== undefined) updateData.tracking_number = tracking_number;
+      if (money_received !== undefined) updateData.money_received = Boolean(money_received);
 
-    const oldSale = await Sale.findById(req.params.id);
-    if (!oldSale) return res.status(404).json({ message: 'Sale not found' });
+      const oldSale = await Sale.findById(req.params.id).session(session);
+      if (!oldSale) throw new RequestError(404, 'Sale not found');
 
-    const isRevertedStatus = order_status === 'Cancelled' || order_status === 'Returned';
-    const stockUpdates = [];
+      const isRevertedStatus = order_status === 'Cancelled' || order_status === 'Returned';
 
-    if (isRevertedStatus && !oldSale.is_stock_restored) {
-      for (const item of oldSale.items) {
-        const product = await Product.findByIdAndUpdate(item.product, { $inc: { stock_quantity: item.quantity } }, { new: true });
-        if (product) stockUpdates.push({ productId: product._id, newQuantity: product.stock_quantity });
+      if (isRevertedStatus && !oldSale.is_stock_restored) {
+        for (const item of oldSale.items) {
+          const product = await Product.findByIdAndUpdate(item.product, { $inc: { stock_quantity: item.quantity } }, { new: true, session });
+          if (product) stockUpdates.push({ productId: product._id, newQuantity: product.stock_quantity });
+        }
+        updateData.is_stock_restored = true;
+      } else if (!isRevertedStatus && oldSale.is_stock_restored) {
+        for (const item of oldSale.items) {
+          const product = await Product.findOneAndUpdate(
+            { _id: item.product, stock_quantity: { $gte: item.quantity } },
+            { $inc: { stock_quantity: -item.quantity } },
+            { new: true, session }
+          );
+          if (!product) throw new RequestError(400, `Insufficient stock to re-apply: ${item.product_name}`);
+          stockUpdates.push({ productId: product._id, newQuantity: product.stock_quantity });
+        }
+        updateData.is_stock_restored = false;
       }
-      updateData.is_stock_restored = true;
-    } else if (!isRevertedStatus && oldSale.is_stock_restored) {
-      for (const item of oldSale.items) {
-        const product = await Product.findByIdAndUpdate(item.product, { $inc: { stock_quantity: -item.quantity } }, { new: true });
-        if (product) stockUpdates.push({ productId: product._id, newQuantity: product.stock_quantity });
-      }
-      updateData.is_stock_restored = false;
-    }
 
-    const sale = await Sale.findByIdAndUpdate(req.params.id, updateData, { new: true });
+      sale = await Sale.findByIdAndUpdate(req.params.id, updateData, { new: true, session });
+    });
 
     if (stockUpdates.length > 0) {
       const io = req.app.get('io');
       if (io) io.emit('stock_updated', stockUpdates);
     }
-    
+
     res.json(sale);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(err.statusCode || 500).json({ message: err.message });
+  } finally {
+    session.endSession();
   }
 };
 
@@ -499,31 +533,41 @@ const getAnalytics = async (req, res) => {
 
 // DELETE /api/sales/:id (Super Admin only)
 const deleteSale = async (req, res) => {
+  const session = await mongoose.startSession();
+  const stockUpdates = [];
+  let sale;
+
   try {
-    const sale = await Sale.findById(req.params.id);
-    if (!sale) return res.status(404).json({ message: 'Sale not found' });
+    await session.withTransaction(async () => {
+      sale = await Sale.findById(req.params.id).session(session);
+      if (!sale) throw new RequestError(404, 'Sale not found');
 
-    // Restore stock if not already restored
-    if (!sale.is_stock_restored) {
-      const stockUpdates = [];
-      for (const item of sale.items) {
-        const product = await Product.findByIdAndUpdate(item.product, { $inc: { stock_quantity: item.quantity } }, { new: true });
-        if (product) stockUpdates.push({ productId: product._id, newQuantity: product.stock_quantity });
+      // Restore stock if not already restored
+      if (!sale.is_stock_restored) {
+        for (const item of sale.items) {
+          const product = await Product.findByIdAndUpdate(item.product, { $inc: { stock_quantity: item.quantity } }, { new: true, session });
+          if (product) stockUpdates.push({ productId: product._id, newQuantity: product.stock_quantity });
+        }
       }
+
+      await Sale.findByIdAndDelete(req.params.id).session(session);
+
+      if (sale.customer) {
+        const User = require('../models/User');
+        await User.findByIdAndUpdate(sale.customer, { $pull: { orderHistory: sale._id } }, { session });
+      }
+    });
+
+    if (stockUpdates.length > 0) {
       const io = req.app.get('io');
-      if (io && stockUpdates.length > 0) io.emit('stock_updated', stockUpdates);
-    }
-
-    await Sale.findByIdAndDelete(req.params.id);
-
-    if (sale.customer) {
-      const User = require('../models/User');
-      await User.findByIdAndUpdate(sale.customer, { $pull: { orderHistory: sale._id } });
+      if (io) io.emit('stock_updated', stockUpdates);
     }
 
     res.json({ message: 'Sale deleted and stock restored' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(err.statusCode || 500).json({ message: err.message });
+  } finally {
+    session.endSession();
   }
 };
 

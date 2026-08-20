@@ -5,33 +5,25 @@ const Product = require('./models/Product');
 const inventoryData =
 [
   {
-    "sku_code": "BP22",
-    "name": "RPM METER",
-    "buying_price": 1600,
-    "selling_price": 2200,
-    "stock_quantity": 5,
-    "sub_category": "METER",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BP23",
-    "name": "ANALOG SPEED METER BLACK",
-    "buying_price": 1550,
-    "selling_price": 2200,
-    "stock_quantity": 5,
-    "sub_category": "METER",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "BP24",
-    "name": "ANALOG SPEED METER NICKEL",
-    "buying_price": 1600,
+    "sku_code": "TWLFL19",
+    "name": "60 LED WHITE FOG LIGHT",
+    "buying_price": 1750,
     "selling_price": 2500,
+    "stock_quantity": 6,
+    "sub_category": "Fog Light",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWLFL20",
+    "name": "45 LED WHITE FOG LIGHT",
+    "buying_price": 1350,
+    "selling_price": 2100,
     "stock_quantity": 4,
-    "sub_category": "METER",
-    "category": "Bike"
+    "sub_category": "Fog Light",
+    "category": "Three-Wheel"
   }
 ];
+ 
 
 async function seedInventory() {
   try {

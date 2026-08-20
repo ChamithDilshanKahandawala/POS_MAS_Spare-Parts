@@ -37,6 +37,7 @@ export default function InventoryPage() {
     const handleKey = (e) => {
       if (e.key === 'Enter' && barcodeBuffer.current.length > 2) {
         setSearch(barcodeBuffer.current);
+        setPage(1);
         toast.success(`🔍 Scanned: ${barcodeBuffer.current}`, { duration: 2000 });
         barcodeBuffer.current = '';
         return;
@@ -66,7 +67,6 @@ export default function InventoryPage() {
   }, [search, category, page]);
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
-  useEffect(() => { setPage(1); }, [search, category]);
 
   const openAdd = () => { setForm(EMPTY_FORM); setEditProduct(null); setModalOpen(true); };
   const openEdit = (p) => {
@@ -184,12 +184,12 @@ export default function InventoryPage() {
         <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
           <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input className="input-field" placeholder="Search by name or SKU..."
-            value={search} onChange={e => setSearch(e.target.value)}
+            value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
             style={{ paddingLeft: '36px' }} />
         </div>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           {['All', ...CATEGORIES].map(cat => (
-            <button key={cat} onClick={() => setCategory(cat)}
+            <button key={cat} onClick={() => { setCategory(cat); setPage(1); }}
               style={{
                 padding: '8px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: 500,
                 cursor: 'pointer', border: '1px solid',

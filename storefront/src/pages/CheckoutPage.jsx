@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -24,13 +24,16 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(!user);
+  // Set the instant checkout succeeds, so the empty-cart redirect below can't
+  // fire off the back of clearCart() and race the navigate('/orders') call.
+  const orderPlacedRef = useRef(false);
 
   useEffect(() => {
-    if (cart.length === 0 && !isCheckingOut) {
+    if (cart.length === 0 && !orderPlacedRef.current) {
       toast.error('Your cart is empty');
       navigate('/');
     }
-  }, [cart, navigate, isCheckingOut]);
+  }, [cart, navigate]);
 
   useEffect(() => {
     if (user && isAuthModalOpen) {
@@ -94,6 +97,7 @@ export default function CheckoutPage() {
       };
       
       await createSale(payload);
+      orderPlacedRef.current = true;
       toast.success('Order placed successfully! 🎉');
       clearCart();
       navigate('/orders'); // Redirect to order history

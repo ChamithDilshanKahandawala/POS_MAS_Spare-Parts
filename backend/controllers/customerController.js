@@ -57,17 +57,34 @@ const deleteCustomer = async (req, res) => {
 const updateCredit = async (req, res) => {
   try {
     const { amount, type } = req.body; // type: 'add' | 'pay'
-    const customer = await Customer.findById(req.params.id);
-    if (!customer) return res.status(404).json({ message: 'Not found' });
+    const numAmount = Number(amount);
+
     if (type === 'add') {
-      if (customer.balance_due + amount > customer.credit_limit) {
-        return res.status(400).json({ message: `Exceeds credit limit (Rs.${customer.credit_limit})` });
+      // Atomic check-and-increment: the credit-limit check and the write happen
+      // in one operation, so two concurrent requests can't both slip past the limit.
+      const customer = await Customer.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          $expr: { $lte: [{ $add: ['$balance_due', numAmount] }, '$credit_limit'] },
+        },
+        { $inc: { balance_due: numAmount } },
+        { new: true }
+      );
+      if (!customer) {
+        const existing = await Customer.findById(req.params.id);
+        if (!existing) return res.status(404).json({ message: 'Not found' });
+        return res.status(400).json({ message: `Exceeds credit limit (Rs.${existing.credit_limit})` });
       }
-      customer.balance_due += Number(amount);
-    } else {
-      customer.balance_due = Math.max(0, customer.balance_due - Number(amount));
+      return res.json(customer);
     }
-    await customer.save();
+
+    // 'pay' — atomically clamp at 0 via an aggregation-pipeline update.
+    const customer = await Customer.findByIdAndUpdate(
+      req.params.id,
+      [{ $set: { balance_due: { $max: [0, { $subtract: ['$balance_due', numAmount] }] } } }],
+      { new: true }
+    );
+    if (!customer) return res.status(404).json({ message: 'Not found' });
     res.json(customer);
   } catch (err) { res.status(500).json({ message: err.message }); }
 };

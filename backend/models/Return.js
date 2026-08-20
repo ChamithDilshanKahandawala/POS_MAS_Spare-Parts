@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+require('./Counter');
 
 const returnItemSchema = new mongoose.Schema({
   product:      { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
@@ -22,14 +23,23 @@ const returnSchema = new mongoose.Schema({
   stock_restocked: { type: Boolean, default: true },
 }, { timestamps: true });
 
-// Auto-generate return number
+// Auto-generate return number using the same atomic counter pattern as Sale invoice numbers,
+// so concurrent returns can never collide on the same return_number.
 returnSchema.pre('save', async function () {
   if (!this.return_number) {
-    const count = await mongoose.model('Return').countDocuments();
     const date = new Date();
     const yr  = date.getFullYear().toString().slice(-2);
     const mo  = String(date.getMonth() + 1).padStart(2, '0');
-    this.return_number = `RET-${yr}${mo}-${String(count + 1).padStart(4, '0')}`;
+    const counterKey = `return-${yr}${mo}`;
+
+    const Counter = mongoose.model('Counter');
+    const counter = await Counter.findOneAndUpdate(
+      { _id: counterKey },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true, session: this.$session() }
+    );
+
+    this.return_number = `RET-${yr}${mo}-${String(counter.seq).padStart(4, '0')}`;
   }
 });
 

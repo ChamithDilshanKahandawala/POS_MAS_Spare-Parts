@@ -30,7 +30,7 @@ export default function SalesHistoryPage() {
   const fetchSales = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await getSales({ page, limit: 1000, from, to, payment_method: paymentFilter, sale_source: sourceFilter });
+      const { data } = await getSales({ page, limit: 50, from, to, payment_method: paymentFilter, sale_source: sourceFilter });
       setSales(data.sales);
       setTotal(data.total);
       setPages(data.pages);
@@ -39,7 +39,6 @@ export default function SalesHistoryPage() {
   }, [page, from, to, paymentFilter, sourceFilter]);
 
   useEffect(() => { fetchSales(); }, [fetchSales]);
-  useEffect(() => { setPage(1); }, [from, to, paymentFilter, sourceFilter]);
 
   const fmt = (v) => `Rs. ${Number(v || 0).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -67,11 +66,11 @@ export default function SalesHistoryPage() {
       <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '12px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>From</span>
-          <input type="date" className="input-field" value={from} onChange={e => setFrom(e.target.value)} style={{ width: '150px', padding: '8px 12px', fontSize: '13px' }} />
+          <input type="date" className="input-field" value={from} onChange={e => { setFrom(e.target.value); setPage(1); }} style={{ width: '150px', padding: '8px 12px', fontSize: '13px' }} />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>To</span>
-          <input type="date" className="input-field" value={to} onChange={e => setTo(e.target.value)} style={{ width: '150px', padding: '8px 12px', fontSize: '13px' }} />
+          <input type="date" className="input-field" value={to} onChange={e => { setTo(e.target.value); setPage(1); }} style={{ width: '150px', padding: '8px 12px', fontSize: '13px' }} />
         </div>
         <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
           {[
@@ -80,7 +79,7 @@ export default function SalesHistoryPage() {
             { value: 'online', label: 'Web', color: '#3b82f6' },
             { value: 'whatsapp', label: 'WhatsApp', color: '#22c55e' },
           ].map(s => (
-            <button key={s.value} onClick={() => setSourceFilter(s.value)} style={{
+            <button key={s.value} onClick={() => { setSourceFilter(s.value); setPage(1); }} style={{
               padding: '6px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: 700,
               border: 'none', cursor: 'pointer', transition: 'all 0.2s',
               background: sourceFilter === s.value ? s.color : 'transparent',
@@ -88,14 +87,14 @@ export default function SalesHistoryPage() {
             }}>{s.label}</button>
           ))}
         </div>
-        <select className="select-field" value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} style={{ width: '140px', padding: '8px 12px', fontSize: '13px' }}>
+        <select className="select-field" value={paymentFilter} onChange={e => { setPaymentFilter(e.target.value); setPage(1); }} style={{ width: '140px', padding: '8px 12px', fontSize: '13px' }}>
           <option value="">All Payments</option>
           <option value="Cash">Cash</option>
           <option value="Card">Card</option>
           <option value="Online">Online</option>
         </select>
         {(from || to || paymentFilter || sourceFilter) && (
-          <button className="btn-secondary" onClick={() => { setFrom(''); setTo(''); setPaymentFilter(''); setSourceFilter(''); }} style={{ padding: '8px 12px', fontSize: '13px' }}>
+          <button className="btn-secondary" onClick={() => { setFrom(''); setTo(''); setPaymentFilter(''); setSourceFilter(''); setPage(1); }} style={{ padding: '8px 12px', fontSize: '13px' }}>
             <X size={14} /> Clear
           </button>
         )}
@@ -181,7 +180,17 @@ export default function SalesHistoryPage() {
             </tbody>
           </table>
         </div>
-        {/* Pagination logic remains same */}
+        {pages > 1 && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', padding: '16px', borderTop: '1px solid var(--border)' }}>
+            <button className="btn-secondary" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} style={{ padding: '6px 12px' }}>
+              <ChevronLeft size={16} />
+            </button>
+            <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Page {page} of {pages}</span>
+            <button className="btn-secondary" onClick={() => setPage(p => Math.min(pages, p + 1))} disabled={page === pages} style={{ padding: '6px 12px' }}>
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Sale Detail Modal */}
