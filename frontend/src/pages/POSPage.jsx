@@ -83,9 +83,12 @@ export default function POSPage() {
       i._id === id ? { ...i, qty: Math.max(1, Math.min(i.stock_quantity, i.qty + delta)) } : i
     ));
 
+  // Positive = discount (price reduced), negative = markup (price increased —
+  // e.g. charging more on a WhatsApp order). Both flow straight through to
+  // line_total / line_profit on the backend, so no cap is applied here.
   const updateDiscount = (id, val) =>
     setCart(prev => prev.map(i =>
-      i._id === id ? { ...i, itemDiscount: Math.max(0, Number(val)) } : i
+      i._id === id ? { ...i, itemDiscount: Number(val) || 0 } : i
     ));
 
   const removeFromCart = (id) => setCart(prev => prev.filter(i => i._id !== id));
@@ -432,12 +435,23 @@ const parseCustomerDetails = (text) => {
                     <button onClick={() => updateQty(item._id, 1)} className="btn-secondary" style={{ padding: '2px 8px' }}>+</button>
                   </div>
                   <input
-                    type="number" min="0" value={item.itemDiscount}
+                    type="number" value={item.itemDiscount}
                     onChange={e => updateDiscount(item._id, e.target.value)}
-                    placeholder="Disc."
-                    style={{ width: '55px', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '6px', padding: '2px 5px', fontSize: '11px', color: 'var(--text-primary)' }}
+                    placeholder="±Disc."
+                    title="Positive = discount (reduce price). Negative = markup (increase price)."
+                    style={{
+                      width: '55px', background: 'var(--bg-card)', borderRadius: '6px', padding: '2px 5px', fontSize: '11px', color: 'var(--text-primary)',
+                      border: `1px solid ${item.itemDiscount > 0 ? 'rgba(239,68,68,0.4)' : item.itemDiscount < 0 ? 'rgba(16,185,129,0.4)' : 'var(--border-light)'}`,
+                    }}
                   />
-                  <div style={{ fontSize: '12px', fontWeight: 700 }}>{fmtRs((item.selling_price - item.itemDiscount) * item.qty)}</div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 700 }}>{fmtRs((item.selling_price - item.itemDiscount) * item.qty)}</div>
+                    {item.itemDiscount !== 0 && (
+                      <div style={{ fontSize: '10px', fontWeight: 600, color: item.itemDiscount > 0 ? '#ef4444' : '#10b981' }}>
+                        {item.itemDiscount > 0 ? `-${fmtRs(item.itemDiscount * item.qty)} off` : `+${fmtRs(Math.abs(item.itemDiscount) * item.qty)} markup`}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -454,7 +468,11 @@ const parseCustomerDetails = (text) => {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
           <span style={{ fontSize: '11px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Bill Disc.</span>
-          <input type="number" value={billDiscount} onChange={e => setBillDiscount(e.target.value)} className="input-field" style={{ fontSize: '12px' }} />
+          <input
+            type="number" value={billDiscount} onChange={e => setBillDiscount(e.target.value)}
+            className="input-field" style={{ fontSize: '12px' }}
+            title="Positive = discount (reduce total). Negative = markup (increase total)."
+          />
         </div>
 
         <div style={{ display: 'flex', gap: '6px', marginBottom: '12px' }}>
@@ -673,14 +691,19 @@ const parseCustomerDetails = (text) => {
                   <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Subtotal</span>
                   <span style={{ fontSize: '14px', fontWeight: 600 }}>{fmtRs(successSale.subtotal)}</span>
                 </div>
-                {(successSale.total_discount > 0 || (successSale.items && successSale.items.some(i => i.discount > 0))) && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Total Discount</span>
-                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#ef4444' }}>
-                      -{fmtRs((successSale.total_discount || 0) + (successSale.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0))}
-                    </span>
-                  </div>
-                )}
+                {(() => {
+                  const netDiscount = (successSale.total_discount || 0) + (successSale.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0);
+                  if (netDiscount === 0) return null;
+                  const isMarkup = netDiscount < 0;
+                  return (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{isMarkup ? 'Total Markup' : 'Total Discount'}</span>
+                      <span style={{ fontSize: '14px', fontWeight: 600, color: isMarkup ? '#10b981' : '#ef4444' }}>
+                        {isMarkup ? '+' : '-'}{fmtRs(Math.abs(netDiscount))}
+                      </span>
+                    </div>
+                  );
+                })()}
                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '10px', marginTop: '4px', borderTop: '1px dashed var(--border-light)' }}>
                   <span style={{ fontSize: '14px', fontWeight: 700 }}>Total</span>
                   <span style={{ fontSize: '16px', fontWeight: 800, color: successSale.koko_charge > 0 ? 'var(--text-primary)' : '#10b981' }}>{fmtRs(successSale.total_amount)}</span>

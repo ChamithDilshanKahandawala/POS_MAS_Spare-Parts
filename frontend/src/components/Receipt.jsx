@@ -54,6 +54,12 @@ const Receipt = forwardRef(({ sale }, ref) => {
                 <span>-{fmtRs(item.discount * item.quantity)}</span>
               </div>
             )}
+            {item.discount < 0 && (
+              <div className="receipt-row" style={{ fontSize: '9px', color: '#666', marginTop: '-2px' }}>
+                <span>Markup:</span>
+                <span>+{fmtRs(Math.abs(item.discount) * item.quantity)}</span>
+              </div>
+            )}
           </div>
         );
       })}
@@ -68,6 +74,12 @@ const Receipt = forwardRef(({ sale }, ref) => {
         <div className="receipt-row">
           <span>Bill Discount</span>
           <span>-{fmtRs(sale.total_discount)}</span>
+        </div>
+      )}
+      {sale.total_discount < 0 && (
+        <div className="receipt-row">
+          <span>Bill Markup</span>
+          <span>+{fmtRs(Math.abs(sale.total_discount))}</span>
         </div>
       )}
       {sale.shipping_cost_charged > 0 && (

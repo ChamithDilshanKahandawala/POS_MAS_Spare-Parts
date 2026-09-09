@@ -44,6 +44,15 @@ export default function SalesHistoryPage() {
 
   const fmt = (v) => `Rs. ${Number(v || 0).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
+  // A negative net discount means a markup was applied (e.g. charging more
+  // on a WhatsApp order) rather than a price reduction — show it as such.
+  const getDiscountTotal = (s) => (s.total_discount || 0) + (s.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0);
+  const renderDiscount = (v) => {
+    if (v > 0) return { text: `- ${fmt(v)}`, color: '#ef4444' };
+    if (v < 0) return { text: `+ ${fmt(Math.abs(v))} markup`, color: '#10b981' };
+    return { text: '-', color: 'var(--text-muted)' };
+  };
+
   const handleDeleteSale = async (id) => {
     if (!window.confirm('Delete this sale? This will also return the stock back to the inventory.')) return;
     try {
@@ -112,7 +121,8 @@ export default function SalesHistoryPage() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {sales.map(s => {
-                const discountTotal = (s.total_discount || 0) + (s.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0);
+                const discountTotal = getDiscountTotal(s);
+                const discountDisplay = renderDiscount(discountTotal);
                 return (
                   <div key={s._id} className="glass-card" style={{ padding: 0, borderRadius: '14px', overflow: 'hidden' }}>
                     {/* Card Header */}
@@ -152,8 +162,8 @@ export default function SalesHistoryPage() {
                           <div style={{ fontSize: '13px', fontWeight: 600 }}>{fmt(s.subtotal)}</div>
                         </div>
                         <div>
-                          <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Discount</div>
-                          <div style={{ fontSize: '13px', fontWeight: 600, color: '#ef4444' }}>{discountTotal > 0 ? `- ${fmt(discountTotal)}` : '-'}</div>
+                          <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>{discountTotal < 0 ? 'Markup' : 'Discount'}</div>
+                          <div style={{ fontSize: '13px', fontWeight: 600, color: discountDisplay.color }}>{discountDisplay.text}</div>
                         </div>
                       </div>
 
@@ -239,10 +249,8 @@ export default function SalesHistoryPage() {
                   </td>
                   <td style={{ fontSize: '13px', textAlign: 'center' }}>{s.items?.length}</td>
                   <td style={{ fontWeight: 600 }}>{fmt(s.subtotal)}</td>
-                  <td style={{ fontWeight: 600, color: '#ef4444', fontSize: '13px' }}>
-                    {((s.total_discount || 0) + (s.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0)) > 0
-                      ? `- ${fmt((s.total_discount || 0) + (s.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0))}`
-                      : '-'}
+                  <td style={{ fontWeight: 600, fontSize: '13px', color: renderDiscount(getDiscountTotal(s)).color }}>
+                    {renderDiscount(getDiscountTotal(s)).text}
                   </td>
                   <td style={{ fontWeight: 700, color: 'var(--accent-primary)' }}>{fmt(s.total_amount)}</td>
 
@@ -356,9 +364,9 @@ export default function SalesHistoryPage() {
                 <span style={{ fontSize: '13px', fontWeight: 600 }}>{fmt(viewSale.subtotal)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Discount</span>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: '#ef4444' }}>
-                  - {fmt((viewSale.total_discount || 0) + (viewSale.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0))}
+                <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{getDiscountTotal(viewSale) < 0 ? 'Markup' : 'Discount'}</span>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: renderDiscount(getDiscountTotal(viewSale)).color }}>
+                  {renderDiscount(getDiscountTotal(viewSale)).text}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid var(--border-light)' }}>
