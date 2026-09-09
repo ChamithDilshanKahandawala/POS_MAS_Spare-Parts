@@ -114,6 +114,20 @@ const createSale = async (req, res) => {
       const finalTotal = itemsTotalAfterItemDiscounts - billDiscount;
       const finalProfit = saleItems.reduce((acc, i) => acc + i.line_profit, 0) - billDiscount + shipping_charged - actual_shipping;
 
+      // WhatsApp orders are handed over right at billing time — the tracking
+      // number is added for reference, not because it's awaiting courier
+      // dispatch — so mark them Delivered once a tracking number is given.
+      // Online orders keep the original Shipped/Pending flow since those do
+      // go through actual courier dispatch tracking.
+      let order_status;
+      if (sale_source === 'whatsapp') {
+        order_status = tracking_number ? 'Delivered' : 'Pending';
+      } else if (sale_source === 'online') {
+        order_status = tracking_number ? 'Shipped' : 'Pending';
+      } else {
+        order_status = 'Delivered';
+      }
+
       const [sale] = await Sale.create([{
         items: saleItems,
         subtotal,
@@ -133,7 +147,7 @@ const createSale = async (req, res) => {
         customer_phone: customer_phone || '',
         customer_details: customer_details || '',
         customer: req.user.role === 'customer' ? req.user._id : undefined,
-        order_status: (sale_source === 'online' || sale_source === 'whatsapp') ? (tracking_number ? 'Shipped' : 'Pending') : 'Delivered',
+        order_status,
         shipping_address: shipping_address || '',
         cashier: req.user.role !== 'customer' ? req.user._id : undefined,
         cashier_name: req.user.role !== 'customer' ? req.user.name : undefined,
