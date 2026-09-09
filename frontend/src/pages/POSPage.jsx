@@ -83,12 +83,26 @@ export default function POSPage() {
       i._id === id ? { ...i, qty: Math.max(1, Math.min(i.stock_quantity, i.qty + delta)) } : i
     ));
 
-  // Positive = discount (price reduced), negative = markup (price increased —
-  // e.g. charging more on a WhatsApp order). Both flow straight through to
-  // line_total / line_profit on the backend, so no cap is applied here.
+  // A plain number is a discount (price reduced). A leading "+" means a
+  // markup (price increased — e.g. charging more on a WhatsApp order).
+  // Internally a markup is stored as a negative amount, which is what
+  // line_total / line_profit on the backend already expect — no backend
+  // change needed, an amount above the selling price just adds to profit.
+  const parseSignedAmount = (raw) => {
+    const str = String(raw ?? '').trim();
+    if (str.startsWith('+')) {
+      const n = Number(str.slice(1));
+      return Number.isFinite(n) ? -Math.abs(n) : 0;
+    }
+    const n = Number(str);
+    return Number.isFinite(n) ? n : 0;
+  };
+
+  // Keep the raw typed string (not the parsed number) so "+" isn't stripped
+  // out from under the user while they're still typing the digits after it.
   const updateDiscount = (id, val) =>
     setCart(prev => prev.map(i =>
-      i._id === id ? { ...i, itemDiscount: Number(val) || 0 } : i
+      i._id === id ? { ...i, itemDiscount: val } : i
     ));
 
   const removeFromCart = (id) => setCart(prev => prev.filter(i => i._id !== id));
@@ -180,8 +194,8 @@ const parseCustomerDetails = (text) => {
   }, []);
 
   const subtotal = cart.reduce((s, i) => s + i.selling_price * i.qty, 0);
-  const itemDiscount = cart.reduce((s, i) => s + i.itemDiscount * i.qty, 0);
-  let totalAmount = subtotal - itemDiscount - Number(billDiscount);
+  const itemDiscount = cart.reduce((s, i) => s + parseSignedAmount(i.itemDiscount) * i.qty, 0);
+  let totalAmount = subtotal - itemDiscount - parseSignedAmount(billDiscount);
   const totalCost = cart.reduce((s, i) => s + i.buying_price * i.qty, 0);
   let totalProfit = totalAmount - totalCost;
 
@@ -202,8 +216,8 @@ const parseCustomerDetails = (text) => {
     setProcessing(true);
     try {
       const payload = {
-        items: cart.map(i => ({ product_id: i._id, quantity: i.qty, discount: i.itemDiscount })),
-        total_discount: Number(billDiscount),
+        items: cart.map(i => ({ product_id: i._id, quantity: i.qty, discount: parseSignedAmount(i.itemDiscount) })),
+        total_discount: parseSignedAmount(billDiscount),
         payment_method: paymentMethod,
         sale_source: saleSource,
         customer_name: customerName || 'Walk-in Customer',
@@ -410,7 +424,9 @@ const parseCustomerDetails = (text) => {
           </div>
         ) : (
           <AnimatePresence>
-            {cart.map(item => (
+            {cart.map(item => {
+              const parsedDiscount = parseSignedAmount(item.itemDiscount);
+              return (
               <motion.div
                 key={item._id}
                 layout
@@ -435,26 +451,27 @@ const parseCustomerDetails = (text) => {
                     <button onClick={() => updateQty(item._id, 1)} className="btn-secondary" style={{ padding: '2px 8px' }}>+</button>
                   </div>
                   <input
-                    type="number" value={item.itemDiscount}
+                    type="text" inputMode="decimal" value={item.itemDiscount}
                     onChange={e => updateDiscount(item._id, e.target.value)}
-                    placeholder="±Disc."
-                    title="Positive = discount (reduce price). Negative = markup (increase price)."
+                    placeholder="Disc."
+                    title="Number = discount (reduce price). Prefix with + = markup (increase price)."
                     style={{
                       width: '55px', background: 'var(--bg-card)', borderRadius: '6px', padding: '2px 5px', fontSize: '11px', color: 'var(--text-primary)',
-                      border: `1px solid ${item.itemDiscount > 0 ? 'rgba(239,68,68,0.4)' : item.itemDiscount < 0 ? 'rgba(16,185,129,0.4)' : 'var(--border-light)'}`,
+                      border: `1px solid ${parsedDiscount > 0 ? 'rgba(239,68,68,0.4)' : parsedDiscount < 0 ? 'rgba(16,185,129,0.4)' : 'var(--border-light)'}`,
                     }}
                   />
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '12px', fontWeight: 700 }}>{fmtRs((item.selling_price - item.itemDiscount) * item.qty)}</div>
-                    {item.itemDiscount !== 0 && (
-                      <div style={{ fontSize: '10px', fontWeight: 600, color: item.itemDiscount > 0 ? '#ef4444' : '#10b981' }}>
-                        {item.itemDiscount > 0 ? `-${fmtRs(item.itemDiscount * item.qty)} off` : `+${fmtRs(Math.abs(item.itemDiscount) * item.qty)} markup`}
+                    <div style={{ fontSize: '12px', fontWeight: 700 }}>{fmtRs((item.selling_price - parsedDiscount) * item.qty)}</div>
+                    {parsedDiscount !== 0 && (
+                      <div style={{ fontSize: '10px', fontWeight: 600, color: parsedDiscount > 0 ? '#ef4444' : '#10b981' }}>
+                        {parsedDiscount > 0 ? `-${fmtRs(parsedDiscount * item.qty)} off` : `+${fmtRs(Math.abs(parsedDiscount) * item.qty)} markup`}
                       </div>
                     )}
                   </div>
                 </div>
               </motion.div>
-            ))}
+              );
+            })}
           </AnimatePresence>
         )}
       </div>
@@ -469,9 +486,9 @@ const parseCustomerDetails = (text) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
           <span style={{ fontSize: '11px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Bill Disc.</span>
           <input
-            type="number" value={billDiscount} onChange={e => setBillDiscount(e.target.value)}
+            type="text" inputMode="decimal" value={billDiscount} onChange={e => setBillDiscount(e.target.value)}
             className="input-field" style={{ fontSize: '12px' }}
-            title="Positive = discount (reduce total). Negative = markup (increase total)."
+            title="Number = discount (reduce total). Prefix with + = markup (increase total)."
           />
         </div>
 
