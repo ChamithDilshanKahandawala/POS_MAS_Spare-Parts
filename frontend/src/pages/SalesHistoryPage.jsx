@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { getSales, deleteSale } from '../api/services';
 import { useAuth } from '../context/AuthContext'; // 👈 Auth context eka gaththa
+import { useIsMobile } from '../hooks/useIsMobile';
 import { Search, Eye, ChevronLeft, ChevronRight, X, TrendingUp, Trash2, Printer } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useReactToPrint } from 'react-to-print';
@@ -10,6 +11,7 @@ import Receipt from '../components/Receipt';
 export default function SalesHistoryPage() {
   const { user } = useAuth(); // User role eka check karanna
   const isAdmin = user?.role === 'admin' || user?.role === 'super_admin'; // Boolean flag ekak hadagaththa lesiyata
+  const isMobile = useIsMobile();
 
   const [sales, setSales] = useState([]);
   const [total, setTotal] = useState(0);
@@ -100,7 +102,103 @@ export default function SalesHistoryPage() {
         )}
       </div>
 
-      {/* Table */}
+      {/* Table (desktop) / Cards (mobile) */}
+      {isMobile ? (
+        <div>
+          {loading ? (
+            <div className="glass-card" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading...</div>
+          ) : sales.length === 0 ? (
+            <div className="glass-card" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No sales found</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {sales.map(s => {
+                const discountTotal = (s.total_discount || 0) + (s.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0);
+                return (
+                  <div key={s._id} className="glass-card" style={{ padding: 0, borderRadius: '14px', overflow: 'hidden' }}>
+                    {/* Card Header */}
+                    <div style={{ padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)' }}>
+                      <span style={{ fontFamily: 'monospace', fontSize: '13px', color: 'var(--accent-primary)', fontWeight: 700 }}>{s.invoice_number}</span>
+                      <span className={`badge ${s.sale_source === 'whatsapp' ? 'badge-green' : s.sale_source === 'online' ? 'badge-blue' : 'badge-purple'}`} style={{ fontSize: '10px' }}>
+                        {s.sale_source === 'whatsapp' ? 'WhatsApp' : s.sale_source === 'online' ? 'Online' : 'Shop'}
+                      </span>
+                    </div>
+
+                    {/* Card Body */}
+                    <div style={{ padding: '14px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                        <div>
+                          <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>{s.customer_name}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{s.cashier_name}</div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{new Date(s.createdAt).toLocaleDateString('en-LK')}</div>
+                          <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{new Date(s.createdAt).toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' })}</div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', background: 'var(--bg-secondary)', borderRadius: '10px', padding: '10px', marginBottom: '12px' }}>
+                        <div>
+                          <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Items</div>
+                          <div style={{ fontSize: '13px', fontWeight: 600 }}>{s.items?.length}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Payment</div>
+                          <span className={`badge ${s.payment_method === 'Cash' ? 'badge-green' : s.payment_method === 'Card' ? 'badge-blue' : 'badge-purple'}`} style={{ fontSize: '10px' }}>
+                            {s.payment_method}
+                          </span>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Subtotal</div>
+                          <div style={{ fontSize: '13px', fontWeight: 600 }}>{fmt(s.subtotal)}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Discount</div>
+                          <div style={{ fontSize: '13px', fontWeight: 600, color: '#ef4444' }}>{discountTotal > 0 ? `- ${fmt(discountTotal)}` : '-'}</div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isAdmin ? '8px' : '0' }}>
+                        <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>Total</span>
+                        <span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--accent-primary)' }}>{fmt(s.total_amount)}</span>
+                      </div>
+
+                      {isAdmin && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)' }}>Profit</span>
+                          <span style={{ fontSize: '13px', fontWeight: 700, color: s.total_profit >= 0 ? '#10b981' : '#ef4444' }}>{fmt(s.total_profit)}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Card Actions */}
+                    <div style={{ display: 'flex', gap: '8px', padding: '10px 14px', borderTop: '1px solid var(--border)' }}>
+                      <button onClick={() => setViewSale(s)} className="btn-secondary" style={{ flex: 1, justifyContent: 'center', padding: '8px', color: '#6366f1' }}>
+                        <Eye size={14} /> View
+                      </button>
+                      {user?.role === 'super_admin' && (
+                        <button onClick={() => handleDeleteSale(s._id)} className="btn-secondary" style={{ padding: '8px', color: '#ef4444' }}>
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {pages > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', padding: '16px' }}>
+              <button className="btn-secondary" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} style={{ padding: '6px 12px' }}>
+                <ChevronLeft size={16} />
+              </button>
+              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Page {page} of {pages}</span>
+              <button className="btn-secondary" onClick={() => setPage(p => Math.min(pages, p + 1))} disabled={page === pages} style={{ padding: '6px 12px' }}>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
       <div className="glass-card" style={{ overflow: 'hidden', padding: 0 }}>
         <div style={{ overflowX: 'auto', maxHeight: 'calc(100vh - 250px)', overflowY: 'auto' }}>
           <table className="data-table">
@@ -115,7 +213,7 @@ export default function SalesHistoryPage() {
                 <th>Discount</th>
                 <th>Total</th>
                 {/* 🔐 Admin Only Header */}
-                {isAdmin && <th>Profit</th>} 
+                {isAdmin && <th>Profit</th>}
                 <th>Payment</th>
                 <th>Cashier</th>
                 <th style={{ textAlign: 'center' }}>View</th>
@@ -142,12 +240,12 @@ export default function SalesHistoryPage() {
                   <td style={{ fontSize: '13px', textAlign: 'center' }}>{s.items?.length}</td>
                   <td style={{ fontWeight: 600 }}>{fmt(s.subtotal)}</td>
                   <td style={{ fontWeight: 600, color: '#ef4444', fontSize: '13px' }}>
-                    {((s.total_discount || 0) + (s.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0)) > 0 
-                      ? `- ${fmt((s.total_discount || 0) + (s.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0))}` 
+                    {((s.total_discount || 0) + (s.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0)) > 0
+                      ? `- ${fmt((s.total_discount || 0) + (s.items?.reduce((acc, i) => acc + ((i.discount || 0) * i.quantity), 0) || 0))}`
                       : '-'}
                   </td>
                   <td style={{ fontWeight: 700, color: 'var(--accent-primary)' }}>{fmt(s.total_amount)}</td>
-                  
+
                   {/* 🔐 Admin Only Cell */}
                   {isAdmin && (
                     <td>
@@ -192,6 +290,7 @@ export default function SalesHistoryPage() {
           </div>
         )}
       </div>
+      )}
 
       {/* Sale Detail Modal */}
       {viewSale && (
