@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -66,8 +66,14 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
     navigate('/login');
   };
 
-  // Close mobile menu on route change
+  // Close mobile menu on route change (but not on initial mount, which
+  // happens right when the panel opens and would close it immediately)
+  const isFirstRender = useRef(true);
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     setMobileOpen(false);
   }, [location.pathname]);
 
