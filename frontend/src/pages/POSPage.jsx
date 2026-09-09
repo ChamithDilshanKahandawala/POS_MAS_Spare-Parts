@@ -83,19 +83,18 @@ export default function POSPage() {
       i._id === id ? { ...i, qty: Math.max(1, Math.min(i.stock_quantity, i.qty + delta)) } : i
     ));
 
-  // A plain number is a discount (price reduced). A leading "+" means a
-  // markup (price increased — e.g. charging more on a WhatsApp order).
-  // Internally a markup is stored as a negative amount, which is what
-  // line_total / line_profit on the backend already expect — no backend
-  // change needed, an amount above the selling price just adds to profit.
+  // No sign, or a leading "-", both mean a discount (price reduced) — the
+  // magnitude is what matters, a typed "-" is just how people naturally
+  // write "off". Only a leading "+" means a markup (sold for more, e.g. a
+  // WhatsApp order priced higher). Internally a markup is stored as a
+  // negative amount, which is what line_total / line_profit on the backend
+  // already expect — no backend change needed, it just adds to profit.
   const parseSignedAmount = (raw) => {
     const str = String(raw ?? '').trim();
-    if (str.startsWith('+')) {
-      const n = Number(str.slice(1));
-      return Number.isFinite(n) ? -Math.abs(n) : 0;
-    }
-    const n = Number(str);
-    return Number.isFinite(n) ? n : 0;
+    const isMarkup = str.startsWith('+');
+    const n = Number(str.replace(/^[+-]/, ''));
+    if (!Number.isFinite(n)) return 0;
+    return isMarkup ? -Math.abs(n) : Math.abs(n);
   };
 
   // Keep the raw typed string (not the parsed number) so "+" isn't stripped
