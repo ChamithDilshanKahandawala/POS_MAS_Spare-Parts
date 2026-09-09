@@ -66,15 +66,16 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
     navigate('/login');
   };
 
-  // Close mobile menu on route change (but not on initial mount, which
-  // happens right when the panel opens and would close it immediately)
-  const isFirstRender = useRef(true);
+  // Close mobile menu only when the pathname actually changes. Comparing
+  // against the previous value (rather than a "first run" flag) keeps this
+  // correct under StrictMode's dev-only double-invoke of effects, which
+  // would otherwise close the panel right after it opens.
+  const prevPathnameRef = useRef(location.pathname);
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
+    if (prevPathnameRef.current !== location.pathname) {
+      setMobileOpen(false);
     }
-    setMobileOpen(false);
+    prevPathnameRef.current = location.pathname;
   }, [location.pathname]);
 
   const sidebarWidth = collapsed ? 72 : 240;
