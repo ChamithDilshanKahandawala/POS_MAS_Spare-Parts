@@ -8,7 +8,7 @@ router.get('/my-orders', protect, getMyOrders);
 router.get('/', protect, staffOnly, getSales);
 router.get('/:id', protect, staffOnly, getSaleById);
 router.get('/:id/receipt', protect, staffOnly, getSaleReceipt);
-router.put('/:id/status', protect, updateOrderStatus);
+router.put('/:id/status', protect, staffOnly, updateOrderStatus);
 router.delete('/:id', protect, superAdminOnly, deleteSale);
 router.post('/', protect, createSale);
 

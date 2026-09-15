@@ -8,6 +8,6 @@ router.get('/:id',        protect, staffOnly, getCustomerById);
 router.post('/',          protect, createCustomer);
 router.put('/:id',        protect, updateCustomer);
 router.delete('/:id',     protect, deleteCustomer);
-router.put('/:id/credit', protect, updateCredit);
+router.put('/:id/credit', protect, staffOnly, updateCredit);
 
 module.exports = router;
