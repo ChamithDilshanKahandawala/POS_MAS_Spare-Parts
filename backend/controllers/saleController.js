@@ -192,7 +192,12 @@ const createSale = async (req, res) => {
       }
     }
 
-    res.status(201).json(formatReceiptData(createdSale));
+    const receiptData = formatReceiptData(createdSale);
+    if (req.user && (req.user.role !== 'admin' && req.user.role !== 'super_admin')) {
+      stripProfitFields(receiptData);
+    }
+
+    res.status(201).json(receiptData);
   } catch (err) {
     res.status(err.statusCode || 500).json({ message: err.message });
   } finally {
