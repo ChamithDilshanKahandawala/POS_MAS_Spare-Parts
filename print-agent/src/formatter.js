@@ -86,13 +86,21 @@ function buildItemRow(item) {
  */
 export function formatReceipt(sale) {
   // Normalise item shape — handle both frontend-mapped and raw MongoDB shapes
-  const items = (sale.items || []).map(i => ({
-    name:      i.name      || i.product_name || 'Item',
-    qty:       i.qty       ?? i.quantity,
-    unitPrice: i.unitPrice ?? i.selling_price,
-    lineTotal: i.lineTotal ?? i.line_total,
-    discount:  i.discount  || 0,
-  }));
+  const items = (sale.items || []).map(i => {
+    const discount = i.discount || 0;
+    const basePrice = i.unitPrice ?? i.selling_price;
+    // A markup (negative discount) should show as the increased price itself,
+    // not the old base price — a real discount keeps showing the old price
+    // with a separate "Disc:" line.
+    const unitPrice = discount < 0 ? basePrice - discount : basePrice;
+    return {
+      name:      i.name      || i.product_name || 'Item',
+      qty:       i.qty       ?? i.quantity,
+      unitPrice,
+      lineTotal: i.lineTotal ?? i.line_total,
+      discount,
+    };
+  });
 
   const subtotal  = Number(sale.subtotal  || 0);
   const itemDiscountSum = items.reduce((sum, i) => sum + (Number(i.discount) * (Number(i.qty) || 1)), 0);

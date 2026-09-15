@@ -3,72 +3,17 @@ require('dotenv').config();
 const Product = require('./models/Product');
 
 const inventoryData =
-[
+ [
   {
-    "sku_code": "BP157",
-    "name": "BIKE PHONE HOLDER WITH USB",
+    "sku_code": "TWSS20",
+    "name": "3 PORT FRONT PARK LIGHT SINGLE",
     "buying_price": 650,
-    "selling_price": 1350,
-    "stock_quantity": 5,
-    "sub_category": "PHONE HOLDER",
-    "category": "Bike"
-  },
-  {
-    "sku_code": "AVH03",
-    "name": "MINI VIP HORN",
-    "buying_price": 850,
-    "selling_price": 1500,
-    "stock_quantity": 5,
-    "sub_category": "HORN",
-    "category": "ANYVEHICLE"
-  },
-  {
-    "sku_code": "TWF39",
-    "name": "FM ANTANA GREEN",
-    "buying_price": 800,
-    "selling_price": 1400,
-    "stock_quantity": 3,
-    "sub_category": "Front",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWF99",
-    "name": "FM ANTANA WHITE",
-    "buying_price": 800,
-    "selling_price": 1400,
-    "stock_quantity": 50,
-    "sub_category": "Front",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWF100",
-    "name": "FM ANTANA YELLOW",
-    "buying_price": 800,
-    "selling_price": 1400,
-    "stock_quantity": 50,
-    "sub_category": "Front",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWLHL13",
-    "name": "TWO RING HEADLIGHT Q1",
-    "buying_price": 2100,
-    "selling_price": 3000,
+    "selling_price": 1000,
     "stock_quantity": 20,
-    "sub_category": "Head Light",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWWBS17",
-    "name": "SET BOX COVER",
-    "buying_price": 330,
-    "selling_price": 650,
-    "stock_quantity": 10,
-    "sub_category": "Sound Set",
+    "sub_category": "FRONT",
     "category": "Three-Wheel"
   }
 ];
- 
 
 async function seedInventory() {
   try {

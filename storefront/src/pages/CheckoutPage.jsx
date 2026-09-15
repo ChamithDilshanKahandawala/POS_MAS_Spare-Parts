@@ -21,7 +21,6 @@ export default function CheckoutPage() {
     phone2: ''
   });
   
-  const [paymentMethod, setPaymentMethod] = useState('card');
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(!user);
   // Set the instant checkout succeeds, so the empty-cart redirect below can't
@@ -89,7 +88,11 @@ export default function CheckoutPage() {
 
       const payload = {
         items: cart.map(i => ({ product_id: i._id, quantity: i.qty, discount: 0 })),
-        payment_method: paymentMethod === 'card' ? 'Online' : 'Cash',
+        // TODO: 'Online' (PayHere/Card) was removed as a checkout option — no payment
+        // gateway was ever wired up, so it only recorded 'Online' without charging
+        // anything. Every storefront order is Cash on Delivery until a real gateway
+        // with server-side payment verification is integrated.
+        payment_method: 'Cash',
         sale_source: 'online',
         customer_name: formData.name,
         shipping_address: fullAddress,
@@ -213,24 +216,16 @@ export default function CheckoutPage() {
             <h2 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
               2. Payment Method
             </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-              <button 
-                onClick={() => setPaymentMethod('card')} 
-                style={{ padding: '20px', borderRadius: '16px', border: paymentMethod === 'card' ? '2px solid var(--accent-primary)' : '2px solid var(--border)', background: paymentMethod === 'card' ? 'rgba(99, 102, 241, 0.05)' : 'var(--bg-secondary)', cursor: 'pointer', transition: 'all 0.2s', textAlign: 'center' }}
-              >
-                <div style={{ fontSize: '24px', marginBottom: '8px' }}>💳</div>
-                <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>PayHere / Card</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Secure online payment</div>
-              </button>
-              
-              <button 
-                onClick={() => setPaymentMethod('cod')} 
-                style={{ padding: '20px', borderRadius: '16px', border: paymentMethod === 'cod' ? '2px solid #10b981' : '2px solid var(--border)', background: paymentMethod === 'cod' ? 'rgba(16, 185, 129, 0.05)' : 'var(--bg-secondary)', cursor: 'pointer', transition: 'all 0.2s', textAlign: 'center' }}
-              >
-                <div style={{ fontSize: '24px', marginBottom: '8px' }}>💵</div>
-                <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Cash on Delivery</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Pay when received</div>
-              </button>
+            {/* TODO: The "PayHere / Card" online payment option was removed from here.
+                It never integrated with a real payment gateway — selecting it only sent
+                payment_method: 'Online' to the backend with no charge actually taken,
+                which let customers believe they'd paid when they hadn't. Only restore
+                an online option once PayHere (or another gateway) is integrated with
+                real server-side payment verification. */}
+            <div style={{ padding: '20px', borderRadius: '16px', border: '2px solid #10b981', background: 'rgba(16, 185, 129, 0.05)', textAlign: 'center', maxWidth: '260px' }}>
+              <div style={{ fontSize: '24px', marginBottom: '8px' }}>💵</div>
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Cash on Delivery</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Pay when received</div>
             </div>
           </div>
         </div>
@@ -275,12 +270,12 @@ export default function CheckoutPage() {
               className="btn-primary" 
               onClick={handleCheckout}
               disabled={isCheckingOut || cart.length === 0}
-              style={{ width: '100%', padding: '16px', borderRadius: '16px', fontSize: '16px', fontWeight: 800, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', background: paymentMethod === 'cod' ? '#10b981' : '' }}
+              style={{ width: '100%', padding: '16px', borderRadius: '16px', fontSize: '16px', fontWeight: 800, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', background: '#10b981' }}
             >
               {isCheckingOut ? 'Processing...' : (
                 <>
                   <ShieldCheck size={20} />
-                  {paymentMethod === 'card' ? 'Pay Securely' : 'Place Order'}
+                  Place Order
                 </>
               )}
             </button>

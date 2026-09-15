@@ -111,7 +111,11 @@ export default function CustomerOrdersPage() {
               <div style={{ padding: '16px', background: 'var(--bg-secondary)', borderRadius: '12px', marginBottom: '20px', display: 'flex', flexWrap: 'wrap', gap: '24px', border: '1px solid var(--border-light)' }}>
                 <div style={{ flex: '1 1 120px' }}>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Payment Info</div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{o.payment_method === 'Cash' ? 'Cash on Delivery' : 'Online / Card'}</div>
+                  {/* TODO: previously showed "Online / Card" for any non-'Cash' order, which
+                      implied online payment had been taken — no payment gateway has ever
+                      existed, so every order (including legacy ones recorded as 'Online')
+                      is actually Cash on Delivery. Revisit once a real gateway exists. */}
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Cash on Delivery</div>
                 </div>
                 <div style={{ flex: '1 1 120px' }}>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Contact Number</div>

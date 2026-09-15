@@ -61,21 +61,29 @@ const ReceiptTemplate = forwardRef(({ sale }, ref) => {
         <div className="separator-light"></div>
 
         {/* LINE ITEMS */}
-        {sale.items && sale.items.map((item, idx) => (
-          <React.Fragment key={idx}>
-            <div style={{ display: 'flex' }}>
-              <div style={{ width: '48%', wordBreak: 'break-word' }}>{item.product_name}</div>
-              <div style={{ width: '12%', textAlign: 'right' }}>{item.quantity}</div>
-              <div style={{ width: '20%', textAlign: 'right' }}>{fmtRs(item.selling_price)}</div>
-              <div style={{ width: '20%', textAlign: 'right' }}>{fmtRs(item.selling_price * item.quantity)}</div>
-            </div>
-            {item.discount > 0 && (
-              <div style={{ textAlign: 'left', paddingLeft: '8px' }}>
-                Disc: -{fmtRs(item.discount * item.quantity)}
+        {sale.items && sale.items.map((item, idx) => {
+          const discount = item.discount || 0;
+          // A markup (negative discount) shows as the increased price itself,
+          // not the old base price — a real discount keeps showing the old
+          // price with a separate "Disc:" line below it.
+          const unitPrice = discount < 0 ? item.selling_price - discount : item.selling_price;
+          const lineTotal = item.line_total ?? ((item.selling_price - discount) * item.quantity);
+          return (
+            <React.Fragment key={idx}>
+              <div style={{ display: 'flex' }}>
+                <div style={{ width: '48%', wordBreak: 'break-word' }}>{item.product_name}</div>
+                <div style={{ width: '12%', textAlign: 'right' }}>{item.quantity}</div>
+                <div style={{ width: '20%', textAlign: 'right' }}>{fmtRs(unitPrice)}</div>
+                <div style={{ width: '20%', textAlign: 'right' }}>{fmtRs(lineTotal)}</div>
               </div>
-            )}
-          </React.Fragment>
-        ))}
+              {discount > 0 && (
+                <div style={{ textAlign: 'left', paddingLeft: '8px' }}>
+                  Disc: -{fmtRs(discount * item.quantity)}
+                </div>
+              )}
+            </React.Fragment>
+          );
+        })}
         <div className="separator-light"></div>
 
         {/* TOTALS */}
