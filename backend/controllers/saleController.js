@@ -27,6 +27,22 @@ const formatColomboTime = (dateInput) => {
   }).format(d).replace('T', ' ');
 };
 
+// Removes profit/cost fields that only admins/super_admins should see. Shared
+// by getSales, getSaleById, and getSaleReceipt so staff-visible sale data
+// stays consistent across all three endpoints.
+const stripProfitFields = (sale) => {
+  delete sale.total_profit;
+  delete sale.total_cost;
+  if (sale.items) {
+    sale.items = sale.items.map(item => {
+      delete item.buying_price;
+      delete item.line_profit;
+      return item;
+    });
+  }
+  return sale;
+};
+
 const formatReceiptData = (sale) => {
   const data = sale.toObject ? sale.toObject() : sale;
   const shouldKickDrawer = data.payment_method === 'Cash';
@@ -212,15 +228,7 @@ const getSales = async (req, res) => {
 
     const sales = rawSales.map(sale => {
       if (req.user && (req.user.role !== 'admin' && req.user.role !== 'super_admin')) {
-        delete sale.total_profit;
-        delete sale.total_cost;
-        if (sale.items) {
-          sale.items = sale.items.map(item => {
-            delete item.buying_price;
-            delete item.line_profit;
-            return item;
-          });
-        }
+        stripProfitFields(sale);
       }
       return sale;
     });
@@ -264,17 +272,9 @@ const getSaleById = async (req, res) => {
     if (!rawSale) return res.status(404).json({ message: 'Sale not found' });
     
     if (req.user && (req.user.role !== 'admin' && req.user.role !== 'super_admin')) {
-      delete rawSale.total_profit;
-      delete rawSale.total_cost;
-      if (rawSale.items) {
-        rawSale.items = rawSale.items.map(item => {
-          delete item.buying_price;
-          delete item.line_profit;
-          return item;
-        });
-      }
+      stripProfitFields(rawSale);
     }
-    
+
     res.json(rawSale);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -286,7 +286,13 @@ const getSaleReceipt = async (req, res) => {
   try {
     const sale = await Sale.findById(req.params.id);
     if (!sale) return res.status(404).json({ message: 'Sale not found' });
-    res.json(formatReceiptData(sale));
+
+    const receiptData = formatReceiptData(sale);
+    if (req.user && (req.user.role !== 'admin' && req.user.role !== 'super_admin')) {
+      stripProfitFields(receiptData);
+    }
+
+    res.json(receiptData);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
