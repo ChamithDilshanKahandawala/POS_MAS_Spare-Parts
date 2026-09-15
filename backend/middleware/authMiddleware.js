@@ -70,4 +70,26 @@ const optionalAuth = async (req, res, next) => {
   return next();
 };
 
-module.exports = { protect, adminOnly, superAdminOnly, staffOnly, optionalAuth };
+// Socket.IO connection middleware — mirrors optionalAuth above: attaches
+// socket.user when a valid token is present, but never rejects the
+// connection outright. The public storefront listens for stock_updated
+// while fully anonymous, so the connection itself has to stay open; role-
+// sensitive events (e.g. new_web_order) are instead scoped to a 'staff'
+// room based on socket.user, rather than gating the handshake.
+const socketAuth = async (socket, next) => {
+  try {
+    const token = socket.handshake.auth?.token;
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id).select('-password');
+      if (user && user.isActive) {
+        socket.user = user;
+      }
+    }
+  } catch (error) {
+    // Ignore an invalid/expired token and proceed as anonymous, same as optionalAuth
+  }
+  return next();
+};
+
+module.exports = { protect, adminOnly, superAdminOnly, staffOnly, optionalAuth, socketAuth };

@@ -186,9 +186,11 @@ const createSale = async (req, res) => {
       // Always broadcast stock changes so storefront updates in real-time
       io.emit('stock_updated', stockUpdates);
 
-      // Notify POS dashboard of new online orders
+      // Notify POS dashboard of new online orders. Scoped to the 'staff'
+      // room (see server.js) so customer/anonymous sockets never receive
+      // it, and still strip profit/cost fields for the staff who do.
       if (createdSale.sale_source === 'online') {
-        io.emit('new_web_order', createdSale);
+        io.to('staff').emit('new_web_order', stripProfitFields(createdSale.toObject()));
       }
     }
 

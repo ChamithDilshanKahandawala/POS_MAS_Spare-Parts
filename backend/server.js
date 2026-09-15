@@ -6,7 +6,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 
 // Middleware imports
-const { protect, adminOnly } = require('./middleware/authMiddleware');
+const { protect, adminOnly, socketAuth } = require('./middleware/authMiddleware');
 
 dotenv.config();
 connectDB();
@@ -46,6 +46,18 @@ const corsOptions = {
 
 const io = new Server(server, { cors: corsOptions });
 app.set('io', io);
+
+// Attach socket.user (if a valid JWT was sent) without rejecting anonymous
+// connections — the storefront relies on anonymous stock_updated access.
+// Only staff/admin/super_admin sockets join 'staff', which is where
+// role-sensitive broadcasts (e.g. new_web_order) are sent instead of the
+// open, unauthenticated default channel.
+io.use(socketAuth);
+io.on('connection', (socket) => {
+  if (socket.user && socket.user.role !== 'customer') {
+    socket.join('staff');
+  }
+});
 
 app.use(cors(corsOptions));
 app.use(express.json());

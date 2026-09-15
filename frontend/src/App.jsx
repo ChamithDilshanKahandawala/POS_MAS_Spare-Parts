@@ -42,7 +42,8 @@ function GlobalSocketManager() {
     if (!user) return;
 
     const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5001', {
-       transports: ['websocket', 'polling']
+       transports: ['websocket', 'polling'],
+       auth: { token: user.token }
     });
 
     socket.on('new_web_order', (sale) => {
