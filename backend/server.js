@@ -14,6 +14,12 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 
+// Deployed on Railway, which sits in front of the app as a single-hop reverse
+// proxy — without this, req.ip (and therefore IP-based rate limiting) would
+// resolve to Railway's proxy IP for every request instead of the real client,
+// lumping all visitors into one shared limit.
+app.set('trust proxy', 1);
+
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 const corsOptions = {
