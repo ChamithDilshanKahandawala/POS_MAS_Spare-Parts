@@ -40,6 +40,16 @@ const superAdminOnly = (req, res, next) => {
   return res.status(403).json({ message: 'Access denied: Super Admins only' });
 };
 
+// Staff, admin, or super_admin — i.e. anyone except a self-registered
+// 'customer' account. Used on shop-internal routes (sale/customer records)
+// that a customer should never be able to list or browse.
+const staffOnly = (req, res, next) => {
+  if (req.user && req.user.role !== 'customer') {
+    return next();
+  }
+  return res.status(403).json({ message: 'Access denied: Staff only' });
+};
+
 const optionalAuth = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -60,4 +70,4 @@ const optionalAuth = async (req, res, next) => {
   return next();
 };
 
-module.exports = { protect, adminOnly, superAdminOnly, optionalAuth };
+module.exports = { protect, adminOnly, superAdminOnly, staffOnly, optionalAuth };
