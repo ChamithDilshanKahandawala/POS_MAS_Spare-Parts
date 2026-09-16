@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
 const { getFiscalMonthRange } = require('../utils/fiscalDate');
+const { getColomboMidnightUTC } = require('../utils/colomboDate');
 const { clampLimit } = require('../utils/pagination');
 
 // WebOrdersPage/WhatsAppOrdersPage request up to 200; SalesHistoryPage uses 50.
@@ -422,8 +423,9 @@ const getAnalytics = async (req, res) => {
       groupFormat = '%Y-%m';
       groupLabel = 'Month';
     } else {
-      // daily (today)
-      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      // daily (today) — midnight in Asia/Colombo, not the server's own
+      // timezone (Railway runs its containers in UTC, ~5.5h off).
+      startDate = getColomboMidnightUTC(now);
       groupFormat = '%H:00';
       groupLabel = 'Hour';
     }
@@ -460,7 +462,7 @@ const getAnalytics = async (req, res) => {
       { $match: matchStage },
       {
         $group: {
-          _id: { $dateToString: { format: groupFormat, date: '$createdAt' } },
+          _id: { $dateToString: { format: groupFormat, date: '$createdAt', timezone: 'Asia/Colombo' } },
           revenue: { $sum: '$total_amount' },
           profit: { $sum: '$total_profit' },
           cost: { $sum: '$total_cost' },
