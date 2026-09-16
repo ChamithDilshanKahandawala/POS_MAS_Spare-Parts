@@ -18,6 +18,7 @@ const createReturn = async (req, res) => {
   try {
     await session.withTransaction(async () => {
       const { sale_id, items, reason, refund_method } = req.body;
+      if (!sale_id) throw new RequestError(400, 'sale_id is required');
       if (!items || items.length === 0) throw new RequestError(400, 'No items to return');
 
       const sale = await Sale.findById(sale_id).session(session);
