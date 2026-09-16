@@ -24,7 +24,7 @@ const Receipt = forwardRef(({ sale }, ref) => {
       
       <div className="receipt-row">
         <span>Inv: {sale.invoice_number}</span>
-        <span>{formatDate(sale.created_at)}</span>
+        <span>{formatDate(sale.createdAt)}</span>
       </div>
       <div className="receipt-row">
         <span>Customer: {sale.customer_name || 'Walk-in'}</span>
@@ -43,7 +43,7 @@ const Receipt = forwardRef(({ sale }, ref) => {
         const lineTotal = (item.selling_price - (item.discount || 0)) * item.quantity;
         return (
           <div key={idx} style={{ marginBottom: '6px' }}>
-            <div className="receipt-item-name">{item.product_id?.name || 'Item'}</div>
+            <div className="receipt-item-name">{item.product_name || 'Item'}</div>
             <div className="receipt-row">
               <span>{item.quantity} x {fmtRs(item.selling_price)}</span>
               <span>{fmtRs(lineTotal)}</span>
