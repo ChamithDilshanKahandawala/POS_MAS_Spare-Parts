@@ -16,6 +16,10 @@ const saleItemSchema = new mongoose.Schema({
 const saleSchema = new mongoose.Schema(
   {
     invoice_number: { type: String, unique: true },
+    // Client-generated UUID for one checkout attempt. sparse so older sales
+    // (and any request that omits it) don't collide on a shared null value —
+    // only actual key collisions are rejected.
+    idempotency_key: { type: String, unique: true, sparse: true },
     items: [saleItemSchema],
     subtotal: { type: Number, required: true },
     total_discount: { type: Number, default: 0 }, // bill-level discount (amount)

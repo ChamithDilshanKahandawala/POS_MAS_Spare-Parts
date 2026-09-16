@@ -236,6 +236,7 @@ const parseCustomerDetails = (text) => {
         tracking_number: saleSource === 'whatsapp' ? whatsappTracking : '',
         koko_charge: paymentMethod === 'KOKO' ? kokoCharge : 0,
         koko_percentage: paymentMethod === 'KOKO' ? Number(kokoPercentage) : 0,
+        idempotencyKey: crypto.randomUUID(),
       };
       const { data } = await createSale(payload);
       setSuccessSale(data);

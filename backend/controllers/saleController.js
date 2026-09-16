@@ -63,11 +63,25 @@ const formatReceiptData = (sale) => {
 // POST /api/sales  - Create a new sale
 const createSale = async (req, res) => {
   const session = await mongoose.startSession();
+  const { idempotencyKey } = req.body;
   let createdSale;
   let stockUpdates;
+  let isDuplicate = false;
 
   try {
-    await session.withTransaction(async () => {
+    // Fast path: a prior request with this same key already committed a
+    // sale (e.g. the network dropped the first response before the client
+    // saw it, and the client retried) — return that sale instead of
+    // creating a second one.
+    if (idempotencyKey) {
+      const existing = await Sale.findOne({ idempotency_key: idempotencyKey });
+      if (existing) {
+        createdSale = existing;
+        isDuplicate = true;
+      }
+    }
+
+    if (!isDuplicate) await session.withTransaction(async () => {
       const { items, total_discount, payment_method, customer_name, customer_phone,customer_details, notes, sale_source, shipping_address, shipping_cost_charged, actual_shipping_cost, tracking_number, cod_amount, paid_amount, koko_charge, koko_percentage } = req.body;
 
       if (!items || items.length === 0) {
@@ -175,6 +189,7 @@ const createSale = async (req, res) => {
         shop: req.user.shop || 'Main Branch',
         notes: notes || '',
         tracking_number: tracking_number || '',
+        idempotency_key: idempotencyKey || undefined,
       }], { session });
 
       if (req.user.role === 'customer') {
@@ -185,17 +200,21 @@ const createSale = async (req, res) => {
       createdSale = sale;
     });
 
-    // Emit Socket.io events only after the transaction has committed
-    const io = req.app.get('io');
-    if (io) {
-      // Always broadcast stock changes so storefront updates in real-time
-      io.emit('stock_updated', stockUpdates);
+    // Emit Socket.io events only after the transaction has committed, and
+    // only for a real new sale — a duplicate no-op made no stock change and
+    // was already broadcast when the original request committed.
+    if (!isDuplicate) {
+      const io = req.app.get('io');
+      if (io) {
+        // Always broadcast stock changes so storefront updates in real-time
+        io.emit('stock_updated', stockUpdates);
 
-      // Notify POS dashboard of new online orders. Scoped to the 'staff'
-      // room (see server.js) so customer/anonymous sockets never receive
-      // it, and still strip profit/cost fields for the staff who do.
-      if (createdSale.sale_source === 'online') {
-        io.to('staff').emit('new_web_order', stripProfitFields(createdSale.toObject()));
+        // Notify POS dashboard of new online orders. Scoped to the 'staff'
+        // room (see server.js) so customer/anonymous sockets never receive
+        // it, and still strip profit/cost fields for the staff who do.
+        if (createdSale.sale_source === 'online') {
+          io.to('staff').emit('new_web_order', stripProfitFields(createdSale.toObject()));
+        }
       }
     }
 
@@ -204,8 +223,24 @@ const createSale = async (req, res) => {
       stripProfitFields(receiptData);
     }
 
-    res.status(201).json(receiptData);
+    // A duplicate is a successful no-op, not a new resource — 200, not 201.
+    res.status(isDuplicate ? 200 : 201).json(receiptData);
   } catch (err) {
+    // Two concurrent requests with the same brand-new key can both pass the
+    // fast-path check above before either commits. The unique index on
+    // idempotency_key then rejects the second insert — treat that the same
+    // way as the fast path: return the sale the first request created
+    // instead of erroring the second one out.
+    if (err.code === 11000 && err.keyPattern?.idempotency_key) {
+      const existing = await Sale.findOne({ idempotency_key: idempotencyKey });
+      if (existing) {
+        const receiptData = formatReceiptData(existing);
+        if (req.user && (req.user.role !== 'admin' && req.user.role !== 'super_admin')) {
+          stripProfitFields(receiptData);
+        }
+        return res.status(200).json(receiptData);
+      }
+    }
     res.status(err.statusCode || 500).json({ message: err.message });
   } finally {
     session.endSession();
