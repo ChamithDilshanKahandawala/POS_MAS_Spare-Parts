@@ -5,8 +5,8 @@ const { protect, staffOnly } = require('../middleware/authMiddleware');
 
 router.get('/',           protect, staffOnly, getCustomers);
 router.get('/:id',        protect, staffOnly, getCustomerById);
-router.post('/',          protect, createCustomer);
-router.put('/:id',        protect, updateCustomer);
+router.post('/',          protect, staffOnly, createCustomer);
+router.put('/:id',        protect, staffOnly, updateCustomer);
 router.delete('/:id',     protect, deleteCustomer);
 router.put('/:id/credit', protect, staffOnly, updateCredit);
 
