@@ -1,5 +1,6 @@
 const Supplier = require('../models/Supplier');
 const { pick } = require('../utils/pick');
+const { escapeRegex } = require('../utils/productSearch');
 
 // isActive is deliberately excluded — only ever changed through the
 // dedicated delete route.
@@ -9,11 +10,14 @@ const getSuppliers = async (req, res) => {
   try {
     const { search } = req.query;
     const query = { isActive: true };
-    if (search) query.$or = [
-      { company_name: { $regex: search, $options: 'i' } },
-      { contact_person: { $regex: search, $options: 'i' } },
-      { phone: { $regex: search, $options: 'i' } },
-    ];
+    if (search) {
+      const safeSearch = escapeRegex(search);
+      query.$or = [
+        { company_name: { $regex: safeSearch, $options: 'i' } },
+        { contact_person: { $regex: safeSearch, $options: 'i' } },
+        { phone: { $regex: safeSearch, $options: 'i' } },
+      ];
+    }
     const suppliers = await Supplier.find(query).sort({ createdAt: -1 });
     res.json({ suppliers, total: suppliers.length });
   } catch (err) { res.status(500).json({ message: err.message }); }

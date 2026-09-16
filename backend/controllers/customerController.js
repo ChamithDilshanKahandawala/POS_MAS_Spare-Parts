@@ -1,5 +1,6 @@
 const Customer = require('../models/Customer');
 const { pick } = require('../utils/pick');
+const { escapeRegex } = require('../utils/productSearch');
 
 // balance_due and isActive are deliberately excluded — balance_due is only
 // ever changed through the atomic /credit endpoint (which enforces the
@@ -11,11 +12,14 @@ const getCustomers = async (req, res) => {
   try {
     const { search, page = 1, limit = 50 } = req.query;
     const query = { isActive: true };
-    if (search) query.$or = [
-      { name: { $regex: search, $options: 'i' } },
-      { phone: { $regex: search, $options: 'i' } },
-      { vehicle_plate: { $regex: search, $options: 'i' } },
-    ];
+    if (search) {
+      const safeSearch = escapeRegex(search);
+      query.$or = [
+        { name: { $regex: safeSearch, $options: 'i' } },
+        { phone: { $regex: safeSearch, $options: 'i' } },
+        { vehicle_plate: { $regex: safeSearch, $options: 'i' } },
+      ];
+    }
     const skip = (page - 1) * limit;
     const [customers, total] = await Promise.all([
       Customer.find(query).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
