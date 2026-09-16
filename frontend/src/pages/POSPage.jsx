@@ -36,6 +36,11 @@ export default function POSPage() {
   const [whatsappPaidAmount, setWhatsappPaidAmount] = useState('');
   const [kokoPercentage, setKokoPercentage] = useState(10);
   const [processing, setProcessing] = useState(false);
+  // Synchronous guard: setProcessing(true) only takes effect on next render,
+  // so a fast double-click/key-repeat can call handleCheckout twice before
+  // the state update lands and the button actually disables. This ref blocks
+  // the second call immediately, with no render in between.
+  const checkoutInFlightRef = useRef(false);
   const [successSale, setSuccessSale] = useState(null);
   const [loading, setLoading] = useState(false);
   const [mobileTab, setMobileTab] = useState('products'); // 'products' | 'cart'
@@ -210,8 +215,10 @@ const parseCustomerDetails = (text) => {
   const computedCodAmount = saleSource === 'whatsapp' ? Math.max(0, totalAmount + Number(whatsappShippingCharged) - Number(whatsappPaidAmount)) : 0;
 
   const handleCheckout = useCallback(async () => {
+    if (checkoutInFlightRef.current) return;
     if (cart.length === 0) { toast.error('Cart is empty!'); return; }
     if (totalAmount < 0) { toast.error('Discount exceeds total!'); return; }
+    checkoutInFlightRef.current = true;
     setProcessing(true);
     try {
       const payload = {
@@ -242,6 +249,7 @@ const parseCustomerDetails = (text) => {
     } catch (err) {
       toast.error(err.response?.data?.message || 'Checkout failed — try again');
     } finally {
+      checkoutInFlightRef.current = false;
       setProcessing(false);
     }
   }, [cart, totalAmount, billDiscount, paymentMethod, saleSource, customerName, customerPhone, whatsappShippingCharged, whatsappActualShipping, whatsappPaidAmount, whatsappTracking, computedCodAmount,whatsappCustomerDetails, kokoCharge, kokoPercentage, clearAll]);
