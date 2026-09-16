@@ -1,6 +1,11 @@
 const Customer = require('../models/Customer');
 const { pick } = require('../utils/pick');
 const { escapeRegex } = require('../utils/productSearch');
+const { clampLimit } = require('../utils/pagination');
+
+// No frontend caller requests above the 50 default today; 100 gives headroom
+// without inviting a full-collection dump.
+const MAX_CUSTOMERS_LIMIT = 100;
 
 // balance_due and isActive are deliberately excluded — balance_due is only
 // ever changed through the atomic /credit endpoint (which enforces the
@@ -20,12 +25,13 @@ const getCustomers = async (req, res) => {
         { vehicle_plate: { $regex: safeSearch, $options: 'i' } },
       ];
     }
-    const skip = (page - 1) * limit;
+    const safeLimit = clampLimit(limit, 50, MAX_CUSTOMERS_LIMIT);
+    const skip = (page - 1) * safeLimit;
     const [customers, total] = await Promise.all([
-      Customer.find(query).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
+      Customer.find(query).sort({ createdAt: -1 }).skip(skip).limit(safeLimit),
       Customer.countDocuments(query),
     ]);
-    res.json({ customers, total, page: Number(page), pages: Math.ceil(total / limit) });
+    res.json({ customers, total, page: Number(page), pages: Math.ceil(total / safeLimit) });
   } catch (err) { res.status(500).json({ message: err.message }); }
 };
 

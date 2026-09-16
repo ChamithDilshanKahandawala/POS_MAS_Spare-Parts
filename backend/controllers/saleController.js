@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
 const { getFiscalMonthRange } = require('../utils/fiscalDate');
+const { clampLimit } = require('../utils/pagination');
+
+// WebOrdersPage/WhatsAppOrdersPage request up to 200; SalesHistoryPage uses 50.
+const MAX_SALES_LIMIT = 200;
 
 // Lets a handler bail out mid-transaction with the same status code the
 // old code used to send directly via res.status(...).json(...).
@@ -226,11 +230,12 @@ const getSales = async (req, res) => {
     if (sale_source) query.sale_source = sale_source;
     if (order_status) query.order_status = order_status;
 
+    const safeLimit = clampLimit(limit, 20, MAX_SALES_LIMIT);
     const total = await Sale.countDocuments(query);
     const rawSales = await Sale.find(query)
       .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(Number(limit))
+      .skip((page - 1) * safeLimit)
+      .limit(safeLimit)
       .lean();
 
     const sales = rawSales.map(sale => {
@@ -240,7 +245,7 @@ const getSales = async (req, res) => {
       return sale;
     });
 
-    res.json({ sales, total, page: Number(page), pages: Math.ceil(total / limit) });
+    res.json({ sales, total, page: Number(page), pages: Math.ceil(total / safeLimit) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

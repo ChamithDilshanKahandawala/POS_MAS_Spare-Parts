@@ -1,6 +1,12 @@
 const Product = require('../models/Product');
 const { executeProductSearch } = require('../services/productSearchService');
 const { normalizeProductPayload } = require('../utils/productSearch');
+const { clampLimit } = require('../utils/pagination');
+
+// The POS's initial product load (no search text) fetches up to 500 items
+// for local filtering — the search path already clamps separately at 50 via
+// executeProductSearch.
+const MAX_PRODUCTS_LIMIT = 500;
 
 // GET /api/products  (with search, category filter, pagination)
 const getProducts = async (req, res) => {
@@ -36,11 +42,12 @@ const getProducts = async (req, res) => {
       query.$expr = { $lte: ['$stock_quantity', '$low_stock_threshold'] };
     }
 
+    const safeLimit = clampLimit(limit, 20, MAX_PRODUCTS_LIMIT);
     const total = await Product.countDocuments(query);
     const rawProducts = await Product.find(query)
       .sort({ updatedAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(Number(limit))
+      .skip((page - 1) * safeLimit)
+      .limit(safeLimit)
       .lean();
 
     const products = rawProducts.map(p => {
@@ -53,7 +60,7 @@ const getProducts = async (req, res) => {
       return p;
     });
 
-    res.json({ products, total, page: Number(page), pages: Math.ceil(total / limit) });
+    res.json({ products, total, page: Number(page), pages: Math.ceil(total / safeLimit) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
