@@ -1,4 +1,10 @@
 const Customer = require('../models/Customer');
+const { pick } = require('../utils/pick');
+
+// balance_due and isActive are deliberately excluded — balance_due is only
+// ever changed through the atomic /credit endpoint (which enforces the
+// credit limit), and isActive only through the dedicated delete route.
+const CUSTOMER_FIELDS = ['name', 'phone', 'email', 'address', 'vehicle_plate', 'vehicle_type', 'credit_limit', 'discount_pct', 'notes'];
 
 // GET /api/customers
 const getCustomers = async (req, res) => {
@@ -31,7 +37,7 @@ const getCustomerById = async (req, res) => {
 // POST /api/customers
 const createCustomer = async (req, res) => {
   try {
-    const customer = await Customer.create(req.body);
+    const customer = await Customer.create(pick(req.body, CUSTOMER_FIELDS));
     res.status(201).json(customer);
   } catch (err) { res.status(500).json({ message: err.message }); }
 };
@@ -39,7 +45,7 @@ const createCustomer = async (req, res) => {
 // PUT /api/customers/:id
 const updateCustomer = async (req, res) => {
   try {
-    const customer = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const customer = await Customer.findByIdAndUpdate(req.params.id, pick(req.body, CUSTOMER_FIELDS), { new: true });
     if (!customer) return res.status(404).json({ message: 'Customer not found' });
     res.json(customer);
   } catch (err) { res.status(500).json({ message: err.message }); }

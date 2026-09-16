@@ -1,4 +1,9 @@
 const Supplier = require('../models/Supplier');
+const { pick } = require('../utils/pick');
+
+// isActive is deliberately excluded — only ever changed through the
+// dedicated delete route.
+const SUPPLIER_FIELDS = ['company_name', 'contact_person', 'phone', 'email', 'address', 'outstanding_payment', 'categories', 'notes'];
 
 const getSuppliers = async (req, res) => {
   try {
@@ -16,14 +21,14 @@ const getSuppliers = async (req, res) => {
 
 const createSupplier = async (req, res) => {
   try {
-    const supplier = await Supplier.create(req.body);
+    const supplier = await Supplier.create(pick(req.body, SUPPLIER_FIELDS));
     res.status(201).json(supplier);
   } catch (err) { res.status(500).json({ message: err.message }); }
 };
 
 const updateSupplier = async (req, res) => {
   try {
-    const supplier = await Supplier.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const supplier = await Supplier.findByIdAndUpdate(req.params.id, pick(req.body, SUPPLIER_FIELDS), { new: true });
     if (!supplier) return res.status(404).json({ message: 'Not found' });
     res.json(supplier);
   } catch (err) { res.status(500).json({ message: err.message }); }
