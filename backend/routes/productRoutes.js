@@ -19,7 +19,7 @@ router.get('/export', protect, adminOnly, bulkOpsLimiter, exportProducts);
 router.get('/search', optionalAuth, searchLimiter, searchProducts);
 router.get('/', optionalAuth, getProducts);
 router.get('/:id', optionalAuth, getProductById);
-router.post('/', protect, createProduct);
+router.post('/', protect, adminOnly, createProduct);
 router.put('/:id', protect, adminOnly, updateProduct);
 router.delete('/:id', protect, adminOnly, deleteProduct);
 
