@@ -210,11 +210,17 @@ const filteredOrders = useMemo(() => {
 // ── Summary stats ─────────────────────────────────────────────────────────
 const totalRevenue = orders.reduce((s, o) => s + (o.total_amount || 0), 0);
 const totalProfit = orders.reduce((s, o) => s + Number(o.total_profit || 0), 0);
+// A returned order never completed as a sale — its item profit is fully
+// lost, and whatever was actually paid to the courier is a pure loss (not
+// offset by any revenue). This applies whenever an order comes back
+// Returned, regardless of whether money had already been collected for it —
+// money_received only tracks COD collection status, not whether the sale
+// itself went through.
 const totalReturnLoss = orders
-  .filter(o => o.order_status === 'Returned' && o.money_received)
+  .filter(o => o.order_status === 'Returned')
   .reduce((s, o) => s + Number(o.total_profit || 0), 0);
 const totalDeliveryLoss = orders
-  .filter(o => o.order_status === 'Returned' && o.money_received)
+  .filter(o => o.order_status === 'Returned')
   .reduce((s, o) => s + Number(o.actual_shipping_cost || 0), 0);
 const netProfit = totalProfit - totalReturnLoss - totalDeliveryLoss;
 const pendingCount = statusCounts['Pending'] || 0;
