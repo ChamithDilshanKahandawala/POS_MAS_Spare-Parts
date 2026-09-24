@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
 const { getFiscalMonthRange } = require('../utils/fiscalDate');
-const { getColomboMidnightUTC } = require('../utils/colomboDate');
+const { getColomboMidnightUTC, parseAsColomboRangeStart, parseAsColomboRangeEnd } = require('../utils/colomboDate');
 const { clampLimit } = require('../utils/pagination');
 
 // WebOrdersPage/WhatsAppOrdersPage request up to 200; SalesHistoryPage uses 50.
@@ -255,12 +255,8 @@ const getSales = async (req, res) => {
 
     if (from || to) {
       query.createdAt = {};
-      if (from) query.createdAt.$gte = new Date(from);
-      if (to) {
-        const toDate = new Date(to);
-        toDate.setHours(23, 59, 59, 999);
-        query.createdAt.$lte = toDate;
-      }
+      if (from) query.createdAt.$gte = parseAsColomboRangeStart(from);
+      if (to) query.createdAt.$lte = parseAsColomboRangeEnd(to);
     }
     if (payment_method) query.payment_method = payment_method;
     if (sale_source) query.sale_source = sale_source;

@@ -31,4 +31,36 @@ function getColomboMidnightUTC(date = new Date()) {
   return colomboDateToUTC(year, month, day);
 }
 
-module.exports = { getColomboDateParts, colomboDateToUTC, getColomboMidnightUTC };
+const BARE_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+// Parses a date-range boundary the way getSales' from/to query params need:
+// a bare "YYYY-MM-DD" (e.g. from a <input type="date"> picker, or a preset
+// period computed client-side) is a Colombo calendar date, not a UTC
+// instant — resolve it as Colombo midnight rather than the UTC midnight
+// `new Date(...)` would default to. Anything else (already a precise ISO
+// instant) passes through unchanged.
+function parseAsColomboRangeStart(value) {
+  if (typeof value === 'string' && BARE_DATE_RE.test(value)) {
+    const [year, month, day] = value.split('-').map(Number);
+    return colomboDateToUTC(year, month, day);
+  }
+  return new Date(value);
+}
+
+// Same, but for a range's end — a bare date widens to the last instant of
+// that Colombo calendar day instead of its midnight.
+function parseAsColomboRangeEnd(value) {
+  if (typeof value === 'string' && BARE_DATE_RE.test(value)) {
+    const [year, month, day] = value.split('-').map(Number);
+    return colomboDateToUTC(year, month, day, 23, 59, 59, 999);
+  }
+  return new Date(value);
+}
+
+module.exports = {
+  getColomboDateParts,
+  colomboDateToUTC,
+  getColomboMidnightUTC,
+  parseAsColomboRangeStart,
+  parseAsColomboRangeEnd,
+};

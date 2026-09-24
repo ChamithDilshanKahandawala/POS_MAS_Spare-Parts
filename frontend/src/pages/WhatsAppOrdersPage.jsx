@@ -10,6 +10,7 @@ import {
 import api from '../api/axios';
 import useIsMobile from '../hooks/useIsMobile';
 import { getFiscalMonthRange } from '../utils/fiscalDate';
+import { getColomboDateString } from '../utils/colomboDate';
 
 // ── Status config ─────────────────────────────────────────────────────────────
 const STATUSES = [
@@ -33,25 +34,27 @@ const PERIOD_OPTIONS = [
 
 function getDateRange(period) {
   const now = new Date();
-  let from = null;
-  let to = undefined;
+  // Bare "YYYY-MM-DD" strings, resolved as Asia/Colombo calendar dates by
+  // getSales on the backend — not raw Date objects run through
+  // toISOString(), which converts to UTC first and can land on the wrong
+  // calendar day entirely (see getFiscalMonthRange's doc comment).
   if (period === 'today') {
-    from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  } else if (period === 'week') {
-    from = new Date(now);
-    from.setDate(now.getDate() - 7);
-  } else if (period === 'month') {
-    const fiscalRange = getFiscalMonthRange(now);
-    from = fiscalRange.start;
-    to = fiscalRange.end;
-  } else if (period === 'quarter') {
-    from = new Date(now);
-    from.setMonth(now.getMonth() - 3);
+    return { from: getColomboDateString(now), to: undefined };
   }
-  return from ? {
-    from: from.toISOString().split('T')[0],
-    to: to ? to.toISOString().split('T')[0] : undefined,
-  } : undefined;
+  if (period === 'week') {
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    return { from: getColomboDateString(weekAgo), to: undefined };
+  }
+  if (period === 'month') {
+    const fiscalRange = getFiscalMonthRange(now);
+    return { from: fiscalRange.start, to: fiscalRange.end };
+  }
+  if (period === 'quarter') {
+    const quarterAgo = new Date(now);
+    quarterAgo.setMonth(now.getMonth() - 3);
+    return { from: getColomboDateString(quarterAgo), to: undefined };
+  }
+  return undefined;
 }
 
 export default function WhatsAppOrdersPage() {
