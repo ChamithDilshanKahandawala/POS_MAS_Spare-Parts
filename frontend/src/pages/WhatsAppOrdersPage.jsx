@@ -227,12 +227,14 @@ const filteredOrders = useMemo(() => {
     updateStatus(deliveryModal.orderId, 'Delivered', undefined, deliveryModal.moneyReceived);
   };
 
-  const markMoneyReceived = (order) => {
-    updateStatus(order._id, 'Delivered', undefined, true);
+  // Toggles money_received both ways (mark and un-mark) while keeping the
+  // order's current status as-is — used for both "money received" on a
+  // Delivered order and "loss acknowledged" on a Returned order, since
+  // they're the same underlying flag. A mis-click is otherwise permanent:
+  // the old one-way "Mark" buttons had no way back once set.
+  const toggleMoneyReceived = (order) => {
+    updateStatus(order._id, order.order_status, undefined, !order.money_received);
   };
-  const markLossAcknowledged = (order) => {
-  updateStatus(order._id, 'Returned', undefined, true);
-};
 
   const getStatusConfig = (status) => STATUSES.find(s => s.value === status) || STATUSES[1];
 
@@ -502,13 +504,13 @@ const deliveredCount = statusCounts['Delivered'] || 0;
                       )}
                     </div>
 
-                    {order.order_status === 'Delivered' && !order.money_received && (
+                    {order.order_status === 'Delivered' && (
                       <button
-                        onClick={() => markMoneyReceived(order)}
-                        className="btn-success"
+                        onClick={() => toggleMoneyReceived(order)}
+                        className={order.money_received ? 'btn-secondary' : 'btn-success'}
                         style={{ width: '100%', justifyContent: 'center', marginBottom: '10px', padding: '8px 10px', fontSize: '12px' }}
                       >
-                        <DollarSign size={14} /> Mark Money Received
+                        <DollarSign size={14} /> {order.money_received ? 'Unmark Money Received' : 'Mark Money Received'}
                       </button>
                     )}
                   </div>
@@ -648,10 +650,16 @@ const deliveredCount = statusCounts['Delivered'] || 0;
                         <td style={{ textAlign: 'center' }}>
                           {order.order_status === 'Delivered' ? (
                             order.money_received ? (
-                              <CheckCircle size={16} color="#10b981" style={{ display: 'inline' }} />
+                              <button
+                                onClick={() => toggleMoneyReceived(order)}
+                                title="Click to un-mark"
+                                style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'none', border: '1px solid #10b981', color: '#10b981', borderRadius: '6px', padding: '3px 8px', fontSize: '10px', fontWeight: 700, cursor: 'pointer' }}
+                              >
+                                <CheckCircle size={12} /> Received
+                              </button>
                             ) : (
                               <button
-                                onClick={() => markMoneyReceived(order)}
+                                onClick={() => toggleMoneyReceived(order)}
                                 title="Mark money received"
                                 style={{ background: 'none', border: '1px solid #f59e0b', color: '#f59e0b', borderRadius: '6px', padding: '3px 8px', fontSize: '10px', fontWeight: 700, cursor: 'pointer' }}
                               >
@@ -660,12 +668,16 @@ const deliveredCount = statusCounts['Delivered'] || 0;
                             )
                           ) : order.order_status === 'Returned' ? (
                             order.money_received ? (
-                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#ef4444', fontSize: '10px', fontWeight: 700, background: 'rgba(239,68,68,0.1)', padding: '3px 8px', borderRadius: '6px' }}>
+                              <button
+                                onClick={() => toggleMoneyReceived(order)}
+                                title="Click to un-mark"
+                                style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'none', border: '1px solid #ef4444', color: '#ef4444', borderRadius: '6px', padding: '3px 8px', fontSize: '10px', fontWeight: 700, cursor: 'pointer' }}
+                              >
                                 <XCircle size={12} /> Lost
-                              </span>
+                              </button>
                             ) : (
                               <button
-                                onClick={() => markLossAcknowledged(order)}
+                                onClick={() => toggleMoneyReceived(order)}
                                 title="Mark as lost"
                                 style={{ background: 'none', border: '1px solid #f59e0b', color: '#f59e0b', borderRadius: '6px', padding: '3px 8px', fontSize: '10px', fontWeight: 700, cursor: 'pointer' }}
                               >
