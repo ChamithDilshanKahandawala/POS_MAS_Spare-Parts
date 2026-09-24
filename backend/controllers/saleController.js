@@ -5,8 +5,8 @@ const { getFiscalMonthRange } = require('../utils/fiscalDate');
 const { getColomboMidnightUTC, parseAsColomboRangeStart, parseAsColomboRangeEnd } = require('../utils/colomboDate');
 const { clampLimit } = require('../utils/pagination');
 
-// WebOrdersPage/WhatsAppOrdersPage request up to 200; SalesHistoryPage uses 50.
-const MAX_SALES_LIMIT = 200;
+// WebOrdersPage/WhatsAppOrdersPage now paginate at 1000/page; SalesHistoryPage uses 50.
+const MAX_SALES_LIMIT = 1000;
 
 // Lets a handler bail out mid-transaction with the same status code the
 // old code used to send directly via res.status(...).json(...).
@@ -250,7 +250,7 @@ const createSale = async (req, res) => {
 // GET /api/sales
 const getSales = async (req, res) => {
   try {
-    const { page = 1, limit = 20, from, to, payment_method, sale_source, order_status } = req.query;
+    const { page = 1, limit = 20, from, to, payment_method, sale_source, order_status, money_received } = req.query;
     const query = {};
 
     if (from || to) {
@@ -261,6 +261,7 @@ const getSales = async (req, res) => {
     if (payment_method) query.payment_method = payment_method;
     if (sale_source) query.sale_source = sale_source;
     if (order_status) query.order_status = order_status;
+    if (money_received !== undefined) query.money_received = money_received === 'true';
 
     const safeLimit = clampLimit(limit, 20, MAX_SALES_LIMIT);
     const total = await Sale.countDocuments(query);
@@ -278,6 +279,83 @@ const getSales = async (req, res) => {
     });
 
     res.json({ sales, total, page: Number(page), pages: Math.ceil(total / safeLimit) });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// GET /api/sales/whatsapp/summary
+// Period-wide totals and status counts for the WhatsApp Orders page,
+// independent of getSales' pagination — so "Net Profit" and the status tab
+// badges always reflect every matching order, not just whichever page of
+// up to MAX_SALES_LIMIT happens to be loaded.
+const ORDER_STATUSES = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returned'];
+const getWhatsappOrdersSummary = async (req, res) => {
+  try {
+    const { from, to } = req.query;
+    const query = { sale_source: 'whatsapp' };
+    if (from || to) {
+      query.createdAt = {};
+      if (from) query.createdAt.$gte = parseAsColomboRangeStart(from);
+      if (to) query.createdAt.$lte = parseAsColomboRangeEnd(to);
+    }
+
+    const [result] = await Sale.aggregate([
+      { $match: query },
+      {
+        $facet: {
+          totals: [
+            {
+              $group: {
+                _id: null,
+                total_revenue: { $sum: '$total_amount' },
+                total_profit: { $sum: '$total_profit' },
+                total_orders: { $sum: 1 },
+              },
+            },
+          ],
+          returnLoss: [
+            { $match: { order_status: 'Returned' } },
+            {
+              $group: {
+                _id: null,
+                totalReturnLoss: { $sum: '$total_profit' },
+                totalDeliveryLoss: { $sum: '$actual_shipping_cost' },
+              },
+            },
+          ],
+          statusCounts: [{ $group: { _id: '$order_status', count: { $sum: 1 } } }],
+          moneyReceivedCount: [
+            { $match: { order_status: 'Delivered', money_received: true } },
+            { $count: 'count' },
+          ],
+        },
+      },
+    ]);
+
+    const totals = result.totals[0] || { total_revenue: 0, total_profit: 0, total_orders: 0 };
+    const loss = result.returnLoss[0] || { totalReturnLoss: 0, totalDeliveryLoss: 0 };
+
+    const statusCounts = { All: totals.total_orders };
+    for (const s of ORDER_STATUSES) statusCounts[s] = 0;
+    for (const row of result.statusCounts) {
+      const status = row._id || 'Pending';
+      if (statusCounts[status] !== undefined) statusCounts[status] = row.count;
+    }
+    statusCounts.MoneyReceived = result.moneyReceivedCount[0]?.count || 0;
+
+    // Revenue (total_amount) isn't treated as sensitive elsewhere in this
+    // codebase — only profit/cost is (see stripProfitFields) — so it's
+    // visible to any staff role.
+    const responseData = { statusCounts, totalRevenue: totals.total_revenue };
+    if (req.user && (req.user.role === 'admin' || req.user.role === 'super_admin')) {
+      responseData.totalProfit = totals.total_profit;
+      responseData.totalReturnLoss = loss.totalReturnLoss;
+      responseData.totalDeliveryLoss = loss.totalDeliveryLoss;
+      responseData.netProfit = totals.total_profit - loss.totalReturnLoss - loss.totalDeliveryLoss;
+    }
+
+    res.json(responseData);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -637,6 +715,7 @@ const deleteSale = async (req, res) => {
 };
 
 module.exports = { createSale,  getSales,
+  getWhatsappOrdersSummary,
   getMyOrders,
   getSaleById,
   getSaleReceipt,

@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { getSales } from '../api/services';
+import { getSales, getWhatsappOrdersSummary } from '../api/services';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import {
   Truck, Package, CheckCircle, Clock, Phone, X, Navigation,
   Search, RefreshCw, ShoppingBag, DollarSign, XCircle,
   Calendar, Filter, ChevronDown, Eye, MapPin, User, CreditCard, RotateCcw, TrendingUp,
+  ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import api from '../api/axios';
 import useIsMobile from '../hooks/useIsMobile';
@@ -64,6 +65,13 @@ export default function WhatsAppOrdersPage() {
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  // Period-wide totals and status counts, independent of the order list's
+  // pagination — so Net Profit and the status tab badges always reflect
+  // every matching order, not just whichever page is currently loaded.
+  const [summary, setSummary] = useState({ statusCounts: { All: 0 } });
 
   // Filter state
   const [statusFilter, setStatusFilter] = useState('All');
@@ -71,7 +79,7 @@ const [periodFilter, setPeriodFilter] = useState('all');
 const [searchQuery, setSearchQuery] = useState('');
 const [customFrom, setCustomFrom] = useState('');
 const [customTo, setCustomTo] = useState('');
-  
+
 
   // Modals
   const [trackingModal, setTrackingModal] = useState({ isOpen: false, orderId: null });
@@ -80,46 +88,78 @@ const [customTo, setCustomTo] = useState('');
   const [detailModal, setDetailModal] = useState(null);
 
   // ── Fetch ─────────────────────────────────────────────────────────────────
- const fetchOnlineOrders = useCallback(async () => {
-  setLoading(true);
-  try {
-    const params = { sale_source: 'whatsapp', limit: 200 };
-
-    // Custom date range takes priority over preset period buttons
+  // Custom date range takes priority over preset period buttons — shared by
+  // both the paginated order list and the period-wide summary below.
+  const dateParams = useMemo(() => {
     if (customFrom || customTo) {
-      if (customFrom) params.from = customFrom;
-      if (customTo) params.to = customTo;
-    } else {
-      const dateRange = getDateRange(periodFilter);
-      if (dateRange?.from) params.from = dateRange.from;
-      if (dateRange?.to) params.to = dateRange.to;
+      const p = {};
+      if (customFrom) p.from = customFrom;
+      if (customTo) p.to = customTo;
+      return p;
     }
-    // Fetch ALL orders for the given date period so that the status tab counts work correctly
+    const dateRange = getDateRange(periodFilter);
+    const p = {};
+    if (dateRange?.from) p.from = dateRange.from;
+    if (dateRange?.to) p.to = dateRange.to;
+    return p;
+  }, [periodFilter, customFrom, customTo]);
 
-    const { data } = await getSales(params);
-    setOrders(data.sales || []);
-  } catch {
-    toast.error('Failed to load WhatsApp orders');
-  } finally {
-    setLoading(false);
-  }
-}, [periodFilter, customFrom, customTo]);
+  const fetchOnlineOrders = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = { sale_source: 'whatsapp', limit: 1000, page, ...dateParams };
+      // Filtered server-side (not just client-side over the loaded page) so
+      // a status tab's pagination reflects every matching order, not just
+      // however many happen to be on the currently loaded page.
+      if (statusFilter === 'MoneyReceived') {
+        params.order_status = 'Delivered';
+        params.money_received = 'true';
+      } else if (statusFilter !== 'All') {
+        params.order_status = statusFilter;
+      }
+
+      const { data } = await getSales(params);
+      setOrders(data.sales || []);
+      setTotal(data.total || 0);
+      setPages(data.pages || 1);
+    } catch {
+      toast.error('Failed to load WhatsApp orders');
+    } finally {
+      setLoading(false);
+    }
+  }, [page, statusFilter, dateParams]);
+
+  // Period-wide totals/status-counts, independent of the order list's page —
+  // always covers every WhatsApp order in the selected date range.
+  const fetchSummary = useCallback(async () => {
+    try {
+      const { data } = await getWhatsappOrdersSummary(dateParams);
+      setSummary(data);
+    } catch {
+      // Non-fatal — the order table and its actions still work without this.
+    }
+  }, [dateParams]);
 
   useEffect(() => {
     fetchOnlineOrders();
-    const handleNewOrder = () => fetchOnlineOrders();
-    window.addEventListener('whatsapp_order_received', handleNewOrder);
-    return () => window.removeEventListener('whatsapp_order_received', handleNewOrder);
   }, [fetchOnlineOrders]);
 
-  // ── Client-side search and status filter ──────────────────────────────────
+  useEffect(() => {
+    fetchSummary();
+  }, [fetchSummary]);
+
+  useEffect(() => {
+    const handleNewOrder = () => { fetchOnlineOrders(); fetchSummary(); };
+    window.addEventListener('whatsapp_order_received', handleNewOrder);
+    return () => window.removeEventListener('whatsapp_order_received', handleNewOrder);
+  }, [fetchOnlineOrders, fetchSummary]);
+
+  // ── Client-side search (within the currently loaded page only) ────────────
+  // Status filtering now happens server-side (see fetchOnlineOrders) so it
+  // works correctly across pagination — only free-text search stays
+  // client-side, since it doesn't reach across pages.
 const filteredOrders = useMemo(() => {
   let result = orders;
-  if (statusFilter === 'MoneyReceived') {
-    result = result.filter(o => (o.order_status || 'Pending') === 'Delivered' && Boolean(o.money_received));
-  } else if (statusFilter !== 'All') {
-    result = result.filter(o => (o.order_status || 'Pending') === statusFilter);
-  }
   if (searchQuery.trim()) {
     const q = searchQuery.toLowerCase();
     result = result.filter(o =>
@@ -130,21 +170,11 @@ const filteredOrders = useMemo(() => {
     );
   }
   return result;
-}, [orders, statusFilter, searchQuery]);
+}, [orders, searchQuery]);
 
-  // ── Status counts for badges ──────────────────────────────────────────────
-  const statusCounts = useMemo(() => {
-    const counts = { All: orders.length };
-    for (const s of STATUSES) {
-      if (s.value !== 'All') counts[s.value] = 0;
-    }
-    orders.forEach(o => {
-      const st = o.order_status || 'Pending';
-      if (counts[st] !== undefined) counts[st]++;
-      if (st === 'Delivered' && o.money_received) counts.MoneyReceived++;
-    });
-    return counts;
-  }, [orders]);
+  // Status tab badge counts come from the period-wide summary (see
+  // fetchSummary), not the loaded page — see the comment above `summary`.
+  const statusCounts = summary.statusCounts || { All: 0 };
 
   // ── Status update ─────────────────────────────────────────────────────────
   const updateStatus = async (id, newStatus, trackingNum = undefined, moneyReceived = undefined) => {
@@ -167,6 +197,9 @@ const filteredOrders = useMemo(() => {
 
     await api.put(`/sales/${id}/status`, payload);
     toast.success(`Order → ${newStatus}`);
+    // Status/money_received changes shift the return-loss and status-count
+    // totals — refresh the period-wide summary so it doesn't go stale.
+    fetchSummary();
   } catch {
     toast.error('Failed to update status');
     // Revert to true server state only if the request actually failed
@@ -208,21 +241,14 @@ const filteredOrders = useMemo(() => {
   const fmtTime = (d) => new Date(d).toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' });
 
 // ── Summary stats ─────────────────────────────────────────────────────────
-const totalRevenue = orders.reduce((s, o) => s + (o.total_amount || 0), 0);
-const totalProfit = orders.reduce((s, o) => s + Number(o.total_profit || 0), 0);
-// A returned order never completed as a sale — its item profit is fully
-// lost, and whatever was actually paid to the courier is a pure loss (not
-// offset by any revenue). This applies whenever an order comes back
-// Returned, regardless of whether money had already been collected for it —
-// money_received only tracks COD collection status, not whether the sale
-// itself went through.
-const totalReturnLoss = orders
-  .filter(o => o.order_status === 'Returned')
-  .reduce((s, o) => s + Number(o.total_profit || 0), 0);
-const totalDeliveryLoss = orders
-  .filter(o => o.order_status === 'Returned')
-  .reduce((s, o) => s + Number(o.actual_shipping_cost || 0), 0);
-const netProfit = totalProfit - totalReturnLoss - totalDeliveryLoss;
+// All from the period-wide summary endpoint (see fetchSummary) — covers
+// every matching WhatsApp order in the selected date range, not just
+// whichever page of the order list happens to be loaded.
+const totalRevenue = summary.totalRevenue || 0;
+const totalProfit = summary.totalProfit || 0;
+const totalReturnLoss = summary.totalReturnLoss || 0;
+const totalDeliveryLoss = summary.totalDeliveryLoss || 0;
+const netProfit = summary.netProfit || 0;
 const pendingCount = statusCounts['Pending'] || 0;
 const shippedCount = statusCounts['Shipped'] || 0;
 const deliveredCount = statusCounts['Delivered'] || 0;
@@ -235,7 +261,7 @@ const deliveredCount = statusCounts['Delivered'] || 0;
           <div>
             <h1 className="page-title">WhatsApp Orders</h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>
-              {orders.length} WhatsApp orders · Manage order lifecycle
+              {total} WhatsApp orders · Manage order lifecycle
             </p>
           </div>
           <button onClick={fetchOnlineOrders} disabled={loading} className="btn-secondary" style={{ padding: '8px 14px', gap: '6px' }}>
@@ -290,7 +316,7 @@ const deliveredCount = statusCounts['Delivered'] || 0;
           {/* Period filter */}
           <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '3px', borderRadius: '10px', border: '1px solid var(--border-light)', flexWrap: 'wrap' }}>
             {PERIOD_OPTIONS.map(p => (
-              <button key={p.value} onClick={() => { setPeriodFilter(p.value); setCustomFrom(''); setCustomTo(''); }} style={{
+              <button key={p.value} onClick={() => { setPeriodFilter(p.value); setCustomFrom(''); setCustomTo(''); setPage(1); }} style={{
                 padding: isMobile ? '5px 8px' : '6px 12px', borderRadius: '8px', fontSize: '11px', fontWeight: 600,
                 cursor: 'pointer', border: 'none', whiteSpace: 'nowrap', transition: 'all 0.2s',
                 background: (!customFrom && !customTo && periodFilter === p.value) ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'transparent',
@@ -305,7 +331,7 @@ const deliveredCount = statusCounts['Delivered'] || 0;
               type="date"
               className="input-field"
               value={customFrom}
-              onChange={e => setCustomFrom(e.target.value)}
+              onChange={e => { setCustomFrom(e.target.value); setPage(1); }}
               style={{ fontSize: '12px', padding: '7px 10px', width: 'auto' }}
               max={customTo || undefined}
             />
@@ -314,13 +340,13 @@ const deliveredCount = statusCounts['Delivered'] || 0;
               type="date"
               className="input-field"
               value={customTo}
-              onChange={e => setCustomTo(e.target.value)}
+              onChange={e => { setCustomTo(e.target.value); setPage(1); }}
               style={{ fontSize: '12px', padding: '7px 10px', width: 'auto' }}
               min={customFrom || undefined}
             />
             {(customFrom || customTo) && (
               <button
-                onClick={() => { setCustomFrom(''); setCustomTo(''); }}
+                onClick={() => { setCustomFrom(''); setCustomTo(''); setPage(1); }}
                 title="Clear custom range"
                 style={{
                   background: 'var(--bg-secondary)', border: '1px solid var(--border-light)',
@@ -344,7 +370,7 @@ const deliveredCount = statusCounts['Delivered'] || 0;
             const count = statusCounts[s.value] || 0;
             const Icon = s.icon;
             return (
-              <button key={s.value} onClick={() => setStatusFilter(s.value)} style={{
+              <button key={s.value} onClick={() => { setStatusFilter(s.value); setPage(1); }} style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
                 padding: '8px 14px', borderRadius: '10px', fontSize: '12px', fontWeight: 600,
                 cursor: 'pointer', border: '1px solid', whiteSpace: 'nowrap', transition: 'all 0.2s',
@@ -691,6 +717,17 @@ const deliveredCount = statusCounts['Delivered'] || 0;
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+        {pages > 1 && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', padding: '16px' }}>
+            <button className="btn-secondary" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} style={{ padding: '6px 12px' }}>
+              <ChevronLeft size={16} />
+            </button>
+            <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Page {page} of {pages}</span>
+            <button className="btn-secondary" onClick={() => setPage(p => Math.min(pages, p + 1))} disabled={page === pages} style={{ padding: '6px 12px' }}>
+              <ChevronRight size={16} />
+            </button>
           </div>
         )}
       </div>

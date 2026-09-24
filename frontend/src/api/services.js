@@ -47,6 +47,7 @@ export const getSaleById = (id)     => api.get(`/sales/${id}`);
 export const deleteSale  = (id)     => api.delete(`/sales/${id}`);
 export const getAnalytics = (period, sale_source, from, to) =>
   api.get('/sales/analytics/summary', { params: { period, sale_source, from, to } });
+export const getWhatsappOrdersSummary = (params) => api.get('/sales/whatsapp/summary', { params });
 
 // --- CUSTOMERS ---
 export const getCustomers    = (params)    => api.get('/customers', { params });
