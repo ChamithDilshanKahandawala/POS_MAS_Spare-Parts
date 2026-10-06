@@ -270,6 +270,7 @@ const filteredOrders = useMemo(() => {
   };
 
   const getStatusConfig = (status) => STATUSES.find(s => s.value === status) || STATUSES[1];
+  const paymentBadgeClass = (method) => method === 'Online' ? 'badge-green' : 'badge-blue';
 
   const fmtRs = (v) => `Rs. ${Number(v || 0).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   const fmtDate = (d) => new Date(d).toLocaleDateString('en-LK', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -286,6 +287,7 @@ const totalProfit = summary.totalProfit || 0;
 const totalReturnLoss = summary.totalReturnLoss || 0;
 const totalDeliveryLoss = summary.totalDeliveryLoss || 0;
 const netProfit = summary.netProfit || 0;
+const totalOnlinePayments = summary.totalOnlinePayments || 0;
 const pendingCount = statusCounts['Pending'] || 0;
 const shippedCount = statusCounts['Shipped'] || 0;
 const deliveredCount = statusCounts['Delivered'] || 0;
@@ -310,13 +312,14 @@ const deliveredCount = statusCounts['Delivered'] || 0;
 
     
         {/* ── Summary Mini-Cards ── */}
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(10, 1fr)', gap: '10px', marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(11, 1fr)', gap: '10px', marginBottom: '16px' }}>
          {[
             { label: 'Total Revenue', value: fmtRs(totalRevenue), color: 'purple', icon: DollarSign },
             { label: 'Profit', value: fmtRs(totalProfit), color: 'green', icon: TrendingUp, show: isAdmin },
             { label: 'Return Loss', value: fmtRs(totalReturnLoss), color: 'red', icon: RotateCcw, show: isAdmin },
             { label: 'Delivery Loss', value: fmtRs(totalDeliveryLoss), color: 'red', icon: XCircle, show: isAdmin },
             { label: 'Net Profit', value: fmtRs(netProfit), color: 'green', icon: TrendingUp, show: isAdmin },
+              { label: 'Online Payments', value: fmtRs(totalOnlinePayments), color: 'green', icon: CreditCard },
               { label: 'Pending', value: pendingCount, color: 'yellow', icon: Clock },
               { label: 'Shipped', value: shippedCount, color: 'purple', icon: Truck },
               { label: 'Delivered', value: deliveredCount, color: 'green', icon: CheckCircle },
@@ -524,7 +527,7 @@ const deliveredCount = statusCounts['Delivered'] || 0;
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '6px' }}>
-                      <span className="badge badge-blue" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '10px' }}>
+                      <span className={`badge ${paymentBadgeClass(order.payment_method)}`} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '10px' }}>
                         <CreditCard size={10} /> {order.payment_method || 'N/A'}
                       </span>
                       {order.tracking_number && (
@@ -661,7 +664,7 @@ const deliveredCount = statusCounts['Delivered'] || 0;
                           {fmtRs(order.total_amount)}
                         </td>
                         <td style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>
-                          <span className="badge badge-blue" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '10px' }}>
+                          <span className={`badge ${paymentBadgeClass(order.payment_method)}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '10px' }}>
                             <CreditCard size={10} /> {order.payment_method || 'N/A'}
                           </span>
                         </td>
@@ -1083,7 +1086,7 @@ const deliveredCount = statusCounts['Delivered'] || 0;
               {detailModal.koko_charge > 0 && (
                 <div style={{ marginTop: '10px', background: 'rgba(168,85,247,0.08)', padding: '8px 10px', borderRadius: '8px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '11px', color: '#a855f7', fontWeight: 700 }}>KOKO Charge ({detailModal.koko_percentage || 10}%)</span>
+                    <span style={{ fontSize: '11px', color: '#a855f7', fontWeight: 700 }}>KOKO Charge ({detailModal.koko_percentage || 13.2}%)</span>
                     <span style={{ fontSize: '11px', fontWeight: 700, color: '#a855f7' }}>+{fmtRs(detailModal.koko_charge)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>

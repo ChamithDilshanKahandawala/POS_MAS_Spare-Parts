@@ -34,7 +34,7 @@ export default function POSPage() {
   const [whatsappActualShipping, setWhatsappActualShipping] = useState(0);
   const [whatsappTracking, setWhatsappTracking] = useState('');
   const [whatsappPaidAmount, setWhatsappPaidAmount] = useState('');
-  const [kokoPercentage, setKokoPercentage] = useState(10);
+  const [kokoPercentage, setKokoPercentage] = useState(13.2);
   const [processing, setProcessing] = useState(false);
   // Synchronous guard: setProcessing(true) only takes effect on next render,
   // so a fast double-click/key-repeat can call handleCheckout twice before
@@ -193,7 +193,7 @@ const parseCustomerDetails = (text) => {
     setWhatsappActualShipping(0);
     setWhatsappTracking('');
     setWhatsappPaidAmount('');
-    setKokoPercentage(10);
+    setKokoPercentage(13.2);
     setWhatsappCustomerDetails('');
   }, []);
 
@@ -736,7 +736,7 @@ const parseCustomerDetails = (text) => {
                 {successSale.koko_charge > 0 && (
                   <>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
-                      <span style={{ fontSize: '12px', color: '#a855f7' }}>KOKO Charge ({successSale.koko_percentage || 10}%)</span>
+                      <span style={{ fontSize: '12px', color: '#a855f7' }}>KOKO Charge ({successSale.koko_percentage || 13.2}%)</span>
                       <span style={{ fontSize: '14px', fontWeight: 700, color: '#a855f7' }}>+{fmtRs(successSale.koko_charge)}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '10px', marginTop: '6px', borderTop: '2px solid #a855f7' }}>

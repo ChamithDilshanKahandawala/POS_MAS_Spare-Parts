@@ -329,6 +329,10 @@ const getWhatsappOrdersSummary = async (req, res) => {
             { $match: { order_status: 'Delivered', money_received: true } },
             { $count: 'count' },
           ],
+          onlinePayments: [
+            { $match: { payment_method: 'Online' } },
+            { $group: { _id: null, total: { $sum: '$total_amount' } } },
+          ],
         },
       },
     ]);
@@ -347,7 +351,11 @@ const getWhatsappOrdersSummary = async (req, res) => {
     // Revenue (total_amount) isn't treated as sensitive elsewhere in this
     // codebase — only profit/cost is (see stripProfitFields) — so it's
     // visible to any staff role.
-    const responseData = { statusCounts, totalRevenue: totals.total_revenue };
+    const responseData = {
+      statusCounts,
+      totalRevenue: totals.total_revenue,
+      totalOnlinePayments: result.onlinePayments[0]?.total || 0,
+    };
     if (req.user && (req.user.role === 'admin' || req.user.role === 'super_admin')) {
       responseData.totalProfit = totals.total_profit;
       responseData.totalReturnLoss = loss.totalReturnLoss;
