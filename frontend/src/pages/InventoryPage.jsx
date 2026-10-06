@@ -143,6 +143,7 @@ export default function InventoryPage() {
   };
 
   const margin = (bp, sp) => bp && sp ? (((sp - bp) / sp) * 100).toFixed(1) : '0';
+  const columnCount = isAdmin ? 9 : 6;
 
   return (
     <div className="animate-fade">
@@ -223,9 +224,9 @@ export default function InventoryPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={9} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading...</td></tr>
+                <tr><td colSpan={columnCount} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading...</td></tr>
               ) : products.length === 0 ? (
-                <tr><td colSpan={9} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+                <tr><td colSpan={columnCount} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
                   <Package size={32} style={{ margin: '0 auto 10px', opacity: 0.3 }} />
                   <div>No products found</div>
                 </td></tr>

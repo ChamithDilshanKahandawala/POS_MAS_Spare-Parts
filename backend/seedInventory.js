@@ -3,18 +3,98 @@ require('dotenv').config();
 const Product = require('./models/Product');
 
 const inventoryData =
- [
+[
   {
-    "sku_code": "TWSS20",
-    "name": "3 PORT FRONT PARK LIGHT SINGLE",
-    "buying_price": 650,
-    "selling_price": 1000,
-    "stock_quantity": 20,
-    "sub_category": "FRONT",
+    "sku_code": "TWI52",
+    "name": "JP STEERING WHEEL COVER BROWN",
+    "buying_price": 900,
+    "selling_price": 1350,
+    "stock_quantity": 0,
+    "sub_category": "INSIDE",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWI53",
+    "name": "JP STEERING WHEEL COVER BLACK",
+    "buying_price": 900,
+    "selling_price": 1350,
+    "stock_quantity": 0,
+    "sub_category": "INSIDE",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWF61",
+    "name": "2ST BODY KIT GREEN",
+    "buying_price": 1400,
+    "selling_price": 2380,
+    "stock_quantity": 0,
+    "sub_category": "Front",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWF82",
+    "name": "4ST BODY KIT GREEN",
+    "buying_price": 1400,
+    "selling_price": 2380,
+    "stock_quantity": 1,
+    "sub_category": "Front",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWF108",
+    "name": "2ST BODY KIT GREEN",
+    "buying_price": 1400,
+    "selling_price": 2380,
+    "stock_quantity": 0,
+    "sub_category": "Front",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWF109",
+    "name": "2ST BODY KIT BLACK",
+    "buying_price": 1400,
+    "selling_price": 2380,
+    "stock_quantity": 1,
+    "sub_category": "Front",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWF110",
+    "name": "2ST BODY KIT BLUE",
+    "buying_price": 1400,
+    "selling_price": 2380,
+    "stock_quantity": 0,
+    "sub_category": "Front",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWF111",
+    "name": "4ST BODY KIT BLACK",
+    "buying_price": 1400,
+    "selling_price": 2380,
+    "stock_quantity": 0,
+    "sub_category": "Front",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWF112",
+    "name": "4ST BODY KIT BLUE",
+    "buying_price": 1400,
+    "selling_price": 2380,
+    "stock_quantity": 1,
+    "sub_category": "Front",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWDI43",
+    "name": "BUWALLA S",
+    "buying_price": 100,
+    "selling_price": 250,
+    "stock_quantity": 12,
+    "sub_category": "Dashboard Item",
     "category": "Three-Wheel"
   }
 ];
-
 async function seedInventory() {
   try {
     await mongoose.connect(process.env.MONGO_URI);

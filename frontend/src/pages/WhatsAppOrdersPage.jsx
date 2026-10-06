@@ -6,7 +6,7 @@ import {
   Truck, Package, CheckCircle, Clock, Phone, X, Navigation,
   Search, RefreshCw, ShoppingBag, DollarSign, XCircle,
   Calendar, Filter, ChevronDown, Eye, MapPin, User, CreditCard, RotateCcw, TrendingUp,
-  ChevronLeft, ChevronRight,
+  ChevronLeft, ChevronRight, Edit2,
 } from 'lucide-react';
 import api from '../api/axios';
 import useIsMobile from '../hooks/useIsMobile';
@@ -86,6 +86,9 @@ const [customTo, setCustomTo] = useState('');
   const [trackingInput, setTrackingInput] = useState('');
   const [deliveryModal, setDeliveryModal] = useState({ isOpen: false, orderId: null, moneyReceived: false });
   const [detailModal, setDetailModal] = useState(null);
+  const [editModal, setEditModal] = useState(null);
+  const [editForm, setEditForm] = useState(null);
+  const [savingEdit, setSavingEdit] = useState(false);
 
   // ── Fetch ─────────────────────────────────────────────────────────────────
   // Custom date range takes priority over preset period buttons — shared by
@@ -236,11 +239,43 @@ const filteredOrders = useMemo(() => {
     updateStatus(order._id, order.order_status, undefined, !order.money_received);
   };
 
+  // ── Edit order details (Admin / Super Admin only) ──────────────────────────
+  const openEditModal = (order) => {
+    setEditForm({
+      customer_name: order.customer_name || '',
+      customer_phone: order.customer_phone || '',
+      shipping_address: order.shipping_address || '',
+      customer_details: order.customer_details || '',
+      payment_method: order.payment_method || 'Cash',
+      cod_amount: order.cod_amount || 0,
+      notes: order.notes || '',
+    });
+    setEditModal(order);
+  };
+
+  const submitEdit = async () => {
+    if (!editModal || !editForm) return;
+    setSavingEdit(true);
+    try {
+      const payload = { ...editForm, cod_amount: Number(editForm.cod_amount) || 0 };
+      const { data } = await api.put(`/sales/${editModal._id}/details`, payload);
+      setOrders(prev => prev.map(o => (o._id === editModal._id ? { ...o, ...data } : o)));
+      toast.success('Order updated');
+      setEditModal(null);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update order');
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
   const getStatusConfig = (status) => STATUSES.find(s => s.value === status) || STATUSES[1];
 
   const fmtRs = (v) => `Rs. ${Number(v || 0).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   const fmtDate = (d) => new Date(d).toLocaleDateString('en-LK', { day: '2-digit', month: 'short', year: 'numeric' });
   const fmtTime = (d) => new Date(d).toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' });
+
+  const fieldLabelStyle = { display: 'block', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' };
 
 // ── Summary stats ─────────────────────────────────────────────────────────
 // All from the period-wide summary endpoint (see fetchSummary) — covers
@@ -540,6 +575,18 @@ const deliveredCount = statusCounts['Delivered'] || 0;
                     >
                       <Eye size={14} /> View
                     </button>
+                    {isAdmin && (
+                      <button
+                        onClick={() => openEditModal(order)}
+                        style={{
+                          padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(245,158,11,0.3)',
+                          background: 'rgba(245,158,11,0.1)', cursor: 'pointer', color: '#f59e0b',
+                          display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 600,
+                        }}
+                      >
+                        <Edit2 size={14} /> Edit
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -721,6 +768,19 @@ const deliveredCount = statusCounts['Delivered'] || 0;
                             >
                               <Eye size={13} />
                             </button>
+                            {isAdmin && (
+                              <button
+                                onClick={() => openEditModal(order)}
+                                title="Edit order details"
+                                style={{
+                                  padding: '6px 8px', borderRadius: '6px', border: '1px solid rgba(245,158,11,0.3)',
+                                  background: 'rgba(245,158,11,0.1)', cursor: 'pointer', color: '#f59e0b',
+                                  display: 'flex', alignItems: 'center', flexShrink: 0,
+                                }}
+                              >
+                                <Edit2 size={13} />
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -815,6 +875,70 @@ const deliveredCount = statusCounts['Delivered'] || 0;
               <button className="btn-secondary" onClick={() => setDeliveryModal({ isOpen: false, orderId: null, moneyReceived: false })} style={{ flex: 1 }}>Cancel</button>
               <button className="btn-primary" onClick={submitDelivery} style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
                 <CheckCircle size={16} /> Confirm Delivered
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Edit Order Modal (Admin / Super Admin only) ── */}
+      {editModal && editForm && (
+        <div className="modal-overlay" onClick={() => setEditModal(null)}>
+          <div className="modal-box glass-card animate-fade" onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '480px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Edit2 size={18} color="#f59e0b" /> Edit Order
+              </h2>
+              <button onClick={() => setEditModal(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <div>
+              <label style={fieldLabelStyle}>Customer Name</label>
+              <input className="input-field" value={editForm.customer_name} onChange={e => setEditForm(f => ({ ...f, customer_name: e.target.value }))} />
+            </div>
+            <div>
+              <label style={fieldLabelStyle}>Phone</label>
+              <input className="input-field" value={editForm.customer_phone} onChange={e => setEditForm(f => ({ ...f, customer_phone: e.target.value }))} />
+            </div>
+            <div>
+              <label style={fieldLabelStyle}>Shipping Address</label>
+              <input className="input-field" value={editForm.shipping_address} onChange={e => setEditForm(f => ({ ...f, shipping_address: e.target.value }))} />
+            </div>
+            <div>
+              <label style={fieldLabelStyle}>Customer Details</label>
+              <textarea className="input-field" rows={3} value={editForm.customer_details} onChange={e => setEditForm(f => ({ ...f, customer_details: e.target.value }))} />
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <div style={{ flex: 1 }}>
+                <label style={fieldLabelStyle}>Payment Method</label>
+                <select className="select-field" value={editForm.payment_method} onChange={e => setEditForm(f => ({ ...f, payment_method: e.target.value }))}>
+                  <option value="Cash">Cash</option>
+                  <option value="Card">Card</option>
+                  <option value="Online">Online</option>
+                  <option value="COD">COD</option>
+                  <option value="KOKO">KOKO</option>
+                </select>
+              </div>
+              {editForm.payment_method === 'COD' && (
+                <div style={{ flex: 1 }}>
+                  <label style={fieldLabelStyle}>COD Amount</label>
+                  <input type="number" min="0" className="input-field" value={editForm.cod_amount} onChange={e => setEditForm(f => ({ ...f, cod_amount: e.target.value }))} />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label style={fieldLabelStyle}>Notes</label>
+              <textarea className="input-field" rows={2} value={editForm.notes} onChange={e => setEditForm(f => ({ ...f, notes: e.target.value }))} />
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button className="btn-secondary" onClick={() => setEditModal(null)} style={{ flex: 1 }}>Cancel</button>
+              <button className="btn-primary" onClick={submitEdit} disabled={savingEdit} style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+                {savingEdit ? 'Saving...' : (<><CheckCircle size={16} /> Save Changes</>)}
               </button>
             </div>
           </div>

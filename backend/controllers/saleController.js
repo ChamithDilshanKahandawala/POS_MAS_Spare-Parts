@@ -482,6 +482,36 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
+// PUT /api/sales/:id/details  (Admin / Super Admin only — edit order info & payment method)
+const EDITABLE_ORDER_DETAIL_FIELDS = [
+  'customer_name', 'customer_phone', 'customer_details',
+  'shipping_address', 'payment_method', 'cod_amount', 'notes',
+];
+const updateOrderDetails = async (req, res) => {
+  try {
+    const updateData = {};
+    for (const field of EDITABLE_ORDER_DETAIL_FIELDS) {
+      if (req.body[field] !== undefined) updateData[field] = req.body[field];
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ message: 'No valid fields to update' });
+    }
+
+    if (updateData.cod_amount !== undefined) updateData.cod_amount = Number(updateData.cod_amount) || 0;
+
+    const sale = await Sale.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
+    if (!sale) return res.status(404).json({ message: 'Sale not found' });
+
+    res.json(sale);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ message: err.message });
+    }
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // GET /api/sales/analytics/summary  (daily | weekly | monthly | yearly)
 const getAnalytics = async (req, res) => {
   try {
@@ -720,6 +750,7 @@ module.exports = { createSale,  getSales,
   getSaleById,
   getSaleReceipt,
   updateOrderStatus,
+  updateOrderDetails,
   getAnalytics,
   deleteSale,
 };

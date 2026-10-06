@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createSale, getSales, getWhatsappOrdersSummary, getSaleById, getSaleReceipt, getAnalytics, getMyOrders, updateOrderStatus, deleteSale } = require('../controllers/saleController');
+const { createSale, getSales, getWhatsappOrdersSummary, getSaleById, getSaleReceipt, getAnalytics, getMyOrders, updateOrderStatus, updateOrderDetails, deleteSale } = require('../controllers/saleController');
 const { protect, adminOnly, superAdminOnly, staffOnly } = require('../middleware/authMiddleware');
 const { saleLimiter } = require('../middleware/rateLimiter');
 
@@ -11,6 +11,7 @@ router.get('/', protect, staffOnly, getSales);
 router.get('/:id', protect, staffOnly, getSaleById);
 router.get('/:id/receipt', protect, staffOnly, getSaleReceipt);
 router.put('/:id/status', protect, staffOnly, updateOrderStatus);
+router.put('/:id/details', protect, adminOnly, updateOrderDetails);
 router.delete('/:id', protect, superAdminOnly, deleteSale);
 router.post('/', protect, saleLimiter, createSale);
 
