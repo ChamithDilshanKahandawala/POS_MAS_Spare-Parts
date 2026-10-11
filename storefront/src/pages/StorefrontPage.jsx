@@ -7,8 +7,13 @@ import { Search, ShoppingCart, X, ArrowRight, ShieldCheck, Package, Truck, Check
 import { useCart } from '../context/CartContext';
 import ProductGrid from '../components/product/ProductGrid';
 import { productStrings } from '../strings/productStrings';
+import { slugify } from '../utils/slugify';
+import { CATEGORIES as REAL_CATEGORIES } from '../config/store';
 
-const CATEGORIES = ['All', 'Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road', 'KeyTag', 'Toys', 'Ornaments'];
+// "All" stays as a local filter (there's no dedicated page for it); every
+// real category now navigates to its own /category/:slug page instead of
+// filtering in place — see CategoryPage.jsx.
+const CATEGORIES = ['All', ...REAL_CATEGORIES];
 
 export default function StorefrontPage() {
   const [products, setProducts] = useState([]);
@@ -127,7 +132,7 @@ export default function StorefrontPage() {
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', flex: 1, maxWidth: '600px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <div style={{ display: 'flex', gap: '10px', flex: 1, maxWidth: '600px', minWidth: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
               <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input 
@@ -137,23 +142,32 @@ export default function StorefrontPage() {
                 value={search} onChange={e => setSearch(e.target.value)}
               />
             </div>
-            {/* Category pills */}
+            {/* Category pills — scrolls horizontally instead of wrapping/
+                overflowing now that the full 11-category list (not the old
+                9-item subset) renders here too. */}
             <div style={{
               display: 'flex', gap: '4px', padding: '3px',
               background: 'var(--bg-secondary)', borderRadius: '12px',
               border: '1px solid var(--border-light)',
+              overflowX: 'auto', maxWidth: '100%', minWidth: 0,
             }}>
-              {CATEGORIES.map(c => (
-                <button key={c} onClick={() => setCategory(c)} style={{
+              {CATEGORIES.map(c => {
+                const pillStyle = {
                   padding: '7px 14px', borderRadius: '9px', fontSize: '12px',
                   fontWeight: 600, cursor: 'pointer', border: 'none',
-                  whiteSpace: 'nowrap', transition: 'all 0.2s',
+                  whiteSpace: 'nowrap', transition: 'all 0.2s', textDecoration: 'none',
+                  display: 'inline-block',
                   background: category === c
                     ? 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))'
                     : 'transparent',
                   color: category === c ? 'white' : 'var(--text-muted)',
-                }}>{c}</button>
-              ))}
+                };
+                return c === 'All' ? (
+                  <button key={c} onClick={() => setCategory(c)} style={pillStyle}>{c}</button>
+                ) : (
+                  <Link key={c} to={`/category/${slugify(c)}`} style={pillStyle}>{c}</Link>
+                );
+              })}
             </div>
           </div>
         </div>

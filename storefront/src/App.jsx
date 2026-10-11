@@ -15,6 +15,8 @@ import CustomerOrdersPage from './pages/CustomerOrdersPage';
 import CheckoutPage from './pages/CheckoutPage';
 const CartPage = lazy(() => import('./pages/CartPage'));
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
+const CategoryPage = lazy(() => import('./pages/CategoryPage'));
+const OrderSuccessPage = lazy(() => import('./pages/OrderSuccessPage'));
 
 // --- Customer Only Route ---
 // Redirecting here loses the page the customer was trying to reach (e.g.
@@ -35,6 +37,22 @@ const ProductDetailRoute = () => {
   return <ProductDetailPage key={id} />;
 };
 
+// Same reasoning as ProductDetailRoute — remounts CategoryPage fresh on
+// every :slug change. Its own filter/sort state lives in the URL query
+// string (owned by react-router, not this component), so it survives the
+// remount untouched; only the fetched product list/load status reset.
+const CategoryRoute = () => {
+  const { slug } = useParams();
+  return <CategoryPage key={slug} />;
+};
+
+// Same reasoning again — remounts OrderSuccessPage fresh per :id so its
+// router-state-vs-fetch initial state is computed clean each time.
+const OrderSuccessRoute = () => {
+  const { id } = useParams();
+  return <OrderSuccessPage key={id} />;
+};
+
 function AppRoutes() {
   return (
     <Routes>
@@ -45,7 +63,9 @@ function AppRoutes() {
         <Route index element={<StorefrontPage />} />
         <Route path="cart" element={<Suspense fallback={null}><CartPage /></Suspense>} />
         <Route path="product/:id" element={<Suspense fallback={null}><ProductDetailRoute /></Suspense>} />
+        <Route path="category/:slug" element={<Suspense fallback={null}><CategoryRoute /></Suspense>} />
         <Route path="checkout" element={<CustomerRoute><CheckoutPage /></CustomerRoute>} />
+        <Route path="order-success/:id" element={<CustomerRoute><Suspense fallback={null}><OrderSuccessRoute /></Suspense></CustomerRoute>} />
         <Route path="orders" element={<CustomerRoute><CustomerOrdersPage /></CustomerRoute>} />
       </Route>
 

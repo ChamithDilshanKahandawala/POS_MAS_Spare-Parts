@@ -7,10 +7,12 @@ import { motion } from 'motion/react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useCart } from '../../context/CartContext';
-import { ShoppingBag, LogOut, Package, Moon, Sun, ShoppingCart, Menu, X, User, ChevronDown } from 'lucide-react';
+import { ShoppingBag, LogOut, Package, Moon, Sun, ShoppingCart, Menu, X, User, ChevronDown, LayoutGrid } from 'lucide-react';
 import Footer from './footer';
 import CartDrawer from '../cart/CartDrawer';
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion';
+import { slugify } from '../../utils/slugify';
+import { CATEGORIES } from '../../config/store';
 
 export default function StoreLayout() {
   const { user, logout } = useAuth();
@@ -20,6 +22,8 @@ export default function StoreLayout() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdown, setUserDropdown] = useState(false);
+  const [categoryDropdown, setCategoryDropdown] = useState(false);
+  const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
   const reducedMotion = usePrefersReducedMotion();
 
   // Badge "bounce" is a declarative pop-in keyed off the item count, not
@@ -92,6 +96,50 @@ export default function StoreLayout() {
               </Link>
             );
           })}
+
+          {/* Shop by category */}
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setCategoryDropdown((o) => !o)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                color: 'var(--text-secondary)', background: 'transparent', border: 'none',
+                fontWeight: 600, fontSize: '14px', padding: '8px 14px', borderRadius: '10px',
+                cursor: 'pointer', transition: 'all 0.2s',
+              }}
+            >
+              <LayoutGrid size={16} /> Categories
+              <ChevronDown size={14} style={{ transition: 'transform 0.2s', transform: categoryDropdown ? 'rotate(180deg)' : 'rotate(0)' }} />
+            </button>
+            {categoryDropdown && (
+              <>
+                <div style={{ position: 'fixed', inset: 0, zIndex: 99 }} onClick={() => setCategoryDropdown(false)} />
+                <div style={{
+                  position: 'absolute', top: 'calc(100% + 8px)', left: 0,
+                  background: 'var(--bg-card)', border: '1px solid var(--border-light)',
+                  borderRadius: '12px', padding: '6px', minWidth: '200px',
+                  display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.12)', zIndex: 100,
+                  animation: 'fadeIn 0.15s ease',
+                }}>
+                  {CATEGORIES.map((c) => (
+                    <Link
+                      key={c} to={`/category/${slugify(c)}`} onClick={() => setCategoryDropdown(false)}
+                      style={{
+                        padding: '9px 12px', borderRadius: '8px', textDecoration: 'none',
+                        color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500,
+                        transition: 'background 0.15s', whiteSpace: 'nowrap',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-secondary)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    >
+                      {c}
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
 
           {/* Cart Button */}
           <button
@@ -272,6 +320,33 @@ export default function StoreLayout() {
               background: isActive('/orders') ? 'var(--accent-light)' : 'transparent',
               textDecoration: 'none', fontWeight: 600, fontSize: '14px',
             }}><Package size={16} /> My Orders</Link>
+          )}
+          <button
+            onClick={() => setMobileCategoriesOpen((o) => !o)}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%',
+              padding: '12px', borderRadius: '10px', background: 'transparent', border: 'none',
+              color: 'var(--text-secondary)', fontWeight: 600, fontSize: '14px', cursor: 'pointer',
+            }}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><LayoutGrid size={16} /> Shop by Category</span>
+            <ChevronDown size={14} style={{ transition: 'transform 0.2s', transform: mobileCategoriesOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
+          </button>
+          {mobileCategoriesOpen && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', paddingLeft: '12px', marginBottom: '4px' }}>
+              {CATEGORIES.map((c) => (
+                <Link
+                  key={c} to={`/category/${slugify(c)}`}
+                  onClick={() => { setMobileMenuOpen(false); setMobileCategoriesOpen(false); }}
+                  style={{
+                    padding: '10px 12px', borderRadius: '8px', textDecoration: 'none',
+                    color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500,
+                  }}
+                >
+                  {c}
+                </Link>
+              ))}
+            </div>
           )}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px' }}>
             <button onClick={toggleTheme} style={{

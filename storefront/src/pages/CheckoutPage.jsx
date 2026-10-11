@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { createSale } from '../api/services';
 import toast from 'react-hot-toast';
-import { Truck, Phone, Check, ArrowLeft, ShieldCheck, ShoppingCart, User, MapPin, Map } from 'lucide-react';
+import { Truck, Phone, Check, ArrowLeft, ShieldCheck, ShoppingCart, User, MapPin, Map, Loader2 } from 'lucide-react';
 
 // This page only ever mounts via the /checkout route, which is wrapped in
 // <CustomerRoute> (see App.jsx) — a logged-out visitor, or a non-customer
@@ -16,19 +16,33 @@ export default function CheckoutPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    name: '',
+  // Pre-filled directly from `user` on mount, not via an effect: this page
+  // only ever mounts already wrapped in <CustomerRoute> (see App.jsx), so a
+  // logged-in customer is guaranteed to be present before the first render
+  // — there's no async gap where `user` could arrive later and need an
+  // effect to sync it in.
+  const [formData, setFormData] = useState(() => ({
+    name: user?.name || '',
     address: '',
     city: '',
     district: '',
-    phone1: '',
+    phone1: user?.phone || '',
     phone2: ''
-  });
+  }));
 
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   // Set the instant checkout succeeds, so the empty-cart redirect below can't
-  // fire off the back of clearCart() and race the navigate('/orders') call.
+  // fire off the back of clearCart() and race the navigate() call.
   const orderPlacedRef = useRef(false);
+  // One id for this checkout attempt, generated once on mount (lazy
+  // initializer, not a ref write during render — see the react-hooks/refs
+  // note elsewhere in this codebase for why that distinction matters here).
+  // Sent as idempotencyKey on every submit, including retries after a
+  // failed attempt, so two requests that reach the backend for the same
+  // attempt (a real double-click that slips past the disabled button, or a
+  // dropped-response network retry) resolve to the same sale server-side
+  // instead of creating two (see createSale's idempotency_key handling).
+  const [idempotencyKey] = useState(() => crypto.randomUUID());
 
   useEffect(() => {
     if (cart.length === 0 && !orderPlacedRef.current) {
@@ -37,20 +51,14 @@ export default function CheckoutPage() {
     }
   }, [cart, navigate]);
 
-  // Pre-fill fields if available
-  useEffect(() => {
-    if (user) {
-      setFormData(prev => ({
-        ...prev,
-        name: prev.name || user.name || '',
-        phone1: prev.phone1 || user.phone || ''
-      }));
-    }
-  }, [user]);
-
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleCheckout = async () => {
+    // Belt-and-suspenders against the button's disabled state lagging a
+    // tick behind a genuine rapid double-click — idempotencyKey below is
+    // the real, server-enforced guarantee; this just avoids firing a
+    // second request at all when we can.
+    if (isCheckingOut) return;
 
     // Validations
     if (!formData.name.trim()) return toast.error('Name is required');
@@ -85,16 +93,18 @@ export default function CheckoutPage() {
         customer_name: formData.name,
         shipping_address: fullAddress,
         customer_phone: customerPhoneCombined,
+        idempotencyKey,
       };
-      
-      await createSale(payload);
+
+      const { data: sale } = await createSale(payload);
       orderPlacedRef.current = true;
-      toast.success('Order placed successfully! 🎉');
       clearCart();
-      navigate('/orders'); // Redirect to order history
+      // `replace` so the back button from order-success lands wherever the
+      // customer was before checkout, not back on a filled-in checkout form
+      // for an order that's already been placed.
+      navigate(`/order-success/${sale._id}`, { replace: true, state: { sale } });
     } catch (err) {
       toast.error(err.response?.data?.message || 'Checkout failed');
-    } finally {
       setIsCheckingOut(false);
     }
   };
@@ -265,7 +275,12 @@ export default function CheckoutPage() {
               disabled={isCheckingOut || cart.length === 0}
               style={{ width: '100%', padding: '16px', borderRadius: '16px', fontSize: '16px', fontWeight: 800, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', background: '#10b981' }}
             >
-              {isCheckingOut ? 'Processing...' : (
+              {isCheckingOut ? (
+                <>
+                  <Loader2 size={20} className="spin" />
+                  Processing...
+                </>
+              ) : (
                 <>
                   <ShieldCheck size={20} />
                   Place Order

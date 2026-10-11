@@ -61,19 +61,55 @@ const PRODUCT_NAMES = {
   ANYVEHICLE: ['Tire Shine Spray', 'Microfiber Cloth Pack', 'Jump Starter Pack', 'Tool Kit Set'],
 };
 
+// A few real-feeling brands + sub-categories per category, cycled across
+// that category's products — gives CategoryPage's brand/sub-category
+// filters actual variety to filter over (previously every seeded product
+// used the single placeholder "Generic"/"General", which made those
+// filters technically functional but untestable — see the category-page
+// task's Step 0 finding #3).
+const BRANDS_BY_CATEGORY = {
+  'Three-Wheel': ['Bajaj', 'TVS', 'Piaggio'],
+  Bike: ['Honda', 'Yamaha', 'Bajaj'],
+  Car: ['Bosch', 'Denso', 'NGK'],
+  SUV: ['Bosch', 'Denso', 'OEM'],
+  'Off-Road': ['ARB', 'Warn', 'OEM'],
+  KeyTag: ['Generic', 'Premium Leather'],
+  Toys: ['Generic'],
+  Ornaments: ['Generic', 'Artisan'],
+  Electronics: ['Sony', 'Pioneer', 'Generic'],
+  'Company Item': ['Mudiyanse'],
+  ANYVEHICLE: ['3M', 'Generic'],
+};
+
+const SUB_CATEGORIES_BY_CATEGORY = {
+  'Three-Wheel': ['Interior', 'Exterior'],
+  Bike: ['Engine', 'Body'],
+  Car: ['Engine', 'Filters'],
+  SUV: ['Exterior', 'Towing'],
+  'Off-Road': ['Recovery', 'Protection'],
+  KeyTag: ['General'],
+  Toys: ['General'],
+  Ornaments: ['General'],
+  Electronics: ['Audio', 'Safety'],
+  'Company Item': ['Apparel', 'Vouchers'],
+  ANYVEHICLE: ['Care', 'Tools'],
+};
+
 function buildProducts() {
   const products = [];
   let i = 0;
   for (const category of CATEGORIES) {
-    for (const name of PRODUCT_NAMES[category]) {
+    const brands = BRANDS_BY_CATEGORY[category];
+    const subs = SUB_CATEGORIES_BY_CATEGORY[category];
+    PRODUCT_NAMES[category].forEach((name, idxInCategory) => {
       const stock = STOCK_CYCLE[i % STOCK_CYCLE.length];
       const buying = 300 + (i % 12) * 150;
       products.push({
         name: `${name.toUpperCase()}`,
         sku_code: `DEV-${category.replace(/\s|-/g, '').slice(0, 4).toUpperCase()}-${String(i + 1).padStart(2, '0')}`,
-        brand: 'Generic',
+        brand: brands[idxInCategory % brands.length],
         category,
-        sub_category: 'General',
+        sub_category: subs[idxInCategory % subs.length],
         buying_price: buying,
         selling_price: Math.round(buying * 1.6),
         stock_quantity: stock,
@@ -81,7 +117,7 @@ function buildProducts() {
         description: `Dev seed data — ${name} for ${category}.`,
       });
       i += 1;
-    }
+    });
   }
   return products;
 }

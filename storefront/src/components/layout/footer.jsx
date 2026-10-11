@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 
 import { WHATSAPP_NUMBER as WHATSAPP } from '../../config/store';
+import { slugify } from '../../utils/slugify';
 
 export default function Footer() {
   const [email, setEmail]       = useState('');
@@ -33,11 +34,14 @@ export default function Footer() {
   ];
 
   const quickLinks = [
-    { label: 'Three-Wheel Parts', to: '/?category=Three-wheel' },
-    { label: 'Bike Spare Parts',  to: '/?category=Bike'        },
-    { label: 'Car Accessories',   to: '/?category=Car'         },
-    { label: 'Van & SUV Parts',   to: '/?category=Van'         },
-    { label: 'Track My Order',    to: '/orders'                },
+    // Previously pointed at /?category=... — StorefrontPage never read that
+    // query param, so these were dead links. Now point at the real category
+    // pages (see CategoryPage.jsx).
+    { label: 'Three-Wheel Parts', to: `/category/${slugify('Three-Wheel')}` },
+    { label: 'Bike Spare Parts',  to: `/category/${slugify('Bike')}`        },
+    { label: 'Car Accessories',   to: `/category/${slugify('Car')}`         },
+    { label: 'Van & SUV Parts',   to: `/category/${slugify('SUV')}`         },
+    { label: 'Track My Order',    to: '/orders'                            },
   ];
 
   const supportLinks = [
@@ -114,7 +118,7 @@ export default function Footer() {
         borderTop: '1px solid var(--border-light)',
         padding: '60px 32px 40px',
       }}>
-        <div style={{
+        <div className="mas-footer-grid" style={{
           maxWidth: '1200px', margin: '0 auto',
           display: 'grid',
           gridTemplateColumns: '2fr 1fr 1fr 1.6fr',
@@ -365,11 +369,25 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* keyframe */}
+      {/* keyframe + responsive grid */}
       <style>{`
         @keyframes mas-footer-shine {
           0%   { background-position: 0%   50%; }
           100% { background-position: 200% 50%; }
+        }
+        /* The 4-column grid's "fr" tracks each have an implicit min-width
+           equal to their own content's min-content size, not 0 — so long
+           unbreakable content (the phone/email line, the newsletter
+           input+button row) in the narrow "Get In Touch" column was forcing
+           the whole grid wider than the viewport at narrow widths, causing
+           a site-wide horizontal scroll (every page renders this footer).
+           Stacking removes the competing fr-shrink entirely instead of
+           trying to out-narrow the content. Desktop (≥1024px) is untouched. */
+        @media (max-width: 1023px) {
+          .mas-footer-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+        @media (max-width: 640px) {
+          .mas-footer-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </footer>

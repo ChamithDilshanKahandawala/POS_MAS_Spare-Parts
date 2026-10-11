@@ -395,6 +395,52 @@ const getMyOrders = async (req, res) => {
   }
 };
 
+// GET /api/sales/my-orders/:id — a single order for the order-success page.
+// Deliberately separate from getSaleById (staffOnly, full POS fields) —
+// this is customer-facing: protect only (no role check needed, since the
+// query itself is scoped to req.user._id and a staff account's own user id
+// never matches a sale's `customer` field), a strict customer-safe field
+// projection (no buying_price/line_profit/total_cost/total_profit/cashier/
+// cashier_name/shop/notes/idempotency_key/cod_amount/paid_amount/
+// money_received/koko_charge/koko_percentage/actual_shipping_cost), and a
+// 404 (never 403) for both "doesn't exist" and "exists but isn't yours" —
+// otherwise the response itself would let someone probe which order ids
+// are real. Also validates the id shape before querying, unlike
+// getProductById elsewhere in this codebase, which lets an invalid
+// ObjectId reach Mongoose and throw a CastError into a raw 500.
+const getMyOrderById = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    const sale = await Sale.findOne({ _id: req.params.id, customer: req.user._id }).lean();
+    if (!sale) return res.status(404).json({ message: 'Order not found' });
+
+    res.json({
+      _id: sale._id,
+      invoice_number: sale.invoice_number,
+      items: (sale.items || []).map(({ product, product_name, sku_code, quantity, selling_price, discount, line_total }) => (
+        { product, product_name, sku_code, quantity, selling_price, discount, line_total }
+      )),
+      subtotal: sale.subtotal,
+      total_discount: sale.total_discount,
+      shipping_cost_charged: sale.shipping_cost_charged,
+      total_amount: sale.total_amount,
+      payment_method: sale.payment_method,
+      sale_source: sale.sale_source,
+      customer_name: sale.customer_name,
+      customer_phone: sale.customer_phone,
+      shipping_address: sale.shipping_address,
+      order_status: sale.order_status,
+      tracking_number: sale.tracking_number,
+      createdAt: sale.createdAt,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // GET /api/sales/:id
 const getSaleById = async (req, res) => {
   try {
@@ -755,6 +801,7 @@ const deleteSale = async (req, res) => {
 module.exports = { createSale,  getSales,
   getWhatsappOrdersSummary,
   getMyOrders,
+  getMyOrderById,
   getSaleById,
   getSaleReceipt,
   updateOrderStatus,

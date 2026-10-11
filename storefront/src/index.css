@@ -283,6 +283,13 @@ body,
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+/* Continuous rotation on a small inline icon (e.g. the checkout button's
+   loading spinner) — no position:fixed descendants, so this never risks
+   the .animate-fade containing-block issue documented above. */
+.spin { animation: spin 0.8s linear infinite; display: inline-flex; }
 
 /* No `forwards` fill-mode: the `to` keyframe (opacity:1, transform:none) is
    identical to these elements' own un-animated CSS, so dropping the fill
