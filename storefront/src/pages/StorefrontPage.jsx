@@ -2,11 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { getProducts } from '../api/services';
 import toast from 'react-hot-toast';
-import { Search, ShoppingCart, Plus, Minus, X, Star, ArrowRight, Info, ShieldCheck, Package, Eye, Filter, Truck, CheckCircle, Zap } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { Search, ShoppingCart, X, Star, ArrowRight, Info, ShieldCheck, Package, Eye, Filter, Truck, CheckCircle, Zap } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { useNavigate } from 'react-router-dom';
-import AuthModal from '../components/AuthModal';
 
 const CATEGORIES = ['All', 'Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road', 'KeyTag', 'Toys', 'Ornaments'];
 
@@ -16,12 +13,9 @@ export default function StorefrontPage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [liveUpdatedIds, setLiveUpdatedIds] = useState(new Set());
-  
-  const { user } = useAuth();
-  const { cart, addToCart, updateQty, removeFromCart, totalAmount, isCartOpen, setIsCartOpen } = useCart();
-  const navigate = useNavigate();
+
+  const { addToCart } = useCart();
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -58,20 +52,6 @@ export default function StorefrontPage() {
     });
     return () => socket.disconnect();
   }, []);
-
-  const handleProceedToCheckout = () => {
-    if (!user) {
-      toast.error('Please login to continue to checkout');
-      setIsAuthModalOpen(true);
-      return;
-    }
-    if (user.role !== 'customer') {
-      toast.error('Only customers can place online orders');
-      return;
-    }
-    setIsCartOpen(false);
-    navigate('/checkout');
-  };
 
   return (
     <>
@@ -300,111 +280,6 @@ export default function StorefrontPage() {
         )}
       </div>
 
-      {/* ── Cart Drawer ── */}
-      {isCartOpen && (
-        <>
-          <div className="modal-overlay" onClick={() => setIsCartOpen(false)} style={{ zIndex: 1000 }} />
-          <div style={{
-            position: 'fixed', top: 0, right: 0, bottom: 0, width: '420px', maxWidth: '100%',
-            background: 'var(--bg-card)', zIndex: 1001, display: 'flex', flexDirection: 'column',
-            boxShadow: '-10px 0 40px rgba(0,0,0,0.15)', transition: 'transform 0.3s ease',
-          }}>
-            {/* Cart Header */}
-            <div style={{
-              padding: '20px 24px', borderBottom: '1px solid var(--border)',
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            }}>
-              <h2 style={{ fontSize: '18px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ShoppingCart size={20} color="var(--accent-primary)" /> Shopping Cart
-                <span style={{
-                  fontSize: '11px', fontWeight: 700, background: 'var(--accent-light)',
-                  color: 'var(--accent-primary)', padding: '2px 8px', borderRadius: '20px',
-                }}>{cart.length}</span>
-              </h2>
-              <button onClick={() => setIsCartOpen(false)} style={{
-                background: 'var(--bg-secondary)', border: '1px solid var(--border-light)',
-                borderRadius: '8px', width: '32px', height: '32px', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'var(--text-muted)',
-              }}><X size={16} /></button>
-            </div>
-
-            {/* Cart Items */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '16px 24px' }}>
-              {cart.length === 0 ? (
-                <div style={{ textAlign: 'center', color: 'var(--text-muted)', marginTop: '60px' }}>
-                  <ShoppingCart size={40} style={{ opacity: 0.1, margin: '0 auto 12px', display: 'block' }} />
-                  <p style={{ fontWeight: 600 }}>Your cart is empty</p>
-                  <p style={{ fontSize: '13px', marginTop: '4px' }}>Browse our catalog to add items</p>
-                </div>
-              ) : (
-                cart.map(item => (
-                  <div key={item._id} style={{
-                    display: 'flex', gap: '14px', padding: '14px',
-                    background: 'var(--bg-secondary)', borderRadius: '12px',
-                    marginBottom: '10px', border: '1px solid var(--border-light)',
-                  }}>
-                    <div style={{
-                      width: '50px', height: '50px', borderRadius: '8px',
-                      background: 'var(--bg-card)', border: '1px solid var(--border-light)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                    }}>
-                      <Package size={20} color="var(--text-muted)" style={{ opacity: 0.3 }} />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px', lineHeight: 1.3 }}>{item.name}</div>
-                      <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--accent-primary)' }}>Rs. {(item.selling_price * item.qty).toLocaleString()}</div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <button onClick={() => updateQty(item._id, -1)} style={{
-                          width: '26px', height: '26px', borderRadius: '6px',
-                          border: '1px solid var(--border)', background: 'var(--bg-card)',
-                          color: 'var(--text-primary)', cursor: 'pointer',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}><Minus size={12} /></button>
-                        <span style={{ fontSize: '13px', fontWeight: 700, width: '20px', textAlign: 'center' }}>{item.qty}</span>
-                        <button onClick={() => updateQty(item._id, 1)} style={{
-                          width: '26px', height: '26px', borderRadius: '6px',
-                          border: '1px solid var(--border)', background: 'var(--bg-card)',
-                          color: 'var(--text-primary)', cursor: 'pointer',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}><Plus size={12} /></button>
-                      </div>
-                      <button onClick={() => removeFromCart(item._id)} style={{
-                        fontSize: '10px', fontWeight: 600, color: 'var(--accent-red)',
-                        background: 'none', border: 'none', cursor: 'pointer',
-                      }}>Remove</button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {/* Cart Footer */}
-            <div style={{ padding: '20px 24px', borderTop: '1px solid var(--border)', background: 'var(--bg-secondary)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '18px', fontWeight: 800 }}>
-                <span>Total:</span>
-                <span style={{ color: 'var(--accent-primary)' }}>Rs. {totalAmount.toLocaleString()}</span>
-              </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>Shipping calculated at checkout.</div>
-              <button 
-                className="btn-primary" 
-                onClick={handleProceedToCheckout}
-                disabled={cart.length === 0}
-                style={{
-                  width: '100%', padding: '14px', borderRadius: '12px',
-                  fontSize: '15px', fontWeight: 700, display: 'flex',
-                  justifyContent: 'center', alignItems: 'center', gap: '8px',
-                }}
-              >
-                <ShieldCheck size={18} /> Proceed to Checkout
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-
       {/* ── Product Quick View Modal ── */}
       {selectedProduct && (
         <div className="modal-overlay" onClick={() => setSelectedProduct(null)}>
@@ -493,8 +368,6 @@ export default function StorefrontPage() {
           </div>
         </div>
       )}
-
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </>
   );
 }

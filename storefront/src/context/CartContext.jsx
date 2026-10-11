@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { cartStrings } from '../strings/cartStrings';
 
 const CartContext = createContext(null);
 
@@ -35,7 +36,17 @@ export const CartProvider = ({ children }) => {
       }
       return [...prev, { ...product, qty: 1 }];
     });
-    toast.success(`${product.name} added to cart`);
+    toast((t) => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <span style={{ fontSize: '13px' }}>{cartStrings.addedToast.message(product.name)}</span>
+        <button
+          onClick={() => { setIsCartOpen(true); toast.dismiss(t.id); }}
+          style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontWeight: 700, fontSize: '13px', cursor: 'pointer' }}
+        >
+          {cartStrings.addedToast.viewCart}
+        </button>
+      </div>
+    ));
   };
 
   const updateQty = (id, delta) => {

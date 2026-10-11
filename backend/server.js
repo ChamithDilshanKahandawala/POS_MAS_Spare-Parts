@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -8,6 +9,13 @@ const { Server } = require('socket.io');
 // Middleware imports
 const { protect, adminOnly, socketAuth } = require('./middleware/authMiddleware');
 
+// Loaded first so its values win (dotenv never overrides a var that's
+// already set); the plain .env below only fills in anything the
+// NODE_ENV-specific file didn't define. `npm run dev` / `npm start` set
+// NODE_ENV themselves (see package.json), so this doesn't depend on
+// whatever NODE_ENV the shell happened to inherit.
+const NODE_ENV = process.env.NODE_ENV || 'development';
+dotenv.config({ path: path.resolve(__dirname, `.env.${NODE_ENV}`) });
 dotenv.config();
 connectDB();
 

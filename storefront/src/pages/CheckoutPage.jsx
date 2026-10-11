@@ -5,8 +5,12 @@ import { useCart } from '../context/CartContext';
 import { createSale } from '../api/services';
 import toast from 'react-hot-toast';
 import { Truck, Phone, Check, ArrowLeft, ShieldCheck, ShoppingCart, User, MapPin, Map } from 'lucide-react';
-import AuthModal from '../components/AuthModal';
 
+// This page only ever mounts via the /checkout route, which is wrapped in
+// <CustomerRoute> (see App.jsx) — a logged-out visitor, or a non-customer
+// account, is redirected to /login (carrying this path as router state so
+// LoginPage can send them back) before CheckoutPage ever renders. So no
+// login/role gate is needed here.
 export default function CheckoutPage() {
   const { cart, totalAmount, clearCart } = useCart();
   const { user } = useAuth();
@@ -20,9 +24,8 @@ export default function CheckoutPage() {
     phone1: '',
     phone2: ''
   });
-  
+
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(!user);
   // Set the instant checkout succeeds, so the empty-cart redirect below can't
   // fire off the back of clearCart() and race the navigate('/orders') call.
   const orderPlacedRef = useRef(false);
@@ -33,12 +36,6 @@ export default function CheckoutPage() {
       navigate('/');
     }
   }, [cart, navigate]);
-
-  useEffect(() => {
-    if (user && isAuthModalOpen) {
-      setIsAuthModalOpen(false);
-    }
-  }, [user, isAuthModalOpen]);
 
   // Pre-fill fields if available
   useEffect(() => {
@@ -54,15 +51,6 @@ export default function CheckoutPage() {
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleCheckout = async () => {
-    if (!user) {
-      toast.error('Please login to place an order');
-      setIsAuthModalOpen(true);
-      return;
-    }
-    if (user.role !== 'customer') {
-      toast.error('Only customers can place online orders here');
-      return;
-    }
 
     // Validations
     if (!formData.name.trim()) return toast.error('Name is required');
@@ -231,8 +219,13 @@ export default function CheckoutPage() {
         </div>
 
         {/* Right Side: Order Summary */}
-        <div style={{ flex: '1 1 350px' }}>
-          <div className="glass-card" style={{ padding: '32px', borderRadius: '24px', position: 'sticky', top: '24px' }}>
+        {/* `position: sticky` lives on this outer flex-item wrapper, not the
+            inner .glass-card — sticky can only move within its own direct
+            parent's box, and a wrapper that only ever shrink-wraps its single
+            child (as this one otherwise would) gives it zero room to stick,
+            regardless of how much taller the sibling column is. */}
+        <div style={{ flex: '1 1 350px', position: 'sticky', top: '24px' }}>
+          <div className="glass-card" style={{ padding: '32px', borderRadius: '24px' }}>
             <h2 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
               <ShoppingCart size={18} /> Order Summary
             </h2>
@@ -286,11 +279,6 @@ export default function CheckoutPage() {
         </div>
 
       </div>
-
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => {
-        setIsAuthModalOpen(false);
-        if (!user) navigate('/'); // If they didn't login, bounce them back
-      }} />
     </div>
   );
 }

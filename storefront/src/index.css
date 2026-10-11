@@ -265,11 +265,11 @@ body,
 /* ─── Animations ──────────────────────────────────── */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  to { opacity: 1; transform: none; }
 }
 @keyframes slideIn {
   from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
+  to { opacity: 1; transform: none; }
 }
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 10px rgba(230, 126, 34, 0.3); }
@@ -284,8 +284,18 @@ body,
   50% { transform: translateY(-6px); }
 }
 
-.animate-fade { animation: fadeIn 0.4s ease forwards; }
-.animate-slide { animation: slideIn 0.4s ease forwards; }
+/* No `forwards` fill-mode: the `to` keyframe (opacity:1, transform:none) is
+   identical to these elements' own un-animated CSS, so dropping the fill
+   lets the transform property stop being "animated" the instant playback
+   ends — reverting to the literal computed value `none`. With `forwards`,
+   Chromium keeps resolving `none` to an identity matrix (matrix(1,0,0,1,0,0))
+   for as long as the animation is filling forward, and any non-`none`
+   transform — including an identity one — still creates a new containing
+   block for position:fixed descendants, silently breaking them. Verified
+   empirically: removing `forwards` here was required, not just changing the
+   keyframe's end value to `transform: none`. */
+.animate-fade { animation: fadeIn 0.4s ease; }
+.animate-slide { animation: slideIn 0.4s ease; }
 
 /* ─── Modal ───────────────────────────────────────── */
 .modal-overlay {
@@ -325,9 +335,16 @@ body,
 }
 
 /* ─── Product Card entrance stagger ───────────────── */
+/* `backwards` (not `forwards`): each card gets a staggered animation-delay
+   (see StorefrontPage), and backwards applies the `from` keyframe (opacity:0)
+   during that delay so a later card doesn't flash fully visible before its
+   turn to fade in. It does NOT persist the `to` state after the animation
+   ends, so the card cleanly reverts to its own CSS (no opacity rule here —
+   defaults to 1, matching the keyframe's end state) instead of staying
+   under animation control, which is what let `forwards` create an
+   accidental containing block for position:fixed descendants. */
 .product-card-enter {
-  animation: fadeIn 0.4s ease forwards;
-  opacity: 0;
+  animation: fadeIn 0.4s ease backwards;
 }
 
 /* ─── THERMAL RECEIPT PRINT STYLES (80mm printer) ── */

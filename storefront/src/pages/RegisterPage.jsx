@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { registerUser } from '../api/services';
 import toast from 'react-hot-toast';
 import { User, Mail, Lock, ArrowRight, CheckCircle2 } from 'lucide-react';
@@ -11,6 +11,9 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const { handleGoogleAuth } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  // Same "where did they come from" carry-through as LoginPage.
+  const from = location.state?.from?.pathname || '/';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,7 +21,9 @@ export default function RegisterPage() {
     try {
       const res = await registerUser(formData);
       toast.success(res.data.message || 'Registration successful!');
-      navigate('/login');
+      // Email/password registration doesn't auto-login, so send them to log
+      // in next — carrying the original destination forward with them.
+      navigate('/login', { state: location.state });
     } catch (err) {
       toast.error(err.response?.data?.message || 'Registration failed');
     } finally {
@@ -33,7 +38,7 @@ export default function RegisterPage() {
         toast.error('Staff/Admin should login through the POS Portal.');
       } else {
         toast.success('Welcome to Mudiyanse Auto Solutions! 👋');
-        navigate('/');
+        navigate(from, { replace: true });
       }
     } else {
       toast.error(result.message);
@@ -112,7 +117,7 @@ export default function RegisterPage() {
           </div>
         </div>
         <p style={{ textAlign: 'center', marginTop: '18px', fontSize: '13px', color: 'var(--text-muted)' }}>
-          Already a member? <Link to="/login" style={{ color: 'var(--accent-primary)', fontWeight: 700, textDecoration: 'none' }}>Sign In</Link>
+          Already a member? <Link to="/login" state={location.state} style={{ color: 'var(--accent-primary)', fontWeight: 700, textDecoration: 'none' }}>Sign In</Link>
         </p>
       </div>
     </div>

@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+// `motion` is used via the <motion.span> member expression below; see the
+// same note in CartDrawer.jsx.
+// eslint-disable-next-line no-unused-vars
+import { motion } from 'motion/react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useCart } from '../../context/CartContext';
 import { ShoppingBag, LogOut, Package, Moon, Sun, ShoppingCart, Menu, X, User, ChevronDown } from 'lucide-react';
 import Footer from './footer';
+import CartDrawer from '../cart/CartDrawer';
+import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion';
 
 export default function StoreLayout() {
   const { user, logout } = useAuth();
@@ -14,6 +20,13 @@ export default function StoreLayout() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdown, setUserDropdown] = useState(false);
+  const reducedMotion = usePrefersReducedMotion();
+
+  // Badge "bounce" is a declarative pop-in keyed off the item count, not
+  // state+effect — simpler, and avoids touching a ref during render.
+  const badgeBumpProps = reducedMotion
+    ? {}
+    : { initial: { scale: 1.4 }, animate: { scale: 1 }, transition: { type: 'spring', stiffness: 500, damping: 15 } };
 
   const handleLogout = () => {
     logout();
@@ -94,15 +107,19 @@ export default function StoreLayout() {
             <ShoppingCart size={16} />
             Cart
             {cart.length > 0 && (
-              <span style={{
-                position: 'absolute', top: '-7px', right: '-7px',
-                background: 'var(--accent-primary)', color: 'white',
-                fontSize: '10px', fontWeight: 800, width: '20px', height: '20px',
-                borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 2px 6px rgba(230,126,34,0.4)',
-              }}>
+              <motion.span
+                key={cart.length}
+                {...badgeBumpProps}
+                style={{
+                  position: 'absolute', top: '-7px', right: '-7px',
+                  background: 'var(--accent-primary)', color: 'white',
+                  fontSize: '10px', fontWeight: 800, width: '20px', height: '20px',
+                  borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 2px 6px rgba(230,126,34,0.4)',
+                }}
+              >
                 {cart.length}
-              </span>
+              </motion.span>
             )}
           </button>
 
@@ -208,12 +225,16 @@ export default function StoreLayout() {
           >
             <ShoppingCart size={18} />
             {cart.length > 0 && (
-              <span style={{
-                position: 'absolute', top: '-5px', right: '-5px',
-                background: 'var(--accent-primary)', color: 'white',
-                fontSize: '9px', fontWeight: 800, width: '17px', height: '17px',
-                borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>{cart.length}</span>
+              <motion.span
+                key={cart.length}
+                {...badgeBumpProps}
+                style={{
+                  position: 'absolute', top: '-5px', right: '-5px',
+                  background: 'var(--accent-primary)', color: 'white',
+                  fontSize: '9px', fontWeight: 800, width: '17px', height: '17px',
+                  borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >{cart.length}</motion.span>
             )}
           </button>
           <button
@@ -294,6 +315,8 @@ export default function StoreLayout() {
       </main>
       
       <Footer />
+
+      <CartDrawer />
 
       {/* Responsive CSS for nav  */}
       <style>{`

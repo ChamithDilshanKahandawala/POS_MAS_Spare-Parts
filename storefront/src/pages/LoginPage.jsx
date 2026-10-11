@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff, UserPlus, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -11,6 +11,10 @@ export default function LoginPage() {
   const [showPass, setShowPass] = useState(false);
   const { login, handleGoogleAuth, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  // Where CustomerRoute sent them from (e.g. /checkout), so a logged-out
+  // customer lands back where they meant to go instead of the home page.
+  const from = location.state?.from?.pathname || '/';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +24,7 @@ export default function LoginPage() {
         toast.error('Staff/Admin should login through the POS Portal.');
       } else {
         toast.success('Welcome back! 👋');
-        navigate('/');
+        navigate(from, { replace: true });
       }
     } else {
       toast.error(result.message);
@@ -34,7 +38,7 @@ export default function LoginPage() {
         toast.error('Staff/Admin should login through the POS Portal.');
       } else {
         toast.success('Welcome back! 👋');
-        navigate('/');
+        navigate(from, { replace: true });
       }
     } else {
       toast.error(result.message);
@@ -111,7 +115,7 @@ export default function LoginPage() {
 
           <div style={{ textAlign: 'center', paddingTop: '16px', borderTop: '1px solid var(--border-light)', fontSize: '13px' }}>
             <p style={{ color: 'var(--text-muted)', marginBottom: '6px' }}>Don't have an account?</p>
-            <Link to="/register" style={{
+            <Link to="/register" state={location.state} style={{
               color: 'var(--accent-primary)', fontWeight: 700, textDecoration: 'none',
               display: 'inline-flex', alignItems: 'center', gap: '6px',
             }}><UserPlus size={15} /> Create Account</Link>

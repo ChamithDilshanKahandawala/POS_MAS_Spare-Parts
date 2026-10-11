@@ -87,20 +87,36 @@ const login = async (req, res) => {
 const googleLogin = async (req, res) => {
   try {
     const { token } = req.body;
+    const clientIdConfigured = !!process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID !== 'dummy-client-id';
     let payload;
-    
-    // For local testing without a real Client ID, manually decode the JWT
-    // In production, configure GOOGLE_CLIENT_ID to verify securely.
-    if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID !== 'dummy-client-id') {
+
+    if (clientIdConfigured) {
+      // Real client ID present — always verify the signature and audience
+      // with Google, in every environment, and require a verified email.
       const ticket = await googleClient.verifyIdToken({
           idToken: token,
           audience: process.env.GOOGLE_CLIENT_ID,
       });
       payload = ticket.getPayload();
-    } else {
+      if (!payload || payload.email_verified !== true) {
+        return res.status(400).json({ message: 'Invalid Google Token' });
+      }
+    } else if (process.env.NODE_ENV === 'development') {
+      // No client ID configured, but we're explicitly in local dev — decode
+      // without verifying the signature, for testing without real Google
+      // credentials. Gated on the literal string 'development' (not just
+      // "not production") so an unset/misconfigured NODE_ENV anywhere else
+      // can't fall through to this branch.
       payload = jwt.decode(token);
+    } else {
+      // No client ID and not known-safe local dev — refuse outright rather
+      // than trust an unverified token. Previously this silently decoded
+      // any caller-supplied token with no signature check, so anyone could
+      // forge one with an existing user's email (including an admin's) and
+      // receive a valid session for that account.
+      return res.status(503).json({ message: 'Google sign-in not configured' });
     }
-    
+
     if (!payload || !payload.email) return res.status(400).json({ message: 'Invalid Google Token' });
 
     const { email, name } = payload;
@@ -118,17 +134,24 @@ const googleLogin = async (req, res) => {
       });
     }
 
-    if (user.role !== 'admin' && user.role !== 'super_admin') {
-      const statusClean = user.status?.trim();
-      if (statusClean === 'pending') {
-        return res.status(403).json({ message: 'Account pending admin approval. Please wait.' });
-      }
-      if (statusClean === 'rejected') {
-        return res.status(403).json({ message: 'Account rejected. Contact admin.' });
-      }
-      if (!user.isActive) {
-        return res.status(403).json({ message: 'Account deactivated.' });
-      }
+    // Google sign-in is customer-only, unconditionally — staff/admin/
+    // super_admin must always use email+password, even for an account that
+    // already exists under this email. Without this, a forged (or a real,
+    // differently-owned) Google token for an admin's email address could
+    // log into the POS as that admin.
+    if (user.role !== 'customer') {
+      return res.status(403).json({ message: 'Staff/Admin accounts must sign in with email and password.' });
+    }
+
+    const statusClean = user.status?.trim();
+    if (statusClean === 'pending') {
+      return res.status(403).json({ message: 'Account pending admin approval. Please wait.' });
+    }
+    if (statusClean === 'rejected') {
+      return res.status(403).json({ message: 'Account rejected. Contact admin.' });
+    }
+    if (!user.isActive) {
+      return res.status(403).json({ message: 'Account deactivated.' });
     }
 
     res.json({
