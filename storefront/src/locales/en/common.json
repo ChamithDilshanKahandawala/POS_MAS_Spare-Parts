@@ -1,0 +1,35 @@
+{
+  "appName": "Mudiyanse Auto Solutions",
+  "tagline": "Auto Solutions",
+  "announcementBar": "🚚 Free Island-wide Delivery on Orders Above Rs. 5,000 · 100% Genuine Parts Guaranteed",
+  "nav": {
+    "store": "Store",
+    "myOrders": "My Orders",
+    "categories": "Categories",
+    "shopByCategory": "Shop by Category",
+    "cart": "Cart",
+    "signIn": "Sign In",
+    "getStarted": "Get Started",
+    "signOut": "Sign Out",
+    "logout": "Logout",
+    "register": "Register",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "switchToLightMode": "Switch to Light Mode",
+    "switchToDarkMode": "Switch to Dark Mode",
+    "backToStore": "← Back to Store"
+  },
+  "languageBanner": {
+    "message": "සිංහලෙන් බලන්න · தமிழில் பார்க்க",
+    "dismiss": "Dismiss"
+  },
+  "language": {
+    "en": "EN",
+    "si": "සිං",
+    "ta": "தமிழ்",
+    "nameEn": "English",
+    "nameSi": "සිංහල",
+    "nameTa": "தமிழ்",
+    "switchTo": "Switch to {{language}}"
+  }
+}

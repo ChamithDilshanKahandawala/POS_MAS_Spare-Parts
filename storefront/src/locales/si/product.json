@@ -1,0 +1,74 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "grid": { "empty": "භාණ්ඩ හමු නොවීය.", "emptyHint": "ඔබගේ සෙවීම හෝ කාණ්ඩ පෙරහන වෙනස් කර බලන්න." },
+  "card": {
+    "quickView": "ඉක්මන් බැල්ම",
+    "add": "එකතු කරන්න",
+    "live": "සජීවී",
+    "inStockCount": "තොගයේ {{count}}ක් ඇත"
+  },
+  "breadcrumb": { "home": "මුල් පිටුව" },
+  "aria": { "breadcrumb": "පාද සටහන" },
+  "gallery": { "showImage": "රූපය {{index}} පෙන්වන්න" },
+  "skuPrefix": "SKU: {{sku}}",
+  "stock": {
+    "inStock": "තොගයේ ඇත",
+    "lowStock": "ඉතිරිව ඇත්තේ {{count}}ක් පමණි",
+    "outOfStock": "තොගයේ නැත"
+  },
+  "actions": {
+    "addToCart": "කරත්තයට එකතු කරන්න",
+    "buyNow": "දැන් මිලදී ගන්න",
+    "whatsapp": "WhatsApp හරහා ඇණවුම් කරන්න",
+    "backToShop": "සාප්පුවට ආපසු",
+    "tryAgain": "නැවත උත්සාහ කරන්න",
+    "viewFullDetails": "සම්පූර්ණ විස්තර බලන්න →"
+  },
+  "sections": {
+    "specifications": "පිරිවිතර",
+    "compatibility": "වාහන ගැළපීම",
+    "description": "විස්තරය",
+    "showMore": "තව බලන්න",
+    "showLess": "අඩුවෙන් බලන්න",
+    "relatedTitle": "ඔබ කැමති විය හැක"
+  },
+  "specs": {
+    "brand": "සන්නාමය",
+    "partNumber": "කොටස් අංකය (SKU)",
+    "category": "කාණ්ඩය",
+    "subCategory": "උප කාණ්ඩය",
+    "barcode": "බාර්කෝඩය",
+    "unit": "ඒකකය"
+  },
+  "notFound": { "title": "භාණ්ඩය හමු නොවීය", "subtitle": "මෙම භාණ්ඩය නොපවතී, හෝ ඉවත් කර ඇති විය හැක." },
+  "error": { "title": "යමක් වැරදී ගියේය", "subtitle": "මෙම භාණ්ඩය ලබා ගත නොහැකි විය. ඔබගේ සම්බන්ධතාවය පරීක්ෂා කර නැවත උත්සාහ කරන්න." },
+  "whatsappMessage": "ආයුබෝවන්! මට {{name}} (SKU: {{sku}}) ගැන උනන්දුවක් ඇත — ප්‍රමාණය: {{qty}} — {{price}}",
+  "hero": {
+    "badge": "රු. 5,000ට වැඩි ඇණවුම් සඳහා නොමිලේ බෙදාහැරීම",
+    "titleLine1": "සැබෑ කොටස්,",
+    "titleLine2": "වේගයෙන් බෙදාහැරේ.",
+    "subtitle": "Mudiyanse Auto Solutions ත්‍රිරෝද හා බයික් සඳහා ගැළපීම සහ වගකීම සහතික කරමින් හොඳම තත්ත්වයේ අමතර කොටස් සපයයි.",
+    "browseCatalog": "නාමාවලිය බලන්න",
+    "genuine": "සැබෑ",
+    "oemParts": "OEM කොටස්",
+    "islandwide": "දිවයින පුරා",
+    "delivery": "බෙදාහැරීම",
+    "warranty": "වගකීම",
+    "guaranteed": "සහතිකයි"
+  },
+  "catalog": {
+    "heading": "අපගේ නාමාවලිය",
+    "count_one": "ගුණාත්මක කොටසක් තිබේ",
+    "count_other": "ගුණාත්මක කොටස් {{count}}ක් තිබේ",
+    "searchPlaceholder": "නම හෝ SKU අනුව කොටස් සොයන්න...",
+    "failedToLoad": "භාණ්ඩ ලබා ගැනීමට අසමත් විය"
+  },
+  "quickViewModal": {
+    "descriptionTitle": "භාණ්ඩ විස්තරය",
+    "descriptionBody": "{{category}} වාහන සඳහා සුදුසුම ප්‍රතිස්ථාපන කොටස. නිෂ්පාදන දෝෂ සඳහා වගකීමක් සමඟ 100% සැබෑ ගැළපීමක් සහතිකයි.",
+    "genuine": "100% සැබෑ",
+    "fastDelivery": "වේගවත් බෙදාහැරීම",
+    "warranty": "වගකීම",
+    "addToCart": "කරත්තයට එකතු කරන්න"
+  }
+}

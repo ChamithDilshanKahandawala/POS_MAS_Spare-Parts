@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 // `motion` is used via the <motion.span> member expression below; see the
 // same note in CartDrawer.jsx.
 // eslint-disable-next-line no-unused-vars
@@ -9,12 +10,15 @@ import { useTheme } from '../../context/ThemeContext';
 import { useCart } from '../../context/CartContext';
 import { ShoppingBag, LogOut, Package, Moon, Sun, ShoppingCart, Menu, X, User, ChevronDown, LayoutGrid } from 'lucide-react';
 import Footer from './footer';
+import LanguageBanner from './LanguageBanner';
+import LanguageSwitcher from './LanguageSwitcher';
 import CartDrawer from '../cart/CartDrawer';
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion';
 import { slugify } from '../../utils/slugify';
 import { CATEGORIES } from '../../config/store';
 
 export default function StoreLayout() {
+  const { t } = useTranslation('common');
   const { user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const { cart, setIsCartOpen } = useCart();
@@ -42,13 +46,15 @@ export default function StoreLayout() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-primary)' }}>
+      <LanguageBanner />
+
       {/* ── Top announcement bar ── */}
       <div style={{
         background: 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))',
         color: 'white', textAlign: 'center', padding: '6px 16px',
         fontSize: '12px', fontWeight: 600, letterSpacing: '0.3px',
       }}>
-        🚚 Free Island-wide Delivery on Orders Above Rs. 5,000 · 100% Genuine Parts Guaranteed
+        {t('announcementBar')}
       </div>
 
       {/* ── Main Navbar ── */}
@@ -69,7 +75,7 @@ export default function StoreLayout() {
           }} />
           <div>
             <div style={{ fontSize: '17px', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>MUDIYANSE</div>
-            <div style={{ fontSize: '9px', color: 'var(--accent-primary)', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase' }}>Auto Solutions</div>
+            <div style={{ fontSize: '9px', color: 'var(--accent-primary)', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase' }}>{t('tagline')}</div>
           </div>
         </Link>
 
@@ -77,8 +83,8 @@ export default function StoreLayout() {
         <div className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {/* Nav Links */}
           {[
-            { to: '/', label: 'Store', icon: ShoppingBag },
-            ...(user ? [{ to: '/orders', label: 'My Orders', icon: Package }] : []),
+            { to: '/', label: t('nav.store'), icon: ShoppingBag },
+            ...(user ? [{ to: '/orders', label: t('nav.myOrders'), icon: Package }] : []),
           ].map(link => {
             const Icon = link.icon;
             const active = isActive(link.to);
@@ -108,7 +114,7 @@ export default function StoreLayout() {
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
             >
-              <LayoutGrid size={16} /> Categories
+              <LayoutGrid size={16} /> {t('nav.categories')}
               <ChevronDown size={14} style={{ transition: 'transform 0.2s', transform: categoryDropdown ? 'rotate(180deg)' : 'rotate(0)' }} />
             </button>
             {categoryDropdown && (
@@ -153,7 +159,7 @@ export default function StoreLayout() {
             }}
           >
             <ShoppingCart size={16} />
-            Cart
+            {t('nav.cart')}
             {cart.length > 0 && (
               <motion.span
                 key={cart.length}
@@ -171,6 +177,8 @@ export default function StoreLayout() {
             )}
           </button>
 
+          <LanguageSwitcher variant="compact" />
+
           {/* Theme Toggle */}
           <button 
             onClick={toggleTheme} 
@@ -180,7 +188,7 @@ export default function StoreLayout() {
               border: '1px solid var(--border-light)', background: 'var(--bg-secondary)',
               cursor: 'pointer', color: 'var(--text-muted)', transition: 'all 0.2s',
             }}
-            title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            title={isDarkMode ? t('nav.switchToLightMode') : t('nav.switchToDarkMode')}
           >
             {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
           </button>
@@ -230,7 +238,7 @@ export default function StoreLayout() {
                       onMouseEnter={e => e.currentTarget.style.background='var(--bg-secondary)'}
                       onMouseLeave={e => e.currentTarget.style.background='transparent'}
                     >
-                      <Package size={15} /> My Orders
+                      <Package size={15} /> {t('nav.myOrders')}
                     </Link>
                     <div style={{ height: '1px', background: 'var(--border-light)', margin: '4px 10px' }} />
                     <button onClick={handleLogout} style={{
@@ -242,7 +250,7 @@ export default function StoreLayout() {
                       onMouseEnter={e => e.currentTarget.style.background='rgba(231,76,60,0.06)'}
                       onMouseLeave={e => e.currentTarget.style.background='transparent'}
                     >
-                      <LogOut size={15} /> Sign Out
+                      <LogOut size={15} /> {t('nav.signOut')}
                     </button>
                   </div>
                 </>
@@ -253,10 +261,10 @@ export default function StoreLayout() {
               <Link to="/login" style={{
                 color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px', fontWeight: 600,
                 padding: '8px 14px', borderRadius: '10px', transition: 'all 0.2s',
-              }}>Sign In</Link>
+              }}>{t('nav.signIn')}</Link>
               <Link to="/register" className="btn-primary" style={{
                 padding: '8px 18px', borderRadius: '10px', textDecoration: 'none', fontSize: '13px',
-              }}>Get Started</Link>
+              }}>{t('nav.getStarted')}</Link>
             </div>
           )}
         </div>
@@ -312,14 +320,14 @@ export default function StoreLayout() {
             color: isActive('/') ? 'var(--accent-primary)' : 'var(--text-secondary)',
             background: isActive('/') ? 'var(--accent-light)' : 'transparent',
             textDecoration: 'none', fontWeight: 600, fontSize: '14px',
-          }}><ShoppingBag size={16} /> Store</Link>
+          }}><ShoppingBag size={16} /> {t('nav.store')}</Link>
           {user && (
             <Link to="/orders" onClick={() => setMobileMenuOpen(false)} style={{
               display: 'flex', alignItems: 'center', gap: '8px', padding: '12px', borderRadius: '10px',
               color: isActive('/orders') ? 'var(--accent-primary)' : 'var(--text-secondary)',
               background: isActive('/orders') ? 'var(--accent-light)' : 'transparent',
               textDecoration: 'none', fontWeight: 600, fontSize: '14px',
-            }}><Package size={16} /> My Orders</Link>
+            }}><Package size={16} /> {t('nav.myOrders')}</Link>
           )}
           <button
             onClick={() => setMobileCategoriesOpen((o) => !o)}
@@ -329,7 +337,7 @@ export default function StoreLayout() {
               color: 'var(--text-secondary)', fontWeight: 600, fontSize: '14px', cursor: 'pointer',
             }}
           >
-            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><LayoutGrid size={16} /> Shop by Category</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><LayoutGrid size={16} /> {t('nav.shopByCategory')}</span>
             <ChevronDown size={14} style={{ transition: 'transform 0.2s', transform: mobileCategoriesOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
           </button>
           {mobileCategoriesOpen && (
@@ -348,6 +356,9 @@ export default function StoreLayout() {
               ))}
             </div>
           )}
+          <div style={{ padding: '8px 12px' }}>
+            <LanguageSwitcher variant="full" />
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px' }}>
             <button onClick={toggleTheme} style={{
               padding: '8px 14px', borderRadius: '8px', border: '1px solid var(--border-light)',
@@ -355,7 +366,7 @@ export default function StoreLayout() {
               display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 500,
             }}>
               {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
-              {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+              {isDarkMode ? t('nav.lightMode') : t('nav.darkMode')}
             </button>
           </div>
           <div style={{ height: '1px', background: 'var(--border-light)', margin: '4px 0' }} />
@@ -373,12 +384,12 @@ export default function StoreLayout() {
               <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} style={{
                 background: 'none', border: 'none', color: 'var(--accent-red)', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', fontWeight: 600,
-              }}><LogOut size={14} /> Logout</button>
+              }}><LogOut size={14} /> {t('nav.logout')}</button>
             </div>
           ) : (
             <div style={{ display: 'flex', gap: '8px', padding: '8px 12px' }}>
-              <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="btn-secondary" style={{ flex: 1, justifyContent: 'center', textDecoration: 'none' }}>Sign In</Link>
-              <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="btn-primary" style={{ flex: 1, justifyContent: 'center', textDecoration: 'none' }}>Register</Link>
+              <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="btn-secondary" style={{ flex: 1, justifyContent: 'center', textDecoration: 'none' }}>{t('nav.signIn')}</Link>
+              <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="btn-primary" style={{ flex: 1, justifyContent: 'center', textDecoration: 'none' }}>{t('nav.register')}</Link>
             </div>
           )}
         </div>

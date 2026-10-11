@@ -13,9 +13,10 @@ import useLiveStock from '../../hooks/useLiveStock';
 import CartLineItem from './CartLineItem';
 import EmptyCart from './EmptyCart';
 import { formatLKR } from '../../utils/formatLKR';
-import { cartStrings } from '../../strings/cartStrings';
+import { useTranslation } from 'react-i18next';
 
 export default function CartDrawer() {
+  const { t } = useTranslation('cart');
   const { cart, updateQty, removeFromCart, totalAmount, isCartOpen, setIsCartOpen } = useCart();
   const navigate = useNavigate();
   const isMobile = useIsMobile(640);
@@ -145,7 +146,7 @@ export default function CartDrawer() {
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             }}>
               <h2 id="cart-drawer-title" style={{ fontSize: '17px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
-                <ShoppingCart size={19} color="var(--accent-primary)" /> {cartStrings.drawer.title}
+                <ShoppingCart size={19} color="var(--accent-primary)" /> {t('drawer.title')}
                 <span style={{
                   fontSize: '11px', fontWeight: 700, background: 'var(--accent-light)',
                   color: 'var(--accent-primary)', padding: '2px 9px', borderRadius: '999px',
@@ -154,7 +155,7 @@ export default function CartDrawer() {
               <button
                 ref={closeBtnRef}
                 onClick={close}
-                aria-label="Close cart"
+                aria-label={t('drawer.closeCart')}
                 style={{
                   background: 'var(--bg-secondary)', border: '1px solid var(--border-light)',
                   borderRadius: '10px', width: '34px', height: '34px', cursor: 'pointer',
@@ -205,23 +206,23 @@ export default function CartDrawer() {
                 background: 'color-mix(in srgb, var(--bg-card) 85%, transparent)', backdropFilter: 'blur(14px)',
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '17px', fontWeight: 800 }}>
-                  <span style={{ color: 'var(--text-primary)' }}>{cartStrings.summary.total}</span>
+                  <span style={{ color: 'var(--text-primary)' }}>{t('summary.total')}</span>
                   <span style={{ color: 'var(--accent-primary)', fontVariantNumeric: 'tabular-nums' }}>{formatLKR(totalAmount)}</span>
                 </div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '14px' }}>{cartStrings.drawer.deliveryNote}</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '14px' }}>{t('drawer.deliveryNote')}</div>
                 <button
                   className="btn-primary"
                   onClick={handleCheckout}
                   style={{ width: '100%', padding: '13px', borderRadius: '14px', fontSize: '14px', justifyContent: 'center', marginBottom: '8px' }}
                 >
-                  <ShieldCheck size={16} /> {cartStrings.drawer.checkout}
+                  <ShieldCheck size={16} /> {t('drawer.checkout')}
                 </button>
                 <button
                   className="btn-secondary"
                   onClick={() => { close(); navigate('/cart'); }}
                   style={{ width: '100%', padding: '11px', borderRadius: '14px', fontSize: '13px', justifyContent: 'center' }}
                 >
-                  {cartStrings.drawer.viewFullCart}
+                  {t('drawer.viewFullCart')}
                 </button>
               </div>
             )}

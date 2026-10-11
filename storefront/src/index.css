@@ -70,6 +70,20 @@ body,
   -webkit-font-smoothing: antialiased;
 }
 
+/* ─── Sinhala / Tamil typography ───────────────────────
+   Fonts load on demand (see src/i18n/loadFonts.js) — these rules just
+   declare the stack, so there's nothing to show until that <link> lands;
+   `swap` means text renders in the Inter fallback until then, never blocks.
+   Both Noto fonts include their own Latin/digit glyphs, so prices still
+   render correctly even though there's no separate Latin-only override —
+   English stays on Inter untouched either way. Line-height is raised for
+   Sinhala/Tamil body text per the design note (≈1.6–1.7, vs this theme's
+   default ~1.4-ish), applied broadly rather than per-component so nothing
+   is missed. */
+html[lang="si"] body { font-family: "Noto Sans Sinhala", "Inter", sans-serif; }
+html[lang="ta"] body { font-family: "Noto Sans Tamil", "Inter", sans-serif; }
+html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-secondary); }

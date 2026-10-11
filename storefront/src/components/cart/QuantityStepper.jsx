@@ -3,10 +3,12 @@ import { Minus, Plus } from 'lucide-react';
 // same note in CartDrawer.jsx.
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion';
 
 // Pill-shaped qty stepper shared by the drawer (compact) and /cart page (full).
 export default function QuantityStepper({ qty, min = 1, max, onIncrement, onDecrement, size = 'md' }) {
+  const { t } = useTranslation('cart');
   const reducedMotion = usePrefersReducedMotion();
   const dim = size === 'sm' ? 26 : 30;
   const atMin = qty <= min;
@@ -24,7 +26,7 @@ export default function QuantityStepper({ qty, min = 1, max, onIncrement, onDecr
         type="button"
         onClick={onDecrement}
         disabled={atMin}
-        aria-label="Decrease quantity"
+        aria-label={t('item.decreaseQuantity')}
         style={{
           width: dim, height: dim, borderRadius: '999px', border: 'none',
           background: 'var(--bg-card)', color: atMin ? 'var(--text-muted)' : 'var(--text-primary)',
@@ -69,8 +71,8 @@ export default function QuantityStepper({ qty, min = 1, max, onIncrement, onDecr
         type="button"
         onClick={onIncrement}
         disabled={atMax}
-        aria-label="Increase quantity"
-        title={atMax ? 'Max available stock reached' : undefined}
+        aria-label={t('item.increaseQuantity')}
+        title={atMax ? t('item.maxStockReached') : undefined}
         style={{
           width: dim, height: dim, borderRadius: '999px', border: 'none',
           background: 'var(--bg-card)', color: atMax ? 'var(--text-muted)' : 'var(--text-primary)',

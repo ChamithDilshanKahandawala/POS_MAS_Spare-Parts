@@ -1,0 +1,73 @@
+{
+  "grid": { "empty": "No products found.", "emptyHint": "Try adjusting your search or category filter." },
+  "card": {
+    "quickView": "Quick View",
+    "add": "Add",
+    "live": "LIVE",
+    "inStockCount": "{{count}} in stock"
+  },
+  "breadcrumb": { "home": "Home" },
+  "aria": { "breadcrumb": "Breadcrumb" },
+  "gallery": { "showImage": "Show image {{index}}" },
+  "skuPrefix": "SKU: {{sku}}",
+  "stock": {
+    "inStock": "In stock",
+    "lowStock": "Only {{count}} left",
+    "outOfStock": "Out of stock"
+  },
+  "actions": {
+    "addToCart": "Add to cart",
+    "buyNow": "Buy now",
+    "whatsapp": "Order on WhatsApp",
+    "backToShop": "Back to shop",
+    "tryAgain": "Try again",
+    "viewFullDetails": "View full details →"
+  },
+  "sections": {
+    "specifications": "Specifications",
+    "compatibility": "Vehicle Compatibility",
+    "description": "Description",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "relatedTitle": "You may also like"
+  },
+  "specs": {
+    "brand": "Brand",
+    "partNumber": "Part Number (SKU)",
+    "category": "Category",
+    "subCategory": "Sub-category",
+    "barcode": "Barcode",
+    "unit": "Unit"
+  },
+  "notFound": { "title": "Product not found", "subtitle": "This product doesn't exist or may have been removed." },
+  "error": { "title": "Something went wrong", "subtitle": "We couldn't load this product. Check your connection and try again." },
+  "whatsappMessage": "Hi! I'm interested in: {{name}} (SKU: {{sku}}) — Qty: {{qty}} — {{price}}",
+  "hero": {
+    "badge": "Free shipping on orders above Rs. 5,000",
+    "titleLine1": "Genuine Parts,",
+    "titleLine2": "Delivered Fast.",
+    "subtitle": "Mudiyanse Auto Solutions offers the best quality spare parts for three-wheelers & bikes with guaranteed fitment and warranty.",
+    "browseCatalog": "Browse Catalog",
+    "genuine": "Genuine",
+    "oemParts": "OEM Parts",
+    "islandwide": "Island-wide",
+    "delivery": "Delivery",
+    "warranty": "Warranty",
+    "guaranteed": "Guaranteed"
+  },
+  "catalog": {
+    "heading": "Our Catalog",
+    "count_one": "{{count}} quality part available",
+    "count_other": "{{count}} quality parts available",
+    "searchPlaceholder": "Search parts by name or SKU...",
+    "failedToLoad": "Failed to load products"
+  },
+  "quickViewModal": {
+    "descriptionTitle": "Product Description",
+    "descriptionBody": "Ideal replacement part for {{category}} vehicles. 100% genuine fitting guaranteed with warranty on manufacturing defects.",
+    "genuine": "100% Genuine",
+    "fastDelivery": "Fast Delivery",
+    "warranty": "Warranty",
+    "addToCart": "Add to Cart"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "breadcrumb": { "home": "මුල් පිටුව" },
+  "productCount_one": "භාණ්ඩ {{count}}",
+  "productCount_other": "භාණ්ඩ {{count}}",
+  "toolbar": {
+    "sort": "අනුපිළිවෙල",
+    "sortOptions": {
+      "featured": "විශේෂාංගගත",
+      "price_asc": "මිල: අඩුම සිට වැඩිම දක්වා",
+      "price_desc": "මිල: වැඩිම සිට අඩුම දක්වා",
+      "name_asc": "නම A–Z"
+    },
+    "inStockOnly": "තොගයේ ඇති පමණි",
+    "brand": "සන්නාමය",
+    "filters": "පෙරහන්",
+    "clearAll": "සියල්ල ඉවත් කරන්න",
+    "applyFilters": "ප්‍රතිඵල පෙන්වන්න"
+  },
+  "loadMore": "තවත් පෙන්වන්න ({{count}})",
+  "empty": { "title": "මෙම පෙරහන් සමඟ ගැළපෙන භාණ්ඩ නැත", "subtitle": "පෙරහනක් හෝ දෙකක් ඉවත් කර බලන්න.", "cta": "පෙරහන් ඉවත් කරන්න" },
+  "notFound": { "title": "කාණ්ඩය හමු නොවීය", "subtitle": "මෙම කාණ්ඩය නොපවතී. ඒ වෙනුවට මේවායින් එකක් උත්සාහ කරන්න:" },
+  "error": { "title": "යමක් වැරදී ගියේය", "subtitle": "මෙම කාණ්ඩය ලබා ගත නොහැකි විය. ඔබගේ සම්බන්ධතාවය පරීක්ෂා කර නැවත උත්සාහ කරන්න." },
+  "actions": { "backToShop": "සාප්පුවට ආපසු", "tryAgain": "නැවත උත්සාහ කරන්න" },
+  "aria": { "breadcrumb": "පාද සටහන", "closeFilters": "පෙරහන් වසන්න" }
+}

@@ -1,0 +1,50 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "headline": "ස්තූතියි! ඔබගේ ඇණවුම තබන ලදී",
+  "subheadline": "අපි ඔබගේ ඇණවුම ලැබී ඇති අතර බෙදාහැරීම සඳහා සූදානම් කරමු.",
+  "invoice": { "label": "ඇණවුම් අංකය", "copy": "පිටපත් කරන්න", "copied": "පිටපත් කරන ලදී!", "copyFailed": "පිටපත් කළ නොහැකි විය — අතින් තෝරන්න" },
+  "timeline": {
+    "placed": "තබන ලදී",
+    "confirmed": "තහවුරු කරන ලදී",
+    "dispatched": "යවන ලදී",
+    "delivered": "බෙදා දෙන ලදී",
+    "cancelled": "මෙම ඇණවුම අවලංගු කරන ලදී",
+    "returned": "මෙම ඇණවුම ආපසු භාර දෙන ලදී"
+  },
+  "delivery": { "title": "බෙදාහැරීමේ විස්තර", "estimate": "ඇස්තමේන්තුගත බෙදාහැරීම: {{range}} (ඇස්තමේන්තුවක් පමණි)" },
+  "items": {
+    "title": "ඇණවුම් සාරාංශය",
+    "subtotal": "උප එකතුව",
+    "deliveryFee": "බෙදාහැරීමේ ගාස්තුව",
+    "total": "එකතුව",
+    "qtyLine": "ප්‍රමාණය: {{count}} × {{price}}"
+  },
+  "payment": { "cod": "ගෙදරදී මුදල් ගෙවීම — කරුණාකර {{amount}} සූදානම් කර තබාගන්න" },
+  "whatsapp": { "cta": "WhatsApp හරහා තහවුරු කරන්න", "message": "ආයුබෝවන්! මගේ ඇණවුම {{invoiceNumber}}, එකතුව {{total}} තහවුරු කිරීමට කැමතියි. ස්තූතියි!" },
+  "actions": { "continueShopping": "සාප්පු සවාරිය දිගටම කරගෙන යන්න", "viewOrders": "මගේ ඇණවුම් බලන්න", "backToShop": "සාප්පුවට ආපසු", "tryAgain": "නැවත උත්සාහ කරන්න" },
+  "notFound": { "title": "ඇණවුම හමු නොවීය", "subtitle": "අපට මෙම ඇණවුම සොයාගත නොහැකි විය, හෝ එය මෙම ගිණුමට අයත් නොවේ." },
+  "error": { "title": "යමක් වැරදී ගියේය", "subtitle": "මෙම ඇණවුම ලබා ගත නොහැකි විය. ඔබගේ සම්බන්ධතාවය පරීක්ෂා කර නැවත උත්සාහ කරන්න." },
+  "list": {
+    "title": "මගේ ඇණවුම්",
+    "loading": "ඔබගේ ඇණවුම් ලබා ගනිමින්...",
+    "empty": "ඔබ තවම කිසිදු ඇණවුමක් තබා නැත.",
+    "failedToLoad": "ඔබගේ ඇණවුම් ලබා ගැනීමට අසමත් විය",
+    "tracking": "නිරීක්ෂණය:",
+    "paymentInfo": "ගෙවීම් තොරතුරු",
+    "cashOnDelivery": "ගෙදරදී මුදල් ගෙවීම",
+    "contactNumber": "සම්බන්ධතා අංකය",
+    "storeAndDelivery": "සාප්පුව සහ බෙදාහැරීම",
+    "standardShipping": "සාමාන්‍ය නැව්ගත කිරීම",
+    "deliveryAddress": "බෙදාහැරීමේ ලිපිනය",
+    "totalAmount": "මුළු මුදල",
+    "notAvailable": "නොමැත"
+  },
+  "status": {
+    "Pending": "අපේක්ෂිතයි",
+    "Processing": "සැකසෙමින්",
+    "Shipped": "යවා ඇත",
+    "Delivered": "බෙදා දී ඇත",
+    "Cancelled": "අවලංගු කරන ලදී",
+    "Returned": "ආපසු භාර දෙන ලදී"
+  }
+}

@@ -12,19 +12,13 @@ import {
 import { getMyOrderById } from '../api/services';
 import ProductImage from '../components/product/ProductImage';
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
+import { useTranslation } from 'react-i18next';
 import { formatLKR } from '../utils/formatLKR';
-import { orderStrings } from '../strings/orderStrings';
 import { WHATSAPP_NUMBER, getDeliveryEstimate } from '../config/store';
 
 const SHOP_NAME = 'Mudiyanse Auto Solutions';
 const DEFAULT_TITLE = 'Mudiyanse Auto Solutions · Spare Parts POS';
 
-const STATUS_STEPS = [
-  { key: 'placed', label: orderStrings.timeline.placed },
-  { key: 'confirmed', label: orderStrings.timeline.confirmed },
-  { key: 'dispatched', label: orderStrings.timeline.dispatched },
-  { key: 'delivered', label: orderStrings.timeline.delivered },
-];
 // order_status enum, from backend/models/Sale.js: Pending/Processing/
 // Shipped/Delivered map onto the 4-step happy path; Cancelled/Returned are
 // terminal/exception states shown as a banner instead (see render below).
@@ -51,6 +45,13 @@ function SkeletonBlock({ height }) {
 }
 
 export default function OrderSuccessPage() {
+  const { t } = useTranslation('order');
+  const STATUS_STEPS = [
+    { key: 'placed', label: t('timeline.placed') },
+    { key: 'confirmed', label: t('timeline.confirmed') },
+    { key: 'dispatched', label: t('timeline.dispatched') },
+    { key: 'delivered', label: t('timeline.delivered') },
+  ];
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -109,9 +110,9 @@ export default function OrderSuccessPage() {
         <div style={{ width: '84px', height: '84px', borderRadius: '999px', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
           <Package size={36} style={{ opacity: 0.35, color: 'var(--text-muted)' }} />
         </div>
-        <p style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{orderStrings.notFound.title}</p>
-        <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '20px' }}>{orderStrings.notFound.subtitle}</p>
-        <button className="btn-primary" onClick={() => navigate('/')}>{orderStrings.actions.backToShop}</button>
+        <p style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{t('notFound.title')}</p>
+        <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '20px' }}>{t('notFound.subtitle')}</p>
+        <button className="btn-primary" onClick={() => navigate('/')}>{t('actions.backToShop')}</button>
       </div>
     );
   }
@@ -122,9 +123,9 @@ export default function OrderSuccessPage() {
         <div style={{ width: '84px', height: '84px', borderRadius: '999px', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
           <AlertTriangle size={36} style={{ opacity: 0.35, color: 'var(--accent-red)' }} />
         </div>
-        <p style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{orderStrings.error.title}</p>
-        <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '20px' }}>{orderStrings.error.subtitle}</p>
-        <button className="btn-primary" onClick={() => { setLoadStatus('loading'); setRetryKey((k) => k + 1); }}>{orderStrings.actions.tryAgain}</button>
+        <p style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{t('error.title')}</p>
+        <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '20px' }}>{t('error.subtitle')}</p>
+        <button className="btn-primary" onClick={() => { setLoadStatus('loading'); setRetryKey((k) => k + 1); }}>{t('actions.tryAgain')}</button>
       </div>
     );
   }
@@ -136,17 +137,17 @@ export default function OrderSuccessPage() {
   const deliveryFee = order.shipping_cost_charged || 0;
 
   const whatsappHref = WHATSAPP_NUMBER
-    ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(orderStrings.whatsapp.message(order.invoice_number, formatLKR(order.total_amount)))}`
+    ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(t('whatsapp.message', { invoiceNumber: order.invoice_number, total: formatLKR(order.total_amount) }))}`
     : null;
 
   const copyInvoice = async () => {
     try {
       await navigator.clipboard.writeText(order.invoice_number);
       setCopied(true);
-      toast.success(orderStrings.invoice.copied);
+      toast.success(t('invoice.copied'));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error('Could not copy — select it manually');
+      toast.error(t('invoice.copyFailed'));
     }
   };
 
@@ -165,14 +166,14 @@ export default function OrderSuccessPage() {
         >
           <CheckCircle2 size={44} color="#27ae60" />
         </motion.div>
-        <h1 style={{ fontSize: '24px', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '6px' }}>{orderStrings.headline}</h1>
-        <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>{orderStrings.subheadline}</p>
+        <h1 style={{ fontSize: '24px', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '6px' }}>{t('headline')}</h1>
+        <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>{t('subheadline')}</p>
       </div>
 
       {/* Invoice number */}
       <div className="glass-card" style={{ padding: '18px 24px', borderRadius: '16px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
         <div>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{orderStrings.invoice.label}</div>
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t('invoice.label')}</div>
           <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'monospace' }}>{order.invoice_number}</div>
         </div>
         <button
@@ -180,7 +181,7 @@ export default function OrderSuccessPage() {
           className="btn-secondary"
           style={{ padding: '9px 14px', display: 'flex', alignItems: 'center', gap: '6px' }}
         >
-          {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? orderStrings.invoice.copied : orderStrings.invoice.copy}
+          {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? t('invoice.copied') : t('invoice.copy')}
         </button>
       </div>
 
@@ -189,7 +190,7 @@ export default function OrderSuccessPage() {
         {isTerminal ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--accent-red)', fontWeight: 700, fontSize: '14px' }}>
             <XCircle size={20} />
-            {order.order_status === 'Cancelled' ? orderStrings.timeline.cancelled : orderStrings.timeline.returned}
+            {order.order_status === 'Cancelled' ? t('timeline.cancelled') : t('timeline.returned')}
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'flex-start' }}>
@@ -221,27 +222,27 @@ export default function OrderSuccessPage() {
 
       {/* Delivery details */}
       <div className="glass-card" style={{ padding: '24px', borderRadius: '16px', marginBottom: '20px' }}>
-        <h2 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '14px' }}>{orderStrings.delivery.title}</h2>
+        <h2 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '14px' }}>{t('delivery.title')}</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: 'var(--text-secondary)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><User size={14} color="var(--accent-primary)" /> {order.customer_name}</div>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}><MapPin size={14} color="var(--accent-primary)" style={{ marginTop: '2px', flexShrink: 0 }} /> {addressLine}{district ? `, ${district}` : ''}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Phone size={14} color="var(--accent-primary)" /> {order.customer_phone}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', fontWeight: 600, color: 'var(--text-primary)' }}>
-            <Truck size={14} color="var(--accent-primary)" /> {orderStrings.delivery.estimate(deliveryEstimate)}
+            <Truck size={14} color="var(--accent-primary)" /> {t('delivery.estimate', { range: deliveryEstimate })}
           </div>
         </div>
       </div>
 
       {/* Items + totals */}
       <div className="glass-card" style={{ padding: '24px', borderRadius: '16px', marginBottom: '20px' }}>
-        <h2 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '14px' }}>{orderStrings.items.title}</h2>
+        <h2 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '14px' }}>{t('items.title')}</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '18px' }}>
           {order.items.map((item) => (
             <div key={item.product || item.product_name} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <ProductImage product={{ name: item.product_name }} size={48} style={{ borderRadius: '10px', flexShrink: 0 }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{item.product_name}</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Qty: {item.quantity} × {formatLKR(item.selling_price)}</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('items.qtyLine', { count: item.quantity, price: formatLKR(item.selling_price) })}</div>
               </div>
               <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{formatLKR(item.line_total)}</div>
             </div>
@@ -249,23 +250,23 @@ export default function OrderSuccessPage() {
         </div>
         <div style={{ borderTop: '1px dashed var(--border)', paddingTop: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
-            <span style={{ color: 'var(--text-muted)' }}>{orderStrings.items.subtotal}</span>
+            <span style={{ color: 'var(--text-muted)' }}>{t('items.subtotal')}</span>
             <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{formatLKR(order.subtotal)}</span>
           </div>
           {deliveryFee > 0 && (
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
-              <span style={{ color: 'var(--text-muted)' }}>{orderStrings.items.deliveryFee}</span>
+              <span style={{ color: 'var(--text-muted)' }}>{t('items.deliveryFee')}</span>
               <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{formatLKR(deliveryFee)}</span>
             </div>
           )}
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', marginTop: '4px' }}>
-            <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{orderStrings.items.total}</span>
+            <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{t('items.total')}</span>
             <span style={{ fontWeight: 900, color: 'var(--accent-primary)' }}>{formatLKR(order.total_amount)}</span>
           </div>
         </div>
         {order.payment_method === 'Cash' && (
           <div style={{ marginTop: '14px', padding: '12px 14px', background: 'var(--bg-secondary)', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
-            💵 {orderStrings.payment.cod(formatLKR(order.total_amount))}
+            💵 {t('payment.cod', { amount: formatLKR(order.total_amount) })}
           </div>
         )}
       </div>
@@ -276,16 +277,16 @@ export default function OrderSuccessPage() {
           className="btn-secondary"
           style={{ width: '100%', justifyContent: 'center', padding: '13px', borderRadius: '999px', marginBottom: '14px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
-          <MessageCircle size={16} /> {orderStrings.whatsapp.cta}
+          <MessageCircle size={16} /> {t('whatsapp.cta')}
         </a>
       )}
 
       <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
         <Link to="/" className="btn-primary" style={{ flex: '1 1 160px', justifyContent: 'center', padding: '13px', textDecoration: 'none' }}>
-          {orderStrings.actions.continueShopping}
+          {t('actions.continueShopping')}
         </Link>
         <Link to="/orders" className="btn-secondary" style={{ flex: '1 1 160px', justifyContent: 'center', padding: '13px', textDecoration: 'none' }}>
-          {orderStrings.actions.viewOrders}
+          {t('actions.viewOrders')}
         </Link>
       </div>
     </div>

@@ -1,10 +1,11 @@
 import { Package } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import ProductCard from './ProductCard';
-import { productStrings } from '../../strings/productStrings';
 
 // Grid + loading skeleton + empty state, shared by StorefrontPage and
 // anywhere else a product grid is needed.
 export default function ProductGrid({ products, loading, liveUpdatedIds, onCardClick, onAddToCart, columns }) {
+  const { t } = useTranslation('product');
   const gridStyle = { display: 'grid', gridTemplateColumns: columns || 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' };
 
   if (loading) {
@@ -26,8 +27,8 @@ export default function ProductGrid({ products, loading, liveUpdatedIds, onCardC
     return (
       <div className="glass-card" style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>
         <Package size={48} style={{ opacity: 0.15, margin: '0 auto 16px', display: 'block' }} />
-        <p style={{ fontWeight: 600, fontSize: '15px' }}>{productStrings.grid.empty}</p>
-        <p style={{ fontSize: '13px', marginTop: '4px' }}>{productStrings.grid.emptyHint}</p>
+        <p style={{ fontWeight: 600, fontSize: '15px' }}>{t('grid.empty')}</p>
+        <p style={{ fontSize: '13px', marginTop: '4px' }}>{t('grid.emptyHint')}</p>
       </div>
     );
   }

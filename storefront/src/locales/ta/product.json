@@ -1,0 +1,74 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "grid": { "empty": "பொருட்கள் எதுவும் கிடைக்கவில்லை.", "emptyHint": "உங்கள் தேடல் அல்லது வகை வடிப்பானை மாற்றி முயற்சிக்கவும்." },
+  "card": {
+    "quickView": "விரைவு பார்வை",
+    "add": "சேர்",
+    "live": "நேரலை",
+    "inStockCount": "{{count}} கையிருப்பில் உள்ளது"
+  },
+  "breadcrumb": { "home": "முகப்பு" },
+  "aria": { "breadcrumb": "வழிசெலுத்தல் பட்டி" },
+  "gallery": { "showImage": "படம் {{index}}ஐக் காட்டு" },
+  "skuPrefix": "SKU: {{sku}}",
+  "stock": {
+    "inStock": "கையிருப்பில் உள்ளது",
+    "lowStock": "{{count}} மட்டுமே மீதம்",
+    "outOfStock": "கையிருப்பில் இல்லை"
+  },
+  "actions": {
+    "addToCart": "வண்டியில் சேர்",
+    "buyNow": "இப்போது வாங்கு",
+    "whatsapp": "WhatsApp மூலம் ஆர்டர் செய்ய",
+    "backToShop": "கடைக்குத் திரும்பு",
+    "tryAgain": "மீண்டும் முயற்சிக்கவும்",
+    "viewFullDetails": "முழு விவரங்களைக் காண →"
+  },
+  "sections": {
+    "specifications": "விவரக்குறிப்புகள்",
+    "compatibility": "வாகன பொருத்தம்",
+    "description": "விளக்கம்",
+    "showMore": "மேலும் காட்டு",
+    "showLess": "குறைவாகக் காட்டு",
+    "relatedTitle": "நீங்கள் விரும்பக்கூடியவை"
+  },
+  "specs": {
+    "brand": "பிராண்ட்",
+    "partNumber": "பாகம் எண் (SKU)",
+    "category": "வகை",
+    "subCategory": "உப வகை",
+    "barcode": "பார்கோடு",
+    "unit": "அலகு"
+  },
+  "notFound": { "title": "பொருள் கிடைக்கவில்லை", "subtitle": "இந்த பொருள் இல்லை, அல்லது அகற்றப்பட்டிருக்கலாம்." },
+  "error": { "title": "ஏதோ தவறு நடந்தது", "subtitle": "இந்த பொருளை ஏற்ற முடியவில்லை. உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்." },
+  "whatsappMessage": "வணக்கம்! எனக்கு {{name}} (SKU: {{sku}}) இல் ஆர்வம் உள்ளது — அளவு: {{qty}} — {{price}}",
+  "hero": {
+    "badge": "ரூ. 5,000க்கு மேல் ஆர்டர்களுக்கு இலவச டெலிவரி",
+    "titleLine1": "உண்மையான பாகங்கள்,",
+    "titleLine2": "விரைவாக டெலிவரி.",
+    "subtitle": "Mudiyanse Auto Solutions முச்சக்கர மற்றும் பைக் வாகனங்களுக்கு உத்தரவாத பொருத்தத்துடனும் உத்தரவாதத்துடனும் சிறந்த தரமான உதிரி பாகங்களை வழங்குகிறது.",
+    "browseCatalog": "பட்டியலைப் பார்க்க",
+    "genuine": "உண்மையான",
+    "oemParts": "OEM பாகங்கள்",
+    "islandwide": "தீவு முழுவதும்",
+    "delivery": "டெலிவரி",
+    "warranty": "உத்தரவாதம்",
+    "guaranteed": "உறுதி"
+  },
+  "catalog": {
+    "heading": "எங்கள் பட்டியல்",
+    "count_one": "தரமான பாகம் {{count}} கிடைக்கிறது",
+    "count_other": "தரமான பாகங்கள் {{count}} கிடைக்கின்றன",
+    "searchPlaceholder": "பெயர் அல்லது SKU மூலம் பாகங்களைத் தேடவும்...",
+    "failedToLoad": "பொருட்களை ஏற்ற முடியவில்லை"
+  },
+  "quickViewModal": {
+    "descriptionTitle": "பொருள் விளக்கம்",
+    "descriptionBody": "{{category}} வாகனங்களுக்கு ஏற்ற மாற்று பாகம். உற்பத்தி குறைபாடுகளுக்கு உத்தரவாதத்துடன் 100% உண்மையான பொருத்தம் உத்தரவாதம்.",
+    "genuine": "100% உண்மையான",
+    "fastDelivery": "விரைவு டெலிவரி",
+    "warranty": "உத்தரவாதம்",
+    "addToCart": "வண்டியில் சேர்"
+  }
+}

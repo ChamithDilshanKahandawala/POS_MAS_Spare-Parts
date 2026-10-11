@@ -1,0 +1,46 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "trust": {
+    "securePayments": "ආරක්ෂිත ගෙවීම්",
+    "islandwideDelivery": "දිවයින පුරා බෙදාහැරීම",
+    "easyReturns": "පහසු ආපසු භාරදීම්",
+    "genuineParts": "100% සැබෑ කොටස්",
+    "fastProcessing": "වේගවත් සැකසීම"
+  },
+  "brand": {
+    "description": "ගුණාත්මක භාවය සහතික කරමින් දිවයින පුරා බෙදාහරින ශ්‍රී ලංකාවේ විශ්වාසනීය වාහන අමතර කොටස් ප්‍රභවය.",
+    "reviews": "(සමාලෝචන 200+)"
+  },
+  "quickShop": {
+    "heading": "ඉක්මන් සාප්පු සවාරිය",
+    "threeWheelParts": "ත්‍රිරෝද කොටස්",
+    "bikeSpareParts": "බයික් අමතර කොටස්",
+    "carAccessories": "කාර් උපාංග",
+    "vanSuvParts": "වෑන් සහ SUV කොටස්",
+    "trackMyOrder": "මගේ ඇණවුම සොයන්න"
+  },
+  "support": {
+    "heading": "සහාය",
+    "privacyPolicy": "පෞද්ගලිකත්ව ප්‍රතිපත්තිය",
+    "termsConditions": "නියම සහ කොන්දේසි",
+    "returnRefundPolicy": "ආපසු භාරදීම් සහ මුදල් ආපසු ගෙවීමේ ප්‍රතිපත්තිය",
+    "shippingInformation": "බෙදාහැරීමේ තොරතුරු",
+    "faq": "නිති අසන ප්‍රශ්න"
+  },
+  "contact": {
+    "heading": "අප අමතන්න",
+    "address": "08, නව සාප්පු සංකීර්ණය, මීරිගම, ශ්‍රී ලංකාව",
+    "hours": "සඳුදා – ඉරිදා: පෙ.ව. 10:00 – ප.ව. 10:00",
+    "chatOnWhatsapp": "WhatsApp හරහා කතා කරන්න"
+  },
+  "newsletter": {
+    "title": "📩 විශේෂ දීමනා ලබාගන්න",
+    "subtitle": "නව භාණ්ඩ සහ දීමනා සඳහා දායක වන්න.",
+    "placeholder": "your@email.com",
+    "subscribed": "✅ ඔබ දායක වී ඇත!"
+  },
+  "bottomBar": {
+    "rights": "සියලුම හිමිකම් ඇවිරිණි. ශ්‍රී ලංකාවේ ❤️ සමඟ නිර්මාණය කරන ලදී.",
+    "cashOnDelivery": "ගෙදරදී මුදල් ගෙවීම"
+  }
+}

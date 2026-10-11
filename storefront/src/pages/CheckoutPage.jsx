@@ -1,17 +1,26 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { createSale } from '../api/services';
 import toast from 'react-hot-toast';
 import { Truck, Phone, Check, ArrowLeft, ShieldCheck, ShoppingCart, User, MapPin, Map, Loader2 } from 'lucide-react';
+import { formatLKR } from '../utils/formatLKR';
 
 // This page only ever mounts via the /checkout route, which is wrapped in
 // <CustomerRoute> (see App.jsx) — a logged-out visitor, or a non-customer
 // account, is redirected to /login (carrying this path as router state so
 // LoginPage can send them back) before CheckoutPage ever renders. So no
 // login/role gate is needed here.
+const DISTRICTS = [
+  'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota',
+  'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale', 'Matara',
+  'Moneragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya',
+];
+
 export default function CheckoutPage() {
+  const { t } = useTranslation(['checkout', 'common']);
   const { cart, totalAmount, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -46,9 +55,13 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (cart.length === 0 && !orderPlacedRef.current) {
-      toast.error('Your cart is empty');
+      toast.error(t('toast.cartEmpty'));
       navigate('/');
     }
+    // `t` deliberately excluded — see the identical note in
+    // StorefrontPage.jsx's fetchProducts; it's always live-bound so a
+    // stale closure reference still returns current-language text.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cart, navigate]);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -61,20 +74,20 @@ export default function CheckoutPage() {
     if (isCheckingOut) return;
 
     // Validations
-    if (!formData.name.trim()) return toast.error('Name is required');
-    if (!formData.address.trim() || formData.address.length < 5) return toast.error('Please provide a detailed address');
-    if (!formData.city.trim() || formData.city.length < 2) return toast.error('City is required');
-    if (!formData.district.trim()) return toast.error('District is required');
+    if (!formData.name.trim()) return toast.error(t('toast.nameRequired'));
+    if (!formData.address.trim() || formData.address.length < 5) return toast.error(t('toast.addressRequired'));
+    if (!formData.city.trim() || formData.city.length < 2) return toast.error(t('toast.cityRequired'));
+    if (!formData.district.trim()) return toast.error(t('toast.districtRequired'));
     
     // Sri Lanka phone validation (basic format checking)
     const phoneRegex = /^(?:0|94|\+94)?(?:7\d{8}|[1-9]\d{8})$/;
     const p1Clean = formData.phone1.replace(/\s+/g, '');
     
-    if (!phoneRegex.test(p1Clean)) return toast.error('Phone Number 1 is invalid (e.g. 0771234567)');
+    if (!phoneRegex.test(p1Clean)) return toast.error(t('toast.phone1Invalid'));
     
     if (formData.phone2.trim()) {
       const p2Clean = formData.phone2.replace(/\s+/g, '');
-      if (!phoneRegex.test(p2Clean)) return toast.error('Phone Number 2 is invalid (e.g. 0771234567)');
+      if (!phoneRegex.test(p2Clean)) return toast.error(t('toast.phone2Invalid'));
     }
 
     setIsCheckingOut(true);
@@ -104,7 +117,7 @@ export default function CheckoutPage() {
       // for an order that's already been placed.
       navigate(`/order-success/${sale._id}`, { replace: true, state: { sale } });
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Checkout failed');
+      toast.error(err.response?.data?.message || t('toast.checkoutFailed'));
       setIsCheckingOut(false);
     }
   };
@@ -117,10 +130,10 @@ export default function CheckoutPage() {
         onClick={() => navigate('/')} 
         style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', marginBottom: '24px', fontSize: '14px', fontWeight: 600 }}
       >
-        <ArrowLeft size={16} /> Back to Store
+        <ArrowLeft size={16} /> {t('common:nav.backToStore')}
       </button>
 
-      <h1 className="page-title" style={{ marginBottom: '32px' }}>Secure Checkout</h1>
+      <h1 className="page-title" style={{ marginBottom: '32px' }}>{t('title')}</h1>
 
       <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
         
@@ -129,29 +142,29 @@ export default function CheckoutPage() {
           
           <div className="glass-card" style={{ padding: '32px', borderRadius: '24px' }}>
             <h2 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
-              1. Delivery Details
+              {t('delivery.heading')}
             </h2>
             
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
               
               <div>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                  <User size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '6px' }} /> Full Name *
+                  <User size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '6px' }} /> {t('delivery.fullName')}
                 </label>
                 <input 
                   type="text" name="name" className="input-field" 
-                  placeholder="Enter your full name" style={{ width: '100%', borderRadius: '12px' }}
+                  placeholder={t('delivery.fullNamePlaceholder')} style={{ width: '100%', borderRadius: '12px' }}
                   value={formData.name} onChange={handleChange} required
                 />
               </div>
 
               <div>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                  <Truck size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '6px' }} /> Street Address *
+                  <Truck size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '6px' }} /> {t('delivery.streetAddress')}
                 </label>
                 <textarea 
                   name="address" className="input-field"
-                  placeholder="Street name, house number, etc..."
+                  placeholder={t('delivery.streetAddressPlaceholder')}
                   style={{ width: '100%', borderRadius: '12px', minHeight: '60px', resize: 'vertical' }}
                   value={formData.address} onChange={handleChange} required
                 />
@@ -160,25 +173,25 @@ export default function CheckoutPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                    <MapPin size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '6px' }} /> City *
+                    <MapPin size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '6px' }} /> {t('delivery.city')}
                   </label>
                   <input 
                     type="text" name="city" className="input-field" 
-                    placeholder="E.g. Colombo" style={{ width: '100%', borderRadius: '12px' }}
+                    placeholder={t('delivery.cityPlaceholder')} style={{ width: '100%', borderRadius: '12px' }}
                     value={formData.city} onChange={handleChange} required
                   />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                    <Map size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '6px' }} /> District *
+                    <Map size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '6px' }} /> {t('delivery.district')}
                   </label>
                   <select 
                     name="district" className="select-field" style={{ width: '100%', borderRadius: '12px' }}
                     value={formData.district} onChange={handleChange} required
                   >
-                    <option value="">Select District</option>
-                    {['Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota', 'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale', 'Matara', 'Moneragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya'].map(d => (
-                      <option key={d} value={d}>{d}</option>
+                    <option value="">{t('delivery.selectDistrict')}</option>
+                    {DISTRICTS.map(d => (
+                      <option key={d} value={d}>{t(`districts.${d}`)}</option>
                     ))}
                   </select>
                 </div>
@@ -187,21 +200,21 @@ export default function CheckoutPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                    <Phone size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '6px' }} /> Phone Number 1 *
+                    <Phone size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '6px' }} /> {t('delivery.phone1')}
                   </label>
                   <input 
                     type="tel" name="phone1" className="input-field" 
-                    placeholder="e.g. 077 123 4567" style={{ width: '100%', borderRadius: '12px' }}
+                    placeholder={t('delivery.phone1Placeholder')} style={{ width: '100%', borderRadius: '12px' }}
                     value={formData.phone1} onChange={handleChange} required
                   />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                    <Phone size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '6px' }} /> Phone Number 2 (Optional)
+                    <Phone size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '6px' }} /> {t('delivery.phone2')}
                   </label>
                   <input 
                     type="tel" name="phone2" className="input-field" 
-                    placeholder="Alternate number" style={{ width: '100%', borderRadius: '12px' }}
+                    placeholder={t('delivery.phone2Placeholder')} style={{ width: '100%', borderRadius: '12px' }}
                     value={formData.phone2} onChange={handleChange}
                   />
                 </div>
@@ -212,7 +225,7 @@ export default function CheckoutPage() {
 
           <div className="glass-card" style={{ padding: '32px', borderRadius: '24px' }}>
             <h2 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
-              2. Payment Method
+              {t('payment.heading')}
             </h2>
             {/* TODO: The "PayHere / Card" online payment option was removed from here.
                 It never integrated with a real payment gateway — selecting it only sent
@@ -222,8 +235,8 @@ export default function CheckoutPage() {
                 real server-side payment verification. */}
             <div style={{ padding: '20px', borderRadius: '16px', border: '2px solid #10b981', background: 'rgba(16, 185, 129, 0.05)', textAlign: 'center', maxWidth: '260px' }}>
               <div style={{ fontSize: '24px', marginBottom: '8px' }}>💵</div>
-              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Cash on Delivery</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Pay when received</div>
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{t('payment.cashOnDelivery')}</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>{t('payment.payWhenReceived')}</div>
             </div>
           </div>
         </div>
@@ -237,7 +250,7 @@ export default function CheckoutPage() {
         <div style={{ flex: '1 1 350px', position: 'sticky', top: '24px' }}>
           <div className="glass-card" style={{ padding: '32px', borderRadius: '24px' }}>
             <h2 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
-              <ShoppingCart size={18} /> Order Summary
+              <ShoppingCart size={18} /> {t('summary.heading')}
             </h2>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px', maxHeight: '400px', overflowY: 'auto', paddingRight: '8px' }}>
@@ -245,10 +258,10 @@ export default function CheckoutPage() {
                 <div key={item._id} style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', borderBottom: '1px solid var(--border-light)', paddingBottom: '16px' }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>{item.name}</div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>Qty: {item.qty} × Rs. {item.selling_price.toLocaleString()}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>{t('summary.qtyLine', { count: item.qty, price: formatLKR(item.selling_price) })}</div>
                   </div>
                   <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
-                    Rs. {(item.selling_price * item.qty).toLocaleString()}
+                    {formatLKR(item.selling_price * item.qty)}
                   </div>
                 </div>
               ))}
@@ -256,16 +269,16 @@ export default function CheckoutPage() {
 
             <div style={{ borderTop: '2px dashed var(--border)', paddingTop: '24px', marginBottom: '32px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Subtotal</span>
-                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Rs. {totalAmount.toLocaleString()}</span>
+                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>{t('summary.subtotal')}</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{formatLKR(totalAmount)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Shipping Estimate</span>
-                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Calculated at Delivery</span>
+                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>{t('summary.shippingEstimate')}</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{t('summary.calculatedAtDelivery')}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
-                <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>Total</span>
-                <span style={{ fontSize: '24px', fontWeight: 900, color: 'var(--accent-primary)' }}>Rs. {totalAmount.toLocaleString()}</span>
+                <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>{t('summary.total')}</span>
+                <span style={{ fontSize: '24px', fontWeight: 900, color: 'var(--accent-primary)' }}>{formatLKR(totalAmount)}</span>
               </div>
             </div>
 
@@ -278,17 +291,17 @@ export default function CheckoutPage() {
               {isCheckingOut ? (
                 <>
                   <Loader2 size={20} className="spin" />
-                  Processing...
+                  {t('summary.processing')}
                 </>
               ) : (
                 <>
                   <ShieldCheck size={20} />
-                  Place Order
+                  {t('summary.placeOrder')}
                 </>
               )}
             </button>
             <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '12px', color: 'var(--text-muted)', padding: '0 20px' }}>
-              By placing your order, you agree to our Terms of Service and Privacy Policy.
+              {t('summary.terms')}
             </div>
           </div>
         </div>

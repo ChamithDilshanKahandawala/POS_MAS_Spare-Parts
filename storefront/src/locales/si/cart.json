@@ -1,0 +1,41 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "addedToast": { "message": "{{name}} කරත්තයට එකතු විය", "viewCart": "කරත්තය බලන්න" },
+  "removedToast": { "message": "{{name}} ඉවත් කරන ලදී", "undo": "අහෝසි කරන්න" },
+  "drawer": {
+    "title": "ඔබගේ කරත්තය",
+    "viewFullCart": "සම්පූර්ණ කරත්තය බලන්න",
+    "checkout": "ගෙවීමට යන්න",
+    "deliveryNote": "බෙදාහැරීම ගෙවීමේදී ගණනය කෙරේ",
+    "closeCart": "කරත්තය වසන්න"
+  },
+  "empty": { "title": "ඔබගේ කරත්තය හිස්ය", "subtitle": "භාණ්ඩ එකතු කිරීමට අපගේ නාමාවලිය බලන්න", "cta": "සාප්පු සවාරිය ආරම්භ කරන්න" },
+  "item": {
+    "remove": "ඉවත් කරන්න",
+    "removeAria": "{{name}} ඉවත් කරන්න",
+    "lowStock": "ඉතිරිව ඇත්තේ {{count}} ක් පමණි",
+    "outOfStock": "තොගයේ නැත — ඉදිරියට යාමට ඉවත් කරන්න",
+    "decreaseQuantity": "ප්‍රමාණය අඩු කරන්න",
+    "increaseQuantity": "ප්‍රමාණය වැඩි කරන්න",
+    "maxStockReached": "තිබෙන උපරිම තොගයට ළඟා විය",
+    "qtyTimes": "× {{count}}"
+  },
+  "page": {
+    "title": "ඔබගේ කරත්තය",
+    "itemCount_one": "භාණ්ඩ {{count}}",
+    "itemCount_other": "භාණ්ඩ {{count}}"
+  },
+  "summary": {
+    "subtotal": "උප එකතුව",
+    "delivery": "බෙදාහැරීම",
+    "deliveryCalculated": "ගෙවීමේදී ගණනය කෙරේ",
+    "total": "එකතුව",
+    "freeDeliveryUnlocked": "ඔබ නොමිලේ බෙදාහැරීම අගුළු හරින ලදී 🎉",
+    "freeDeliveryProgress": "නොමිලේ බෙදාහැරීම සඳහා තව {{remaining}}ක් එකතු කරන්න",
+    "proceedToCheckout": "ගෙවීමට යන්න",
+    "continueShopping": "සාප්පු සවාරිය දිගටම කරගෙන යන්න",
+    "blockedByStock": "ඉදිරියට යාමට තොගයේ නැති භාණ්ඩ ඉවත් කරන්න"
+  },
+  "trust": { "cod": "ගෙදරදී මුදල් ගෙවීම ලබාගත හැක", "delivery": "දිවයින පුරා බෙදාහැරීම", "returns": "පහසු ආපසු භාරදීම්" },
+  "toast": { "outOfStock": "තොගයේ නැත!", "maxStockReached": "උපරිම තොගයට ළඟා විය!", "notEnoughStock": "ප්‍රමාණවත් තොගයක් නැත" }
+}

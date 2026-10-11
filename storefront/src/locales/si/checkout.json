@@ -1,0 +1,72 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "title": "ආරක්ෂිත ගෙවීම",
+  "toast": {
+    "cartEmpty": "ඔබගේ කරත්තය හිස්ය",
+    "nameRequired": "නම අවශ්‍යයි",
+    "addressRequired": "කරුණාකර විස්තරාත්මක ලිපිනයක් සපයන්න",
+    "cityRequired": "නගරය අවශ්‍යයි",
+    "districtRequired": "දිස්ත්‍රික්කය අවශ්‍යයි",
+    "phone1Invalid": "දුරකථන අංකය 1 වලංගු නොවේ (උදා: 0771234567)",
+    "phone2Invalid": "දුරකථන අංකය 2 වලංගු නොවේ (උදා: 0771234567)",
+    "checkoutFailed": "ගෙවීම අසාර්ථක විය"
+  },
+  "delivery": {
+    "heading": "1. බෙදාහැරීමේ විස්තර",
+    "fullName": "සම්පූර්ණ නම *",
+    "fullNamePlaceholder": "ඔබගේ සම්පූර්ණ නම ඇතුළත් කරන්න",
+    "streetAddress": "වීදි ලිපිනය *",
+    "streetAddressPlaceholder": "වීදියේ නම, නිවස අංකය, ආදිය...",
+    "city": "නගරය *",
+    "cityPlaceholder": "උදා: කොළඹ",
+    "district": "දිස්ත්‍රික්කය *",
+    "selectDistrict": "දිස්ත්‍රික්කය තෝරන්න",
+    "phone1": "දුරකථන අංකය 1 *",
+    "phone1Placeholder": "උදා: 077 123 4567",
+    "phone2": "දුරකථන අංකය 2 (විකල්ප)",
+    "phone2Placeholder": "විකල්ප අංකය"
+  },
+  "payment": {
+    "heading": "2. ගෙවීමේ ක්‍රමය",
+    "cashOnDelivery": "ගෙදරදී මුදල් ගෙවීම",
+    "payWhenReceived": "ලැබුණු විට ගෙවන්න"
+  },
+  "summary": {
+    "heading": "ඇණවුම් සාරාංශය",
+    "qtyLine": "ප්‍රමාණය: {{count}} × {{price}}",
+    "subtotal": "උප එකතුව",
+    "shippingEstimate": "නැව්ගත කිරීමේ ඇස්තමේන්තුව",
+    "calculatedAtDelivery": "බෙදාහැරීමේදී ගණනය කෙරේ",
+    "total": "එකතුව",
+    "processing": "සැකසෙමින්...",
+    "placeOrder": "ඇණවුම තබන්න",
+    "terms": "ඇණවුම තැබීමෙන් ඔබ අපගේ සේවා නියමයන් සහ පෞද්ගලිකත්ව ප්‍රතිපත්තියට එකඟ වේ."
+  },
+  "districts": {
+    "Ampara": "අම්පාර",
+    "Anuradhapura": "අනුරාධපුර",
+    "Badulla": "බදුල්ල",
+    "Batticaloa": "මඩකලපුව",
+    "Colombo": "කොළඹ",
+    "Galle": "ගාල්ල",
+    "Gampaha": "ගම්පහ",
+    "Hambantota": "හම්බන්තොට",
+    "Jaffna": "යාපනය",
+    "Kalutara": "කළුතර",
+    "Kandy": "මහනුවර",
+    "Kegalle": "කෑගල්ල",
+    "Kilinochchi": "කිලිනොච්චිය",
+    "Kurunegala": "කුරුණෑගල",
+    "Mannar": "මන්නාරම",
+    "Matale": "මාතලේ",
+    "Matara": "මාතර",
+    "Moneragala": "මොණරාගල",
+    "Mullaitivu": "මුලතිව්",
+    "Nuwara Eliya": "නුවරඑළිය",
+    "Polonnaruwa": "පොළොන්නරුව",
+    "Puttalam": "පුත්තලම",
+    "Ratnapura": "රත්නපුර",
+    "Trincomalee": "ත්‍රිකුණාමලය",
+    "Vavuniya": "වවුනියාව"
+  }
+}

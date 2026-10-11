@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ShoppingCart, Eye } from 'lucide-react';
 import ProductImage from './ProductImage';
+import { formatLKR } from '../../utils/formatLKR';
 
 // Used on StorefrontPage's grid, the product detail page's "You may also
 // like" row, and anywhere else a product tile is needed. `onCardClick`
@@ -9,6 +11,7 @@ import ProductImage from './ProductImage';
 // the detail page's related row uses it to also navigate, since there's no
 // modal there).
 export default function ProductCard({ product, index = 0, isLiveUpdated, onCardClick, onAddToCart }) {
+  const { t } = useTranslation('product');
   const outOfStock = product.stock_quantity <= 0;
   const detailHref = `/product/${product._id}`;
 
@@ -41,7 +44,7 @@ export default function ProductCard({ product, index = 0, isLiveUpdated, onCardC
             color: product.stock_quantity > 10 ? '#27ae60' : product.stock_quantity > 0 ? '#f39c12' : '#e74c3c',
             border: `1px solid ${product.stock_quantity > 10 ? 'rgba(39,174,96,0.25)' : product.stock_quantity > 0 ? 'rgba(243,156,18,0.25)' : 'rgba(231,76,60,0.25)'}`,
           }}>
-            {product.stock_quantity > 0 ? `${product.stock_quantity} in stock` : 'Out of Stock'}
+            {product.stock_quantity > 0 ? t('card.inStockCount', { count: product.stock_quantity }) : t('stock.outOfStock')}
           </span>
           {isLiveUpdated && (
             <span style={{
@@ -52,7 +55,7 @@ export default function ProductCard({ product, index = 0, isLiveUpdated, onCardC
               borderRadius: '12px', border: '1px solid rgba(39,174,96,0.2)',
             }}>
               <span style={{ width: '6px', height: '6px', background: '#27ae60', borderRadius: '50%', animation: 'pulse-glow 1s infinite' }} />
-              LIVE
+              {t('card.live')}
             </span>
           )}
           {/* Quick view overlay (desktop hover hint only — click still
@@ -71,7 +74,7 @@ export default function ProductCard({ product, index = 0, isLiveUpdated, onCardC
               background: 'var(--accent-primary)', color: 'white',
               padding: '8px 16px', borderRadius: '8px', fontSize: '12px',
               fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px',
-            }}><Eye size={14} /> Quick View</span>
+            }}><Eye size={14} /> {t('card.quickView')}</span>
           </div>
         </ProductImage>
       </Link>
@@ -90,7 +93,7 @@ export default function ProductCard({ product, index = 0, isLiveUpdated, onCardC
 
         <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--accent-primary)' }}>
-            Rs. {product.selling_price.toLocaleString()}
+            {formatLKR(product.selling_price)}
           </span>
           <button
             onClick={(e) => { e.stopPropagation(); onAddToCart(product); }}
@@ -104,7 +107,7 @@ export default function ProductCard({ product, index = 0, isLiveUpdated, onCardC
               transition: 'all 0.2s',
             }}
           >
-            <ShoppingCart size={13} /> Add
+            <ShoppingCart size={13} /> {t('card.add')}
           </button>
         </div>
       </div>

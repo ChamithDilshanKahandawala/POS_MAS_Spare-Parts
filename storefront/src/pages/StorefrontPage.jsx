@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { io } from 'socket.io-client';
 import { getProducts } from '../api/services';
 import toast from 'react-hot-toast';
 import { Search, ShoppingCart, X, ArrowRight, ShieldCheck, Package, Truck, CheckCircle, Zap } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import ProductGrid from '../components/product/ProductGrid';
-import { productStrings } from '../strings/productStrings';
+import { formatLKR } from '../utils/formatLKR';
 import { slugify } from '../utils/slugify';
 import { CATEGORIES as REAL_CATEGORIES } from '../config/store';
 
@@ -16,6 +17,7 @@ import { CATEGORIES as REAL_CATEGORIES } from '../config/store';
 const CATEGORIES = ['All', ...REAL_CATEGORIES];
 
 export default function StorefrontPage() {
+  const { t } = useTranslation('product');
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -31,10 +33,17 @@ export default function StorefrontPage() {
       const { data } = await getProducts({ search, category, limit: 100 });
       setProducts(data.products || []);
     } catch {
-      toast.error('Failed to load products');
+      toast.error(t('catalog.failedToLoad'));
     } finally {
       setLoading(false);
     }
+    // `t` deliberately excluded: it's always live-bound to the i18next
+    // instance regardless of which render's closure holds it, so an older
+    // reference still returns the current language's text. Depending on it
+    // would refetch (and flash the loading skeleton) on every language
+    // switch for no benefit — including resetting scroll position, which
+    // broke "switching language keeps scroll position" when first tried.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, category]);
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
@@ -78,13 +87,13 @@ export default function StorefrontPage() {
 
           <div style={{ maxWidth: '560px', position: 'relative', zIndex: 1 }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, marginBottom: '16px' }}>
-              <Zap size={13} /> Free shipping on orders above Rs. 5,000
+              <Zap size={13} /> {t('hero.badge')}
             </div>
             <h2 style={{ fontSize: '34px', fontWeight: 900, marginBottom: '14px', lineHeight: 1.15 }}>
-              Genuine Parts,<br/>Delivered Fast.
+              {t('hero.titleLine1')}<br/>{t('hero.titleLine2')}
             </h2>
             <p style={{ fontSize: '15px', opacity: 0.92, marginBottom: '24px', lineHeight: 1.7, maxWidth: '460px' }}>
-              Mudiyanse Auto Solutions offers the best quality spare parts for three-wheelers & bikes with guaranteed fitment and warranty.
+              {t('hero.subtitle')}
             </p>
             <button 
               onClick={() => document.getElementById('catalog').scrollIntoView({behavior: 'smooth'})}
@@ -96,16 +105,16 @@ export default function StorefrontPage() {
                 boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
               }}
             >
-              Browse Catalog <ArrowRight size={16} />
+              {t('hero.browseCatalog')} <ArrowRight size={16} />
             </button>
           </div>
 
           {/* Hero right — trust indicators */}
           <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
             {[
-              { icon: ShieldCheck, label: 'Genuine', sub: 'OEM Parts' },
-              { icon: Truck, label: 'Island-wide', sub: 'Delivery' },
-              { icon: CheckCircle, label: 'Warranty', sub: 'Guaranteed' },
+              { icon: ShieldCheck, label: t('hero.genuine'), sub: t('hero.oemParts') },
+              { icon: Truck, label: t('hero.islandwide'), sub: t('hero.delivery') },
+              { icon: CheckCircle, label: t('hero.warranty'), sub: t('hero.guaranteed') },
             ].map(t => (
               <div key={t.label} style={{
                 background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)',
@@ -126,9 +135,9 @@ export default function StorefrontPage() {
           marginBottom: '24px', flexWrap: 'wrap', gap: '16px',
         }}>
           <div>
-            <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)' }}>Our Catalog</h2>
+            <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)' }}>{t('catalog.heading')}</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '2px' }}>
-              {products.length} quality parts available
+              {t('catalog.count', { count: products.length })}
             </p>
           </div>
 
@@ -136,7 +145,7 @@ export default function StorefrontPage() {
             <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
               <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input 
-                type="text" placeholder="Search parts by name or SKU..." 
+                type="text" placeholder={t('catalog.searchPlaceholder')} 
                 className="input-field"
                 style={{ paddingLeft: '36px', width: '100%', borderRadius: '12px' }}
                 value={search} onChange={e => setSearch(e.target.value)}
@@ -197,7 +206,7 @@ export default function StorefrontPage() {
               <span style={{
                 position: 'absolute', top: '16px', left: '16px',
               }} className={`badge ${selectedProduct.stock_quantity > 10 ? 'badge-green' : selectedProduct.stock_quantity > 0 ? 'badge-yellow' : 'badge-red'}`}>
-                {selectedProduct.stock_quantity > 0 ? `${selectedProduct.stock_quantity} in stock` : 'Out of Stock'}
+                {selectedProduct.stock_quantity > 0 ? t('card.inStockCount', { count: selectedProduct.stock_quantity }) : t('stock.outOfStock')}
               </span>
             </div>
             
@@ -224,10 +233,9 @@ export default function StorefrontPage() {
                 borderRadius: '12px', marginBottom: '20px', border: '1px solid var(--border-light)',
               }}>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>Product Description</strong><br/>
+                  <strong style={{ color: 'var(--text-primary)' }}>{t('quickViewModal.descriptionTitle')}</strong><br/>
                   <span style={{ opacity: 0.85 }}>
-                    Ideal replacement part for {selectedProduct.category.toLowerCase()} vehicles. 
-                    100% genuine fitting guaranteed with warranty on manufacturing defects.
+                    {t('quickViewModal.descriptionBody', { category: selectedProduct.category.toLowerCase() })}
                   </span>
                 </p>
               </div>
@@ -235,9 +243,9 @@ export default function StorefrontPage() {
               {/* Trust indicators */}
               <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
                 {[
-                  { icon: ShieldCheck, label: '100% Genuine' },
-                  { icon: Truck, label: 'Fast Delivery' },
-                  { icon: CheckCircle, label: 'Warranty' },
+                  { icon: ShieldCheck, label: t('quickViewModal.genuine') },
+                  { icon: Truck, label: t('quickViewModal.fastDelivery') },
+                  { icon: CheckCircle, label: t('quickViewModal.warranty') },
                 ].map(t => (
                   <div key={t.label} style={{
                     display: 'flex', alignItems: 'center', gap: '5px',
@@ -252,7 +260,7 @@ export default function StorefrontPage() {
 
               <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border)', paddingTop: '20px' }}>
                 <div style={{ fontSize: '30px', fontWeight: 900, color: 'var(--accent-primary)', marginBottom: '16px' }}>
-                  Rs. {selectedProduct.selling_price.toLocaleString()}
+                  {formatLKR(selectedProduct.selling_price)}
                 </div>
                 <button 
                   onClick={() => { addToCart(selectedProduct); setSelectedProduct(null); }}
@@ -263,7 +271,7 @@ export default function StorefrontPage() {
                     fontSize: '15px', justifyContent: 'center',
                   }}
                 >
-                  <ShoppingCart size={18} /> Add to Cart
+                  <ShoppingCart size={18} /> {t('quickViewModal.addToCart')}
                 </button>
                 <Link
                   to={`/product/${selectedProduct._id}`}
@@ -273,7 +281,7 @@ export default function StorefrontPage() {
                     fontSize: '13px', fontWeight: 600, color: 'var(--accent-primary)', textDecoration: 'none',
                   }}
                 >
-                  {productStrings.actions.viewFullDetails}
+                  {t('actions.viewFullDetails')}
                 </Link>
               </div>
             </div>

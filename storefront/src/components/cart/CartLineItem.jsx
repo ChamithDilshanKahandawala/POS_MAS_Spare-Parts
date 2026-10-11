@@ -2,10 +2,11 @@ import { Link } from 'react-router-dom';
 import { Package, Trash2 } from 'lucide-react';
 import QuantityStepper from './QuantityStepper';
 import { formatLKR } from '../../utils/formatLKR';
-import { cartStrings } from '../../strings/cartStrings';
+import { useTranslation } from 'react-i18next';
 
 // variant: "compact" (drawer) | "full" (/cart page)
 export default function CartLineItem({ item, variant = 'compact', liveStock, onIncrement, onDecrement, onRemove }) {
+  const { t } = useTranslation('cart');
   const full = variant === 'full';
   const thumbSize = full ? 76 : 50;
   const image = item.image || item.images?.[0];
@@ -68,16 +69,16 @@ export default function CartLineItem({ item, variant = 'compact', liveStock, onI
         )}
 
         <span style={{ fontSize: full ? '13px' : '12px', color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>
-          {formatLKR(item.selling_price)} {!full && `× ${item.qty}`}
+          {formatLKR(item.selling_price)} {!full && t('item.qtyTimes', { count: item.qty })}
         </span>
 
         {outOfStock ? (
           <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--accent-red)' }}>
-            {cartStrings.item.outOfStock}
+            {t('item.outOfStock')}
           </span>
         ) : lowStock ? (
           <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--accent-yellow)' }}>
-            {cartStrings.item.lowStock(knownStock)}
+            {t('item.lowStock', { count: knownStock })}
           </span>
         ) : null}
 
@@ -93,14 +94,14 @@ export default function CartLineItem({ item, variant = 'compact', liveStock, onI
           <button
             type="button"
             onClick={onRemove}
-            aria-label={`${cartStrings.item.remove} ${item.name}`}
+            aria-label={t('item.removeAria', { name: item.name })}
             style={{
               display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none',
               cursor: 'pointer', color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600, padding: '4px',
             }}
           >
             <Trash2 size={14} />
-            {full && cartStrings.item.remove}
+            {full && t('item.remove')}
           </button>
         </div>
       </div>

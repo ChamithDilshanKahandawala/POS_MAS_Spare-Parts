@@ -1,0 +1,71 @@
+{
+  "title": "Secure Checkout",
+  "toast": {
+    "cartEmpty": "Your cart is empty",
+    "nameRequired": "Name is required",
+    "addressRequired": "Please provide a detailed address",
+    "cityRequired": "City is required",
+    "districtRequired": "District is required",
+    "phone1Invalid": "Phone Number 1 is invalid (e.g. 0771234567)",
+    "phone2Invalid": "Phone Number 2 is invalid (e.g. 0771234567)",
+    "checkoutFailed": "Checkout failed"
+  },
+  "delivery": {
+    "heading": "1. Delivery Details",
+    "fullName": "Full Name *",
+    "fullNamePlaceholder": "Enter your full name",
+    "streetAddress": "Street Address *",
+    "streetAddressPlaceholder": "Street name, house number, etc...",
+    "city": "City *",
+    "cityPlaceholder": "E.g. Colombo",
+    "district": "District *",
+    "selectDistrict": "Select District",
+    "phone1": "Phone Number 1 *",
+    "phone1Placeholder": "e.g. 077 123 4567",
+    "phone2": "Phone Number 2 (Optional)",
+    "phone2Placeholder": "Alternate number"
+  },
+  "payment": {
+    "heading": "2. Payment Method",
+    "cashOnDelivery": "Cash on Delivery",
+    "payWhenReceived": "Pay when received"
+  },
+  "summary": {
+    "heading": "Order Summary",
+    "qtyLine": "Qty: {{count}} × {{price}}",
+    "subtotal": "Subtotal",
+    "shippingEstimate": "Shipping Estimate",
+    "calculatedAtDelivery": "Calculated at Delivery",
+    "total": "Total",
+    "processing": "Processing...",
+    "placeOrder": "Place Order",
+    "terms": "By placing your order, you agree to our Terms of Service and Privacy Policy."
+  },
+  "districts": {
+    "Ampara": "Ampara",
+    "Anuradhapura": "Anuradhapura",
+    "Badulla": "Badulla",
+    "Batticaloa": "Batticaloa",
+    "Colombo": "Colombo",
+    "Galle": "Galle",
+    "Gampaha": "Gampaha",
+    "Hambantota": "Hambantota",
+    "Jaffna": "Jaffna",
+    "Kalutara": "Kalutara",
+    "Kandy": "Kandy",
+    "Kegalle": "Kegalle",
+    "Kilinochchi": "Kilinochchi",
+    "Kurunegala": "Kurunegala",
+    "Mannar": "Mannar",
+    "Matale": "Matale",
+    "Matara": "Matara",
+    "Moneragala": "Moneragala",
+    "Mullaitivu": "Mullaitivu",
+    "Nuwara Eliya": "Nuwara Eliya",
+    "Polonnaruwa": "Polonnaruwa",
+    "Puttalam": "Puttalam",
+    "Ratnapura": "Ratnapura",
+    "Trincomalee": "Trincomalee",
+    "Vavuniya": "Vavuniya"
+  }
+}

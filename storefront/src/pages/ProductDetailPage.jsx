@@ -14,8 +14,7 @@ import ProductImage from '../components/product/ProductImage';
 import ProductCard from '../components/product/ProductCard';
 import { formatLKR } from '../utils/formatLKR';
 import { slugify } from '../utils/slugify';
-import { productStrings } from '../strings/productStrings';
-import { cartStrings } from '../strings/cartStrings';
+import { useTranslation } from 'react-i18next';
 import { WHATSAPP_NUMBER } from '../config/store';
 
 const SHOP_NAME = 'Mudiyanse Auto Solutions';
@@ -32,6 +31,8 @@ function SkeletonBlock({ height }) {
 }
 
 export default function ProductDetailPage() {
+  const { t } = useTranslation('product');
+  const { t: tCart } = useTranslation('cart');
   const { id } = useParams();
   const navigate = useNavigate();
   const isMobile = useIsMobile(1024);
@@ -115,9 +116,9 @@ export default function ProductDetailPage() {
         <div style={{ width: '84px', height: '84px', borderRadius: '999px', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
           <Package size={36} style={{ opacity: 0.35 }} />
         </div>
-        <p style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{productStrings.notFound.title}</p>
-        <p style={{ fontSize: '14px', marginBottom: '20px' }}>{productStrings.notFound.subtitle}</p>
-        <button className="btn-primary" onClick={() => navigate('/')}>{productStrings.actions.backToShop}</button>
+        <p style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{t('notFound.title')}</p>
+        <p style={{ fontSize: '14px', marginBottom: '20px' }}>{t('notFound.subtitle')}</p>
+        <button className="btn-primary" onClick={() => navigate('/')}>{t('actions.backToShop')}</button>
       </div>
     );
   }
@@ -128,9 +129,9 @@ export default function ProductDetailPage() {
         <div style={{ width: '84px', height: '84px', borderRadius: '999px', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
           <AlertTriangle size={36} style={{ opacity: 0.35, color: 'var(--accent-red)' }} />
         </div>
-        <p style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{productStrings.error.title}</p>
-        <p style={{ fontSize: '14px', marginBottom: '20px' }}>{productStrings.error.subtitle}</p>
-        <button className="btn-primary" onClick={() => { setLoadStatus('loading'); setRetryKey((k) => k + 1); }}>{productStrings.actions.tryAgain}</button>
+        <p style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{t('error.title')}</p>
+        <p style={{ fontSize: '14px', marginBottom: '20px' }}>{t('error.subtitle')}</p>
+        <button className="btn-primary" onClick={() => { setLoadStatus('loading'); setRetryKey((k) => k + 1); }}>{t('actions.tryAgain')}</button>
       </div>
     );
   }
@@ -142,18 +143,18 @@ export default function ProductDetailPage() {
   const effectiveQty = Math.min(qty, Math.max(knownStock, 1));
 
   const specs = [
-    { label: productStrings.specs.brand, value: product.brand },
-    { label: productStrings.specs.partNumber, value: product.sku_code },
-    { label: productStrings.specs.category, value: product.category },
-    { label: productStrings.specs.subCategory, value: product.sub_category },
-    { label: productStrings.specs.barcode, value: product.barcode },
-    { label: productStrings.specs.unit, value: product.unit },
+    { label: t('specs.brand'), value: product.brand },
+    { label: t('specs.partNumber'), value: product.sku_code },
+    { label: t('specs.category'), value: product.category },
+    { label: t('specs.subCategory'), value: product.sub_category },
+    { label: t('specs.barcode'), value: product.barcode },
+    { label: t('specs.unit'), value: product.unit },
   ].filter((s) => s.value);
 
   const descriptionNeedsClamp = !!product.description && (product.description.split('\n').length > 6 || product.description.length > 400);
 
   const whatsappHref = WHATSAPP_NUMBER
-    ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(productStrings.whatsappMessage(product, effectiveQty))}`
+    ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(t('whatsappMessage', { name: product.name, sku: product.sku_code, qty: effectiveQty, price: formatLKR(product.selling_price * effectiveQty) }))}`
     : null;
 
   // CartContext's addToCart has no quantity parameter (its API isn't being
@@ -177,8 +178,8 @@ export default function ProductDetailPage() {
     <>
       <div className="animate-fade" style={{ paddingBottom: isMobile ? '110px' : '40px' }}>
         {/* Breadcrumbs */}
-        <nav aria-label="Breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
-          <Link to="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{productStrings.breadcrumb.home}</Link>
+        <nav aria-label={t('aria.breadcrumb')} style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
+          <Link to="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{t('breadcrumb.home')}</Link>
           <ChevronRight size={12} />
           <Link to={`/category/${slugify(product.category)}`} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{product.category}</Link>
           <ChevronRight size={12} />
@@ -190,9 +191,9 @@ export default function ProductDetailPage() {
           <div style={{ flex: '1 1 0%', minWidth: 0, width: isMobile ? '100%' : undefined, position: isMobile ? 'static' : 'sticky', top: '24px' }}>
             <ProductImage product={{ ...product, images: images.length ? [images[activeImage]] : [] }} style={{ borderRadius: '20px', border: '1px solid var(--border-light)' }}>
               {outOfStock ? (
-                <span className="badge badge-red" style={{ position: 'absolute', top: '14px', left: '14px' }}>{productStrings.stock.outOfStock}</span>
+                <span className="badge badge-red" style={{ position: 'absolute', top: '14px', left: '14px' }}>{t('stock.outOfStock')}</span>
               ) : lowStock ? (
-                <span className="badge badge-yellow" style={{ position: 'absolute', top: '14px', left: '14px' }}>{productStrings.stock.lowStock(knownStock)}</span>
+                <span className="badge badge-yellow" style={{ position: 'absolute', top: '14px', left: '14px' }}>{t('stock.lowStock', { count: knownStock })}</span>
               ) : null}
             </ProductImage>
             {images.length > 1 && (
@@ -202,7 +203,7 @@ export default function ProductDetailPage() {
                     key={img + i}
                     type="button"
                     onClick={() => setActiveImage(i)}
-                    aria-label={`Show image ${i + 1}`}
+                    aria-label={t('gallery.showImage', { index: i + 1 })}
                     aria-current={i === activeImage}
                     style={{
                       width: '60px', height: '60px', borderRadius: '10px', overflow: 'hidden', padding: 0,
@@ -226,7 +227,7 @@ export default function ProductDetailPage() {
             {(product.brand || product.sku_code) && (
               <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
                 {product.brand && <span className="badge badge-blue">{product.brand}</span>}
-                {product.sku_code && <span className="badge badge-purple" style={{ fontFamily: 'monospace' }}>SKU: {product.sku_code}</span>}
+                {product.sku_code && <span className="badge badge-purple" style={{ fontFamily: 'monospace' }}>{t('skuPrefix', { sku: product.sku_code })}</span>}
               </div>
             )}
 
@@ -241,7 +242,7 @@ export default function ProductDetailPage() {
                 color: outOfStock ? 'var(--accent-red)' : lowStock ? 'var(--accent-yellow)' : 'var(--accent-green)',
               }}
             >
-              {outOfStock ? productStrings.stock.outOfStock : lowStock ? productStrings.stock.lowStock(knownStock) : productStrings.stock.inStock}
+              {outOfStock ? t('stock.outOfStock') : lowStock ? t('stock.lowStock', { count: knownStock }) : t('stock.inStock')}
             </p>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px', flexWrap: 'wrap' }}>
@@ -259,7 +260,7 @@ export default function ProductDetailPage() {
                 disabled={outOfStock}
                 style={{ flex: '1 1 180px', justifyContent: 'center', padding: '14px', borderRadius: '999px', opacity: outOfStock ? 0.5 : 1, cursor: outOfStock ? 'not-allowed' : 'pointer' }}
               >
-                <ShoppingCart size={18} /> {productStrings.actions.addToCart}
+                <ShoppingCart size={18} /> {t('actions.addToCart')}
               </button>
             </div>
 
@@ -269,7 +270,7 @@ export default function ProductDetailPage() {
               disabled={outOfStock}
               style={{ width: '100%', justifyContent: 'center', padding: '13px', borderRadius: '999px', marginBottom: '12px', opacity: outOfStock ? 0.5 : 1, cursor: outOfStock ? 'not-allowed' : 'pointer' }}
             >
-              {productStrings.actions.buyNow}
+              {t('actions.buyNow')}
             </button>
 
             {whatsappHref && (
@@ -280,16 +281,16 @@ export default function ProductDetailPage() {
                 className="btn-secondary"
                 style={{ width: '100%', justifyContent: 'center', padding: '13px', borderRadius: '999px', marginBottom: '20px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}
               >
-                <MessageCircle size={16} /> {productStrings.actions.whatsapp}
+                <MessageCircle size={16} /> {t('actions.whatsapp')}
               </a>
             )}
 
             {/* Trust row — same style/strings as OrderSummary's */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px', paddingTop: '18px', borderTop: '1px solid var(--border-light)' }}>
               {[
-                { Icon: ShieldCheck, label: cartStrings.trust.cod },
-                { Icon: Truck, label: cartStrings.trust.delivery },
-                { Icon: RotateCcw, label: cartStrings.trust.returns },
+                { Icon: ShieldCheck, label: tCart('trust.cod') },
+                { Icon: Truck, label: tCart('trust.delivery') },
+                { Icon: RotateCcw, label: tCart('trust.returns') },
                 // eslint-disable-next-line no-unused-vars
               ].map(({ Icon, label }) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--text-muted)' }}>
@@ -300,7 +301,7 @@ export default function ProductDetailPage() {
 
             {specs.length > 0 && (
               <div className="glass-card" style={{ padding: '24px', borderRadius: '20px', marginBottom: '20px' }}>
-                <h2 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '16px', color: 'var(--text-primary)' }}>{productStrings.sections.specifications}</h2>
+                <h2 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '16px', color: 'var(--text-primary)' }}>{t('sections.specifications')}</h2>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px 20px' }}>
                   {specs.map((s) => (
                     <div key={s.label} style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -319,7 +320,7 @@ export default function ProductDetailPage() {
 
             {product.description && (
               <div className="glass-card" style={{ padding: '24px', borderRadius: '20px', marginBottom: '24px' }}>
-                <h2 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '12px', color: 'var(--text-primary)' }}>{productStrings.sections.description}</h2>
+                <h2 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '12px', color: 'var(--text-primary)' }}>{t('sections.description')}</h2>
                 <p style={{
                   fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, whiteSpace: 'pre-line', margin: 0,
                   display: descExpanded ? 'block' : '-webkit-box',
@@ -334,7 +335,7 @@ export default function ProductDetailPage() {
                     onClick={() => setDescExpanded((e) => !e)}
                     style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontWeight: 700, fontSize: '13px', cursor: 'pointer', marginTop: '10px', padding: 0 }}
                   >
-                    {descExpanded ? productStrings.sections.showLess : productStrings.sections.showMore}
+                    {descExpanded ? t('sections.showLess') : t('sections.showMore')}
                   </button>
                 )}
               </div>
@@ -344,7 +345,7 @@ export default function ProductDetailPage() {
 
         {related.length > 0 && (
           <div style={{ marginTop: '56px' }}>
-            <h2 className="page-title" style={{ fontSize: '20px', marginBottom: '20px' }}>{productStrings.sections.relatedTitle}</h2>
+            <h2 className="page-title" style={{ fontSize: '20px', marginBottom: '20px' }}>{t('sections.relatedTitle')}</h2>
             <div style={{
               display: isMobile ? 'flex' : 'grid',
               gridTemplateColumns: isMobile ? undefined : 'repeat(4, 1fr)',
@@ -376,7 +377,7 @@ export default function ProductDetailPage() {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
         }}>
           <div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.4px' }}>{cartStrings.summary.total}</div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.4px' }}>{tCart('summary.total')}</div>
             <div style={{ fontSize: '17px', fontWeight: 800, color: 'var(--accent-primary)', fontVariantNumeric: 'tabular-nums' }}>{formatLKR(product.selling_price * effectiveQty)}</div>
           </div>
           <button
@@ -385,7 +386,7 @@ export default function ProductDetailPage() {
             disabled={outOfStock}
             style={{ padding: '12px 22px', borderRadius: '14px', opacity: outOfStock ? 0.5 : 1, cursor: outOfStock ? 'not-allowed' : 'pointer' }}
           >
-            <ShoppingCart size={16} /> {productStrings.actions.addToCart}
+            <ShoppingCart size={16} /> {t('actions.addToCart')}
           </button>
         </div>
       )}

@@ -9,9 +9,10 @@ import CartLineItem from '../components/cart/CartLineItem';
 import OrderSummary from '../components/cart/OrderSummary';
 import EmptyCart from '../components/cart/EmptyCart';
 import { formatLKR } from '../utils/formatLKR';
-import { cartStrings } from '../strings/cartStrings';
+import { useTranslation } from 'react-i18next';
 
 export default function CartPage() {
+  const { t } = useTranslation('cart');
   const { cart, updateQty, removeFromCart, addToCart, totalAmount } = useCart();
   const navigate = useNavigate();
   const isMobile = useIsMobile(1024);
@@ -22,20 +23,20 @@ export default function CartPage() {
   const handleRemove = (item) => {
     removedItemsRef.current[item._id] = item;
     removeFromCart(item._id);
-    toast((t) => (
+    toast((toastObj) => (
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <span style={{ fontSize: '13px' }}>{cartStrings.removedToast.message(item.name)}</span>
+        <span style={{ fontSize: '13px' }}>{t('removedToast.message', { name: item.name })}</span>
         <button
           onClick={() => {
             const removed = removedItemsRef.current[item._id];
             if (removed) {
               for (let i = 0; i < removed.qty; i += 1) addToCart(removed);
             }
-            toast.dismiss(t.id);
+            toast.dismiss(toastObj.id);
           }}
           style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontWeight: 700, fontSize: '13px', cursor: 'pointer' }}
         >
-          {cartStrings.removedToast.undo}
+          {t('removedToast.undo')}
         </button>
       </div>
     ), { duration: 5000 });
@@ -63,10 +64,10 @@ export default function CartPage() {
         onClick={() => navigate('/')}
         style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', marginBottom: '20px', fontSize: '14px', fontWeight: 600 }}
       >
-        <ArrowLeft size={16} /> Continue shopping
+        <ArrowLeft size={16} /> {t('summary.continueShopping')}
       </button>
 
-      <h1 className="page-title" style={{ marginBottom: '24px' }}>{cartStrings.page.title}</h1>
+      <h1 className="page-title" style={{ marginBottom: '24px' }}>{t('page.title')}</h1>
 
       <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
         {/* Line items */}
@@ -94,7 +95,7 @@ export default function CartPage() {
             onCheckout={handleCheckout}
             onContinueShopping={() => navigate('/')}
             disableCheckout={anyOutOfStock}
-            disableReason={anyOutOfStock ? cartStrings.summary.blockedByStock : null}
+            disableReason={anyOutOfStock ? t('summary.blockedByStock') : null}
           />
         </div>
       </div>
@@ -114,7 +115,7 @@ export default function CartPage() {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
         }}>
           <div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.4px' }}>{cartStrings.summary.total}</div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.4px' }}>{t('summary.total')}</div>
             <div style={{ fontSize: '17px', fontWeight: 800, color: 'var(--accent-primary)', fontVariantNumeric: 'tabular-nums' }}>{formatLKR(totalAmount)}</div>
           </div>
           <button
@@ -123,7 +124,7 @@ export default function CartPage() {
             disabled={anyOutOfStock}
             style={{ padding: '12px 22px', borderRadius: '14px', opacity: anyOutOfStock ? 0.5 : 1, cursor: anyOutOfStock ? 'not-allowed' : 'pointer' }}
           >
-            <ShieldCheck size={16} /> {cartStrings.summary.proceedToCheckout}
+            <ShieldCheck size={16} /> {t('summary.proceedToCheckout')}
           </button>
         </div>
       )}

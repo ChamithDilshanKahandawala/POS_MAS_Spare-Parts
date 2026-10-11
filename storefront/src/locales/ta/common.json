@@ -1,0 +1,36 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "appName": "Mudiyanse Auto Solutions",
+  "tagline": "வாகன உதிரி பாகங்கள்",
+  "announcementBar": "🚚 ரூ. 5,000க்கு மேல் ஆர்டர்களுக்கு இலவச தீவு முழுவதும் டெலிவரி · 100% உண்மையான உதிரி பாகங்கள் உத்தரவாதம்",
+  "nav": {
+    "store": "கடை",
+    "myOrders": "எனது ஆர்டர்கள்",
+    "categories": "வகைகள்",
+    "shopByCategory": "வகை வாரியாக வாங்கவும்",
+    "cart": "வண்டி",
+    "signIn": "உள்நுழைய",
+    "getStarted": "தொடங்குங்கள்",
+    "signOut": "வெளியேறு",
+    "logout": "வெளியேறு",
+    "register": "பதிவு செய்ய",
+    "lightMode": "வெளிர் தோற்றம்",
+    "darkMode": "இருள் தோற்றம்",
+    "switchToLightMode": "வெளிர் தோற்றத்திற்கு மாறவும்",
+    "switchToDarkMode": "இருள் தோற்றத்திற்கு மாறவும்",
+    "backToStore": "← கடைக்குத் திரும்பு"
+  },
+  "languageBanner": {
+    "message": "සිංහලෙන් බලන්න · தமிழில் பார்க்க",
+    "dismiss": "மூடு"
+  },
+  "language": {
+    "en": "EN",
+    "si": "සිං",
+    "ta": "தமிழ்",
+    "nameEn": "English",
+    "nameSi": "සිංහල",
+    "nameTa": "தமிழ்",
+    "switchTo": "{{language}} மொழிக்கு மாறவும்"
+  }
+}

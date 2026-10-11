@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff, UserPlus, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { GoogleLogin } from '@react-oauth/google';
 
 export default function LoginPage() {
+  const { t } = useTranslation(['auth', 'common']);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
@@ -21,9 +23,9 @@ export default function LoginPage() {
     const result = await login(email, password);
     if (result.success) {
       if (result.user?.role !== 'customer') {
-        toast.error('Staff/Admin should login through the POS Portal.');
+        toast.error(t('toast.staffShouldUsePos'));
       } else {
-        toast.success('Welcome back! 👋');
+        toast.success(t('toast.welcomeBack'));
         navigate(from, { replace: true });
       }
     } else {
@@ -35,9 +37,9 @@ export default function LoginPage() {
     const result = await handleGoogleAuth(credentialResponse.credential);
     if (result.success) {
       if (result.user?.role !== 'customer') {
-        toast.error('Staff/Admin should login through the POS Portal.');
+        toast.error(t('toast.staffShouldUsePos'));
       } else {
-        toast.success('Welcome back! 👋');
+        toast.success(t('toast.welcomeBack'));
         navigate(from, { replace: true });
       }
     } else {
@@ -66,47 +68,47 @@ export default function LoginPage() {
             <img src="/logo.png" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', background: 'white' }} />
           </div>
           <h1 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px' }}>
-            Welcome Back
+            {t('login.welcomeBack')}
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
-            Sign in to Mudiyanse Auto Solutions
+            {t('login.subtitle')}
           </p>
         </div>
 
         <div className="glass-card" style={{ padding: '28px', borderRadius: '20px' }}>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px', letterSpacing: '0.3px' }}>EMAIL ADDRESS</label>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px', letterSpacing: '0.3px' }}>{t('login.emailLabel')}</label>
               <div style={{ position: 'relative' }}>
                 <Mail size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                <input type="email" className="input-field" placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)} required style={{ paddingLeft: '38px' }} />
+                <input type="email" className="input-field" placeholder={t('login.emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} required style={{ paddingLeft: '38px' }} />
               </div>
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px', letterSpacing: '0.3px' }}>PASSWORD</label>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px', letterSpacing: '0.3px' }}>{t('login.passwordLabel')}</label>
               <div style={{ position: 'relative' }}>
                 <Lock size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                <input type={showPass ? 'text' : 'password'} className="input-field" placeholder="Enter your password" value={password} onChange={e => setPassword(e.target.value)} required style={{ paddingLeft: '38px', paddingRight: '42px' }} />
+                <input type={showPass ? 'text' : 'password'} className="input-field" placeholder={t('login.passwordPlaceholder')} value={password} onChange={e => setPassword(e.target.value)} required style={{ paddingLeft: '38px', paddingRight: '42px' }} />
                 <button type="button" onClick={() => setShowPass(!showPass)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
             <button type="submit" className="btn-primary" disabled={loading} style={{ width: '100%', padding: '12px', marginTop: '4px', justifyContent: 'center', fontSize: '15px' }}>
-              {loading ? 'Signing in...' : 'Sign In →'}
+              {loading ? t('login.signingIn') : t('login.signIn')}
             </button>
           </form>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '20px 0' }}>
             <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>OR CONTINUE WITH</span>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>{t('login.orContinueWith')}</span>
             <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
             <GoogleLogin
               onSuccess={onGoogleSuccess}
-              onError={() => toast.error('Google Login Failed')}
+              onError={() => toast.error(t('toast.googleLoginFailed'))}
               useOneTap
               shape="rectangular"
               theme="filled_black"
@@ -114,15 +116,15 @@ export default function LoginPage() {
           </div>
 
           <div style={{ textAlign: 'center', paddingTop: '16px', borderTop: '1px solid var(--border-light)', fontSize: '13px' }}>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '6px' }}>Don't have an account?</p>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '6px' }}>{t('login.noAccount')}</p>
             <Link to="/register" state={location.state} style={{
               color: 'var(--accent-primary)', fontWeight: 700, textDecoration: 'none',
               display: 'inline-flex', alignItems: 'center', gap: '6px',
-            }}><UserPlus size={15} /> Create Account</Link>
+            }}><UserPlus size={15} /> {t('login.createAccount')}</Link>
           </div>
         </div>
         <div style={{ textAlign: 'center', marginTop: '16px' }}>
-          <Link to="/" style={{ fontSize: '12px', color: 'var(--text-muted)', textDecoration: 'none' }}>← Back to Store</Link>
+          <Link to="/" style={{ fontSize: '12px', color: 'var(--text-muted)', textDecoration: 'none' }}>{t('common:nav.backToStore')}</Link>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Facebook, Instagram, Youtube, MessageCircle,
   Mail, Phone, MapPin, Clock,
@@ -7,10 +8,11 @@ import {
   ChevronRight, Send,
 } from 'lucide-react';
 
-import { WHATSAPP_NUMBER as WHATSAPP } from '../../config/store';
+import { WHATSAPP_NUMBER as WHATSAPP, PAYMENT_BADGES } from '../../config/store';
 import { slugify } from '../../utils/slugify';
 
 export default function Footer() {
+  const { t } = useTranslation('footer');
   const [email, setEmail]       = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -26,30 +28,30 @@ export default function Footer() {
 
   /* ─── data ─────────────────────────────────────────────── */
   const trustBadges = [
-    { icon: <ShieldCheck size={18} />, label: 'Secure Payments',      color: '#10b981' },
-    { icon: <Truck size={18} />,       label: 'Island-wide Delivery',  color: '#e67e22' },
-    { icon: <RotateCcw size={18} />,   label: 'Easy Returns',          color: '#f59e0b' },
-    { icon: <Star size={18} />,        label: '100% Genuine Parts',    color: '#ec4899' },
-    { icon: <Zap size={18} />,         label: 'Fast Processing',       color: '#14b8a6' },
+    { icon: <ShieldCheck size={18} />, label: t('trust.securePayments'),      color: '#10b981' },
+    { icon: <Truck size={18} />,       label: t('trust.islandwideDelivery'),  color: '#e67e22' },
+    { icon: <RotateCcw size={18} />,   label: t('trust.easyReturns'),         color: '#f59e0b' },
+    { icon: <Star size={18} />,        label: t('trust.genuineParts'),        color: '#ec4899' },
+    { icon: <Zap size={18} />,         label: t('trust.fastProcessing'),      color: '#14b8a6' },
   ];
 
   const quickLinks = [
     // Previously pointed at /?category=... — StorefrontPage never read that
     // query param, so these were dead links. Now point at the real category
     // pages (see CategoryPage.jsx).
-    { label: 'Three-Wheel Parts', to: `/category/${slugify('Three-Wheel')}` },
-    { label: 'Bike Spare Parts',  to: `/category/${slugify('Bike')}`        },
-    { label: 'Car Accessories',   to: `/category/${slugify('Car')}`         },
-    { label: 'Van & SUV Parts',   to: `/category/${slugify('SUV')}`         },
-    { label: 'Track My Order',    to: '/orders'                            },
+    { label: t('quickShop.threeWheelParts'), to: `/category/${slugify('Three-Wheel')}` },
+    { label: t('quickShop.bikeSpareParts'),  to: `/category/${slugify('Bike')}`        },
+    { label: t('quickShop.carAccessories'),  to: `/category/${slugify('Car')}`         },
+    { label: t('quickShop.vanSuvParts'),     to: `/category/${slugify('SUV')}`         },
+    { label: t('quickShop.trackMyOrder'),    to: '/orders'                            },
   ];
 
   const supportLinks = [
-    { label: 'Privacy Policy',         to: '#' },
-    { label: 'Terms & Conditions',     to: '#' },
-    { label: 'Return & Refund Policy', to: '#' },
-    { label: 'Shipping Information',   to: '#' },
-    { label: 'FAQ',                    to: '#' },
+    { label: t('support.privacyPolicy'),         to: '#' },
+    { label: t('support.termsConditions'),       to: '#' },
+    { label: t('support.returnRefundPolicy'),    to: '#' },
+    { label: t('support.shippingInformation'),   to: '#' },
+    { label: t('support.faq'),                   to: '#' },
   ];
 
   const socials = [
@@ -60,10 +62,10 @@ export default function Footer() {
   ];
 
   const contactItems = [
-    { icon: <MapPin size={14} />, text: '08, New Shopping Complex, Mirigama, Sri Lanka', color: '#e67e22' },
-    { icon: <Phone size={14} />,  text: '+94 75 720 3766',                        color: '#10b981' },
-    { icon: <Mail size={14} />,   text: 'mudiyanseautosolutions@gmail.com',              color: '#f59e0b' },
-    { icon: <Clock size={14} />,  text: 'Mon – Sun: 10:00 AM – 10:00 PM',          color: '#ec4899' },
+    { icon: <MapPin size={14} />, text: t('contact.address'),        color: '#e67e22' },
+    { icon: <Phone size={14} />,  text: '+94 75 720 3766',           color: '#10b981' },
+    { icon: <Mail size={14} />,   text: 'mudiyanseautosolutions@gmail.com', color: '#f59e0b' },
+    { icon: <Clock size={14} />,  text: t('contact.hours'),          color: '#ec4899' },
   ];
 
   /* ─── shared style helpers ──────────────────────────────── */
@@ -148,7 +150,7 @@ export default function Footer() {
             </div>
 
             <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: 1.75, marginBottom: '20px', maxWidth: '290px' }}>
-              Sri Lanka's trusted source for premium vehicle spare parts — delivered island-wide with a guarantee of quality.
+              {t('brand.description')}
             </p>
 
             {/* Stars */}
@@ -160,7 +162,7 @@ export default function Footer() {
             }}>
               {[0,1,2,3,4].map(i => <Star key={i} size={13} fill="#fbbf24" color="#fbbf24" />)}
               <span style={{ fontSize: '12px', fontWeight: 700, color: '#fbbf24', marginLeft: '3px' }}>4.9</span>
-              <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginLeft: '2px' }}>(200+ reviews)</span>
+              <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginLeft: '2px' }}>{t('brand.reviews')}</span>
             </div>
 
             {/* Socials */}
@@ -203,7 +205,7 @@ export default function Footer() {
 
           {/* ── Quick Shop ── */}
           <div>
-            <h4 style={sectionHeading('#e67e22')}>Quick Shop</h4>
+            <h4 style={sectionHeading('#e67e22')}>{t('quickShop.heading')}</h4>
             {quickLinks.map((l) => (
               <Link
                 key={l.label} to={l.to}
@@ -225,7 +227,7 @@ export default function Footer() {
 
           {/* ── Support ── */}
           <div>
-            <h4 style={sectionHeading('#8b5cf6')}>Support</h4>
+            <h4 style={sectionHeading('#8b5cf6')}>{t('support.heading')}</h4>
             {supportLinks.map((l) => (
               <Link
                 key={l.label} to={l.to}
@@ -247,7 +249,7 @@ export default function Footer() {
 
           {/* ── Contact + Newsletter ── */}
           <div>
-            <h4 style={sectionHeading('#10b981')}>Get In Touch</h4>
+            <h4 style={sectionHeading('#10b981')}>{t('contact.heading')}</h4>
 
             {/* Contact list */}
             <div style={{ marginBottom: '22px' }}>
@@ -284,7 +286,7 @@ export default function Footer() {
               }}
             >
               <MessageCircle size={17} />
-              Chat on WhatsApp
+              {t('contact.chatOnWhatsapp')}
             </a>
 
             {/* Newsletter box */}
@@ -293,10 +295,10 @@ export default function Footer() {
               padding: '16px', border: '1px solid var(--border-light)',
             }}>
               <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '5px' }}>
-                📩 Get Exclusive Deals
+                {t('newsletter.title')}
               </div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '12px' }}>
-                Subscribe for new arrivals &amp; offers.
+                {t('newsletter.subtitle')}
               </div>
               {subscribed ? (
                 <div style={{
@@ -304,7 +306,7 @@ export default function Footer() {
                   background: 'rgba(16,185,129,0.1)', color: '#10b981',
                   fontSize: '13px', fontWeight: 600,
                 }}>
-                  ✅ You're subscribed!
+                  {t('newsletter.subscribed')}
                 </div>
               ) : (
                 <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: '7px' }}>
@@ -312,7 +314,7 @@ export default function Footer() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your@email.com"
+                    placeholder={t('newsletter.placeholder')}
                     className="input-field"
                     style={{ flex: 1, fontSize: '12.5px', padding: '9px 12px', borderRadius: '9px' }}
                   />
@@ -352,17 +354,17 @@ export default function Footer() {
           <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
             © {year}{' '}
             <strong style={{ color: 'var(--text-secondary)' }}>Mudiyanse Auto Solutions</strong>
-            . All rights reserved. Built with ❤️ in Sri Lanka.
+            {'. '}{t('bottomBar.rights')}
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {['VISA', 'MC', 'UPI', 'COD'].map((pm) => (
-              <span key={pm} style={{
+            {PAYMENT_BADGES.map((pm) => (
+              <span key={pm.code} style={{
                 fontSize: '10px', fontWeight: 800, letterSpacing: '0.4px',
                 padding: '3px 8px', borderRadius: '6px',
                 border: '1px solid var(--border-light)',
                 color: 'var(--text-muted)', background: 'var(--bg-card)',
               }}>
-                {pm}
+                {t(pm.labelKey)}
               </span>
             ))}
           </div>

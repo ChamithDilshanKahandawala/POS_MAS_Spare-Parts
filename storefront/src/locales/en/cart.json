@@ -1,0 +1,40 @@
+{
+  "addedToast": { "message": "{{name}} added to cart", "viewCart": "View cart" },
+  "removedToast": { "message": "Removed {{name}}", "undo": "Undo" },
+  "drawer": {
+    "title": "Your cart",
+    "viewFullCart": "View full cart",
+    "checkout": "Checkout",
+    "deliveryNote": "Delivery calculated at checkout",
+    "closeCart": "Close cart"
+  },
+  "empty": { "title": "Your cart is empty", "subtitle": "Browse our catalog to add items", "cta": "Start shopping" },
+  "item": {
+    "remove": "Remove",
+    "removeAria": "Remove {{name}}",
+    "lowStock": "Only {{count}} left",
+    "qtyTimes": "× {{count}}",
+    "outOfStock": "Out of stock — remove to continue",
+    "decreaseQuantity": "Decrease quantity",
+    "increaseQuantity": "Increase quantity",
+    "maxStockReached": "Max available stock reached"
+  },
+  "page": {
+    "title": "Your Cart",
+    "itemCount_one": "{{count}} item",
+    "itemCount_other": "{{count}} items"
+  },
+  "summary": {
+    "subtotal": "Subtotal",
+    "delivery": "Delivery",
+    "deliveryCalculated": "Calculated at checkout",
+    "total": "Total",
+    "freeDeliveryUnlocked": "You've unlocked free delivery 🎉",
+    "freeDeliveryProgress": "Add {{remaining}} more for free delivery",
+    "proceedToCheckout": "Proceed to checkout",
+    "continueShopping": "Continue shopping",
+    "blockedByStock": "Remove out-of-stock items to continue"
+  },
+  "trust": { "cod": "Cash on Delivery available", "delivery": "Island-wide delivery", "returns": "Easy returns" },
+  "toast": { "outOfStock": "Out of stock!", "maxStockReached": "Max stock reached!", "notEnoughStock": "Not enough stock" }
+}

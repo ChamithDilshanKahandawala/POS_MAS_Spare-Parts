@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getMyOrders } from '../api/services';
 import toast from 'react-hot-toast';
 import { Package, Truck, Clock, CheckCircle, Navigation } from 'lucide-react';
+import { formatLKR } from '../utils/formatLKR';
 
 export default function CustomerOrdersPage() {
+  const { t } = useTranslation('order');
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -13,12 +16,13 @@ export default function CustomerOrdersPage() {
         const { data } = await getMyOrders();
         setOrders(data);
       } catch {
-        toast.error('Failed to load your orders');
+        toast.error(t('list.failedToLoad'));
       } finally {
         setLoading(false);
       }
     };
     fetchOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getStatusIcon = (status) => {
@@ -53,14 +57,14 @@ export default function CustomerOrdersPage() {
 
   return (
     <div className="animate-fade">
-      <h1 className="page-title" style={{ marginBottom: '24px' }}>My Orders</h1>
+      <h1 className="page-title" style={{ marginBottom: '24px' }}>{t('list.title')}</h1>
       
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>Loading your orders...</div>
+        <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>{t('list.loading')}</div>
       ) : orders.length === 0 ? (
         <div className="glass-card" style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>
           <Package size={48} style={{ opacity: 0.2, marginBottom: '16px', display: 'block', margin: '0 auto 16px' }} />
-          <p>You haven't placed any orders yet.</p>
+          <p>{t('list.empty')}</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -77,13 +81,13 @@ export default function CustomerOrdersPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: getStatusColor(o.order_status || 'Pending'), padding: '6px 12px', borderRadius: '20px' }}>
                     {getStatusIcon(o.order_status || 'Pending')}
                     <span style={{ fontSize: '13px', fontWeight: 700, color: getStatusTextColor(o.order_status || 'Pending') }}>
-                      {o.order_status || 'Pending'}
+                      {t(`status.${o.order_status || 'Pending'}`)}
                     </span>
                   </div>
                   {o.tracking_number && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)', background: 'var(--bg-secondary)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
                       <Navigation size={12} color="var(--accent-primary)" style={{ transform: 'rotate(45deg)' }} />
-                      Tracking: <strong style={{ fontFamily: 'monospace', color: 'var(--text-primary)' }}>{o.tracking_number}</strong>
+                      {t('list.tracking')} <strong style={{ fontFamily: 'monospace', color: 'var(--text-primary)' }}>{o.tracking_number}</strong>
                     </div>
                   )}
                 </div>
@@ -98,11 +102,11 @@ export default function CustomerOrdersPage() {
                       </div>
                       <div>
                         <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>{item.product_name}</div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Qty: {item.quantity} × Rs. {item.selling_price.toLocaleString()}</div>
+                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('items.qtyLine', { count: item.quantity, price: formatLKR(item.selling_price) })}</div>
                       </div>
                     </div>
                     <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                      Rs. {(item.quantity * item.selling_price).toLocaleString()}
+                      {formatLKR(item.quantity * item.selling_price)}
                     </div>
                   </div>
                 ))}
@@ -110,31 +114,31 @@ export default function CustomerOrdersPage() {
 
               <div style={{ padding: '16px', background: 'var(--bg-secondary)', borderRadius: '12px', marginBottom: '20px', display: 'flex', flexWrap: 'wrap', gap: '24px', border: '1px solid var(--border-light)' }}>
                 <div style={{ flex: '1 1 120px' }}>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Payment Info</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>{t('list.paymentInfo')}</div>
                   {/* TODO: previously showed "Online / Card" for any non-'Cash' order, which
                       implied online payment had been taken — no payment gateway has ever
                       existed, so every order (including legacy ones recorded as 'Online')
                       is actually Cash on Delivery. Revisit once a real gateway exists. */}
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Cash on Delivery</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{t('list.cashOnDelivery')}</div>
                 </div>
                 <div style={{ flex: '1 1 120px' }}>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Contact Number</div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{o.customer_phone || 'N/A'}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>{t('list.contactNumber')}</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{o.customer_phone || t('list.notAvailable')}</div>
                 </div>
                 <div style={{ flex: '1 1 120px' }}>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Store & Delivery</div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Standard Shipping</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>{t('list.storeAndDelivery')}</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{t('list.standardShipping')}</div>
                 </div>
               </div>
 
               <div style={{ borderTop: '1px dashed var(--border)', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
                 <div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Delivery Address</div>
-                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '2px', maxWidth: '300px' }}>{o.shipping_address || 'N/A'}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t('list.deliveryAddress')}</div>
+                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '2px', maxWidth: '300px' }}>{o.shipping_address || t('list.notAvailable')}</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Amount</div>
-                  <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--accent-primary)' }}>Rs. {o.total_amount.toLocaleString()}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t('list.totalAmount')}</div>
+                  <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--accent-primary)' }}>{formatLKR(o.total_amount)}</div>
                 </div>
               </div>
             </div>

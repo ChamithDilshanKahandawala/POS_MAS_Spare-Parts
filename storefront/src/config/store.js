@@ -37,3 +37,12 @@ export const DELIVERY_ESTIMATE_BY_DISTRICT = {
 export function getDeliveryEstimate(district) {
   return DELIVERY_ESTIMATE_BY_DISTRICT[district] || DEFAULT_DELIVERY_ESTIMATE;
 }
+
+// Payment methods shown as badges in the footer. The storefront is Cash on
+// Delivery only right now (no card/online gateway is wired up), so this is
+// a single entry — add PayHere/card entries here later and the footer picks
+// them up automatically. `labelKey` is looked up in the footer i18n
+// namespace (translations/review-sheet.csv tracks the en/si/ta copy).
+export const PAYMENT_BADGES = [
+  { code: 'COD', labelKey: 'bottomBar.cashOnDelivery' },
+];

@@ -1,0 +1,45 @@
+{
+  "trust": {
+    "securePayments": "Secure Payments",
+    "islandwideDelivery": "Island-wide Delivery",
+    "easyReturns": "Easy Returns",
+    "genuineParts": "100% Genuine Parts",
+    "fastProcessing": "Fast Processing"
+  },
+  "brand": {
+    "description": "Sri Lanka's trusted source for premium vehicle spare parts — delivered island-wide with a guarantee of quality.",
+    "reviews": "(200+ reviews)"
+  },
+  "quickShop": {
+    "heading": "Quick Shop",
+    "threeWheelParts": "Three-Wheel Parts",
+    "bikeSpareParts": "Bike Spare Parts",
+    "carAccessories": "Car Accessories",
+    "vanSuvParts": "Van & SUV Parts",
+    "trackMyOrder": "Track My Order"
+  },
+  "support": {
+    "heading": "Support",
+    "privacyPolicy": "Privacy Policy",
+    "termsConditions": "Terms & Conditions",
+    "returnRefundPolicy": "Return & Refund Policy",
+    "shippingInformation": "Shipping Information",
+    "faq": "FAQ"
+  },
+  "contact": {
+    "heading": "Get In Touch",
+    "address": "08, New Shopping Complex, Mirigama, Sri Lanka",
+    "hours": "Mon – Sun: 10:00 AM – 10:00 PM",
+    "chatOnWhatsapp": "Chat on WhatsApp"
+  },
+  "newsletter": {
+    "title": "📩 Get Exclusive Deals",
+    "subtitle": "Subscribe for new arrivals & offers.",
+    "placeholder": "your@email.com",
+    "subscribed": "✅ You're subscribed!"
+  },
+  "bottomBar": {
+    "rights": "All rights reserved. Built with ❤️ in Sri Lanka.",
+    "cashOnDelivery": "Cash on Delivery"
+  }
+}

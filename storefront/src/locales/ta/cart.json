@@ -1,0 +1,41 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "addedToast": { "message": "{{name}} வண்டியில் சேர்க்கப்பட்டது", "viewCart": "வண்டியைப் பார்க்க" },
+  "removedToast": { "message": "{{name}} அகற்றப்பட்டது", "undo": "செயல்தவிர்" },
+  "drawer": {
+    "title": "உங்கள் வண்டி",
+    "viewFullCart": "முழு வண்டியைப் பார்க்க",
+    "checkout": "செக்அவுட்",
+    "deliveryNote": "டெலிவரி கட்டணம் செக்அவுட்டில் கணக்கிடப்படும்",
+    "closeCart": "வண்டியை மூடு"
+  },
+  "empty": { "title": "உங்கள் வண்டி காலியாக உள்ளது", "subtitle": "பொருட்களைச் சேர்க்க எங்கள் பட்டியலைப் பார்க்கவும்", "cta": "ஷாப்பிங் தொடங்குங்கள்" },
+  "item": {
+    "remove": "அகற்று",
+    "removeAria": "{{name}}ஐ அகற்று",
+    "lowStock": "{{count}} மட்டுமே மீதம்",
+    "outOfStock": "கையிருப்பில் இல்லை — தொடர அகற்றவும்",
+    "decreaseQuantity": "அளவைக் குறைக்க",
+    "increaseQuantity": "அளவை அதிகரிக்க",
+    "maxStockReached": "கிடைக்கும் அதிகபட்ச கையிருப்பை எட்டிவிட்டது",
+    "qtyTimes": "× {{count}}"
+  },
+  "page": {
+    "title": "உங்கள் வண்டி",
+    "itemCount_one": "{{count}} பொருள்",
+    "itemCount_other": "{{count}} பொருட்கள்"
+  },
+  "summary": {
+    "subtotal": "துணை மொத்தம்",
+    "delivery": "டெலிவரி",
+    "deliveryCalculated": "செக்அவுட்டில் கணக்கிடப்படும்",
+    "total": "மொத்தம்",
+    "freeDeliveryUnlocked": "நீங்கள் இலவச டெலிவரியைப் பெற்றீர்கள் 🎉",
+    "freeDeliveryProgress": "இலவச டெலிவரிக்கு மேலும் {{remaining}} சேர்க்கவும்",
+    "proceedToCheckout": "செக்அவுட் செய்ய",
+    "continueShopping": "ஷாப்பிங் தொடரவும்",
+    "blockedByStock": "தொடர கையிருப்பில் இல்லாத பொருட்களை அகற்றவும்"
+  },
+  "trust": { "cod": "டெலிவரியின் போது பணம் செலுத்தலாம்", "delivery": "தீவு முழுவதும் டெலிவரி", "returns": "எளிதான திருப்பங்கள்" },
+  "toast": { "outOfStock": "கையிருப்பில் இல்லை!", "maxStockReached": "அதிகபட்ச கையிருப்பை எட்டிவிட்டது!", "notEnoughStock": "போதுமான கையிருப்பு இல்லை" }
+}

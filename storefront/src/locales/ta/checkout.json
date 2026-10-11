@@ -1,0 +1,72 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "title": "பாதுகாப்பான செக்அவுட்",
+  "toast": {
+    "cartEmpty": "உங்கள் வண்டி காலியாக உள்ளது",
+    "nameRequired": "பெயர் தேவை",
+    "addressRequired": "விரிவான முகவரியை வழங்கவும்",
+    "cityRequired": "நகரம் தேவை",
+    "districtRequired": "மாவட்டம் தேவை",
+    "phone1Invalid": "தொலைபேசி எண் 1 தவறானது (எ.கா. 0771234567)",
+    "phone2Invalid": "தொலைபேசி எண் 2 தவறானது (எ.கா. 0771234567)",
+    "checkoutFailed": "செக்அவுட் தோல்வியடைந்தது"
+  },
+  "delivery": {
+    "heading": "1. டெலிவரி விவரங்கள்",
+    "fullName": "முழுப் பெயர் *",
+    "fullNamePlaceholder": "உங்கள் முழுப் பெயரை உள்ளிடவும்",
+    "streetAddress": "தெரு முகவரி *",
+    "streetAddressPlaceholder": "தெரு பெயர், வீட்டு எண், முதலியன...",
+    "city": "நகரம் *",
+    "cityPlaceholder": "எ.கா. கொழும்பு",
+    "district": "மாவட்டம் *",
+    "selectDistrict": "மாவட்டத்தைத் தேர்ந்தெடுக்கவும்",
+    "phone1": "தொலைபேசி எண் 1 *",
+    "phone1Placeholder": "எ.கா. 077 123 4567",
+    "phone2": "தொலைபேசி எண் 2 (விருப்பத்தேர்வு)",
+    "phone2Placeholder": "மாற்று எண்"
+  },
+  "payment": {
+    "heading": "2. கட்டண முறை",
+    "cashOnDelivery": "டெலிவரியின் போது பணம்",
+    "payWhenReceived": "பெற்றவுடன் செலுத்தவும்"
+  },
+  "summary": {
+    "heading": "ஆர்டர் சுருக்கம்",
+    "qtyLine": "அளவு: {{count}} × {{price}}",
+    "subtotal": "துணை மொத்தம்",
+    "shippingEstimate": "அனுப்புகை மதிப்பீடு",
+    "calculatedAtDelivery": "டெலிவரியின் போது கணக்கிடப்படும்",
+    "total": "மொத்தம்",
+    "processing": "செயலாக்கப்படுகிறது...",
+    "placeOrder": "ஆர்டர் செய்",
+    "terms": "ஆர்டர் செய்வதன் மூலம், எங்கள் சேவை விதிமுறைகள் மற்றும் தனியுரிமைக் கொள்கையை நீங்கள் ஒப்புக்கொள்கிறீர்கள்."
+  },
+  "districts": {
+    "Ampara": "அம்பாறை",
+    "Anuradhapura": "அனுராதபுரம்",
+    "Badulla": "பதுளை",
+    "Batticaloa": "மட்டக்களப்பு",
+    "Colombo": "கொழும்பு",
+    "Galle": "காலி",
+    "Gampaha": "கம்பஹா",
+    "Hambantota": "அம்பாந்தோட்டை",
+    "Jaffna": "யாழ்ப்பாணம்",
+    "Kalutara": "களுத்துறை",
+    "Kandy": "கண்டி",
+    "Kegalle": "கேகாலை",
+    "Kilinochchi": "கிளிநொச்சி",
+    "Kurunegala": "குருநாகல்",
+    "Mannar": "மன்னார்",
+    "Matale": "மாத்தளை",
+    "Matara": "மாத்தறை",
+    "Moneragala": "மொணராகலை",
+    "Mullaitivu": "முல்லைத்தீவு",
+    "Nuwara Eliya": "நுவரெலியா",
+    "Polonnaruwa": "பொலன்னறுவை",
+    "Puttalam": "புத்தளம்",
+    "Ratnapura": "இரத்தினபுரி",
+    "Trincomalee": "திருகோணமலை",
+    "Vavuniya": "வவுனியா"
+  }
+}

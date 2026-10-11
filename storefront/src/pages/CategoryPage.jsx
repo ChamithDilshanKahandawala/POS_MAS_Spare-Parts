@@ -11,8 +11,8 @@ import useLiveStock from '../hooks/useLiveStock';
 import useIsMobile from '../hooks/useIsMobile';
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
 import ProductGrid from '../components/product/ProductGrid';
+import { useTranslation } from 'react-i18next';
 import { slugify } from '../utils/slugify';
-import { categoryStrings } from '../strings/categoryStrings';
 import { CATEGORIES } from '../config/store';
 
 const SHOP_NAME = 'Mudiyanse Auto Solutions';
@@ -38,6 +38,7 @@ function SkeletonBar({ height, width }) {
 // react-hooks/refs (no ref access during render), which a naive
 // ref-based "remember the previous signature" approach would trip.
 function ResultsSection({ filtered, onCardClick, onAddToCart }) {
+  const { t } = useTranslation('category');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const visibleProducts = filtered.slice(0, visibleCount);
   return (
@@ -46,7 +47,7 @@ function ResultsSection({ filtered, onCardClick, onAddToCart }) {
       {visibleCount < filtered.length && (
         <div style={{ textAlign: 'center', marginTop: '8px', paddingBottom: '40px' }}>
           <button className="btn-secondary" onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
-            {categoryStrings.loadMore} ({filtered.length - visibleCount})
+            {t('loadMore', { count: filtered.length - visibleCount })}
           </button>
         </div>
       )}
@@ -55,6 +56,7 @@ function ResultsSection({ filtered, onCardClick, onAddToCart }) {
 }
 
 export default function CategoryPage() {
+  const { t } = useTranslation('category');
   const { slug } = useParams();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -154,8 +156,8 @@ export default function CategoryPage() {
         <div style={{ width: '84px', height: '84px', borderRadius: '999px', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
           <Package size={36} style={{ opacity: 0.35, color: 'var(--text-muted)' }} />
         </div>
-        <p style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{categoryStrings.notFound.title}</p>
-        <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '20px' }}>{categoryStrings.notFound.subtitle}</p>
+        <p style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{t('notFound.title')}</p>
+        <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '20px' }}>{t('notFound.subtitle')}</p>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '480px', margin: '0 auto' }}>
           {CATEGORIES.map((c) => (
             <Link key={c} to={`/category/${slugify(c)}`} className="badge badge-blue" style={{ textDecoration: 'none' }}>{c}</Link>
@@ -171,9 +173,9 @@ export default function CategoryPage() {
         <div style={{ width: '84px', height: '84px', borderRadius: '999px', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
           <AlertTriangle size={36} style={{ opacity: 0.35, color: 'var(--accent-red)' }} />
         </div>
-        <p style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{categoryStrings.error.title}</p>
-        <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '20px' }}>{categoryStrings.error.subtitle}</p>
-        <button className="btn-primary" onClick={() => { setLoadStatus('loading'); setRetryKey((k) => k + 1); }}>{categoryStrings.actions.tryAgain}</button>
+        <p style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{t('error.title')}</p>
+        <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '20px' }}>{t('error.subtitle')}</p>
+        <button className="btn-primary" onClick={() => { setLoadStatus('loading'); setRetryKey((k) => k + 1); }}>{t('actions.tryAgain')}</button>
       </div>
     );
   }
@@ -181,7 +183,7 @@ export default function CategoryPage() {
   const toolbarContent = (
     <>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <label htmlFor="cat-sort" style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>{categoryStrings.toolbar.sort}</label>
+        <label htmlFor="cat-sort" style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>{t('toolbar.sort')}</label>
         <select
           id="cat-sort"
           className="select-field"
@@ -189,7 +191,7 @@ export default function CategoryPage() {
           onChange={(e) => updateParams({ sort: e.target.value === 'featured' ? null : e.target.value })}
           style={{ width: 'auto', borderRadius: '10px', padding: '8px 10px', fontSize: '13px' }}
         >
-          {Object.entries(categoryStrings.toolbar.sortOptions).map(([value, label]) => (
+          {Object.entries(t('toolbar.sortOptions', { returnObjects: true })).map(([value, label]) => (
             <option key={value} value={value}>{label}</option>
           ))}
         </select>
@@ -206,12 +208,12 @@ export default function CategoryPage() {
           color: inStock ? 'white' : 'var(--text-muted)',
         }}
       >
-        {inStock && <Check size={13} />} {categoryStrings.toolbar.inStockOnly}
+        {inStock && <Check size={13} />} {t('toolbar.inStockOnly')}
       </button>
 
       {availableBrands.length > 0 && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>{categoryStrings.toolbar.brand}:</span>
+          <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>{t('toolbar.brand')}:</span>
           {availableBrands.map((b) => {
             const active = selectedBrands.includes(b);
             return (
@@ -238,8 +240,8 @@ export default function CategoryPage() {
 
   return (
     <div className="animate-fade">
-      <nav aria-label="Breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-        <Link to="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{categoryStrings.breadcrumb.home}</Link>
+      <nav aria-label={t('aria.breadcrumb')} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+        <Link to="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{t('breadcrumb.home')}</Link>
         <ChevronRight size={12} />
         <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{category}</span>
       </nav>
@@ -249,7 +251,7 @@ export default function CategoryPage() {
       ) : (
         <>
           <h1 className="page-title" style={{ marginBottom: '4px' }}>{category}</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '20px' }}>{categoryStrings.productCount(filtered.length)}</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '20px' }}>{t('productCount', { count: filtered.length })}</p>
         </>
       )}
 
@@ -287,7 +289,7 @@ export default function CategoryPage() {
           className="btn-secondary"
           style={{ marginBottom: '20px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
         >
-          <SlidersHorizontal size={15} /> {categoryStrings.toolbar.filters}
+          <SlidersHorizontal size={15} /> {t('toolbar.filters')}
           {activeFilterCount > 0 && (
             <span style={{
               background: 'var(--accent-primary)', color: 'white', fontSize: '11px', fontWeight: 800,
@@ -306,13 +308,13 @@ export default function CategoryPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
           {sort !== 'featured' && (
             <span className="badge badge-orange" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              {categoryStrings.toolbar.sortOptions[sort]}
+              {t(`toolbar.sortOptions.${sort}`)}
               <X size={12} style={{ cursor: 'pointer' }} onClick={() => updateParams({ sort: null })} />
             </span>
           )}
           {inStock && (
             <span className="badge badge-green" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              {categoryStrings.toolbar.inStockOnly}
+              {t('toolbar.inStockOnly')}
               <X size={12} style={{ cursor: 'pointer' }} onClick={() => updateParams({ inStock: null })} />
             </span>
           )}
@@ -329,7 +331,7 @@ export default function CategoryPage() {
             </span>
           ))}
           <button onClick={clearAll} style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontWeight: 700, fontSize: '12px', cursor: 'pointer' }}>
-            {categoryStrings.toolbar.clearAll}
+            {t('toolbar.clearAll')}
           </button>
         </div>
       )}
@@ -339,9 +341,9 @@ export default function CategoryPage() {
       ) : filtered.length === 0 ? (
         <div className="glass-card" style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>
           <Package size={48} style={{ opacity: 0.15, margin: '0 auto 16px', display: 'block' }} />
-          <p style={{ fontWeight: 600, fontSize: '15px' }}>{categoryStrings.empty.title}</p>
-          <p style={{ fontSize: '13px', marginTop: '4px', marginBottom: '16px' }}>{categoryStrings.empty.subtitle}</p>
-          <button className="btn-primary" onClick={clearAll}>{categoryStrings.empty.cta}</button>
+          <p style={{ fontWeight: 600, fontSize: '15px' }}>{t('empty.title')}</p>
+          <p style={{ fontSize: '13px', marginTop: '4px', marginBottom: '16px' }}>{t('empty.subtitle')}</p>
+          <button className="btn-primary" onClick={clearAll}>{t('empty.cta')}</button>
         </div>
       ) : (
         <ResultsSection
@@ -363,7 +365,7 @@ export default function CategoryPage() {
               style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)' }}
             />
             <motion.div
-              role="dialog" aria-modal="true" aria-label={categoryStrings.toolbar.filters}
+              role="dialog" aria-modal="true" aria-label={t('toolbar.filters')}
               initial={reducedMotion ? { opacity: 0 } : { y: '100%' }}
               animate={reducedMotion ? { opacity: 1 } : { y: 0 }}
               exit={reducedMotion ? { opacity: 0 } : { y: '100%' }}
@@ -378,8 +380,8 @@ export default function CategoryPage() {
                 <div style={{ width: '36px', height: '4px', borderRadius: '999px', background: 'var(--border)' }} />
               </div>
               <div style={{ padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-light)' }}>
-                <h2 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>{categoryStrings.toolbar.filters}</h2>
-                <button onClick={() => setFiltersOpen(false)} aria-label="Close filters" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-light)', borderRadius: '8px', width: '32px', height: '32px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+                <h2 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>{t('toolbar.filters')}</h2>
+                <button onClick={() => setFiltersOpen(false)} aria-label={t('aria.closeFilters')} style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-light)', borderRadius: '8px', width: '32px', height: '32px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
                   <X size={16} />
                 </button>
               </div>
@@ -388,7 +390,7 @@ export default function CategoryPage() {
               </div>
               <div style={{ padding: '16px 20px', borderTop: '1px solid var(--border-light)' }}>
                 <button className="btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => setFiltersOpen(false)}>
-                  {categoryStrings.toolbar.applyFilters}
+                  {t('toolbar.applyFilters')}
                 </button>
               </div>
             </motion.div>

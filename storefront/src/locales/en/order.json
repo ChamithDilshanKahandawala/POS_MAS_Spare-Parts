@@ -1,0 +1,49 @@
+{
+  "headline": "Thank you! Your order is placed",
+  "subheadline": "We've received your order and will get it ready for delivery.",
+  "invoice": { "label": "Order number", "copy": "Copy", "copied": "Copied!", "copyFailed": "Could not copy — select it manually" },
+  "timeline": {
+    "placed": "Placed",
+    "confirmed": "Confirmed",
+    "dispatched": "Dispatched",
+    "delivered": "Delivered",
+    "cancelled": "This order was cancelled",
+    "returned": "This order was returned"
+  },
+  "delivery": { "title": "Delivery details", "estimate": "Estimated delivery: {{range}} (estimate only)" },
+  "items": {
+    "title": "Order summary",
+    "subtotal": "Subtotal",
+    "deliveryFee": "Delivery fee",
+    "total": "Total",
+    "qtyLine": "Qty: {{count}} × {{price}}"
+  },
+  "payment": { "cod": "Cash on Delivery — please keep {{amount}} ready" },
+  "whatsapp": { "cta": "Confirm on WhatsApp", "message": "Hi! I'd like to confirm my order {{invoiceNumber}}, total {{total}}. Thank you!" },
+  "actions": { "continueShopping": "Continue shopping", "viewOrders": "View my orders", "backToShop": "Back to shop", "tryAgain": "Try again" },
+  "notFound": { "title": "Order not found", "subtitle": "We couldn't find this order, or it doesn't belong to this account." },
+  "error": { "title": "Something went wrong", "subtitle": "We couldn't load this order. Check your connection and try again." },
+  "list": {
+    "title": "My Orders",
+    "loading": "Loading your orders...",
+    "empty": "You haven't placed any orders yet.",
+    "failedToLoad": "Failed to load your orders",
+    "tracking": "Tracking:",
+    "paymentInfo": "Payment Info",
+    "cashOnDelivery": "Cash on Delivery",
+    "contactNumber": "Contact Number",
+    "storeAndDelivery": "Store & Delivery",
+    "standardShipping": "Standard Shipping",
+    "deliveryAddress": "Delivery Address",
+    "totalAmount": "Total Amount",
+    "notAvailable": "N/A"
+  },
+  "status": {
+    "Pending": "Pending",
+    "Processing": "Processing",
+    "Shipped": "Shipped",
+    "Delivered": "Delivered",
+    "Cancelled": "Cancelled",
+    "Returned": "Returned"
+  }
+}
