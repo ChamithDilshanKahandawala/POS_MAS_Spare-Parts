@@ -5,93 +5,129 @@ const Product = require('./models/Product');
 const inventoryData =
 [
   {
-    "sku_code": "TWI52",
-    "name": "JP STEERING WHEEL COVER BROWN",
-    "buying_price": 900,
-    "selling_price": 1350,
-    "stock_quantity": 0,
-    "sub_category": "INSIDE",
+    "sku_code": "TWLWL02",
+    "name": "WELLAMPITI BUFFER LIGHT Q2 MULTICOLOR",
+    "buying_price": 800,
+    "selling_price": 1500,
+    "stock_quantity": 9,
+    "sub_category": "Wellampiti Light",
     "category": "Three-Wheel"
   },
   {
-    "sku_code": "TWI53",
-    "name": "JP STEERING WHEEL COVER BLACK",
-    "buying_price": 900,
-    "selling_price": 1350,
-    "stock_quantity": 0,
-    "sub_category": "INSIDE",
+    "sku_code": "TWLWL32",
+    "name": "WELLAMPITI BUFFER LIGHT Q2 BLUE",
+    "buying_price": 800,
+    "selling_price": 1500,
+    "stock_quantity": 3,
+    "sub_category": "Wellampiti Light",
     "category": "Three-Wheel"
   },
   {
-    "sku_code": "TWF61",
-    "name": "2ST BODY KIT GREEN",
-    "buying_price": 1400,
-    "selling_price": 2380,
-    "stock_quantity": 0,
-    "sub_category": "Front",
+    "sku_code": "TWLWL18",
+    "name": "WELLAMPITI GLASS LIGHT Q2 RED MULTICOLOR",
+    "buying_price": 800,
+    "selling_price": 1500,
+    "stock_quantity": 2,
+    "sub_category": "Wellampiti Light",
     "category": "Three-Wheel"
   },
   {
-    "sku_code": "TWF82",
-    "name": "4ST BODY KIT GREEN",
-    "buying_price": 1400,
-    "selling_price": 2380,
+    "sku_code": "TWLWL17",
+    "name": "WELLAMPITI BADA LIGHT Q2 MULTICOLOR",
+    "buying_price": 800,
+    "selling_price": 1500,
+    "stock_quantity": 7,
+    "sub_category": "Wellampiti Light",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWLWL03",
+    "name": "WELLAMPITI BADA LIGHT Q2 BLUE",
+    "buying_price": 800,
+    "selling_price": 1500,
+    "stock_quantity": 3,
+    "sub_category": "Wellampiti Light",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWLWL05",
+    "name": "WELLAMPITI MADA CARPET LIGHT PAIR RED",
+    "buying_price": 550,
+    "selling_price": 1000,
+    "stock_quantity": 7,
+    "sub_category": "Wellampiti Light",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWLWL33",
+    "name": "WELLAMPITI MADA CARPET LIGHT PAIR GREEN",
+    "buying_price": 550,
+    "selling_price": 1000,
+    "stock_quantity": 5,
+    "sub_category": "Wellampiti Light",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWLWL34",
+    "name": "WELLAMPITI MADA CARPET LIGHT PAIR BLUE",
+    "buying_price": 550,
+    "selling_price": 1000,
+    "stock_quantity": 3,
+    "sub_category": "Wellampiti Light",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWLWL35",
+    "name": "LIGHT HORN GUARD DARMA CHAKRAYA MT",
+    "buying_price": 4950,
+    "selling_price": 6100,
+    "stock_quantity": 3,
+    "sub_category": "MTD MODIFICATION",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWLWL36",
+    "name": "KULLA LONG LIGHT MT",
+    "buying_price": 2950,
+    "selling_price": 4100,
+    "stock_quantity": 3,
+    "sub_category": "MTD MODIFICATION",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWLWL37",
+    "name": "SIDE MIRROR WITH LIGHT MT",
+    "buying_price": 2050,
+    "selling_price": 3300,
+    "stock_quantity": 3,
+    "sub_category": "MTD MODIFICATION",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "TWLWL38",
+    "name": "LIGHT HORN GUARD WITH NUMBER MT",
+    "buying_price": 5350,
+    "selling_price": 6600,
     "stock_quantity": 1,
-    "sub_category": "Front",
+    "sub_category": "MTD MODIFICATION",
     "category": "Three-Wheel"
   },
   {
-    "sku_code": "TWF108",
-    "name": "2ST BODY KIT GREEN",
-    "buying_price": 1400,
-    "selling_price": 2380,
-    "stock_quantity": 0,
-    "sub_category": "Front",
+    "sku_code": "TWLWL39",
+    "name": "DASHBOARD LONG LIGHT MT",
+    "buying_price": 2950,
+    "selling_price": 4100,
+    "stock_quantity": 3,
+    "sub_category": "MTD MODIFICATION",
     "category": "Three-Wheel"
   },
   {
-    "sku_code": "TWF109",
-    "name": "2ST BODY KIT BLACK",
-    "buying_price": 1400,
-    "selling_price": 2380,
+    "sku_code": "TWLWL40",
+    "name": "BACK DOOR LIGHT MT",
+    "buying_price": 3850,
+    "selling_price": 5100,
     "stock_quantity": 1,
-    "sub_category": "Front",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWF110",
-    "name": "2ST BODY KIT BLUE",
-    "buying_price": 1400,
-    "selling_price": 2380,
-    "stock_quantity": 0,
-    "sub_category": "Front",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWF111",
-    "name": "4ST BODY KIT BLACK",
-    "buying_price": 1400,
-    "selling_price": 2380,
-    "stock_quantity": 0,
-    "sub_category": "Front",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWF112",
-    "name": "4ST BODY KIT BLUE",
-    "buying_price": 1400,
-    "selling_price": 2380,
-    "stock_quantity": 1,
-    "sub_category": "Front",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWDI43",
-    "name": "BUWALLA S",
-    "buying_price": 100,
-    "selling_price": 250,
-    "stock_quantity": 12,
-    "sub_category": "Dashboard Item",
+    "sub_category": "MTD MODIFICATION",
     "category": "Three-Wheel"
   }
 ];

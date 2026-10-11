@@ -1,9 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { getProducts } from '../api/services';
 import toast from 'react-hot-toast';
-import { Search, ShoppingCart, X, Star, ArrowRight, Info, ShieldCheck, Package, Eye, Filter, Truck, CheckCircle, Zap } from 'lucide-react';
+import { Search, ShoppingCart, X, ArrowRight, ShieldCheck, Package, Truck, CheckCircle, Zap } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import ProductGrid from '../components/product/ProductGrid';
+import { productStrings } from '../strings/productStrings';
 
 const CATEGORIES = ['All', 'Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road', 'KeyTag', 'Toys', 'Ornaments'];
 
@@ -156,128 +159,13 @@ export default function StorefrontPage() {
         </div>
 
         {/* ── Product Grid ── */}
-        {loading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' }}>
-            {[1,2,3,4,5,6].map(i => (
-              <div key={i} style={{
-                height: '260px', background: 'var(--bg-card)', borderRadius: '16px',
-                border: '1px solid var(--border-light)',
-                backgroundImage: 'linear-gradient(90deg, var(--bg-card) 25%, var(--bg-secondary) 50%, var(--bg-card) 75%)',
-                backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite',
-              }} />
-            ))}
-          </div>
-        ) : products.length === 0 ? (
-          <div className="glass-card" style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>
-            <Package size={48} style={{ opacity: 0.15, margin: '0 auto 16px', display: 'block' }} />
-            <p style={{ fontWeight: 600, fontSize: '15px' }}>No products found.</p>
-            <p style={{ fontSize: '13px', marginTop: '4px' }}>Try adjusting your search or category filter.</p>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px', paddingBottom: '40px' }}>
-            {products.map((p, idx) => {
-              const isLiveUpdated = liveUpdatedIds.has(p._id);
-              const outOfStock = p.stock_quantity <= 0;
-              return (
-                <div 
-                  key={p._id} 
-                  className="product-card-enter"
-                  style={{
-                    background: 'var(--bg-card)', borderRadius: '16px',
-                    border: `1px solid ${isLiveUpdated ? '#27ae60' : 'var(--border-light)'}`,
-                    boxShadow: isLiveUpdated ? '0 0 0 3px rgba(39,174,96,0.15)' : 'var(--card-shadow)',
-                    display: 'flex', flexDirection: 'column', cursor: 'pointer',
-                    transition: 'all 0.3s ease', overflow: 'hidden',
-                    animationDelay: `${idx * 0.04}s`,
-                    opacity: outOfStock ? 0.6 : 1,
-                  }}
-                  onClick={() => setSelectedProduct(p)}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = 'var(--card-shadow-hover)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'var(--card-shadow)'; }}
-                >
-                  {/* Product image placeholder */}
-                  <div style={{
-                    height: '140px', background: 'var(--bg-secondary)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    position: 'relative', borderBottom: '1px solid var(--border-light)',
-                  }}>
-                    <Package size={40} color="var(--text-muted)" style={{ opacity: 0.15 }} />
-                    {/* Stock badge overlay */}
-                    <span style={{
-                      position: 'absolute', top: '10px', left: '10px',
-                      fontSize: '10px', fontWeight: 700, padding: '4px 10px',
-                      borderRadius: '20px',
-                      background: p.stock_quantity > 10 ? 'rgba(39,174,96,0.12)' : p.stock_quantity > 0 ? 'rgba(243,156,18,0.12)' : 'rgba(231,76,60,0.12)',
-                      color: p.stock_quantity > 10 ? '#27ae60' : p.stock_quantity > 0 ? '#f39c12' : '#e74c3c',
-                      border: `1px solid ${p.stock_quantity > 10 ? 'rgba(39,174,96,0.25)' : p.stock_quantity > 0 ? 'rgba(243,156,18,0.25)' : 'rgba(231,76,60,0.25)'}`,
-                    }}>
-                      {p.stock_quantity > 0 ? `${p.stock_quantity} in stock` : 'Out of Stock'}
-                    </span>
-                    {isLiveUpdated && (
-                      <span style={{
-                        position: 'absolute', top: '10px', right: '10px',
-                        fontSize: '9px', fontWeight: 700, color: '#27ae60',
-                        display: 'flex', alignItems: 'center', gap: '4px',
-                        background: 'rgba(39,174,96,0.1)', padding: '3px 8px',
-                        borderRadius: '12px', border: '1px solid rgba(39,174,96,0.2)',
-                      }}>
-                        <span style={{ width: '6px', height: '6px', background: '#27ae60', borderRadius: '50%', animation: 'pulse-glow 1s infinite' }} />
-                        LIVE
-                      </span>
-                    )}
-                    {/* Quick view overlay */}
-                    <div style={{
-                      position: 'absolute', inset: 0,
-                      background: 'rgba(0,0,0,0.03)', display: 'flex',
-                      alignItems: 'center', justifyContent: 'center',
-                      opacity: 0, transition: 'opacity 0.2s',
-                    }}
-                      onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-                      onMouseLeave={e => e.currentTarget.style.opacity = '0'}
-                    >
-                      <span style={{
-                        background: 'var(--accent-primary)', color: 'white',
-                        padding: '8px 16px', borderRadius: '8px', fontSize: '12px',
-                        fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px',
-                      }}><Eye size={14} /> Quick View</span>
-                    </div>
-                  </div>
-
-                  {/* Card content */}
-                  <div style={{ padding: '16px 18px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                      <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        {p.category}
-                      </span>
-                      <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{p.sku_code}</span>
-                    </div>
-                    <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '12px', lineHeight: 1.3 }}>{p.name}</h3>
-                    
-                    <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--accent-primary)' }}>
-                        Rs. {p.selling_price.toLocaleString()}
-                      </span>
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); addToCart(p); }}
-                        disabled={outOfStock}
-                        style={{
-                          padding: '8px 14px', borderRadius: '8px', fontSize: '12px',
-                          fontWeight: 700, cursor: outOfStock ? 'not-allowed' : 'pointer',
-                          border: 'none', display: 'flex', alignItems: 'center', gap: '5px',
-                          background: outOfStock ? 'var(--bg-secondary)' : 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))',
-                          color: outOfStock ? 'var(--text-muted)' : 'white',
-                          transition: 'all 0.2s',
-                        }}
-                      >
-                        <ShoppingCart size={13} /> Add
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+        <ProductGrid
+          products={products}
+          loading={loading}
+          liveUpdatedIds={liveUpdatedIds}
+          onCardClick={(p) => setSelectedProduct(p)}
+          onAddToCart={addToCart}
+        />
       </div>
 
       {/* ── Product Quick View Modal ── */}
@@ -363,6 +251,16 @@ export default function StorefrontPage() {
                 >
                   <ShoppingCart size={18} /> Add to Cart
                 </button>
+                <Link
+                  to={`/product/${selectedProduct._id}`}
+                  onClick={() => setSelectedProduct(null)}
+                  style={{
+                    display: 'block', textAlign: 'center', marginTop: '12px',
+                    fontSize: '13px', fontWeight: 600, color: 'var(--accent-primary)', textDecoration: 'none',
+                  }}
+                >
+                  {productStrings.actions.viewFullDetails}
+                </Link>
               </div>
             </div>
           </div>

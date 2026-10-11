@@ -40,17 +40,20 @@ export default function CartLineItem({ item, variant = 'compact', liveStock, onI
       borderRadius: full ? 0 : '14px',
       opacity: outOfStock ? 0.75 : 1,
     }}>
-      {full ? <Link to={`/product/${item._id}`} style={{ flexShrink: 0 }}>{thumb}</Link> : thumb}
+      <Link to={`/product/${item._id}`} style={{ flexShrink: 0 }}>{thumb}</Link>
 
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
-          <span style={{
-            fontSize: full ? '14px' : '13px', fontWeight: 600, color: 'var(--text-primary)',
-            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-            lineHeight: 1.35,
-          }}>
+          <Link
+            to={`/product/${item._id}`}
+            style={{
+              fontSize: full ? '14px' : '13px', fontWeight: 600, color: 'var(--text-primary)',
+              display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+              lineHeight: 1.35, textDecoration: 'none',
+            }}
+          >
             {item.name}
-          </span>
+          </Link>
           {full && (
             <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
               {formatLKR(item.selling_price * item.qty)}

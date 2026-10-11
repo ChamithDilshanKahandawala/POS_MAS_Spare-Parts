@@ -7,7 +7,7 @@ import {
   ChevronRight, Send,
 } from 'lucide-react';
 
-const WHATSAPP = '94771234567';
+import { WHATSAPP_NUMBER as WHATSAPP } from '../../config/store';
 
 export default function Footer() {
   const [email, setEmail]       = useState('');
@@ -56,10 +56,10 @@ export default function Footer() {
   ];
 
   const contactItems = [
-    { icon: <MapPin size={14} />, text: '123, Auto Plaza, Kandy Road, Sri Lanka', color: '#e67e22' },
-    { icon: <Phone size={14} />,  text: '+94 77 123 4567',                        color: '#10b981' },
-    { icon: <Mail size={14} />,   text: 'support@mudiyanseauto.lk',              color: '#f59e0b' },
-    { icon: <Clock size={14} />,  text: 'Mon – Sat: 8:00 AM – 6:00 PM',          color: '#ec4899' },
+    { icon: <MapPin size={14} />, text: '08, New Shopping Complex, Mirigama, Sri Lanka', color: '#e67e22' },
+    { icon: <Phone size={14} />,  text: '+94 75 720 3766',                        color: '#10b981' },
+    { icon: <Mail size={14} />,   text: 'mudiyanseautosolutions@gmail.com',              color: '#f59e0b' },
+    { icon: <Clock size={14} />,  text: 'Mon – Sun: 10:00 AM – 10:00 PM',          color: '#ec4899' },
   ];
 
   /* ─── shared style helpers ──────────────────────────────── */

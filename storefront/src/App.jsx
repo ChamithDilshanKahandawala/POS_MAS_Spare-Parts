@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -14,6 +14,7 @@ import StorefrontPage from './pages/StorefrontPage';
 import CustomerOrdersPage from './pages/CustomerOrdersPage';
 import CheckoutPage from './pages/CheckoutPage';
 const CartPage = lazy(() => import('./pages/CartPage'));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
 
 // --- Customer Only Route ---
 // Redirecting here loses the page the customer was trying to reach (e.g.
@@ -25,6 +26,15 @@ const CustomerRoute = ({ children }) => {
   return user?.role === 'customer' ? children : <Navigate to="/login" replace state={{ from: location }} />;
 };
 
+// Remounts ProductDetailPage fresh on every :id change (React's own
+// recommended pattern for "reset all state when X changes" — see
+// react.dev/learn/you-might-not-need-an-effect) instead of the page
+// resetting its own state synchronously inside an effect.
+const ProductDetailRoute = () => {
+  const { id } = useParams();
+  return <ProductDetailPage key={id} />;
+};
+
 function AppRoutes() {
   return (
     <Routes>
@@ -34,6 +44,7 @@ function AppRoutes() {
       <Route path="/" element={<StoreLayout />}>
         <Route index element={<StorefrontPage />} />
         <Route path="cart" element={<Suspense fallback={null}><CartPage /></Suspense>} />
+        <Route path="product/:id" element={<Suspense fallback={null}><ProductDetailRoute /></Suspense>} />
         <Route path="checkout" element={<CustomerRoute><CheckoutPage /></CustomerRoute>} />
         <Route path="orders" element={<CustomerRoute><CustomerOrdersPage /></CustomerRoute>} />
       </Route>
