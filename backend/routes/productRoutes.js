@@ -10,10 +10,13 @@ const {
   getLowStockAlerts,
 } = require('../controllers/productController');
 const { importProducts, exportProducts, upload } = require('../controllers/excelController');
-const { protect, adminOnly, optionalAuth } = require('../middleware/authMiddleware');
+const { protect, adminOnly, staffOnly, optionalAuth } = require('../middleware/authMiddleware');
 const { searchLimiter, bulkOpsLimiter } = require('../middleware/rateLimiter');
 
-router.get('/low-stock/alerts', protect, getLowStockAlerts);
+// Was `protect` only — a logged-in customer could read shop-wide stock
+// levels including buying_price (cost). Scoped to staff per the
+// customer-privilege audit.
+router.get('/low-stock/alerts', protect, staffOnly, getLowStockAlerts);
 router.post('/import', protect, adminOnly, bulkOpsLimiter, upload.single('file'), importProducts);
 router.get('/export', protect, adminOnly, bulkOpsLimiter, exportProducts);
 router.get('/search', optionalAuth, searchLimiter, searchProducts);

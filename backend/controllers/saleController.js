@@ -84,12 +84,25 @@ const createSale = async (req, res) => {
     if (!isDuplicate) await session.withTransaction(async () => {
       const { items, total_discount, payment_method, customer_name, customer_phone,customer_details, notes, sale_source, shipping_address, shipping_cost_charged, actual_shipping_cost, tracking_number, cod_amount, paid_amount, koko_charge, koko_percentage } = req.body;
 
+      // Customer-sourced orders (the public storefront checkout) must never
+      // trust pricing, fulfillment-status, or payment fields straight from
+      // the request body — see the customer-privilege-escalation audit.
+      // Every line below only takes effect when req.user.role === 'customer';
+      // staff/admin/super_admin requests (POS sales, WhatsApp orders logged
+      // by staff, etc.) read the exact same raw values as before.
+      const isCustomerOrder = req.user.role === 'customer';
+      const safeTrackingNumber = isCustomerOrder ? '' : tracking_number;
+      const safePaymentMethod = isCustomerOrder ? 'Cash' : payment_method;
+      const safeCodAmount = isCustomerOrder ? 0 : cod_amount;
+      const safePaidAmount = isCustomerOrder ? 0 : paid_amount;
+      const safeTotalDiscount = isCustomerOrder ? 0 : total_discount;
+
       if (!items || items.length === 0) {
         throw new RequestError(400, 'No items in cart');
       }
 
-      if (tracking_number && tracking_number.trim() !== '') {
-        const existingSale = await Sale.findOne({ tracking_number: tracking_number.trim() }).session(session);
+      if (safeTrackingNumber && safeTrackingNumber.trim() !== '') {
+        const existingSale = await Sale.findOne({ tracking_number: safeTrackingNumber.trim() }).session(session);
         if (existingSale) {
           throw new RequestError(400, 'Tracking number already exists for another order');
         }
@@ -113,7 +126,7 @@ const createSale = async (req, res) => {
         );
         if (!updatedProduct) throw new RequestError(400, `Insufficient stock for: ${product.name}`);
 
-        const lineDiscount = item.discount || 0;
+        const lineDiscount = isCustomerOrder ? 0 : (item.discount || 0);
         const effectivePrice = product.selling_price - lineDiscount;
         const line_total = effectivePrice * item.quantity;
         const line_profit = (effectivePrice - product.buying_price) * item.quantity;
@@ -142,7 +155,7 @@ const createSale = async (req, res) => {
 
       const itemsTotalAfterItemDiscounts = saleItems.reduce((acc, i) => acc + i.line_total, 0);
 
-      const billDiscount = total_discount || 0;
+      const billDiscount = safeTotalDiscount || 0;
       const shipping_charged = Number(shipping_cost_charged) || 0;
       const actual_shipping = Number(actual_shipping_cost) || 0;
 
@@ -156,9 +169,9 @@ const createSale = async (req, res) => {
       // go through actual courier dispatch tracking.
       let order_status;
       if (sale_source === 'whatsapp') {
-        order_status = tracking_number ? 'Delivered' : 'Pending';
+        order_status = safeTrackingNumber ? 'Delivered' : 'Pending';
       } else if (sale_source === 'online') {
-        order_status = tracking_number ? 'Shipped' : 'Pending';
+        order_status = safeTrackingNumber ? 'Shipped' : 'Pending';
       } else {
         order_status = 'Delivered';
       }
@@ -169,14 +182,14 @@ const createSale = async (req, res) => {
         total_discount: billDiscount,
         shipping_cost_charged: shipping_charged,
         actual_shipping_cost: actual_shipping,
-        cod_amount: Number(cod_amount) || 0,
-        paid_amount: Number(paid_amount) || 0,
+        cod_amount: Number(safeCodAmount) || 0,
+        paid_amount: Number(safePaidAmount) || 0,
         koko_charge: Number(koko_charge) || 0,
         koko_percentage: Number(koko_percentage) || 0,
         total_amount: finalTotal,
         total_cost,
         total_profit: finalProfit,
-        payment_method: payment_method || 'Cash',
+        payment_method: safePaymentMethod || 'Cash',
         sale_source: sale_source || 'shop',
         customer_name: customer_name || (req.user.role === 'customer' ? req.user.name : 'Walk-in Customer'),
         customer_phone: customer_phone || '',
@@ -188,7 +201,7 @@ const createSale = async (req, res) => {
         cashier_name: req.user.role !== 'customer' ? req.user.name : undefined,
         shop: req.user.shop || 'Main Branch',
         notes: notes || '',
-        tracking_number: tracking_number || '',
+        tracking_number: safeTrackingNumber || '',
         idempotency_key: idempotencyKey || undefined,
       }], { session });
 

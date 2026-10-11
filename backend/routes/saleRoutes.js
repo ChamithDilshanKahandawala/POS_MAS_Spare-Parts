@@ -4,7 +4,9 @@ const { createSale, getSales, getWhatsappOrdersSummary, getSaleById, getSaleRece
 const { protect, adminOnly, superAdminOnly, staffOnly } = require('../middleware/authMiddleware');
 const { saleLimiter } = require('../middleware/rateLimiter');
 
-router.get('/analytics/summary', protect, getAnalytics);
+// Was `protect` only — a logged-in customer could read shop-wide revenue/
+// profit/top-products. Scoped to staff per the customer-privilege audit.
+router.get('/analytics/summary', protect, staffOnly, getAnalytics);
 router.get('/whatsapp/summary', protect, staffOnly, getWhatsappOrdersSummary);
 router.get('/my-orders', protect, getMyOrders);
 // New route for the storefront's order-success page (/order-success/:id).
