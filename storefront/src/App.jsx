@@ -17,6 +17,12 @@ const CartPage = lazy(() => import('./pages/CartPage'));
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
 const CategoryPage = lazy(() => import('./pages/CategoryPage'));
 const OrderSuccessPage = lazy(() => import('./pages/OrderSuccessPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const DeliveryPage = lazy(() => import('./pages/DeliveryPage'));
+const ReturnsPage = lazy(() => import('./pages/ReturnsPage'));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
+const TermsPage = lazy(() => import('./pages/TermsPage'));
 
 // --- Customer Only Route ---
 // Redirecting here loses the page the customer was trying to reach (e.g.
@@ -67,6 +73,12 @@ function AppRoutes() {
         <Route path="checkout" element={<CustomerRoute><CheckoutPage /></CustomerRoute>} />
         <Route path="order-success/:id" element={<CustomerRoute><Suspense fallback={null}><OrderSuccessRoute /></Suspense></CustomerRoute>} />
         <Route path="orders" element={<CustomerRoute><CustomerOrdersPage /></CustomerRoute>} />
+        <Route path="about" element={<Suspense fallback={null}><AboutPage /></Suspense>} />
+        <Route path="contact" element={<Suspense fallback={null}><ContactPage /></Suspense>} />
+        <Route path="delivery" element={<Suspense fallback={null}><DeliveryPage /></Suspense>} />
+        <Route path="returns" element={<Suspense fallback={null}><ReturnsPage /></Suspense>} />
+        <Route path="privacy" element={<Suspense fallback={null}><PrivacyPage /></Suspense>} />
+        <Route path="terms" element={<Suspense fallback={null}><TermsPage /></Suspense>} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

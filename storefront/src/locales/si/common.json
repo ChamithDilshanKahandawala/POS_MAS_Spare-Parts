@@ -2,10 +2,16 @@
   "_meta": { "status": "draft — needs native speaker review" },
   "appName": "Mudiyanse Auto Solutions",
   "tagline": "වාහන අමතර කොටස්",
-  "announcementBar": "🚚 රු. 5,000ට වැඩි ඇණවුම් සඳහා දිවයින පුරා නොමිලේ ගෙනාවත් · 100% සැබෑ අමතර කොටස් සහතිකයි",
+  "home": {
+    "metaTitle": "Mudiyanse Auto Solutions | ශ්‍රී ලංකාවේ සැබෑ වාහන අමතර කොටස්",
+    "metaDescription": "ත්‍රිරෝද, බයික්, කාර් සහ SUV සඳහා සැබෑ, ගුණාත්මකභාවය පරීක්ෂා කළ අමතර කොටස් මිලදී ගන්න. දිවයින පුරා බෙදාහැරීම, ගෙදරදී මුදල් ගෙවීම, මීරිගමේ පිහිටි."
+  },
+  "announcementBar": "🚚 දිවයින පුරා බෙදාහැරීම, ගෙදරදී මුදල් ගෙවීම · 100% සැබෑ අමතර කොටස් සහතිකයි",
   "nav": {
     "store": "සාප්පුව",
     "myOrders": "මගේ ඇණවුම්",
+    "contact": "අප අමතන්න",
+    "delivery": "බෙදාහැරීම",
     "categories": "කාණ්ඩ",
     "shopByCategory": "කාණ්ඩ අනුව සාප්පු යන්න",
     "cart": "කරත්තය",

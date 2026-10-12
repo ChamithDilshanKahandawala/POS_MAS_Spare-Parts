@@ -15,10 +15,9 @@ import ProductCard from '../components/product/ProductCard';
 import { formatLKR } from '../utils/formatLKR';
 import { slugify } from '../utils/slugify';
 import { useTranslation } from 'react-i18next';
-import { WHATSAPP_NUMBER } from '../config/store';
+import { WHATSAPP_NUMBER, SHOP_INFO } from '../config/store';
 
-const SHOP_NAME = 'Mudiyanse Auto Solutions';
-const DEFAULT_TITLE = 'Mudiyanse Auto Solutions · Spare Parts POS';
+const DEFAULT_TITLE = `${SHOP_INFO.name} · Genuine Vehicle Spare Parts`;
 
 function SkeletonBlock({ height }) {
   return (
@@ -80,7 +79,7 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!product) return;
-    document.title = `${product.name} | ${SHOP_NAME}`;
+    document.title = `${product.name} | ${SHOP_INFO.name}`;
     return () => { document.title = DEFAULT_TITLE; };
   }, [product]);
 

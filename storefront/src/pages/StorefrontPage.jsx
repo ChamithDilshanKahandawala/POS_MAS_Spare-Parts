@@ -10,6 +10,9 @@ import ProductGrid from '../components/product/ProductGrid';
 import { formatLKR } from '../utils/formatLKR';
 import { slugify } from '../utils/slugify';
 import { CATEGORIES as REAL_CATEGORIES } from '../config/store';
+import useDocumentMeta from '../hooks/useDocumentMeta';
+import useJsonLd from '../hooks/useJsonLd';
+import { buildShopJsonLd } from '../utils/shopJsonLd';
 
 // "All" stays as a local filter (there's no dedicated page for it); every
 // real category now navigates to its own /category/:slug page instead of
@@ -17,7 +20,9 @@ import { CATEGORIES as REAL_CATEGORIES } from '../config/store';
 const CATEGORIES = ['All', ...REAL_CATEGORIES];
 
 export default function StorefrontPage() {
-  const { t } = useTranslation('product');
+  const { t } = useTranslation(['product', 'common']);
+  useDocumentMeta(t('common:home.metaTitle'), t('common:home.metaDescription'));
+  useJsonLd(buildShopJsonLd());
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');

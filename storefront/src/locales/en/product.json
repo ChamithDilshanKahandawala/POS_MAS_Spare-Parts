@@ -43,7 +43,7 @@
   "error": { "title": "Something went wrong", "subtitle": "We couldn't load this product. Check your connection and try again." },
   "whatsappMessage": "Hi! I'm interested in: {{name}} (SKU: {{sku}}) — Qty: {{qty}} — {{price}}",
   "hero": {
-    "badge": "Free shipping on orders above Rs. 5,000",
+    "badge": "Island-wide Delivery · Cash on Delivery",
     "titleLine1": "Genuine Parts,",
     "titleLine2": "Delivered Fast.",
     "subtitle": "Mudiyanse Auto Solutions offers the best quality spare parts for three-wheelers & bikes with guaranteed fitment and warranty.",

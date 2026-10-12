@@ -96,6 +96,21 @@ const createSale = async (req, res) => {
       const safeCodAmount = isCustomerOrder ? 0 : cod_amount;
       const safePaidAmount = isCustomerOrder ? 0 : paid_amount;
       const safeTotalDiscount = isCustomerOrder ? 0 : total_discount;
+      // The storefront always sends 'online' — a customer sending 'shop' or
+      // 'whatsapp' instead would skip straight to order_status 'Delivered'
+      // on their own order (see the order_status branch below), bypassing
+      // the Pending/Shipped funnel staff use to track real courier dispatch.
+      const safeSaleSource = isCustomerOrder ? 'online' : sale_source;
+      // Neither field is ever shown to or settable by a real storefront
+      // customer (CheckoutPage.jsx sends neither) — only a raw API caller
+      // would send them. Both feed directly into total_profit below, so an
+      // unguarded value let a customer silently inject arbitrary (incl.
+      // negative) profit/cost into their own order's stored record — see
+      // the customer-privilege-escalation audit.
+      const safeShippingCostCharged = isCustomerOrder ? 0 : shipping_cost_charged;
+      const safeActualShippingCost = isCustomerOrder ? 0 : actual_shipping_cost;
+      const safeKokoCharge = isCustomerOrder ? 0 : koko_charge;
+      const safeKokoPercentage = isCustomerOrder ? 0 : koko_percentage;
 
       if (!items || items.length === 0) {
         throw new RequestError(400, 'No items in cart');
@@ -156,8 +171,8 @@ const createSale = async (req, res) => {
       const itemsTotalAfterItemDiscounts = saleItems.reduce((acc, i) => acc + i.line_total, 0);
 
       const billDiscount = safeTotalDiscount || 0;
-      const shipping_charged = Number(shipping_cost_charged) || 0;
-      const actual_shipping = Number(actual_shipping_cost) || 0;
+      const shipping_charged = Number(safeShippingCostCharged) || 0;
+      const actual_shipping = Number(safeActualShippingCost) || 0;
 
       const finalTotal = itemsTotalAfterItemDiscounts - billDiscount;
       const finalProfit = saleItems.reduce((acc, i) => acc + i.line_profit, 0) - billDiscount + shipping_charged - actual_shipping;
@@ -168,9 +183,9 @@ const createSale = async (req, res) => {
       // Online orders keep the original Shipped/Pending flow since those do
       // go through actual courier dispatch tracking.
       let order_status;
-      if (sale_source === 'whatsapp') {
+      if (safeSaleSource === 'whatsapp') {
         order_status = safeTrackingNumber ? 'Delivered' : 'Pending';
-      } else if (sale_source === 'online') {
+      } else if (safeSaleSource === 'online') {
         order_status = safeTrackingNumber ? 'Shipped' : 'Pending';
       } else {
         order_status = 'Delivered';
@@ -184,13 +199,13 @@ const createSale = async (req, res) => {
         actual_shipping_cost: actual_shipping,
         cod_amount: Number(safeCodAmount) || 0,
         paid_amount: Number(safePaidAmount) || 0,
-        koko_charge: Number(koko_charge) || 0,
-        koko_percentage: Number(koko_percentage) || 0,
+        koko_charge: Number(safeKokoCharge) || 0,
+        koko_percentage: Number(safeKokoPercentage) || 0,
         total_amount: finalTotal,
         total_cost,
         total_profit: finalProfit,
         payment_method: safePaymentMethod || 'Cash',
-        sale_source: sale_source || 'shop',
+        sale_source: safeSaleSource || 'shop',
         customer_name: customer_name || (req.user.role === 'customer' ? req.user.name : 'Walk-in Customer'),
         customer_phone: customer_phone || '',
         customer_details: customer_details || '',

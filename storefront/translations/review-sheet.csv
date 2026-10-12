@@ -1,9 +1,13 @@
 key,English,Sinhala,Tamil,notes
 common:appName,Mudiyanse Auto Solutions,Mudiyanse Auto Solutions,Mudiyanse Auto Solutions,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
 common:tagline,Auto Solutions,වාහන අමතර කොටස්,வாகன உதிரி பாகங்கள்,
-common:announcementBar,"🚚 Free Island-wide Delivery on Orders Above Rs. 5,000 · 100% Genuine Parts Guaranteed","🚚 රු. 5,000ට වැඩි ඇණවුම් සඳහා දිවයින පුරා නොමිලේ ගෙනාවත් · 100% සැබෑ අමතර කොටස් සහතිකයි","🚚 ரூ. 5,000க்கு மேல் ஆர்டர்களுக்கு இலவச தீவு முழுவதும் டெலிவரி · 100% உண்மையான உதிரி பாகங்கள் உத்தரவாதம்",
+common:home.metaTitle,Mudiyanse Auto Solutions | Genuine Vehicle Spare Parts in Sri Lanka,Mudiyanse Auto Solutions | ශ්‍රී ලංකාවේ සැබෑ වාහන අමතර කොටස්,Mudiyanse Auto Solutions | இலங்கையின் உண்மையான வாகன உதிரி பாகங்கள்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+common:home.metaDescription,"Shop genuine, quality-checked spare parts for three-wheelers, bikes, cars and SUVs. Island-wide delivery, Cash on Delivery, based in Mirigama, Sri Lanka.","ත්‍රිරෝද, බයික්, කාර් සහ SUV සඳහා සැබෑ, ගුණාත්මකභාවය පරීක්ෂා කළ අමතර කොටස් මිලදී ගන්න. දිවයින පුරා බෙදාහැරීම, ගෙදරදී මුදල් ගෙවීම, මීරිගමේ පිහිටි.","முச்சக்கர வாகனங்கள், பைக்குகள், கார்கள் மற்றும் SUV களுக்கான உண்மையான, தரம் சரிபார்க்கப்பட்ட உதிரி பாகங்களை வாங்குங்கள். தீவு முழுவதும் டெலிவரி, டெலிவரியின் போது பணம், மிரிகமவை அமைந்துள்ளது.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+common:announcementBar,"🚚 Island-wide Delivery, Cash on Delivery · 100% Genuine Parts Guaranteed","🚚 දිවයින පුරා බෙදාහැරීම, ගෙදරදී මුදල් ගෙවීම · 100% සැබෑ අමතර කොටස් සහතිකයි","🚚 தீவு முழுவதும் டெலிவரி, டெலிவரியின் போது பணம் · 100% உண்மையான உதிரி பாகங்கள் உத்தரவாதம்",
 common:nav.store,Store,සාප්පුව,கடை,
 common:nav.myOrders,My Orders,මගේ ඇණවුම්,எனது ஆர்டர்கள்,
+common:nav.contact,Contact,අප අමතන්න,தொடர்பு கொள்ள,
+common:nav.delivery,Delivery,බෙදාහැරීම,டெலிவரி,
 common:nav.categories,Categories,කාණ්ඩ,வகைகள்,
 common:nav.shopByCategory,Shop by Category,කාණ්ඩ අනුව සාප්පු යන්න,வகை வாரியாக வாங்கவும்,
 common:nav.cart,Cart,කරත්තය,வண்டி,
@@ -33,7 +37,8 @@ cart:removedToast.undo,Undo,අහෝසි කරන්න,செயல்த�
 cart:drawer.title,Your cart,ඔබගේ කරත්තය,உங்கள் வண்டி,
 cart:drawer.viewFullCart,View full cart,සම්පූර්ණ කරත්තය බලන්න,முழு வண்டியைப் பார்க்க,
 cart:drawer.checkout,Checkout,ගෙවීමට යන්න,செக்அவுட்,
-cart:drawer.deliveryNote,Delivery calculated at checkout,බෙදාහැරීම ගෙවීමේදී ගණනය කෙරේ,டெலிவரி கட்டணம் செக்அவுட்டில் கணக்கிடப்படும்,
+cart:drawer.deliveryNote,Delivery from Rs. {{price}} · final fee confirmed before dispatch,බෙදාහැරීම රු. {{price}} සිට · අවසාන ගාස්තුව යැවීමට පෙර තහවුරු කෙරේ,டெலிவரி ரூ. {{price}} முதல் · இறுதி கட்டணம் அனுப்புவதற்கு முன் உறுதிப்படுத்தப்படும்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+cart:drawer.viewDeliveryOptions,View delivery options,බෙදාහැරීමේ විකල්ප බලන්න,டெலிவரி விருப்பங்களைப் பார்க்க,
 cart:drawer.closeCart,Close cart,කරත්තය වසන්න,வண்டியை மூடு,
 cart:empty.title,Your cart is empty,ඔබගේ කරත්තය හිස්ය,உங்கள் வண்டி காலியாக உள்ளது,
 cart:empty.subtitle,Browse our catalog to add items,භාණ්ඩ එකතු කිරීමට අපගේ නාමාවලිය බලන්න,பொருட்களைச் சேர்க்க எங்கள் பட்டியலைப் பார்க்கவும்,
@@ -51,7 +56,8 @@ cart:page.itemCount_one,{{count}} item,භාණ්ඩ {{count}},{{count}} ப�
 cart:page.itemCount_other,{{count}} items,භාණ්ඩ {{count}},{{count}} பொருட்கள்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
 cart:summary.subtotal,Subtotal,උප එකතුව,துணை மொத்தம்,
 cart:summary.delivery,Delivery,බෙදාහැරීම,டெலிவரி,
-cart:summary.deliveryCalculated,Calculated at checkout,ගෙවීමේදී ගණනය කෙරේ,செக்அவுட்டில் கணக்கிடப்படும்,
+cart:summary.deliveryCalculated,From Rs. {{price}},රු. {{price}} සිට,ரூ. {{price}} முதல்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+cart:summary.viewDeliveryOptions,View delivery options,බෙදාහැරීමේ විකල්ප බලන්න,டெலிவரி விருப்பங்களைப் பார்க்க,
 cart:summary.total,Total,එකතුව,மொத்தம்,
 cart:summary.freeDeliveryUnlocked,You've unlocked free delivery 🎉,ඔබ නොමිලේ බෙදාහැරීම අගුළු හරින ලදී 🎉,நீங்கள் இலவச டெலிவரியைப் பெற்றீர்கள் 🎉,
 cart:summary.freeDeliveryProgress,Add {{remaining}} more for free delivery,නොමිලේ බෙදාහැරීම සඳහා තව {{remaining}}ක් එකතු කරන්න,இலவச டெலிவரிக்கு மேலும் {{remaining}} சேர்க்கவும்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
@@ -100,7 +106,7 @@ product:notFound.subtitle,This product doesn't exist or may have been removed.,"
 product:error.title,Something went wrong,යමක් වැරදී ගියේය,ஏதோ தவறு நடந்தது,
 product:error.subtitle,We couldn't load this product. Check your connection and try again.,මෙම භාණ්ඩය ලබා ගත නොහැකි විය. ඔබගේ සම්බන්ධතාවය පරීක්ෂා කර නැවත උත්සාහ කරන්න.,இந்த பொருளை ஏற்ற முடியவில்லை. உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.,
 product:whatsappMessage,Hi! I'm interested in: {{name}} (SKU: {{sku}}) — Qty: {{qty}} — {{price}},ආයුබෝවන්! මට {{name}} (SKU: {{sku}}) ගැන උනන්දුවක් ඇත — ප්‍රමාණය: {{qty}} — {{price}},வணக்கம்! எனக்கு {{name}} (SKU: {{sku}}) இல் ஆர்வம் உள்ளது — அளவு: {{qty}} — {{price}},si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
-product:hero.badge,"Free shipping on orders above Rs. 5,000","රු. 5,000ට වැඩි ඇණවුම් සඳහා නොමිලේ බෙදාහැරීම","ரூ. 5,000க்கு மேல் ஆர்டர்களுக்கு இலவச டெலிவரி",
+product:hero.badge,Island-wide Delivery · Cash on Delivery,දිවයින පුරා බෙදාහැරීම · ගෙදරදී මුදල් ගෙවීම,தீவு முழுவதும் டெலிவரி · டெலிவரியின் போது பணம்,
 product:hero.titleLine1,"Genuine Parts,","සැබෑ කොටස්,","உண்மையான பாகங்கள்,",
 product:hero.titleLine2,Delivered Fast.,වේගයෙන් බෙදාහැරේ.,விரைவாக டெலிவரி.,
 product:hero.subtitle,Mudiyanse Auto Solutions offers the best quality spare parts for three-wheelers & bikes with guaranteed fitment and warranty.,Mudiyanse Auto Solutions ත්‍රිරෝද හා බයික් සඳහා ගැළපීම සහ වගකීම සහතික කරමින් හොඳම තත්ත්වයේ අමතර කොටස් සපයයි.,Mudiyanse Auto Solutions முச்சக்கர மற்றும் பைக் வாகனங்களுக்கு உத்தரவாத பொருத்தத்துடனும் உத்தரவாதத்துடனும் சிறந்த தரமான உதிரி பாகங்களை வழங்குகிறது.,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
@@ -204,8 +210,10 @@ checkout:toast.cityRequired,City is required,නගරය අවශ්‍යය�
 checkout:toast.districtRequired,District is required,දිස්ත්‍රික්කය අවශ්‍යයි,மாவட்டம் தேவை,
 checkout:toast.phone1Invalid,Phone Number 1 is invalid (e.g. 0771234567),දුරකථන අංකය 1 වලංගු නොවේ (උදා: 0771234567),தொலைபேசி எண் 1 தவறானது (எ.கா. 0771234567),
 checkout:toast.phone2Invalid,Phone Number 2 is invalid (e.g. 0771234567),දුරකථන අංකය 2 වලංගු නොවේ (උදා: 0771234567),தொலைபேசி எண் 2 தவறானது (எ.கா. 0771234567),
+checkout:toast.termsRequired,Please agree to the Terms and Returns policy to continue,ඉදිරියට යාමට කරුණාකර නියමයන් සහ ආපසු භාරදීම් ප්‍රතිපත්තියට එකඟ වන්න,தொடர விதிமுறைகள் மற்றும் திரும்பப்பெறுதல் கொள்கையை ஏற்றுக்கொள்ளவும்,
 checkout:toast.checkoutFailed,Checkout failed,ගෙවීම අසාර්ථක විය,செக்அவுட் தோல்வியடைந்தது,
 checkout:delivery.heading,1. Delivery Details,1. බෙදාහැරීමේ විස්තර,1. டெலிவரி விவரங்கள்,
+checkout:delivery.courierNote,Delivery: Transexpress Courier (Cash on Delivery),බෙදාහැරීම: Transexpress Courier (ගෙදරදී මුදල් ගෙවීම),டெலிவரி: Transexpress Courier (டெலிவரியின் போது பணம்),si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
 checkout:delivery.fullName,Full Name *,සම්පූර්ණ නම *,முழுப் பெயர் *,
 checkout:delivery.fullNamePlaceholder,Enter your full name,ඔබගේ සම්පූර්ණ නම ඇතුළත් කරන්න,உங்கள் முழுப் பெயரை உள்ளிடவும்,
 checkout:delivery.streetAddress,Street Address *,වීදි ලිපිනය *,தெரு முகவரி *,
@@ -225,11 +233,13 @@ checkout:summary.heading,Order Summary,ඇණවුම් සාරාංශය,
 checkout:summary.qtyLine,Qty: {{count}} × {{price}},ප්‍රමාණය: {{count}} × {{price}},அளவு: {{count}} × {{price}},si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
 checkout:summary.subtotal,Subtotal,උප එකතුව,துணை மொத்தம்,
 checkout:summary.shippingEstimate,Shipping Estimate,නැව්ගත කිරීමේ ඇස්තමේන්තුව,அனுப்புகை மதிப்பீடு,
-checkout:summary.calculatedAtDelivery,Calculated at Delivery,බෙදාහැරීමේදී ගණනය කෙරේ,டெலிவரியின் போது கணக்கிடப்படும்,
+checkout:summary.calculatedAtDelivery,From Rs. {{price}},රු. {{price}} සිට,ரூ. {{price}} முதல்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+checkout:summary.viewDeliveryOptions,View delivery options,බෙදාහැරීමේ විකල්ප බලන්න,டெலிவரி விருப்பங்களைப் பார்க்க,
 checkout:summary.total,Total,එකතුව,மொத்தம்,
 checkout:summary.processing,Processing...,සැකසෙමින්...,செயலாக்கப்படுகிறது...,
 checkout:summary.placeOrder,Place Order,ඇණවුම තබන්න,ஆர்டர் செய்,
-checkout:summary.terms,"By placing your order, you agree to our Terms of Service and Privacy Policy.",ඇණවුම තැබීමෙන් ඔබ අපගේ සේවා නියමයන් සහ පෞද්ගලිකත්ව ප්‍රතිපත්තියට එකඟ වේ.,"ஆர்டர் செய்வதன் மூலம், எங்கள் சேவை விதிமுறைகள் மற்றும் தனியுரிமைக் கொள்கையை நீங்கள் ஒப்புக்கொள்கிறீர்கள்.",
+checkout:summary.termsCheckbox,I agree to the <1>Terms</1> and <3>Returns</3> policy,මම <1>නියමයන්</1> සහ <3>ආපසු භාරදීම්</3> ප්‍රතිපත්තියට එකඟ වෙමි,நான் <1>விதிமுறைகள்</1> மற்றும் <3>திரும்பப்பெறுதல்</3> கொள்கையை ஒப்புக்கொள்கிறேன்,
+checkout:summary.privacyNotice,Your information will be used to process your order. See our <1>Privacy Policy</1>.,ඔබගේ තොරතුරු ඔබගේ ඇණවුම සැකසීමට භාවිතා කෙරේ. අපගේ <1>පෞද්ගලිකත්ව ප්‍රතිපත්තිය</1> බලන්න.,உங்கள் தகவல் உங்கள் ஆர்டரை செயல்படுத்த பயன்படுத்தப்படும். எங்கள் <1>தனியுரிமைக் கொள்கையை</1> பார்க்கவும்.,
 checkout:districts.Ampara,Ampara,අම්පාර,அம்பாறை,
 checkout:districts.Anuradhapura,Anuradhapura,අනුරාධපුර,அனுராதபுரம்,
 checkout:districts.Badulla,Badulla,බදුල්ල,பதுளை,
@@ -282,6 +292,7 @@ auth:register.submit,Create Account,ගිණුමක් සාදන්න,க
 auth:register.processing,Processing...,සැකසෙමින්...,செயலாக்கப்படுகிறது...,
 auth:register.orContinueWith,OR CONTINUE WITH,හෝ මේවායින් ඉදිරියට යන්න,அல்லது இதன் மூலம் தொடரவும்,
 auth:register.instantAccess,Instant access – buy parts immediately after registering!,ක්ෂණික ප්‍රවේශය – ලියාපදිංචි වූ වහාම කොටස් මිලදී ගන්න!,உடனடி அணுகல் – பதிவு செய்தவுடன் பாகங்களை வாங்குங்கள்!,
+auth:register.termsNotice,"By creating an account, you agree to our <1>Terms</1> and <3>Privacy Policy</3>.","ගිණුමක් සෑදීමෙන්, ඔබ අපගේ <1>නියමයන්</1> සහ <3>පෞද්ගලිකත්ව ප්‍රතිපත්තියට</3> එකඟ වේ.","கணக்கை உருவாக்குவதன் மூலம், எங்கள் <1>விதிமுறைகள்</1> மற்றும் <3>தனியுரிமைக் கொள்கையை</3> ஏற்றுக்கொள்கிறீர்கள்.",
 auth:register.alreadyMember,Already a member?,දැනටමත් සාමාජිකයෙක්ද?,ஏற்கனவே உறுப்பினரா?,
 auth:register.signIn,Sign In,ප්‍රවේශ වන්න,உள்நுழைய,
 footer:trust.securePayments,Secure Payments,ආරක්ෂිත ගෙවීම්,பாதுகாப்பான கட்டணங்கள்,
@@ -297,12 +308,13 @@ footer:quickShop.bikeSpareParts,Bike Spare Parts,බයික් අමතර �
 footer:quickShop.carAccessories,Car Accessories,කාර් උපාංග,கார் அணுகுசாதனங்கள்,
 footer:quickShop.vanSuvParts,Van & SUV Parts,වෑන් සහ SUV කොටස්,வான் & SUV பாகங்கள்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
 footer:quickShop.trackMyOrder,Track My Order,මගේ ඇණවුම සොයන්න,எனது ஆர்டரைக் கண்காணிக்க,
-footer:support.heading,Support,සහාය,ஆதரவு,
+footer:support.heading,Company & Support,සමාගම සහ සහාය,நிறுவனம் & ஆதரவு,
+footer:support.aboutUs,About Us,අප ගැන,எங்களைப் பற்றி,
+footer:support.contactUs,Contact Us,අප අමතන්න,எங்களை தொடர்பு கொள்ள,
+footer:support.deliveryInformation,Delivery Information,බෙදාහැරීමේ තොරතුරු,டெலிவரி தகவல்,
 footer:support.privacyPolicy,Privacy Policy,පෞද්ගලිකත්ව ප්‍රතිපත්තිය,தனியுரிமைக் கொள்கை,
 footer:support.termsConditions,Terms & Conditions,නියම සහ කොන්දේසි,விதிமுறைகள் & நிபந்தனைகள்,
-footer:support.returnRefundPolicy,Return & Refund Policy,ආපසු භාරදීම් සහ මුදල් ආපසු ගෙවීමේ ප්‍රතිපත්තිය,திரும்பப்பெறுதல் & பணத்தைத் திரும்பப்பெறும் கொள்கை,
-footer:support.shippingInformation,Shipping Information,බෙදාහැරීමේ තොරතුරු,அனுப்புகை தகவல்,
-footer:support.faq,FAQ,නිති අසන ප්‍රශ්න,அடிக்கடி கேட்கப்படும் கேள்விகள்,
+footer:support.returnRefundPolicy,Returns & Refunds,ආපසු භාරදීම් සහ මුදල් ආපසු ගෙවීම්,திரும்பப்பெறுதல் & பணத்தைத் திரும்பப்பெறுதல்,
 footer:contact.heading,Get In Touch,අප අමතන්න,எங்களை தொடர்பு கொள்ள,
 footer:contact.address,"08, New Shopping Complex, Mirigama, Sri Lanka","08, නව සාප්පු සංකීර්ණය, මීරිගම, ශ්‍රී ලංකාව","08, புதிய ஷாப்பிங் காம்ப்ளெக்ஸ், மிரிகம, இலங்கை",
 footer:contact.hours,Mon – Sun: 10:00 AM – 10:00 PM,සඳුදා – ඉරිදා: පෙ.ව. 10:00 – ප.ව. 10:00,திங்கள் – ஞாயிறு: காலை 10:00 – இரவு 10:00,
@@ -312,3 +324,125 @@ footer:newsletter.subtitle,Subscribe for new arrivals & offers.,නව භාණ
 footer:newsletter.placeholder,your@email.com,your@email.com,your@email.com,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
 footer:newsletter.subscribed,✅ You're subscribed!,✅ ඔබ දායක වී ඇත!,✅ நீங்கள் குழுசேர்ந்துவிட்டீர்கள்!,
 footer:bottomBar.rights,All rights reserved. Built with ❤️ in Sri Lanka.,සියලුම හිමිකම් ඇවිරිණි. ශ්‍රී ලංකාවේ ❤️ සමඟ නිර්මාණය කරන ලදී.,அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை. இலங்கையில் ❤️ உடன் உருவாக்கப்பட்டது.,
+footer:bottomBar.cashOnDelivery,Cash on Delivery,ගෙදරදී මුදල් ගෙවීම,டெலிவரியின் போது பணம்,
+footer:bottomBar.brNumber,Business Registration No. {{brNumber}},ව්‍යාපාර ලියාපදිංචි අංකය {{brNumber}},வணிக பதிவு எண் {{brNumber}},si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+about:metaTitle,About Us,අප ගැන,எங்களைப் பற்றி,
+about:metaDescription,Mudiyanse Auto Solutions is a Mirigama-based vehicle spare parts shop serving customers island-wide across Sri Lanka.,"Mudiyanse Auto Solutions යනු මීරිගමේ පිහිටි, ශ්‍රී ලංකාව පුරා පාරිභෝගිකයින්ට සේවය කරන වාහන අමතර කොටස් සාප්පුවකි.",Mudiyanse Auto Solutions என்பது மிரிகமவை தளமாகக் கொண்டு இலங்கை முழுவதும் வாடிக்கையாளர்களுக்கு சேவை செய்யும் வாகன உதிரி பாகங்கள் கடை.,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+about:hero.heading,About Mudiyanse Auto Solutions,Mudiyanse Auto Solutions ගැන,Mudiyanse Auto Solutions பற்றி,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+about:hero.subtitle,"A Mirigama-based spare parts shop, serving customers island-wide.","මීරිගමේ පිහිටි අමතර කොටස් සාප්පුවක්, දිවයින පුරා පාරිභෝගිකයින්ට සේවය කරයි.","மிரிகமவை தளமாகக் கொண்ட உதிரி பாகங்கள் கடை, தீவு முழுவதும் வாடிக்கையாளர்களுக்கு சேவை செய்கிறது.",
+about:story.heading,Our Story,අපගේ කතාව,எங்கள் கதை,
+about:story.paragraphs[0],"Mudiyanse Auto Solutions is a vehicle spare parts shop based in Mirigama, Sri Lanka. We supply parts for three-wheelers, bikes, cars, SUVs and more, to customers across the island.","Mudiyanse Auto Solutions යනු ශ්‍රී ලංකාවේ මීරිගමේ පිහිටි වාහන අමතර කොටස් සාප්පුවකි. අපි ත්‍රිරෝද, බයික්, කාර්, SUV සහ තවත් වාහන සඳහා කොටස් දිවයින පුරා පාරිභෝගිකයින්ට සපයමු.","Mudiyanse Auto Solutions என்பது இலங்கை மிரிகமவை அமைந்துள்ள வாகன உதிரி பாகங்கள் கடை. முச்சக்கர வாகனங்கள், பைக்குகள், கார்கள், SUV வாகனங்கள் மற்றும் பலவற்றிற்கான பாகங்களை தீவு முழுவதும் உள்ள வாடிக்கையாளர்களுக்கு வழங்குகிறோம்.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+about:story.paragraphs[1],"Every order is checked before it leaves our shop, and we deliver island-wide with Cash on Delivery.","සෑම ඇණවුමක්ම අපගේ සාප්පුවෙන් පිටවීමට පෙර පරීක්ෂා කරනු ලබන අතර, අපි ගෙදරදී මුදල් ගෙවීම සමඟ දිවයින පුරා බෙදාහරිමු.","ஒவ்வொரு ஆர்டரும் எங்கள் கடையிலிருந்து அனுப்பப்படுவதற்கு முன் சரிபார்க்கப்படுகிறது, மேலும் டெலிவரியின் போது பணம் செலுத்தும் முறையில் தீவு முழுவதும் டெலிவரி செய்கிறோம்.",
+about:story.paragraphs[2],PLACEHOLDER — add a personal note here about how and why the shop started (not written by this draft — please fill this in yourself).,PLACEHOLDER — සාප්පුව ආරම්භ වූආකාරය සහ හේතුව පිළිබඳ පුද්ගලික සටහනක් මෙහි එක් කරන්න (මෙම කෙටුම්පතෙන් ලියා නැත — කරුණාකර මෙය ඔබම පුරවන්න).,"PLACEHOLDER — கடை எவ்வாறு, ஏன் தொடங்கப்பட்டது என்பது பற்றிய தனிப்பட்ட குறிப்பை இங்கே சேர்க்கவும் (இந்த வரைவில் எழுதப்படவில்லை — தயவுசெய்து இதை நீங்களே பூர்த்தி செய்யவும்).",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+about:whatWeSell.heading,What We Sell,අපි විකුණන දේ,நாங்கள் விற்பது,
+about:whatWeSell.intro,"Genuine, quality-checked spare parts across these categories:","මෙම කාණ්ඩ හරහා සැබෑ, ගුණාත්මකභාවය පරීක්ෂා කළ අමතර කොටස්:","இந்த வகைகளில் உண்மையான, தரம் சரிபார்க்கப்பட்ட உதிரி பாகங்கள்:",
+about:whyUs.heading,Why Buy From Us,අපෙන් මිලදී ගැනීමට හේතු,எங்களிடமிருந்து வாங்க வேண்டிய காரணங்கள்,
+about:whyUs.items[0].title,Checked before dispatch,යැවීමට පෙර පරීක්ෂා කෙරේ,அனுப்புவதற்கு முன் சரிபார்க்கப்படுகிறது,
+about:whyUs.items[0].desc,Every item is checked before it's packed and sent out.,සෑම භාණ්ඩයක්ම ඇසුරුම් කර යැවීමට පෙර පරීක්ෂා කරනු ලැබේ.,ஒவ்வொரு பொருளும் பேக் செய்து அனுப்புவதற்கு முன் சரிபார்க்கப்படுகிறது.,
+about:whyUs.items[1].title,Island-wide delivery,දිවයින පුරා බෙදාහැරීම,தீவு முழுவதும் டெலிவரி,
+about:whyUs.items[1].desc,We deliver anywhere in Sri Lanka by courier.,අපි ශ්‍රී ලංකාව තුළ ඕනෑම තැනකට කුරියර් මගින් බෙදා හරිමු.,நாங்கள் இலங்கையில் எங்கும் கூரியர் மூலம் டெலிவரி செய்கிறோம்.,
+about:whyUs.items[2].title,Cash on Delivery,ගෙදරදී මුදල් ගෙවීම,டெலிவரியின் போது பணம்,
+about:whyUs.items[2].desc,Pay when your order arrives — no advance payment needed.,ඔබගේ ඇණවුම ළඟා වූ විට ගෙවන්න — කල් තබා ගෙවීමක් අවශ්‍ය නැත.,உங்கள் ஆர்டர் வந்தவுடன் பணம் செலுத்துங்கள் — முன்பணம் தேவையில்லை.,
+about:whyUs.items[3].title,WhatsApp support,WhatsApp සහාය,WhatsApp ஆதரவு,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+about:whyUs.items[3].desc,Reach us directly on WhatsApp with questions about your order.,ඔබගේ ඇණවුම පිළිබඳ ප්‍රශ්න සඳහා WhatsApp හරහා අප හා සෘජුවම සම්බන්ධ වන්න.,உங்கள் ஆர்டர் பற்றிய கேள்விகளுக்கு WhatsApp மூலம் நேரடியாக எங்களை தொடர்பு கொள்ளுங்கள்.,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+about:details.heading,Shop Details,සාප්පු විස්තර,கடை விவரங்கள்,
+about:details.brLabel,Business Registration No.,ව්‍යාපාර ලියාපදිංචි අංකය,வணிக பதிவு எண்,
+about:details.addressLabel,Address,ලිපිනය,முகவரி,
+contact:metaTitle,Contact Us,අප අමතන්න,எங்களை தொடர்பு கொள்ள,
+contact:metaDescription,"Contact Mudiyanse Auto Solutions by phone, WhatsApp or email, or visit our shop in Mirigama, Sri Lanka.","දුරකථනයෙන්, WhatsApp හරහා හෝ විද්‍යුත් තැපෑලෙන් Mudiyanse Auto Solutions අමතන්න, හෝ මීරිගමේ අපගේ සාප්පුවට පැමිණෙන්න.","தொலைபேசி, WhatsApp அல்லது மின்னஞ்சல் மூலம் Mudiyanse Auto Solutions ஐ தொடர்பு கொள்ளுங்கள், அல்லது மிரிகமவில் உள்ள எங்கள் கடைக்கு வாருங்கள்.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+contact:heading,Contact Us,අප අමතන්න,எங்களை தொடர்பு கொள்ள,
+contact:subtitle,"Call, WhatsApp or visit us — we're happy to help.","අමතන්න, WhatsApp කරන්න, හෝ අප වෙත පැමිණෙන්න — අපි සතුටින් උදව් කරන්නෙමු.","அழைக்கவும், WhatsApp செய்யவும், அல்லது எங்களைச் சந்திக்க வாருங்கள் — நாங்கள் மகிழ்ச்சியுடன் உதவுவோம்.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+contact:callUs,Call Us,අප අමතන්න,எங்களை அழைக்கவும்,
+contact:callLabel,Call {{phone}},{{phone}} අමතන්න,{{phone}} ஐ அழைக்கவும்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+contact:whatsapp,Chat on WhatsApp,WhatsApp හරහා කතා කරන්න,WhatsApp இல் அரட்டையடிக்க,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+contact:emailUs,Email Us,විද්‍යුත් තැපෑල යවන්න,மின்னஞ்சல் அனுப்பவும்,
+contact:address,Address,ලිපිනය,முகவரி,
+contact:openInMaps,Open in Google Maps,Google Maps වල විවෘත කරන්න,Google Maps இல் திறக்கவும்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+contact:hours,Opening Hours,විවෘත වේලාවන්,திறந்திருக்கும் நேரம்,
+contact:hoursValue,"Open daily, 10.00 AM – 10.00 PM","සෑම දිනකම විවෘතයි, පෙ.ව. 10.00 – ප.ව. 10.00","தினமும் திறந்திருக்கும், காலை 10.00 – இரவு 10.00",
+contact:openNow,Open now,දැන් විවෘතයි,இப்போது திறந்துள்ளது,
+contact:closedNow,Closed now,දැන් වසා ඇත,இப்போது மூடப்பட்டுள்ளது,
+contact:mapTitle,Map showing {{name}}'s location,{{name}} පිහිටි ස්ථානය පෙන්වන සිතියම,{{name}} இருக்கும் இடத்தைக் காட்டும் வரைபடம்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+delivery:metaTitle,Delivery Information,බෙදාහැරීමේ තොරතුරු,டெலிவரி தகவல்,
+delivery:metaDescription,"Delivery options, areas and fees for Mudiyanse Auto Solutions orders across Sri Lanka.","Mudiyanse Auto Solutions ඇණවුම් සඳහා ශ්‍රී ලංකාව පුරා බෙදාහැරීමේ විකල්ප, ප්‍රදේශ සහ ගාස්තු.","Mudiyanse Auto Solutions ஆர்டர்களுக்கான இலங்கை முழுவதும் டெலிவரி விருப்பங்கள், பகுதிகள் மற்றும் கட்டணங்கள்.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+delivery:heading,Delivery Information,බෙදාහැරීමේ තොරතුරු,டெலிவரி தகவல்,
+delivery:subtitle,We deliver island-wide through the following couriers.,අපි පහත කුරියර් සේවා හරහා දිවයින පුරා බෙදා හරිමු.,பின்வரும் கூரியர் சேவைகள் மூலம் நாங்கள் தீவு முழுவதும் டெலிவரி செய்கிறோம்.,
+delivery:etaLabel,{{days}} days,දින {{days}},{{days}} நாட்கள்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+delivery:codAvailable,Cash on Delivery available,ගෙදරදී මුදල් ගෙවීම ලබා ගත හැක,டெலிவரியின் போது பணம் செலுத்தலாம்,
+delivery:codNotAvailable,No Cash on Delivery,ගෙදරදී මුදල් ගෙවීම නොමැත,டெலிவரியின் போது பணம் செலுத்த முடியாது,
+delivery:options.transexpress.name,Transexpress Courier,Transexpress Courier,Transexpress Courier,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+delivery:options.transexpress.westernPricing,Western Province: first 1 kg from Rs. {{price}},බස්නාහිර පළාත: පළමු කිලෝග්‍රෑම් 1 සඳහා රු. {{price}} සිට,மேல் மாகாணம்: முதல் 1 கிலோவிற்கு ரூ. {{price}} முதல்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+delivery:options.transexpress.otherPricing,"Other areas: Rs. {{min}}–{{max}} for the first 1 kg, depending on distance",අනෙකුත් ප්‍රදේශ: දුර අනුව පළමු කිලෝග්‍රෑම් 1 සඳහා රු. {{min}}–{{max}},மற்ற பகுதிகள்: தூரத்தைப் பொறுத்து முதல் 1 கிலோவிற்கு ரூ. {{min}}–{{max}},si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+delivery:options.transexpress.additionalPricing,Each additional 1 kg: Rs. {{price}},අමතර සෑම කිලෝග්‍රෑම් 1 කටම: රු. {{price}},ஒவ்வொரு கூடுதல் 1 கிலோவிற்கும்: ரூ. {{price}},si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+delivery:options.slpost.name,SL Speed Post (Sri Lanka Post),SL Speed Post (ශ්‍රී ලංකා තැපැල් දෙපාර්තමේන්තුව),SL Speed Post (இலங்கை தபால் திணைக்களம்),si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+delivery:options.slpost.anywherePricing,Anywhere in Sri Lanka: Rs. {{price}} for the first 1 kg,ශ්‍රී ලංකාව තුළ ඕනෑම තැනකට: පළමු කිලෝග්‍රෑම් 1 සඳහා රු. {{price}},இலங்கையில் எங்கும்: முதல் 1 கிலோவிற்கு ரூ. {{price}},si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+delivery:options.slpost.additionalPricing,Each additional 1 kg: Rs. {{price}},අමතර සෑම කිලෝග්‍රෑම් 1 කටම: රු. {{price}},ஒவ்வொரு கூடுதல் 1 கிலோவிற்கும்: ரூ. {{price}},si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+delivery:options.slpost.contactNote,"To use Speed Post, contact us on WhatsApp before ordering to arrange payment.","Speed Post භාවිතා කිරීමට, ගෙවීම සැලසුම් කිරීම සඳහා ඇණවුම් කිරීමට පෙර WhatsApp හරහා අප අමතන්න.","Speed Post ஐப் பயன்படுத்த, கட்டணத்தை ஏற்பாடு செய்ய ஆர்டர் செய்வதற்கு முன் WhatsApp மூலம் எங்களை தொடர்பு கொள்ளவும்.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+delivery:feeNote,The final delivery fee depends on the parcel weight. We'll confirm it with you by phone or WhatsApp before dispatch.,අවසාන බෙදාහැරීමේ ගාස්තුව පාර්සලයේ බරට අනුව වෙනස් වේ. යැවීමට පෙර අපි එය දුරකථනයෙන් හෝ WhatsApp හරහා ඔබ සමඟ තහවුරු කරගන්නෙමු.,இறுதி டெலிவரி கட்டணம் பார்சலின் எடையைப் பொறுத்தது. அனுப்புவதற்கு முன் தொலைபேசி அல்லது WhatsApp மூலம் உங்களுடன் உறுதிப்படுத்துவோம்.,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+delivery:whatsappCta,Ask About Delivery on WhatsApp,බෙදාහැරීම ගැන WhatsApp හරහා අසන්න,டெலிவரி பற்றி WhatsApp இல் கேளுங்கள்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+returns:metaTitle,Returns & Refunds,ආපසු භාරදීම් සහ මුදල් ආපසු ගෙවීම්,திரும்பப்பெறுதல் & பணத்தைத் திரும்பப்பெறுதல்,
+returns:metaDescription,"Returns, exchanges and refund policy for Mudiyanse Auto Solutions orders.","Mudiyanse Auto Solutions ඇණවුම් සඳහා ආපසු භාරදීම්, හුවමාරු සහ මුදල් ආපසු ගෙවීමේ ප්‍රතිපත්තිය.","Mudiyanse Auto Solutions ஆர்டர்களுக்கான திரும்பப்பெறுதல், பரிமாற்றம் மற்றும் பணம் திரும்பப்பெறும் கொள்கை.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+returns:heading,Returns & Refunds,ආපසු භාරදීම් සහ මුදල් ආපසු ගෙවීම්,திரும்பப்பெறுதல் & பணத்தைத் திரும்பப்பெறுதல்,
+returns:subtitle,"A plain-language summary of how we handle returns, exchanges and refunds.","අපි ආපසු භාරදීම්, හුවමාරු සහ මුදල් ආපසු ගෙවීම් හැසිරවන ආකාරය පිළිබඳ සරල සාරාංශයක්.","திரும்பப்பெறுதல், பரிமாற்றம் மற்றும் பணம் திரும்பப்பெறுதலை நாங்கள் எவ்வாறு கையாள்கிறோம் என்பதன் எளிய சுருக்கம்.",
+returns:intro,Every item is checked before it's dispatched.,සෑම භාණ්ඩයක්ම යැවීමට පෙර පරීක්ෂා කරනු ලැබේ.,ஒவ்வொரு பொருளும் அனுப்புவதற்கு முன் சரிபார்க்கப்படுகிறது.,
+returns:points.electronics.heading,Electronic items,ඉලෙක්ට්‍රොනික භාණ්ඩ,மின்னணு பொருட்கள்,
+returns:points.electronics.body,Electronic items cannot be returned.,ඉලෙක්ට්‍රොනික භාණ්ඩ ආපසු භාර ගත නොහැක.,மின்னணு பொருட்களை திருப்பித் தர முடியாது.,
+returns:points.otherProblems.heading,"Wrong item, damaged in transit, or not as described","වැරදි භාණ්ඩයක්, ප්‍රවාහනයේදී හානි වූ, හෝ විස්තර කළ ආකාරයට නොමැති","தவறான பொருள், போக்குவரத்தில் சேதம், அல்லது விவரிக்கப்பட்டதற்கு பொருந்தவில்லை",
+returns:points.otherProblems.body,"Contact us within {{days}} days of delivery by WhatsApp or phone with photos of the item and its packaging. We'll arrange a return, exchange or refund case by case.","බෙදාහැරීමෙන් දින {{days}} ක් ඇතුළත, භාණ්ඩයේ සහ ඇසුරුමේ ඡායාරූප සමඟ WhatsApp හෝ දුරකථනයෙන් අප අමතන්න. අපි එක් එක් අවස්ථාව අනුව ආපසු භාරදීමක්, හුවමාරුවක් හෝ මුදල් ආපසු ගෙවීමක් සංවිධානය කරන්නෙමු.","டெலிவரி செய்யப்பட்ட {{days}} நாட்களுக்குள், பொருள் மற்றும் அதன் பேக்கேஜிங்கின் புகைப்படங்களுடன் WhatsApp அல்லது தொலைபேசி மூலம் எங்களை தொடர்பு கொள்ளவும். ஒவ்வொரு சந்தர்ப்பத்திற்கும் ஏற்ப திருப்பி தருதல், பரிமாற்றம் அல்லது பணம் திரும்பப்பெறுதலை நாங்கள் ஏற்பாடு செய்வோம்.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+returns:points.condition.heading,Condition,තත්ත්වය,நிலை,
+returns:points.condition.body,"Items must be unused and in their original packaging, except where the problem was our mistake or the item was damaged in transit.","අපගේ වරදක් හෝ ප්‍රවාහනයේදී හානියක් වූ අවස්ථා හැර, භාණ්ඩ භාවිතා නොකළ හා එහි මුල් ඇසුරුමේම තිබිය යුතුය.","எங்கள் தவறு அல்லது போக்குவரத்தில் சேதம் ஏற்பட்ட சந்தர்ப்பங்களைத் தவிர, பொருட்கள் பயன்படுத்தப்படாமல் மற்றும் அதன் அசல் பேக்கேஜிங்கில் இருக்க வேண்டும்.",
+returns:points.refundMethod.heading,How Refunds Are Paid,මුදල් ආපසු ගෙවන ආකාරය,பணம் எவ்வாறு திரும்பப் பெறப்படுகிறது,
+returns:points.refundMethod.body,PLACEHOLDER — describe how refunds are issued here (e.g. bank transfer or cash).,PLACEHOLDER — මුදල් ආපසු ගෙවන ආකාරය (උදා: බැංකු මාරුව හෝ මුදල්) මෙහි විස්තර කරන්න.,PLACEHOLDER — பணம் திரும்பப் பெறப்படும் முறையை (எ.கா. வங்கி பரிமாற்றம் அல்லது பணம்) இங்கே விவரிக்கவும்.,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+returns:cta,Report a Problem on WhatsApp,WhatsApp හරහා ගැටලුවක් වාර්තා කරන්න,WhatsApp இல் ஒரு பிரச்சினையைப் புகாரளிக்கவும்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+privacy:metaTitle,Privacy Policy,පෞද්ගලිකත්ව ප්‍රතිපත්තිය,தனியுரிமைக் கொள்கை,
+privacy:metaDescription,"How Mudiyanse Auto Solutions collects, uses and protects your personal data.","Mudiyanse Auto Solutions ඔබගේ පුද්ගලික දත්ත රැස් කරන, භාවිතා කරන සහ ආරක්ෂා කරන ආකාරය.","Mudiyanse Auto Solutions உங்கள் தனிப்பட்ட தரவை எவ்வாறு சேகரிக்கிறது, பயன்படுத்துகிறது மற்றும் பாதுகாக்கிறது.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+privacy:heading,Privacy Policy,පෞද්ගලිකත්ව ප්‍රතිපත්තිය,தனியுரிமைக் கொள்கை,
+privacy:lastUpdated,Last updated: 12 October 2026,අවසන් වරට යාවත්කාලීන කළේ: 2026 ඔක්තෝබර් 12,கடைசியாக புதுப்பிக்கப்பட்டது: 12 அக்டோபர் 2026,
+privacy:sections.whoWeAre.heading,Who We Are,අපි කවුද,நாங்கள் யார்,
+privacy:sections.whoWeAre.body,"{{name}} (Business Registration No. {{brNumber}}) is a vehicle spare parts shop based in Mirigama, Sri Lanka, operating this storefront website.","{{name}} (ව්‍යාපාර ලියාපදිංචි අංකය {{brNumber}}) යනු ශ්‍රී ලංකාවේ මීරිගමේ පිහිටි, මෙම වෙබ් අඩවිය මෙහෙයවන වාහන අමතර කොටස් සාප්පුවකි.","{{name}} (வணிக பதிவு எண் {{brNumber}}) என்பது இலங்கை மிரிகமவை அமைந்துள்ள, இந்த இணையதளத்தை இயக்கும் வாகன உதிரி பாகங்கள் கடை.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+privacy:sections.whatWeCollect.heading,What We Collect,අපි රැස් කරන දේ,நாங்கள் சேகரிப்பது,
+privacy:sections.whatWeCollect.intro,"When you create an account, sign in, or place an order, we collect:","ඔබ ගිණුමක් සාදන විට, ප්‍රවේශ වන විට, හෝ ඇණවුමක් තබන විට, අපි රැස් කරන්නේ:","நீங்கள் கணக்கை உருவாக்கும்போது, உள்நுழையும்போது அல்லது ஆர்டர் செய்யும்போது, நாங்கள் சேகரிப்பது:",
+privacy:sections.whatWeCollect.items[0],Your name,ඔබගේ නම,உங்கள் பெயர்,
+privacy:sections.whatWeCollect.items[1],Phone number,දුරකථන අංකය,தொலைபேசி எண்,
+privacy:sections.whatWeCollect.items[2],Email address,විද්‍යුත් තැපැල් ලිපිනය,மின்னஞ்சல் முகவரி,
+privacy:sections.whatWeCollect.items[3],Delivery address,බෙදාහැරීමේ ලිපිනය,டெலிவரி முகவரி,
+privacy:sections.whatWeCollect.items[4],Order history,ඇණවුම් ඉතිහාසය,ஆர்டர் வரலாறு,
+privacy:sections.whatWeCollect.items[5],"Your Google profile name, email and photo, if you sign in with Google","ඔබ Google හරහා ප්‍රවේශ වන්නේ නම්, ඔබගේ Google පැතිකඩෙහි නම, විද්‍යුත් තැපෑල සහ ඡායාරූපය","நீங்கள் Google மூலம் உள்நுழைந்தால், உங்கள் Google சுயவிவரப் பெயர், மின்னஞ்சல் மற்றும் புகைப்படம்",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+privacy:sections.whyWeCollect.heading,Why We Collect It,අපි එය රැස් කරන්නේ ඇයි,நாங்கள் ஏன் சேகரிக்கிறோம்,
+privacy:sections.whyWeCollect.intro,We use this information to:,අපි මෙම තොරතුරු භාවිතා කරන්නේ:,இந்த தகவலை நாங்கள் பயன்படுத்துவது:,
+privacy:sections.whyWeCollect.items[0],Process and deliver your orders,ඔබගේ ඇණවුම් සැකසීමට සහ බෙදාහැරීමට,உங்கள் ஆர்டர்களைச் செயல்படுத்தவும் டெலிவரி செய்யவும்,
+privacy:sections.whyWeCollect.items[1],Contact you about your order,ඔබගේ ඇණවුම පිළිබඳ ඔබ හා සම්බන්ධ වීමට,உங்கள் ஆர்டர் குறித்து உங்களைத் தொடர்பு கொள்ள,
+privacy:sections.whyWeCollect.items[2],Provide customer support,පාරිභෝගික සේවා සැපයීමට,வாடிக்கையாளர் ஆதரவு வழங்க,
+privacy:sections.whyWeCollect.items[3],Send marketing messages — only if you opt in; we never send marketing without your consent,අලෙවිකරණ පණිවිඩ යැවීමට — ඔබ කැමැත්ත ලබා දුන්නේ නම් පමණි; ඔබගේ කැමැත්තෙන් තොරව අපි කිසි විටෙකත් අලෙවිකරණ පණිවිඩ නොයවමු,சந்தைப்படுத்தல் செய்திகளை அனுப்ப — நீங்கள் ஒப்புக்கொண்டால் மட்டுமே; உங்கள் ஒப்புதல் இல்லாமல் நாங்கள் ஒருபோதும் சந்தைப்படுத்தல் செய்திகளை அனுப்ப மாட்டோம்,
+privacy:sections.whoWeShareWith.heading,Who We Share It With,අප එය බෙදාගන්නේ කා සමඟද,நாங்கள் யாருடன் பகிர்கிறோம்,
+privacy:sections.whoWeShareWith.intro,We share information only as needed to run the shop:,සාප්පුව මෙහෙයවීමට අවශ්‍ය පරිදි පමණක් අපි තොරතුරු බෙදාගනිමු:,கடையை இயக்க தேவையான அளவிற்கு மட்டுமே நாங்கள் தகவலைப் பகிர்கிறோம்:,
+privacy:sections.whoWeShareWith.items[0],"Our courier partners (Transexpress, Sri Lanka Post) — to deliver your order","අපගේ කුරියර් හවුල්කරුවන් (Transexpress, Sri Lanka Post) — ඔබගේ ඇණවුම බෙදාහැරීමට","எங்கள் கூரியர் கூட்டாளர்கள் (Transexpress, Sri Lanka Post) — உங்கள் ஆர்டரை டெலிவரி செய்ய",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+privacy:sections.whoWeShareWith.items[1],Our hosting and database providers — to run this website,අපගේ හොස්ටින් සහ දත්ත සමුදා සපයන්නන් — මෙම වෙබ් අඩවිය ක්‍රියාත්මක කිරීමට,எங்கள் ஹோஸ்டிங் மற்றும் தரவுத்தள வழங்குநர்கள் — இந்த இணையதளத்தை இயக்க,
+privacy:sections.whoWeShareWith.items[2],Google — if you sign in with your Google account,Google — ඔබ ඔබගේ Google ගිණුමෙන් ප්‍රවේශ වන්නේ නම්,Google — நீங்கள் உங்கள் Google கணக்கில் உள்நுழைந்தால்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+privacy:sections.whoWeShareWith.items[3],WhatsApp — when you choose to contact us there,WhatsApp — ඔබ එහි අප අමතන්නේ නම්,WhatsApp — நீங்கள் அங்கு எங்களை தொடர்பு கொள்ள தேர்வு செய்தால்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+privacy:sections.whoWeShareWith.outro,Some of these providers may store data on servers outside Sri Lanka.,මෙම සපයන්නන්ගෙන් සමහරක් ශ්‍රී ලංකාවෙන් පිටත සේවාදායක මත දත්ත ගබඩා කළ හැක.,இந்த வழங்குநர்களில் சிலர் இலங்கைக்கு வெளியே உள்ள சேவையகங்களில் தரவை சேமிக்கலாம்.,
+privacy:sections.howLong.heading,How Long We Keep It,අපි එය තබාගන්නේ කොපමණ කාලයක්ද,நாங்கள் அதை எவ்வளவு காலம் வைத்திருக்கிறோம்,
+privacy:sections.howLong.body,PLACEHOLDER — specify how long account and order data is kept here.,PLACEHOLDER — ගිණුම් සහ ඇණවුම් දත්ත තබාගන්නා කාලසීමාව මෙහි සඳහන් කරන්න.,PLACEHOLDER — கணக்கு மற்றும் ஆர்டர் தரவு வைத்திருக்கப்படும் காலத்தை இங்கே குறிப்பிடவும்.,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+privacy:sections.security.heading,Security,ආරක්ෂාව,பாதுகாப்பு,
+privacy:sections.security.body,"We take reasonable steps to protect your information, including password hashing and restricting access to customer data within our team. No online system is 100% secure, but we work to keep your data safe.","මුරපද hash කිරීම සහ අපගේ කණ්ඩායම තුළ පාරිභෝගික දත්තවලට ප්‍රවේශය සීමා කිරීම ඇතුළුව, ඔබගේ තොරතුරු ආරක්ෂා කිරීමට අපි සාධාරණ පියවර ගනිමු. කිසිදු මාර්ගගත පද්ධතියක් 100% ආරක්ෂිත නොවේ, නමුත් ඔබගේ දත්ත ආරක්ෂිතව තබා ගැනීමට අපි කටයුතු කරමු.","கடவுச்சொல் ஹாஷிங் மற்றும் எங்கள் குழுவிற்குள் வாடிக்கையாளர் தரவிற்கான அணுகலைக் கட்டுப்படுத்துதல் உட்பட, உங்கள் தகவலைப் பாதுகாக்க நாங்கள் நியாயமான நடவடிக்கைகளை எடுக்கிறோம். எந்த ஆன்லைன் அமைப்பும் 100% பாதுகாப்பானது அல்ல, ஆனால் உங்கள் தரவை பாதுகாப்பாக வைத்திருக்க நாங்கள் பணியாற்றுகிறோம்.",si keeps English/Latin term — verify this is the intended everyday usage
+privacy:sections.yourChoices.heading,Your Choices,ඔබගේ තේරීම්,உங்கள் தேர்வுகள்,
+privacy:sections.yourChoices.body,"You can ask us for a copy of the personal data we hold about you, ask us to correct it, or ask us to delete it, by contacting us at {{email}}.","{{email}} හරහා අප අමතා, ඔබ පිළිබඳ අප සතුව ඇති පුද්ගලික දත්තවල පිටපතක් ඉල්ලා සිටීමට, එය නිවැරදි කිරීමට, හෝ එය මකා දැමීමට ඔබට ඉල්ලා සිටිය හැක.","{{email}} இல் எங்களை தொடர்பு கொண்டு, உங்களைப் பற்றி நாங்கள் வைத்திருக்கும் தனிப்பட்ட தரவின் நகலைக் கோரலாம், அதைச் சரிசெய்யக் கோரலாம் அல்லது அதை நீக்கக் கோரலாம்.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+privacy:sections.contact.heading,Contact Us About Privacy,පෞද්ගලිකත්වය පිළිබඳ අප අමතන්න,தனியுரிமை குறித்து எங்களை தொடர்பு கொள்ள,
+privacy:sections.contact.body,"For any questions about this policy or your data, email us at {{email}}.","මෙම ප්‍රතිපත්තිය හෝ ඔබගේ දත්ත පිළිබඳ ඕනෑම ප්‍රශ්නයක් සඳහා, {{email}} වෙත විද්‍යුත් තැපෑලක් එවන්න.","இந்த கொள்கை அல்லது உங்கள் தரவு குறித்த எந்த கேள்விகளுக்கும், {{email}} க்கு மின்னஞ்சல் அனுப்பவும்.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+privacy:legalNote,This policy is written with reference to Sri Lanka's Personal Data Protection Act No. 9 of 2022. We do not claim any certification or formal compliance assessment.,මෙම ප්‍රතිපත්තිය ශ්‍රී ලංකාවේ Personal Data Protection Act No. 9 of 2022 (අංක 9 දරන 2022 පුද්ගලික දත්ත ආරක්ෂණ පනත) සැලකිල්ලට ගනිමින් ලියා ඇත. අපි කිසිදු සහතිකයක් හෝ විධිමත් අනුකූලතා තක්සේරුවක් ප්‍රකාශ නොකරමු.,"இந்த கொள்கை இலங்கையின் Personal Data Protection Act No. 9 of 2022 (எண் 9, 2022ன் தனிப்பட்ட தரவு பாதுகாப்புச் சட்டம்) குறிப்பில் எழுதப்பட்டுள்ளது. நாங்கள் எந்த சான்றிதழையும் அல்லது முறையான இணக்கத் தரத்தையும் கூறவில்லை.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+terms:metaTitle,Terms of Sale,විකුණුම් නියමයන්,விற்பனை விதிமுறைகள்,
+terms:metaDescription,Terms of sale for orders placed with Mudiyanse Auto Solutions.,Mudiyanse Auto Solutions වෙතින් තබන ඇණවුම් සඳහා විකුණුම් නියමයන්.,Mudiyanse Auto Solutions இல் வைக்கப்படும் ஆர்டர்களுக்கான விற்பனை விதிமுறைகள்.,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+terms:heading,Terms of Sale,විකුණුම් නියමයන්,விற்பனை விதிமுறைகள்,
+terms:lastUpdated,Last updated: 12 October 2026,අවසන් වරට යාවත්කාලීන කළේ: 2026 ඔක්තෝබර් 12,கடைசியாக புதுப்பிக்கப்பட்டது: 12 அக்டோபர் 2026,
+terms:sections.prices.heading,Prices,මිල ගණන්,விலைகள்,
+terms:sections.prices.body,All prices are shown in Sri Lankan Rupees (LKR) and may change without notice.,"සියලුම මිල ගණන් ශ්‍රී ලංකා රුපියල් (LKR) වලින් දැක්වෙන අතර, කිසිදු දැනුම්දීමකින් තොරව වෙනස් විය හැක.","அனைத்து விலைகளும் இலங்கை ரூபாவில் (LKR) காட்டப்படுகின்றன, மேலும் அறிவிப்பின்றி மாறலாம்.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+terms:sections.stock.heading,Stock Availability,තොග ලබා ගත හැකි බව,கையிருப்பு கிடைக்கும் தன்மை,
+terms:sections.stock.body,"Items are subject to availability. Stock levels shown on the site are live, but an item can occasionally sell out between browsing and checkout.","භාණ්ඩ ලබා ගත හැකි බව මත රඳා පවතී. වෙබ් අඩවියේ පෙන්වන තොග මට්ටම් සජීවීව යාවත්කාලීන වේ, නමුත් ඔබ බැලීමේ සිට ගෙවීම දක්වා කාලය තුළ භාණ්ඩයක් විටින් විට විකුණී ගොස් තිබිය හැක.","பொருட்கள் கிடைக்கும் தன்மைக்கு உட்பட்டவை. தளத்தில் காட்டப்படும் கையிருப்பு அளவுகள் நேரடியானவை, ஆனால் பார்வையிடுவதற்கும் செக்அவுட் செய்வதற்கும் இடையில் ஒரு பொருள் எப்போதாவது தீர்ந்துவிடலாம்.",
+terms:sections.confirmation.heading,Order Confirmation,ඇණවුම් තහවුරු කිරීම,ஆர்டர் உறுதிப்படுத்தல்,
+terms:sections.confirmation.body,All orders are Cash on Delivery and may be confirmed by phone or WhatsApp before dispatch.,"සියලුම ඇණවුම් ගෙදරදී මුදල් ගෙවීම මගින් සිදු කෙරෙන අතර, යැවීමට පෙර දුරකථනයෙන් හෝ WhatsApp හරහා තහවුරු කරගත හැක.","அனைத்து ஆர்டர்களும் டெலிவரியின் போது பணம் செலுத்தும் முறையில் உள்ளன, மேலும் அனுப்புவதற்கு முன் தொலைபேசி அல்லது WhatsApp மூலம் உறுதிப்படுத்தப்படலாம்.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+terms:sections.delivery.heading,Delivery,බෙදාහැරීම,டெலிவரி,
+terms:sections.delivery.body,"See our <1>Delivery Information</1> page for courier options, areas and fees.","කුරියර් විකල්ප, ප්‍රදේශ සහ ගාස්තු සඳහා අපගේ <1>බෙදාහැරීමේ තොරතුරු</1> පිටුව බලන්න.","கூரியர் விருப்பங்கள், பகுதிகள் மற்றும் கட்டணங்களுக்கு எங்கள் <1>டெலிவரி தகவல்</1> பக்கத்தைப் பார்க்கவும்.",
+terms:sections.returns.heading,Returns,ආපසු භාරදීම්,திரும்பப்பெறுதல்,
+terms:sections.returns.body,"See our <1>Returns & Refunds</1> policy for how we handle returns, exchanges and refunds.","ආපසු භාරදීම්, හුවමාරු සහ මුදල් ආපසු ගෙවීම් අප හැසිරවන ආකාරය සඳහා අපගේ <1>ආපසු භාරදීම් සහ මුදල් ආපසු ගෙවීම්</1> ප්‍රතිපත්තිය බලන්න.","திரும்பப்பெறுதல், பரிமாற்றம் மற்றும் பணம் திரும்பப்பெறுதலை நாங்கள் எவ்வாறு கையாள்கிறோம் என்பதற்கு எங்கள் <1>திரும்பப்பெறுதல் & பணத்தைத் திரும்பப்பெறுதல்</1> கொள்கையைப் பார்க்கவும்.",
+terms:sections.law.heading,Governing Law,පාලක නීතිය,ஆளும் சட்டம்,
+terms:sections.law.body,These terms are governed by the laws of Sri Lanka.,මෙම නියමයන් ශ්‍රී ලංකාවේ නීති මගින් පාලනය වේ.,இந்த விதிமுறைகள் இலங்கையின் சட்டங்களால் நிர்வகிக்கப்படுகின்றன.,

@@ -5,7 +5,8 @@
     "title": "Your cart",
     "viewFullCart": "View full cart",
     "checkout": "Checkout",
-    "deliveryNote": "Delivery calculated at checkout",
+    "deliveryNote": "Delivery from Rs. {{price}} · final fee confirmed before dispatch",
+    "viewDeliveryOptions": "View delivery options",
     "closeCart": "Close cart"
   },
   "empty": { "title": "Your cart is empty", "subtitle": "Browse our catalog to add items", "cta": "Start shopping" },
@@ -27,7 +28,8 @@
   "summary": {
     "subtotal": "Subtotal",
     "delivery": "Delivery",
-    "deliveryCalculated": "Calculated at checkout",
+    "deliveryCalculated": "From Rs. {{price}}",
+    "viewDeliveryOptions": "View delivery options",
     "total": "Total",
     "freeDeliveryUnlocked": "You've unlocked free delivery 🎉",
     "freeDeliveryProgress": "Add {{remaining}} more for free delivery",

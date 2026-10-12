@@ -1,10 +1,16 @@
 {
   "appName": "Mudiyanse Auto Solutions",
   "tagline": "Auto Solutions",
-  "announcementBar": "🚚 Free Island-wide Delivery on Orders Above Rs. 5,000 · 100% Genuine Parts Guaranteed",
+  "home": {
+    "metaTitle": "Mudiyanse Auto Solutions | Genuine Vehicle Spare Parts in Sri Lanka",
+    "metaDescription": "Shop genuine, quality-checked spare parts for three-wheelers, bikes, cars and SUVs. Island-wide delivery, Cash on Delivery, based in Mirigama, Sri Lanka."
+  },
+  "announcementBar": "🚚 Island-wide Delivery, Cash on Delivery · 100% Genuine Parts Guaranteed",
   "nav": {
     "store": "Store",
     "myOrders": "My Orders",
+    "contact": "Contact",
+    "delivery": "Delivery",
     "categories": "Categories",
     "shopByCategory": "Shop by Category",
     "cart": "Cart",

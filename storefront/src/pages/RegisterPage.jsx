@@ -4,7 +4,7 @@ import { registerUser } from '../api/services';
 import toast from 'react-hot-toast';
 import { User, Mail, Lock, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 
 export default function RegisterPage() {
@@ -117,6 +117,15 @@ export default function RegisterPage() {
               <CheckCircle2 size={14} style={{ flexShrink: 0 }} /> {t('register.instantAccess')}
             </p>
           </div>
+          <p style={{ fontSize: '11.5px', color: 'var(--text-muted)', textAlign: 'center', marginTop: '14px', lineHeight: 1.6 }}>
+            <Trans
+              i18nKey="auth:register.termsNotice"
+              components={[
+                <Link key="0" to="/terms" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', fontWeight: 700 }} />,
+                <Link key="2" to="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', fontWeight: 700 }} />,
+              ]}
+            />
+          </p>
         </div>
         <p style={{ textAlign: 'center', marginTop: '18px', fontSize: '13px', color: 'var(--text-muted)' }}>
           {t('register.alreadyMember')} <Link to="/login" state={location.state} style={{ color: 'var(--accent-primary)', fontWeight: 700, textDecoration: 'none' }}>{t('register.signIn')}</Link>

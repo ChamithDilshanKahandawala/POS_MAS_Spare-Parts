@@ -19,12 +19,13 @@
     "trackMyOrder": "Track My Order"
   },
   "support": {
-    "heading": "Support",
+    "heading": "Company & Support",
+    "aboutUs": "About Us",
+    "contactUs": "Contact Us",
+    "deliveryInformation": "Delivery Information",
     "privacyPolicy": "Privacy Policy",
     "termsConditions": "Terms & Conditions",
-    "returnRefundPolicy": "Return & Refund Policy",
-    "shippingInformation": "Shipping Information",
-    "faq": "FAQ"
+    "returnRefundPolicy": "Returns & Refunds"
   },
   "contact": {
     "heading": "Get In Touch",
@@ -40,6 +41,7 @@
   },
   "bottomBar": {
     "rights": "All rights reserved. Built with ❤️ in Sri Lanka.",
-    "cashOnDelivery": "Cash on Delivery"
+    "cashOnDelivery": "Cash on Delivery",
+    "brNumber": "Business Registration No. {{brNumber}}"
   }
 }

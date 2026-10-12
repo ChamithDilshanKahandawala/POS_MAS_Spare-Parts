@@ -13,10 +13,9 @@ import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
 import ProductGrid from '../components/product/ProductGrid';
 import { useTranslation } from 'react-i18next';
 import { slugify } from '../utils/slugify';
-import { CATEGORIES } from '../config/store';
+import { CATEGORIES, SHOP_INFO } from '../config/store';
 
-const SHOP_NAME = 'Mudiyanse Auto Solutions';
-const DEFAULT_TITLE = 'Mudiyanse Auto Solutions · Spare Parts POS';
+const DEFAULT_TITLE = `${SHOP_INFO.name} · Genuine Vehicle Spare Parts`;
 const PAGE_SIZE = 24;
 
 function SkeletonBar({ height, width }) {
@@ -116,7 +115,7 @@ export default function CategoryPage() {
 
   useEffect(() => {
     if (!category) return;
-    document.title = `${category} | ${SHOP_NAME}`;
+    document.title = `${category} | ${SHOP_INFO.name}`;
     return () => { document.title = DEFAULT_TITLE; };
   }, [category]);
 

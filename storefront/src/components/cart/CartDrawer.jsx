@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 // `motion` is used via the <motion.div> member expression below; this project's
 // flat eslint config has no eslint-plugin-react, so no-unused-vars can't see
 // JSX member-expression usage (only direct <Identifier> tags).
@@ -12,8 +12,9 @@ import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion';
 import useLiveStock from '../../hooks/useLiveStock';
 import CartLineItem from './CartLineItem';
 import EmptyCart from './EmptyCart';
-import { formatLKR } from '../../utils/formatLKR';
+import { formatLKR, formatAmount } from '../../utils/formatLKR';
 import { useTranslation } from 'react-i18next';
+import { DELIVERY_OPTIONS } from '../../config/store';
 
 export default function CartDrawer() {
   const { t } = useTranslation('cart');
@@ -209,7 +210,13 @@ export default function CartDrawer() {
                   <span style={{ color: 'var(--text-primary)' }}>{t('summary.total')}</span>
                   <span style={{ color: 'var(--accent-primary)', fontVariantNumeric: 'tabular-nums' }}>{formatLKR(totalAmount)}</span>
                 </div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '14px' }}>{t('drawer.deliveryNote')}</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '14px' }}>
+                  {t('drawer.deliveryNote', { price: formatAmount(DELIVERY_OPTIONS[0].pricing.westernFirstKg) })}
+                  {' · '}
+                  <Link to="/delivery" onClick={close} style={{ color: 'var(--accent-primary)', fontWeight: 700, textDecoration: 'none' }}>
+                    {t('drawer.viewDeliveryOptions')}
+                  </Link>
+                </div>
                 <button
                   className="btn-primary"
                   onClick={handleCheckout}

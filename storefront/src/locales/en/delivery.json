@@ -1,0 +1,25 @@
+{
+  "metaTitle": "Delivery Information",
+  "metaDescription": "Delivery options, areas and fees for Mudiyanse Auto Solutions orders across Sri Lanka.",
+  "heading": "Delivery Information",
+  "subtitle": "We deliver island-wide through the following couriers.",
+  "etaLabel": "{{days}} days",
+  "codAvailable": "Cash on Delivery available",
+  "codNotAvailable": "No Cash on Delivery",
+  "options": {
+    "transexpress": {
+      "name": "Transexpress Courier",
+      "westernPricing": "Western Province: first 1 kg from Rs. {{price}}",
+      "otherPricing": "Other areas: Rs. {{min}}–{{max}} for the first 1 kg, depending on distance",
+      "additionalPricing": "Each additional 1 kg: Rs. {{price}}"
+    },
+    "slpost": {
+      "name": "SL Speed Post (Sri Lanka Post)",
+      "anywherePricing": "Anywhere in Sri Lanka: Rs. {{price}} for the first 1 kg",
+      "additionalPricing": "Each additional 1 kg: Rs. {{price}}",
+      "contactNote": "To use Speed Post, contact us on WhatsApp before ordering to arrange payment."
+    }
+  },
+  "feeNote": "The final delivery fee depends on the parcel weight. We'll confirm it with you by phone or WhatsApp before dispatch.",
+  "whatsappCta": "Ask About Delivery on WhatsApp"
+}

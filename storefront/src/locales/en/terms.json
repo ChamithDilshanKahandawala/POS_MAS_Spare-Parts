@@ -1,0 +1,32 @@
+{
+  "metaTitle": "Terms of Sale",
+  "metaDescription": "Terms of sale for orders placed with Mudiyanse Auto Solutions.",
+  "heading": "Terms of Sale",
+  "lastUpdated": "Last updated: 12 October 2026",
+  "sections": {
+    "prices": {
+      "heading": "Prices",
+      "body": "All prices are shown in Sri Lankan Rupees (LKR) and may change without notice."
+    },
+    "stock": {
+      "heading": "Stock Availability",
+      "body": "Items are subject to availability. Stock levels shown on the site are live, but an item can occasionally sell out between browsing and checkout."
+    },
+    "confirmation": {
+      "heading": "Order Confirmation",
+      "body": "All orders are Cash on Delivery and may be confirmed by phone or WhatsApp before dispatch."
+    },
+    "delivery": {
+      "heading": "Delivery",
+      "body": "See our <1>Delivery Information</1> page for courier options, areas and fees."
+    },
+    "returns": {
+      "heading": "Returns",
+      "body": "See our <1>Returns & Refunds</1> policy for how we handle returns, exchanges and refunds."
+    },
+    "law": {
+      "heading": "Governing Law",
+      "body": "These terms are governed by the laws of Sri Lanka."
+    }
+  }
+}

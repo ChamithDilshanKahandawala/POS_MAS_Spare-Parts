@@ -1,0 +1,26 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "metaTitle": "බෙදාහැරීමේ තොරතුරු",
+  "metaDescription": "Mudiyanse Auto Solutions ඇණවුම් සඳහා ශ්‍රී ලංකාව පුරා බෙදාහැරීමේ විකල්ප, ප්‍රදේශ සහ ගාස්තු.",
+  "heading": "බෙදාහැරීමේ තොරතුරු",
+  "subtitle": "අපි පහත කුරියර් සේවා හරහා දිවයින පුරා බෙදා හරිමු.",
+  "etaLabel": "දින {{days}}",
+  "codAvailable": "ගෙදරදී මුදල් ගෙවීම ලබා ගත හැක",
+  "codNotAvailable": "ගෙදරදී මුදල් ගෙවීම නොමැත",
+  "options": {
+    "transexpress": {
+      "name": "Transexpress Courier",
+      "westernPricing": "බස්නාහිර පළාත: පළමු කිලෝග්‍රෑම් 1 සඳහා රු. {{price}} සිට",
+      "otherPricing": "අනෙකුත් ප්‍රදේශ: දුර අනුව පළමු කිලෝග්‍රෑම් 1 සඳහා රු. {{min}}–{{max}}",
+      "additionalPricing": "අමතර සෑම කිලෝග්‍රෑම් 1 කටම: රු. {{price}}"
+    },
+    "slpost": {
+      "name": "SL Speed Post (ශ්‍රී ලංකා තැපැල් දෙපාර්තමේන්තුව)",
+      "anywherePricing": "ශ්‍රී ලංකාව තුළ ඕනෑම තැනකට: පළමු කිලෝග්‍රෑම් 1 සඳහා රු. {{price}}",
+      "additionalPricing": "අමතර සෑම කිලෝග්‍රෑම් 1 කටම: රු. {{price}}",
+      "contactNote": "Speed Post භාවිතා කිරීමට, ගෙවීම සැලසුම් කිරීම සඳහා ඇණවුම් කිරීමට පෙර WhatsApp හරහා අප අමතන්න."
+    }
+  },
+  "feeNote": "අවසාන බෙදාහැරීමේ ගාස්තුව පාර්සලයේ බරට අනුව වෙනස් වේ. යැවීමට පෙර අපි එය දුරකථනයෙන් හෝ WhatsApp හරහා ඔබ සමඟ තහවුරු කරගන්නෙමු.",
+  "whatsappCta": "බෙදාහැරීම ගැන WhatsApp හරහා අසන්න"
+}

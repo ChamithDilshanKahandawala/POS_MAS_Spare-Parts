@@ -6,7 +6,8 @@
     "title": "ඔබගේ කරත්තය",
     "viewFullCart": "සම්පූර්ණ කරත්තය බලන්න",
     "checkout": "ගෙවීමට යන්න",
-    "deliveryNote": "බෙදාහැරීම ගෙවීමේදී ගණනය කෙරේ",
+    "deliveryNote": "බෙදාහැරීම රු. {{price}} සිට · අවසාන ගාස්තුව යැවීමට පෙර තහවුරු කෙරේ",
+    "viewDeliveryOptions": "බෙදාහැරීමේ විකල්ප බලන්න",
     "closeCart": "කරත්තය වසන්න"
   },
   "empty": { "title": "ඔබගේ කරත්තය හිස්ය", "subtitle": "භාණ්ඩ එකතු කිරීමට අපගේ නාමාවලිය බලන්න", "cta": "සාප්පු සවාරිය ආරම්භ කරන්න" },
@@ -28,7 +29,8 @@
   "summary": {
     "subtotal": "උප එකතුව",
     "delivery": "බෙදාහැරීම",
-    "deliveryCalculated": "ගෙවීමේදී ගණනය කෙරේ",
+    "deliveryCalculated": "රු. {{price}} සිට",
+    "viewDeliveryOptions": "බෙදාහැරීමේ විකල්ප බලන්න",
     "total": "එකතුව",
     "freeDeliveryUnlocked": "ඔබ නොමිලේ බෙදාහැරීම අගුළු හරින ලදී 🎉",
     "freeDeliveryProgress": "නොමිලේ බෙදාහැරීම සඳහා තව {{remaining}}ක් එකතු කරන්න",

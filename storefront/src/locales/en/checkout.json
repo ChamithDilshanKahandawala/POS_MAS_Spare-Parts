@@ -8,10 +8,12 @@
     "districtRequired": "District is required",
     "phone1Invalid": "Phone Number 1 is invalid (e.g. 0771234567)",
     "phone2Invalid": "Phone Number 2 is invalid (e.g. 0771234567)",
+    "termsRequired": "Please agree to the Terms and Returns policy to continue",
     "checkoutFailed": "Checkout failed"
   },
   "delivery": {
     "heading": "1. Delivery Details",
+    "courierNote": "Delivery: Transexpress Courier (Cash on Delivery)",
     "fullName": "Full Name *",
     "fullNamePlaceholder": "Enter your full name",
     "streetAddress": "Street Address *",
@@ -35,11 +37,13 @@
     "qtyLine": "Qty: {{count}} × {{price}}",
     "subtotal": "Subtotal",
     "shippingEstimate": "Shipping Estimate",
-    "calculatedAtDelivery": "Calculated at Delivery",
+    "calculatedAtDelivery": "From Rs. {{price}}",
+    "viewDeliveryOptions": "View delivery options",
     "total": "Total",
     "processing": "Processing...",
     "placeOrder": "Place Order",
-    "terms": "By placing your order, you agree to our Terms of Service and Privacy Policy."
+    "termsCheckbox": "I agree to the <1>Terms</1> and <3>Returns</3> policy",
+    "privacyNotice": "Your information will be used to process your order. See our <1>Privacy Policy</1>."
   },
   "districts": {
     "Ampara": "Ampara",

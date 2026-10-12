@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useNavigate, Link } from 'react-router-dom';
+import { Trans, useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { createSale } from '../api/services';
 import toast from 'react-hot-toast';
 import { Truck, Phone, Check, ArrowLeft, ShieldCheck, ShoppingCart, User, MapPin, Map, Loader2 } from 'lucide-react';
-import { formatLKR } from '../utils/formatLKR';
+import { formatLKR, formatAmount } from '../utils/formatLKR';
+import { DELIVERY_OPTIONS } from '../config/store';
 
 // This page only ever mounts via the /checkout route, which is wrapped in
 // <CustomerRoute> (see App.jsx) — a logged-out visitor, or a non-customer
@@ -40,6 +41,7 @@ export default function CheckoutPage() {
   }));
 
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   // Set the instant checkout succeeds, so the empty-cart redirect below can't
   // fire off the back of clearCart() and race the navigate() call.
   const orderPlacedRef = useRef(false);
@@ -89,6 +91,8 @@ export default function CheckoutPage() {
       const p2Clean = formData.phone2.replace(/\s+/g, '');
       if (!phoneRegex.test(p2Clean)) return toast.error(t('toast.phone2Invalid'));
     }
+
+    if (!agreedToTerms) return toast.error(t('toast.termsRequired'));
 
     setIsCheckingOut(true);
     try {
@@ -141,10 +145,16 @@ export default function CheckoutPage() {
         <div style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
           <div className="glass-card" style={{ padding: '32px', borderRadius: '24px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
               {t('delivery.heading')}
             </h2>
-            
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '12.5px', fontWeight: 600,
+              color: 'var(--text-muted)', marginBottom: '24px',
+            }}>
+              <Truck size={13} color="var(--accent-primary)" /> {t('delivery.courierNote')}
+            </div>
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
               
               <div>
@@ -272,9 +282,16 @@ export default function CheckoutPage() {
                 <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>{t('summary.subtotal')}</span>
                 <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{formatLKR(totalAmount)}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                 <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>{t('summary.shippingEstimate')}</span>
-                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{t('summary.calculatedAtDelivery')}</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                  {t('summary.calculatedAtDelivery', { price: formatAmount(DELIVERY_OPTIONS[0].pricing.westernFirstKg) })}
+                </span>
+              </div>
+              <div style={{ textAlign: 'right', marginBottom: '12px' }}>
+                <Link to="/delivery" style={{ fontSize: '11.5px', color: 'var(--accent-primary)', fontWeight: 700, textDecoration: 'none' }}>
+                  {t('summary.viewDeliveryOptions')}
+                </Link>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
                 <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>{t('summary.total')}</span>
@@ -282,11 +299,29 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            <button 
-              className="btn-primary" 
+            <label style={{
+              display: 'flex', alignItems: 'flex-start', gap: '9px', marginBottom: '14px',
+              fontSize: '13px', color: 'var(--text-secondary)', cursor: 'pointer', lineHeight: 1.5,
+            }}>
+              <input
+                type="checkbox" checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                style={{ marginTop: '2px', width: '16px', height: '16px', flexShrink: 0, accentColor: 'var(--accent-primary)' }}
+              />
+              <Trans
+                i18nKey="checkout:summary.termsCheckbox"
+                components={[
+                  <Link key="0" to="/terms" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', fontWeight: 700 }} />,
+                  <Link key="2" to="/returns" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', fontWeight: 700 }} />,
+                ]}
+              />
+            </label>
+
+            <button
+              className="btn-primary"
               onClick={handleCheckout}
               disabled={isCheckingOut || cart.length === 0}
-              style={{ width: '100%', padding: '16px', borderRadius: '16px', fontSize: '16px', fontWeight: 800, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', background: '#10b981' }}
+              style={{ width: '100%', padding: '16px', borderRadius: '16px', fontSize: '16px', fontWeight: 800, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', background: '#10b981', opacity: isCheckingOut ? 0.8 : 1 }}
             >
               {isCheckingOut ? (
                 <>
@@ -301,7 +336,10 @@ export default function CheckoutPage() {
               )}
             </button>
             <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '12px', color: 'var(--text-muted)', padding: '0 20px' }}>
-              {t('summary.terms')}
+              <Trans
+                i18nKey="checkout:summary.privacyNotice"
+                components={[<Link key="0" to="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', fontWeight: 700 }} />]}
+              />
             </div>
           </div>
         </div>

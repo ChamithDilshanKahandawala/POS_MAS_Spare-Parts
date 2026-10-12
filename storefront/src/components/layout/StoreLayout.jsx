@@ -8,7 +8,7 @@ import { motion } from 'motion/react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useCart } from '../../context/CartContext';
-import { ShoppingBag, LogOut, Package, Moon, Sun, ShoppingCart, Menu, X, User, ChevronDown, LayoutGrid } from 'lucide-react';
+import { ShoppingBag, LogOut, Package, Moon, Sun, ShoppingCart, Menu, X, User, ChevronDown, LayoutGrid, Phone, Truck } from 'lucide-react';
 import Footer from './footer';
 import LanguageBanner from './LanguageBanner';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -85,6 +85,8 @@ export default function StoreLayout() {
           {[
             { to: '/', label: t('nav.store'), icon: ShoppingBag },
             ...(user ? [{ to: '/orders', label: t('nav.myOrders'), icon: Package }] : []),
+            { to: '/contact', label: t('nav.contact'), icon: Phone },
+            { to: '/delivery', label: t('nav.delivery'), icon: Truck },
           ].map(link => {
             const Icon = link.icon;
             const active = isActive(link.to);
@@ -329,6 +331,18 @@ export default function StoreLayout() {
               textDecoration: 'none', fontWeight: 600, fontSize: '14px',
             }}><Package size={16} /> {t('nav.myOrders')}</Link>
           )}
+          <Link to="/contact" onClick={() => setMobileMenuOpen(false)} style={{
+            display: 'flex', alignItems: 'center', gap: '8px', padding: '12px', borderRadius: '10px',
+            color: isActive('/contact') ? 'var(--accent-primary)' : 'var(--text-secondary)',
+            background: isActive('/contact') ? 'var(--accent-light)' : 'transparent',
+            textDecoration: 'none', fontWeight: 600, fontSize: '14px',
+          }}><Phone size={16} /> {t('nav.contact')}</Link>
+          <Link to="/delivery" onClick={() => setMobileMenuOpen(false)} style={{
+            display: 'flex', alignItems: 'center', gap: '8px', padding: '12px', borderRadius: '10px',
+            color: isActive('/delivery') ? 'var(--accent-primary)' : 'var(--text-secondary)',
+            background: isActive('/delivery') ? 'var(--accent-light)' : 'transparent',
+            textDecoration: 'none', fontWeight: 600, fontSize: '14px',
+          }}><Truck size={16} /> {t('nav.delivery')}</Link>
           <button
             onClick={() => setMobileCategoriesOpen((o) => !o)}
             style={{

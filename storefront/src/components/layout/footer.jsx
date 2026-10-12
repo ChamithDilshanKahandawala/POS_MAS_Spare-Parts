@@ -8,7 +8,7 @@ import {
   ChevronRight, Send,
 } from 'lucide-react';
 
-import { WHATSAPP_NUMBER as WHATSAPP, PAYMENT_BADGES } from '../../config/store';
+import { SHOP_INFO, PAYMENT_BADGES, formatPhoneDisplay } from '../../config/store';
 import { slugify } from '../../utils/slugify';
 
 export default function Footer() {
@@ -47,25 +47,26 @@ export default function Footer() {
   ];
 
   const supportLinks = [
-    { label: t('support.privacyPolicy'),         to: '#' },
-    { label: t('support.termsConditions'),       to: '#' },
-    { label: t('support.returnRefundPolicy'),    to: '#' },
-    { label: t('support.shippingInformation'),   to: '#' },
-    { label: t('support.faq'),                   to: '#' },
+    { label: t('support.aboutUs'),               to: '/about' },
+    { label: t('support.contactUs'),             to: '/contact' },
+    { label: t('support.deliveryInformation'),   to: '/delivery' },
+    { label: t('support.returnRefundPolicy'),    to: '/returns' },
+    { label: t('support.privacyPolicy'),         to: '/privacy' },
+    { label: t('support.termsConditions'),       to: '/terms' },
   ];
 
   const socials = [
-    { icon: <Facebook size={17} />,      label: 'Facebook',  href: '#',                          color: '#1877f2' },
-    { icon: <Instagram size={17} />,     label: 'Instagram', href: '#',                          color: '#e1306c' },
-    { icon: <Youtube size={17} />,       label: 'YouTube',   href: '#',                          color: '#ff0000' },
-    { icon: <MessageCircle size={17} />, label: 'WhatsApp',  href: `https://wa.me/${WHATSAPP}`, color: '#25d366' },
+    { icon: <Facebook size={17} />,      label: 'Facebook',  href: '#',                                 color: '#1877f2' },
+    { icon: <Instagram size={17} />,     label: 'Instagram', href: '#',                                 color: '#e1306c' },
+    { icon: <Youtube size={17} />,       label: 'YouTube',   href: '#',                                 color: '#ff0000' },
+    { icon: <MessageCircle size={17} />, label: 'WhatsApp',  href: `https://wa.me/${SHOP_INFO.whatsapp}`, color: '#25d366' },
   ];
 
   const contactItems = [
-    { icon: <MapPin size={14} />, text: t('contact.address'),        color: '#e67e22' },
-    { icon: <Phone size={14} />,  text: '+94 75 720 3766',           color: '#10b981' },
-    { icon: <Mail size={14} />,   text: 'mudiyanseautosolutions@gmail.com', color: '#f59e0b' },
-    { icon: <Clock size={14} />,  text: t('contact.hours'),          color: '#ec4899' },
+    { icon: <MapPin size={14} />, text: `${SHOP_INFO.addressLines.join(', ')}, ${SHOP_INFO.district}, ${SHOP_INFO.country}`, color: '#e67e22' },
+    ...SHOP_INFO.phones.map((phone) => ({ icon: <Phone size={14} />, text: formatPhoneDisplay(phone), color: '#10b981', href: `tel:${phone}` })),
+    { icon: <Mail size={14} />, text: SHOP_INFO.email, color: '#f59e0b', href: `mailto:${SHOP_INFO.email}` },
+    { icon: <Clock size={14} />, text: t('contact.hours'), color: '#ec4899' },
   ];
 
   /* ─── shared style helpers ──────────────────────────────── */
@@ -253,20 +254,24 @@ export default function Footer() {
 
             {/* Contact list */}
             <div style={{ marginBottom: '22px' }}>
-              {contactItems.map((c) => (
-                <div key={c.text} style={{
-                  display: 'flex', alignItems: 'flex-start', gap: '10px',
-                  marginBottom: '10px', fontSize: '13px', color: 'var(--text-muted)',
-                }}>
-                  <span style={{ color: c.color, flexShrink: 0, marginTop: '1px', display: 'flex' }}>{c.icon}</span>
-                  {c.text}
-                </div>
-              ))}
+              {contactItems.map((c) => {
+                const Tag = c.href ? 'a' : 'div';
+                return (
+                  <Tag key={c.text} href={c.href} style={{
+                    display: 'flex', alignItems: 'flex-start', gap: '10px',
+                    marginBottom: '10px', fontSize: '13px', color: 'var(--text-muted)',
+                    textDecoration: 'none',
+                  }}>
+                    <span style={{ color: c.color, flexShrink: 0, marginTop: '1px', display: 'flex' }}>{c.icon}</span>
+                    {c.text}
+                  </Tag>
+                );
+              })}
             </div>
 
             {/* WhatsApp CTA */}
             <a
-              href={`https://wa.me/${WHATSAPP}`}
+              href={`https://wa.me/${SHOP_INFO.whatsapp}`}
               target="_blank" rel="noreferrer"
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '9px',
@@ -351,11 +356,16 @@ export default function Footer() {
           display: 'flex', justifyContent: 'space-between',
           alignItems: 'center', flexWrap: 'wrap', gap: '10px',
         }}>
-          <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
-            © {year}{' '}
-            <strong style={{ color: 'var(--text-secondary)' }}>Mudiyanse Auto Solutions</strong>
-            {'. '}{t('bottomBar.rights')}
-          </p>
+          <div>
+            <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
+              © {year}{' '}
+              <strong style={{ color: 'var(--text-secondary)' }}>{SHOP_INFO.name}</strong>
+              {'. '}{t('bottomBar.rights')}
+            </p>
+            <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '4px 0 0' }}>
+              {t('bottomBar.brNumber', { brNumber: SHOP_INFO.brNumber })}
+            </p>
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             {PAYMENT_BADGES.map((pm) => (
               <span key={pm.code} style={{

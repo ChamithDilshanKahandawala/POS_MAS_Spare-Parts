@@ -14,10 +14,9 @@ import ProductImage from '../components/product/ProductImage';
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
 import { useTranslation } from 'react-i18next';
 import { formatLKR } from '../utils/formatLKR';
-import { WHATSAPP_NUMBER, getDeliveryEstimate } from '../config/store';
+import { SHOP_INFO, getDeliveryEstimate } from '../config/store';
 
-const SHOP_NAME = 'Mudiyanse Auto Solutions';
-const DEFAULT_TITLE = 'Mudiyanse Auto Solutions · Spare Parts POS';
+const DEFAULT_TITLE = `${SHOP_INFO.name} · Genuine Vehicle Spare Parts`;
 
 // order_status enum, from backend/models/Sale.js: Pending/Processing/
 // Shipped/Delivered map onto the 4-step happy path; Cancelled/Returned are
@@ -89,7 +88,7 @@ export default function OrderSuccessPage() {
 
   useEffect(() => {
     if (!order) return;
-    document.title = `Order ${order.invoice_number} | ${SHOP_NAME}`;
+    document.title = `Order ${order.invoice_number} | ${SHOP_INFO.name}`;
     return () => { document.title = DEFAULT_TITLE; };
   }, [order]);
 
@@ -136,8 +135,8 @@ export default function OrderSuccessPage() {
   const currentStep = STATUS_TO_STEP_INDEX[order.order_status] ?? 0;
   const deliveryFee = order.shipping_cost_charged || 0;
 
-  const whatsappHref = WHATSAPP_NUMBER
-    ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(t('whatsapp.message', { invoiceNumber: order.invoice_number, total: formatLKR(order.total_amount) }))}`
+  const whatsappHref = SHOP_INFO.whatsapp
+    ? `https://wa.me/${SHOP_INFO.whatsapp}?text=${encodeURIComponent(t('whatsapp.message', { invoiceNumber: order.invoice_number, total: formatLKR(order.total_amount) }))}`
     : null;
 
   const copyInvoice = async () => {

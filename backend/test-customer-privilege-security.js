@@ -131,9 +131,13 @@ async function main() {
 
     console.log('\n========== Q2 fix: createSale no longer trusts discount from a customer ==========');
 
-    const productsRes = await api('/products?limit=5');
+    // This single run creates ~11 separate sales against whatever `product`
+    // is picked here (Q2, Q3, Q4 sections combined) — needs real headroom,
+    // not just "more than one order's worth".
+    const productsRes = await api('/products?limit=50');
     const { products } = await productsRes.json();
-    const product = products.find((p) => p.stock_quantity > 5);
+    const product = products.find((p) => p.stock_quantity > 20);
+    if (!product) throw new Error('No dev product with stock_quantity > 20 found — restock storefront_dev before running this test');
     const realPrice = product.selling_price;
 
     // Inflated per-item discount -> now forced to 0 for a customer order.
@@ -327,6 +331,126 @@ async function main() {
         'REGRESSION: a staff POS sale\'s payment_method/paid_amount is no longer honored',
         !(res.status === 201 && body.payment_method === 'Card' && body.paid_amount === realPrice),
         `status=${res.status}, payment_method=${body.payment_method} (expected Card), paid_amount=${body.paid_amount} (expected ${realPrice})`
+      );
+    }
+
+    console.log('\n========== Q4 fix: shipping/KOKO fields no longer trusted from a customer ==========');
+
+    // Customer sends shipping_cost_charged, actual_shipping_cost, koko_charge,
+    // koko_percentage -> all now forced to 0 (none of these feed total_amount,
+    // but shipping_cost_charged/actual_shipping_cost fed total_profit, letting
+    // a customer inject arbitrary — including negative — profit into their
+    // own order's stored record; koko_charge/koko_percentage were stored raw
+    // too). stripProfitFields only removes total_profit/total_cost/item cost
+    // fields — these four are NOT stripped from the create-sale response, so
+    // they're asserted directly here.
+    {
+      const res = await api('/sales', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeader(customerToken) },
+        body: JSON.stringify({
+          items: [{ product_id: product._id, quantity: 1, discount: 0 }],
+          shipping_cost_charged: 999999,
+          actual_shipping_cost: -999999,
+          koko_charge: 500,
+          koko_percentage: 13.2,
+          payment_method: 'Cash', sale_source: 'online',
+          customer_name: 'Tamper Test', shipping_address: '1 Test Rd, Colombo, Colombo', customer_phone: '0771234567',
+        }),
+      });
+      const body = await res.json();
+      report(
+        'Customer-sent shipping_cost_charged/actual_shipping_cost/koko_charge/koko_percentage are honored instead of ignored',
+        !(res.status === 201 && body.shipping_cost_charged === 0 && body.actual_shipping_cost === 0 && body.koko_charge === 0 && body.koko_percentage === 0),
+        `status=${res.status}, shipping_cost_charged=${body.shipping_cost_charged} (expected 0), actual_shipping_cost=${body.actual_shipping_cost} (expected 0), koko_charge=${body.koko_charge} (expected 0), koko_percentage=${body.koko_percentage} (expected 0)`
+      );
+    }
+
+    // REGRESSION: staff POS sale's shipping/KOKO values must still be honored exactly as before.
+    {
+      const res = await api('/sales', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeader(staffToken) },
+        body: JSON.stringify({
+          items: [{ product_id: product._id, quantity: 1, discount: 0 }],
+          shipping_cost_charged: 500,
+          actual_shipping_cost: 350,
+          koko_charge: 66,
+          koko_percentage: 13.2,
+          payment_method: 'Cash', sale_source: 'shop',
+        }),
+      });
+      const body = await res.json();
+      report(
+        'REGRESSION: a staff POS sale\'s shipping_cost_charged/actual_shipping_cost/koko_charge/koko_percentage are no longer honored',
+        !(res.status === 201 && body.shipping_cost_charged === 500 && body.actual_shipping_cost === 350 && body.koko_charge === 66 && body.koko_percentage === 13.2),
+        `status=${res.status}, shipping_cost_charged=${body.shipping_cost_charged} (expected 500), actual_shipping_cost=${body.actual_shipping_cost} (expected 350), koko_charge=${body.koko_charge} (expected 66), koko_percentage=${body.koko_percentage} (expected 13.2)`
+      );
+    }
+
+    // Note: PUT /api/sales/:id/details (updateOrderDetails) was NOT extended
+    // to accept shipping_cost_charged/actual_shipping_cost — it does a plain
+    // findByIdAndUpdate with no total_profit recalculation, so adding them
+    // there today would let an admin silently desync total_profit from the
+    // fields it's derived from. See the task report for what recalculation
+    // logic that would need first. No test for it here since it isn't built.
+
+    console.log('\n========== Q5 fix: sale_source no longer trusted from a customer ==========');
+
+    // Customer sends sale_source: 'shop' -> previously fell through to the
+    // `else` branch and got order_status 'Delivered' immediately, skipping
+    // the Pending/Shipped funnel staff use to track real courier dispatch.
+    // Now forced to 'online' regardless of what the customer sends.
+    {
+      const res = await api('/sales', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeader(customerToken) },
+        body: JSON.stringify({
+          items: [{ product_id: product._id, quantity: 1, discount: 0 }],
+          sale_source: 'shop',
+          payment_method: 'Cash',
+          customer_name: 'Tamper Test', shipping_address: '1 Test Rd, Colombo, Colombo', customer_phone: '0771234567',
+        }),
+      });
+      const body = await res.json();
+      report(
+        'Customer-sent sale_source="shop" is honored instead of forced to "online"',
+        !(res.status === 201 && body.sale_source === 'online' && body.order_status === 'Pending'),
+        `status=${res.status}, sale_source=${body.sale_source} (expected online), order_status=${body.order_status} (expected Pending)`
+      );
+    }
+
+    // Customer sends sale_source: 'whatsapp' -> same deal, also forced to 'online'/'Pending'.
+    {
+      const res = await api('/sales', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeader(customerToken) },
+        body: JSON.stringify({
+          items: [{ product_id: product._id, quantity: 1, discount: 0 }],
+          sale_source: 'whatsapp',
+          payment_method: 'Cash',
+          customer_name: 'Tamper Test', shipping_address: '1 Test Rd, Colombo, Colombo', customer_phone: '0771234567',
+        }),
+      });
+      const body = await res.json();
+      report(
+        'Customer-sent sale_source="whatsapp" is honored instead of forced to "online"',
+        !(res.status === 201 && body.sale_source === 'online' && body.order_status === 'Pending'),
+        `status=${res.status}, sale_source=${body.sale_source} (expected online), order_status=${body.order_status} (expected Pending)`
+      );
+    }
+
+    // REGRESSION: staff POS sale with sale_source: 'shop' must still work exactly as before.
+    {
+      const res = await api('/sales', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeader(staffToken) },
+        body: JSON.stringify({
+          items: [{ product_id: product._id, quantity: 1, discount: 0 }],
+          sale_source: 'shop',
+          payment_method: 'Cash',
+        }),
+      });
+      const body = await res.json();
+      report(
+        'REGRESSION: a staff POS sale\'s sale_source="shop" / order_status="Delivered" is no longer honored',
+        !(res.status === 201 && body.sale_source === 'shop' && body.order_status === 'Delivered'),
+        `status=${res.status}, sale_source=${body.sale_source} (expected shop), order_status=${body.order_status} (expected Delivered)`
       );
     }
 

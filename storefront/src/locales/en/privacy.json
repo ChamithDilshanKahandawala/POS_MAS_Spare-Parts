@@ -1,0 +1,62 @@
+{
+  "metaTitle": "Privacy Policy",
+  "metaDescription": "How Mudiyanse Auto Solutions collects, uses and protects your personal data.",
+  "heading": "Privacy Policy",
+  "lastUpdated": "Last updated: 12 October 2026",
+  "sections": {
+    "whoWeAre": {
+      "heading": "Who We Are",
+      "body": "{{name}} (Business Registration No. {{brNumber}}) is a vehicle spare parts shop based in Mirigama, Sri Lanka, operating this storefront website."
+    },
+    "whatWeCollect": {
+      "heading": "What We Collect",
+      "intro": "When you create an account, sign in, or place an order, we collect:",
+      "items": [
+        "Your name",
+        "Phone number",
+        "Email address",
+        "Delivery address",
+        "Order history",
+        "Your Google profile name, email and photo, if you sign in with Google"
+      ]
+    },
+    "whyWeCollect": {
+      "heading": "Why We Collect It",
+      "intro": "We use this information to:",
+      "items": [
+        "Process and deliver your orders",
+        "Contact you about your order",
+        "Provide customer support",
+        "Send marketing messages — only if you opt in; we never send marketing without your consent"
+      ]
+    },
+    "whoWeShareWith": {
+      "heading": "Who We Share It With",
+      "intro": "We share information only as needed to run the shop:",
+      "items": [
+        "Our courier partners (Transexpress, Sri Lanka Post) — to deliver your order",
+        "Our hosting and database providers — to run this website",
+        "Google — if you sign in with your Google account",
+        "WhatsApp — when you choose to contact us there"
+      ],
+      "outro": "Some of these providers may store data on servers outside Sri Lanka."
+    },
+    "howLong": {
+      "heading": "How Long We Keep It",
+      "body": "PLACEHOLDER — specify how long account and order data is kept here."
+    },
+    "security": {
+      "heading": "Security",
+      "body": "We take reasonable steps to protect your information, including password hashing and restricting access to customer data within our team. No online system is 100% secure, but we work to keep your data safe."
+    },
+    "yourChoices": {
+      "heading": "Your Choices",
+      "body": "You can ask us for a copy of the personal data we hold about you, ask us to correct it, or ask us to delete it, by contacting us at {{email}}."
+    },
+    "contact": {
+      "heading": "Contact Us About Privacy",
+      "body": "For any questions about this policy or your data, email us at {{email}}."
+    }
+  },
+  "legalNote": "This policy is written with reference to Sri Lanka's Personal Data Protection Act No. 9 of 2022. We do not claim any certification or formal compliance assessment."
+}

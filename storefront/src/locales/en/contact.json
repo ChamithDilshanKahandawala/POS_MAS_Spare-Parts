@@ -1,0 +1,17 @@
+{
+  "metaTitle": "Contact Us",
+  "metaDescription": "Contact Mudiyanse Auto Solutions by phone, WhatsApp or email, or visit our shop in Mirigama, Sri Lanka.",
+  "heading": "Contact Us",
+  "subtitle": "Call, WhatsApp or visit us — we're happy to help.",
+  "callUs": "Call Us",
+  "callLabel": "Call {{phone}}",
+  "whatsapp": "Chat on WhatsApp",
+  "emailUs": "Email Us",
+  "address": "Address",
+  "openInMaps": "Open in Google Maps",
+  "hours": "Opening Hours",
+  "hoursValue": "Open daily, 10.00 AM – 10.00 PM",
+  "openNow": "Open now",
+  "closedNow": "Closed now",
+  "mapTitle": "Map showing {{name}}'s location"
+}

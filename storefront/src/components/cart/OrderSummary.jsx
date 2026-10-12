@@ -1,7 +1,8 @@
 import { ShieldCheck, Truck, RotateCcw } from 'lucide-react';
-import { formatLKR } from '../../utils/formatLKR';
+import { Link } from 'react-router-dom';
+import { formatLKR, formatAmount } from '../../utils/formatLKR';
 import { useTranslation } from 'react-i18next';
-import { FREE_DELIVERY_THRESHOLD } from '../../config/store';
+import { FREE_DELIVERY_THRESHOLD, DELIVERY_OPTIONS } from '../../config/store';
 
 export default function OrderSummary({ itemCount, subtotal, onCheckout, onContinueShopping, disableCheckout, disableReason }) {
   const { t } = useTranslation('cart');
@@ -36,10 +37,15 @@ export default function OrderSummary({ itemCount, subtotal, onCheckout, onContin
           <span style={{ color: 'var(--text-muted)' }}>{t('summary.subtotal')}</span>
           <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>{formatLKR(subtotal)}</span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: '13px' }}>
           <span style={{ color: 'var(--text-muted)' }}>{t('summary.delivery')}</span>
-          <span style={{ color: 'var(--text-muted)' }}>{t('summary.deliveryCalculated')}</span>
+          <span style={{ color: 'var(--text-muted)' }}>
+            {t('summary.deliveryCalculated', { price: formatAmount(DELIVERY_OPTIONS[0].pricing.westernFirstKg) })}
+          </span>
         </div>
+        <Link to="/delivery" style={{ fontSize: '11.5px', color: 'var(--accent-primary)', fontWeight: 700, textDecoration: 'none', alignSelf: 'flex-end' }}>
+          {t('summary.viewDeliveryOptions')}
+        </Link>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>

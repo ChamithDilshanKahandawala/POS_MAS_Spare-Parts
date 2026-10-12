@@ -10,6 +10,12 @@ import enOrder from '../locales/en/order.json';
 import enCheckout from '../locales/en/checkout.json';
 import enAuth from '../locales/en/auth.json';
 import enFooter from '../locales/en/footer.json';
+import enAbout from '../locales/en/about.json';
+import enContact from '../locales/en/contact.json';
+import enDelivery from '../locales/en/delivery.json';
+import enReturns from '../locales/en/returns.json';
+import enPrivacy from '../locales/en/privacy.json';
+import enTerms from '../locales/en/terms.json';
 
 import siCommon from '../locales/si/common.json';
 import siCart from '../locales/si/cart.json';
@@ -19,6 +25,12 @@ import siOrder from '../locales/si/order.json';
 import siCheckout from '../locales/si/checkout.json';
 import siAuth from '../locales/si/auth.json';
 import siFooter from '../locales/si/footer.json';
+import siAbout from '../locales/si/about.json';
+import siContact from '../locales/si/contact.json';
+import siDelivery from '../locales/si/delivery.json';
+import siReturns from '../locales/si/returns.json';
+import siPrivacy from '../locales/si/privacy.json';
+import siTerms from '../locales/si/terms.json';
 
 import taCommon from '../locales/ta/common.json';
 import taCart from '../locales/ta/cart.json';
@@ -28,6 +40,12 @@ import taOrder from '../locales/ta/order.json';
 import taCheckout from '../locales/ta/checkout.json';
 import taAuth from '../locales/ta/auth.json';
 import taFooter from '../locales/ta/footer.json';
+import taAbout from '../locales/ta/about.json';
+import taContact from '../locales/ta/contact.json';
+import taDelivery from '../locales/ta/delivery.json';
+import taReturns from '../locales/ta/returns.json';
+import taPrivacy from '../locales/ta/privacy.json';
+import taTerms from '../locales/ta/terms.json';
 
 export const SUPPORTED_LANGUAGES = ['en', 'si', 'ta'];
 const STORAGE_KEY = 'storefrontLanguage';
@@ -38,9 +56,18 @@ const STORAGE_KEY = 'storefrontLanguage';
 // loaded on demand (see loadFonts.js), satisfying the "only load what's
 // needed" requirement where it actually matters for page weight.
 const resources = {
-  en: { common: enCommon, cart: enCart, product: enProduct, category: enCategory, order: enOrder, checkout: enCheckout, auth: enAuth, footer: enFooter },
-  si: { common: siCommon, cart: siCart, product: siProduct, category: siCategory, order: siOrder, checkout: siCheckout, auth: siAuth, footer: siFooter },
-  ta: { common: taCommon, cart: taCart, product: taProduct, category: taCategory, order: taOrder, checkout: taCheckout, auth: taAuth, footer: taFooter },
+  en: {
+    common: enCommon, cart: enCart, product: enProduct, category: enCategory, order: enOrder, checkout: enCheckout, auth: enAuth, footer: enFooter,
+    about: enAbout, contact: enContact, delivery: enDelivery, returns: enReturns, privacy: enPrivacy, terms: enTerms,
+  },
+  si: {
+    common: siCommon, cart: siCart, product: siProduct, category: siCategory, order: siOrder, checkout: siCheckout, auth: siAuth, footer: siFooter,
+    about: siAbout, contact: siContact, delivery: siDelivery, returns: siReturns, privacy: siPrivacy, terms: siTerms,
+  },
+  ta: {
+    common: taCommon, cart: taCart, product: taProduct, category: taCategory, order: taOrder, checkout: taCheckout, auth: taAuth, footer: taFooter,
+    about: taAbout, contact: taContact, delivery: taDelivery, returns: taReturns, privacy: taPrivacy, terms: taTerms,
+  },
 };
 
 function getStoredLanguage() {
@@ -85,7 +112,7 @@ i18next.use(initReactI18next).init({
   lng: getStoredLanguage() || 'en',
   fallbackLng: 'en',
   supportedLngs: SUPPORTED_LANGUAGES,
-  ns: ['common', 'cart', 'product', 'category', 'order', 'checkout', 'auth', 'footer'],
+  ns: ['common', 'cart', 'product', 'category', 'order', 'checkout', 'auth', 'footer', 'about', 'contact', 'delivery', 'returns', 'privacy', 'terms'],
   defaultNS: 'common',
   interpolation: { escapeValue: false }, // React already escapes
   returnEmptyString: false,

@@ -1,0 +1,26 @@
+{
+  "metaTitle": "Returns & Refunds",
+  "metaDescription": "Returns, exchanges and refund policy for Mudiyanse Auto Solutions orders.",
+  "heading": "Returns & Refunds",
+  "subtitle": "A plain-language summary of how we handle returns, exchanges and refunds.",
+  "intro": "Every item is checked before it's dispatched.",
+  "points": {
+    "electronics": {
+      "heading": "Electronic items",
+      "body": "Electronic items cannot be returned."
+    },
+    "otherProblems": {
+      "heading": "Wrong item, damaged in transit, or not as described",
+      "body": "Contact us within {{days}} days of delivery by WhatsApp or phone with photos of the item and its packaging. We'll arrange a return, exchange or refund case by case."
+    },
+    "condition": {
+      "heading": "Condition",
+      "body": "Items must be unused and in their original packaging, except where the problem was our mistake or the item was damaged in transit."
+    },
+    "refundMethod": {
+      "heading": "How Refunds Are Paid",
+      "body": "PLACEHOLDER — describe how refunds are issued here (e.g. bank transfer or cash)."
+    }
+  },
+  "cta": "Report a Problem on WhatsApp"
+}
