@@ -1,0 +1,16 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "offlineBanner": "நீங்கள் ஆஃப்லைனில் உள்ளீர்கள் — விலைகள் மற்றும் கையிருப்பு புதுப்பிக்கப்படாமல் இருக்கலாம்",
+  "offlineCheckout": "நீங்கள் ஆஃப்லைனில் உள்ளீர்கள். ஆர்டர் செய்ய மீண்டும் இணையவும்.",
+  "offlineLogin": "நீங்கள் ஆஃப்லைனில் உள்ளீர்கள். உள்நுழைய மீண்டும் இணையவும்.",
+  "offlineRegister": "நீங்கள் ஆஃப்லைனில் உள்ளீர்கள். கணக்கை உருவாக்க மீண்டும் இணையவும்.",
+  "updateAvailable": "புதிய பதிப்பு கிடைக்கிறது",
+  "refresh": "புதுப்பிக்க",
+  "installMenuItem": "ஆப்ஸை நிறுவு",
+  "installCardTitle": "Mudiyanse Auto Solutions ஐ நிறுவுங்கள்",
+  "installCardBody": "விரைவான அணுகல் மற்றும் ஆஃப்லைன் உலாவலுக்கு இதை உங்கள் முகப்புத் திரையில் சேர்க்கவும்.",
+  "installCardInstall": "நிறுவு",
+  "installCardDismiss": "இப்போது வேண்டாம்",
+  "iosInstallHint": "இந்த ஆப்ஸை நிறுவ Share ஐத் தட்டி, பின் \"Add to Home Screen\" ஐத் தேர்ந்தெடுக்கவும்.",
+  "iosInstallDismiss": "சரி"
+}

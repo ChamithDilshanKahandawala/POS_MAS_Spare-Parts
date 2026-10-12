@@ -25,7 +25,6 @@ export default function ProductCard({ product, index = 0, isLiveUpdated, onCardC
         display: 'flex', flexDirection: 'column', cursor: 'pointer',
         transition: 'all 0.3s ease', overflow: 'hidden',
         animationDelay: `${index * 0.04}s`,
-        opacity: outOfStock ? 0.6 : 1,
       }}
       onClick={onCardClick}
       onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = 'var(--card-shadow-hover)'; }}
@@ -41,7 +40,7 @@ export default function ProductCard({ product, index = 0, isLiveUpdated, onCardC
             fontSize: '10px', fontWeight: 700, padding: '4px 10px',
             borderRadius: '20px',
             background: product.stock_quantity > 10 ? 'rgba(39,174,96,0.12)' : product.stock_quantity > 0 ? 'rgba(243,156,18,0.12)' : 'rgba(231,76,60,0.12)',
-            color: product.stock_quantity > 10 ? '#27ae60' : product.stock_quantity > 0 ? '#f39c12' : '#e74c3c',
+            color: product.stock_quantity > 10 ? '#27ae60' : product.stock_quantity > 0 ? '#f39c12' : 'var(--badge-red-text)',
             border: `1px solid ${product.stock_quantity > 10 ? 'rgba(39,174,96,0.25)' : product.stock_quantity > 0 ? 'rgba(243,156,18,0.25)' : 'rgba(231,76,60,0.25)'}`,
           }}>
             {product.stock_quantity > 0 ? t('card.inStockCount', { count: product.stock_quantity }) : t('stock.outOfStock')}
@@ -82,7 +81,7 @@ export default function ProductCard({ product, index = 0, isLiveUpdated, onCardC
       {/* Card content */}
       <div style={{ padding: '16px 18px', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-          <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent-primary-text)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             {product.category}
           </span>
           <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{product.sku_code}</span>
@@ -92,7 +91,7 @@ export default function ProductCard({ product, index = 0, isLiveUpdated, onCardC
         </Link>
 
         <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--accent-primary)' }}>
+          <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--accent-primary-text)' }}>
             {formatLKR(product.selling_price)}
           </span>
           <button

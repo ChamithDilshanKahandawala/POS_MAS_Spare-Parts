@@ -275,7 +275,11 @@ export default function Footer() {
               target="_blank" rel="noreferrer"
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '9px',
-                background: '#25d366', color: 'white', textDecoration: 'none',
+                // Not the brand #25d366 — white text on that only reaches
+                // 1.98:1 (fails WCAG AA's 4.5:1). Darkened just for this
+                // button background; the icon elsewhere keeps the real
+                // brand green since icon color isn't a text-contrast rule.
+                background: '#128037', color: 'white', textDecoration: 'none',
                 padding: '11px 18px', borderRadius: '12px',
                 fontSize: '13px', fontWeight: 700, marginBottom: '20px',
                 boxShadow: '0 4px 14px rgba(37,211,102,0.28)',
@@ -325,6 +329,7 @@ export default function Footer() {
                   />
                   <button
                     type="submit"
+                    aria-label={t('newsletter.subscribe')}
                     style={{
                       background: 'linear-gradient(135deg,#e67e22,#d35400)',
                       color: 'white', border: 'none', borderRadius: '9px',

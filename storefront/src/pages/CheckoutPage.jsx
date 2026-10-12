@@ -75,6 +75,11 @@ export default function CheckoutPage() {
     // second request at all when we can.
     if (isCheckingOut) return;
 
+    // Checked before validation so a reconnect-and-retry doesn't also need
+    // to re-clear every field error first — this is the one that actually
+    // explains why the submit will fail right now.
+    if (!navigator.onLine) return toast.error(t('pwa:offlineCheckout'));
+
     // Validations
     if (!formData.name.trim()) return toast.error(t('toast.nameRequired'));
     if (!formData.address.trim() || formData.address.length < 5) return toast.error(t('toast.addressRequired'));

@@ -1,21 +1,28 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-// `motion` is used via the <motion.span> member expression below; see the
-// same note in CartDrawer.jsx.
-// eslint-disable-next-line no-unused-vars
-import { motion } from 'motion/react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useCart } from '../../context/CartContext';
-import { ShoppingBag, LogOut, Package, Moon, Sun, ShoppingCart, Menu, X, User, ChevronDown, LayoutGrid, Phone, Truck } from 'lucide-react';
+import { ShoppingBag, LogOut, Package, Moon, Sun, ShoppingCart, Menu, X, User, ChevronDown, LayoutGrid, Phone, Truck, Download } from 'lucide-react';
+import useInstallPrompt from '../../hooks/useInstallPrompt';
 import Footer from './footer';
+import Logo from './Logo';
+import OfflineBanner from './OfflineBanner';
 import LanguageBanner from './LanguageBanner';
 import LanguageSwitcher from './LanguageSwitcher';
-import CartDrawer from '../cart/CartDrawer';
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion';
 import { slugify } from '../../utils/slugify';
 import { CATEGORIES } from '../../config/store';
+
+// framer-motion (the CartDrawer's slide/fade transitions) is ~110 KB on its
+// own — StoreLayout is the one component every single route mounts, so an
+// eager import here put the whole library in the entry chunk even for a
+// visitor who never opens the cart. Lazy-loading it means the very first
+// "add to cart" / cart-icon click waits on one small chunk fetch (cached
+// after that) instead of nothing — CartDrawer reads isCartOpen fresh off
+// CartContext on mount, so it opens correctly whenever it does land.
+const CartDrawer = lazy(() => import('../cart/CartDrawer'));
 
 export default function StoreLayout() {
   const { t } = useTranslation('common');
@@ -29,12 +36,13 @@ export default function StoreLayout() {
   const [categoryDropdown, setCategoryDropdown] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
   const reducedMotion = usePrefersReducedMotion();
+  const { canInstall, isIOSHint, promptInstall } = useInstallPrompt();
 
-  // Badge "bounce" is a declarative pop-in keyed off the item count, not
-  // state+effect — simpler, and avoids touching a ref during render.
-  const badgeBumpProps = reducedMotion
-    ? {}
-    : { initial: { scale: 1.4 }, animate: { scale: 1 }, transition: { type: 'spring', stiffness: 500, damping: 15 } };
+  // Badge "bounce" — a plain CSS keyframe (see the <style> block below)
+  // played fresh each time by keying the span on cart.length so React
+  // remounts a brand-new element (and the animation naturally restarts)
+  // instead of pulling in framer-motion just for this one small pop-in.
+  const badgeBumpClass = reducedMotion ? '' : 'mas-badge-bump';
 
   const handleLogout = () => {
     logout();
@@ -46,6 +54,7 @@ export default function StoreLayout() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-primary)' }}>
+      <OfflineBanner />
       <LanguageBanner />
 
       {/* ── Top announcement bar ── */}
@@ -68,10 +77,10 @@ export default function StoreLayout() {
       }}>
         {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
-          <img src="/logo.png" alt="Logo" style={{
-            width: '42px', height: '42px', borderRadius: '10px',
+          <Logo size={42} style={{
+            borderRadius: '10px',
             background: 'white', padding: '2px', objectFit: 'contain',
-            border: '2px solid var(--accent-light)',
+            border: '2px solid var(--accent-light)', boxSizing: 'border-box',
           }} />
           <div>
             <div style={{ fontSize: '17px', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>MUDIYANSE</div>
@@ -163,9 +172,9 @@ export default function StoreLayout() {
             <ShoppingCart size={16} />
             {t('nav.cart')}
             {cart.length > 0 && (
-              <motion.span
+              <span
                 key={cart.length}
-                {...badgeBumpProps}
+                className={badgeBumpClass}
                 style={{
                   position: 'absolute', top: '-7px', right: '-7px',
                   background: 'var(--accent-primary)', color: 'white',
@@ -175,7 +184,7 @@ export default function StoreLayout() {
                 }}
               >
                 {cart.length}
-              </motion.span>
+              </span>
             )}
           </button>
 
@@ -275,6 +284,7 @@ export default function StoreLayout() {
         <div className="mobile-nav-btns" style={{ display: 'none', alignItems: 'center', gap: '8px' }}>
           <button
             onClick={() => setIsCartOpen(true)}
+            aria-label={t('nav.cart')}
             style={{
               position: 'relative', padding: '8px', borderRadius: '8px',
               border: '1px solid var(--border-light)', background: 'var(--bg-secondary)',
@@ -283,20 +293,22 @@ export default function StoreLayout() {
           >
             <ShoppingCart size={18} />
             {cart.length > 0 && (
-              <motion.span
+              <span
                 key={cart.length}
-                {...badgeBumpProps}
+                className={badgeBumpClass}
                 style={{
                   position: 'absolute', top: '-5px', right: '-5px',
                   background: 'var(--accent-primary)', color: 'white',
                   fontSize: '9px', fontWeight: 800, width: '17px', height: '17px',
                   borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
-              >{cart.length}</motion.span>
+              >{cart.length}</span>
             )}
           </button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
+            aria-expanded={mobileMenuOpen}
             style={{
               padding: '8px', borderRadius: '8px',
               border: '1px solid var(--border-light)', background: 'var(--bg-secondary)',
@@ -373,6 +385,20 @@ export default function StoreLayout() {
           <div style={{ padding: '8px 12px' }}>
             <LanguageSwitcher variant="full" />
           </div>
+          {(canInstall || isIOSHint) && (
+            <button
+              onClick={canInstall ? promptInstall : undefined}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '8px', width: '100%',
+                padding: '12px', borderRadius: '10px', background: 'transparent', border: 'none',
+                color: 'var(--text-secondary)', fontWeight: 600, fontSize: '14px',
+                cursor: canInstall ? 'pointer' : 'default', textAlign: 'left',
+              }}
+            >
+              <Download size={16} />
+              {canInstall ? t('pwa:installMenuItem') : t('pwa:iosInstallHint')}
+            </button>
+          )}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px' }}>
             <button onClick={toggleTheme} style={{
               padding: '8px 14px', borderRadius: '8px', border: '1px solid var(--border-light)',
@@ -416,7 +442,9 @@ export default function StoreLayout() {
       
       <Footer />
 
-      <CartDrawer />
+      <Suspense fallback={null}>
+        <CartDrawer />
+      </Suspense>
 
       {/* Responsive CSS for nav  */}
       <style>{`
@@ -426,6 +454,11 @@ export default function StoreLayout() {
           nav { padding: 0 16px !important; }
           main { padding: 16px !important; }
         }
+        @keyframes mas-badge-bump {
+          0% { transform: scale(1.4); }
+          100% { transform: scale(1); }
+        }
+        .mas-badge-bump { animation: mas-badge-bump 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
       `}</style>
     </div>
   );

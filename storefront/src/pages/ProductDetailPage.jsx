@@ -188,7 +188,7 @@ export default function ProductDetailPage() {
         <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
           {/* Image column */}
           <div style={{ flex: '1 1 0%', minWidth: 0, width: isMobile ? '100%' : undefined, position: isMobile ? 'static' : 'sticky', top: '24px' }}>
-            <ProductImage product={{ ...product, images: images.length ? [images[activeImage]] : [] }} style={{ borderRadius: '20px', border: '1px solid var(--border-light)' }}>
+            <ProductImage product={{ ...product, images: images.length ? [images[activeImage]] : [] }} priority style={{ borderRadius: '20px', border: '1px solid var(--border-light)' }}>
               {outOfStock ? (
                 <span className="badge badge-red" style={{ position: 'absolute', top: '14px', left: '14px' }}>{t('stock.outOfStock')}</span>
               ) : lowStock ? (

@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { io } from 'socket.io-client';
 import { getProducts } from '../api/services';
 import toast from 'react-hot-toast';
 import { Search, ShoppingCart, X, ArrowRight, ShieldCheck, Package, Truck, CheckCircle, Zap } from 'lucide-react';
@@ -13,6 +12,7 @@ import { CATEGORIES as REAL_CATEGORIES } from '../config/store';
 import useDocumentMeta from '../hooks/useDocumentMeta';
 import useJsonLd from '../hooks/useJsonLd';
 import { buildShopJsonLd } from '../utils/shopJsonLd';
+import InstallCard from '../components/InstallCard';
 
 // "All" stays as a local filter (there's no dedicated page for it); every
 // real category now navigates to its own /category/:slug page instead of
@@ -53,26 +53,35 @@ export default function StorefrontPage() {
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
-  // Socket.io real-time stock sync
+  // Socket.io real-time stock sync. Dynamically imported — socket.io-client
+  // is ~120 KB raw and was otherwise the single largest non-framework chunk
+  // in the entry bundle for a feature that isn't needed for first paint;
+  // this fetches it as its own chunk right after mount instead of bundling
+  // it into the critical path.
   useEffect(() => {
-    const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5001', { transports: ['websocket', 'polling'] });
-    socket.on('stock_updated', (updates) => {
-      setProducts(prev =>
-        prev.map(p => {
-          const update = updates.find(u => u.productId === p._id);
-          return update ? { ...p, stock_quantity: update.newQuantity } : p;
-        })
-      );
-      const updatedIds = new Set(updates.map(u => u.productId));
-      setLiveUpdatedIds(updatedIds);
-      setTimeout(() => setLiveUpdatedIds(new Set()), 2500);
-      setSelectedProduct(prev => {
-        if (!prev) return prev;
-        const update = updates.find(u => u.productId === prev._id);
-        return update ? { ...prev, stock_quantity: update.newQuantity } : prev;
+    let socket;
+    let cancelled = false;
+    import('socket.io-client').then(({ io }) => {
+      if (cancelled) return;
+      socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5001', { transports: ['websocket', 'polling'] });
+      socket.on('stock_updated', (updates) => {
+        setProducts(prev =>
+          prev.map(p => {
+            const update = updates.find(u => u.productId === p._id);
+            return update ? { ...p, stock_quantity: update.newQuantity } : p;
+          })
+        );
+        const updatedIds = new Set(updates.map(u => u.productId));
+        setLiveUpdatedIds(updatedIds);
+        setTimeout(() => setLiveUpdatedIds(new Set()), 2500);
+        setSelectedProduct(prev => {
+          if (!prev) return prev;
+          const update = updates.find(u => u.productId === prev._id);
+          return update ? { ...prev, stock_quantity: update.newQuantity } : prev;
+        });
       });
     });
-    return () => socket.disconnect();
+    return () => { cancelled = true; socket?.disconnect(); };
   }, []);
 
   return (
@@ -103,7 +112,12 @@ export default function StorefrontPage() {
             <button 
               onClick={() => document.getElementById('catalog').scrollIntoView({behavior: 'smooth'})}
               style={{
-                background: 'white', color: 'var(--accent-primary)', border: 'none',
+                // Not var(--accent-primary) — this button's background is a
+                // literal white regardless of theme, and the plain accent
+                // orange only clears 2.85:1 on white (fails WCAG AA's 4.5:1
+                // for bold 15px text). #ab550d is the same darkened shade
+                // used for --accent-primary-text in light mode.
+                background: 'white', color: '#ab550d', border: 'none',
                 padding: '13px 28px', fontSize: '15px', fontWeight: 700,
                 borderRadius: '12px', cursor: 'pointer', display: 'inline-flex',
                 alignItems: 'center', gap: '8px', transition: 'all 0.25s',
@@ -133,6 +147,8 @@ export default function StorefrontPage() {
             ))}
           </div>
         </div>
+
+        <InstallCard />
 
         {/* ── Search and Filter Bar ── */}
         <div id="catalog" style={{

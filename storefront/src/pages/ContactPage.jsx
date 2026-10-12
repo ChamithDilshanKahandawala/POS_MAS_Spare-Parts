@@ -66,7 +66,10 @@ export default function ContactPage() {
             href={whatsappHref} target="_blank" rel="noopener noreferrer"
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '9px',
-              background: '#25d366', color: 'white', textDecoration: 'none',
+              // Not the brand #25d366 — white text on that only reaches
+              // 1.98:1 (fails WCAG AA's 4.5:1); darkened for this button
+              // background only (the icon above keeps the real brand green).
+              background: '#128037', color: 'white', textDecoration: 'none',
               padding: '11px 18px', borderRadius: '12px', fontSize: '13.5px', fontWeight: 700,
             }}
           >

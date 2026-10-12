@@ -23,7 +23,9 @@
     "darkMode": "Dark Mode",
     "switchToLightMode": "Switch to Light Mode",
     "switchToDarkMode": "Switch to Dark Mode",
-    "backToStore": "← Back to Store"
+    "backToStore": "← Back to Store",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "languageBanner": {
     "message": "සිංහලෙන් බලන්න · தமிழில் பார்க்க",

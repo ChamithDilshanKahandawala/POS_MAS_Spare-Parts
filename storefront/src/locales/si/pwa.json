@@ -1,0 +1,16 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "offlineBanner": "ඔබ අන්තර්ජාලයෙන් විසන්ධි වී ඇත — මිල ගණන් සහ තොග යාවත්කාලීන නොවිය හැක",
+  "offlineCheckout": "ඔබ අන්තර්ජාලයෙන් විසන්ධි වී ඇත. ඇණවුම තැබීමට නැවත සම්බන්ධ වන්න.",
+  "offlineLogin": "ඔබ අන්තර්ජාලයෙන් විසන්ධි වී ඇත. ප්‍රවේශ වීමට නැවත සම්බන්ධ වන්න.",
+  "offlineRegister": "ඔබ අන්තර්ජාලයෙන් විසන්ධි වී ඇත. ගිණුමක් සෑදීමට නැවත සම්බන්ධ වන්න.",
+  "updateAvailable": "නව අනුවාදයක් තිබේ",
+  "refresh": "නැවුම් කරන්න",
+  "installMenuItem": "යෙදුම ස්ථාපනය කරන්න",
+  "installCardTitle": "Mudiyanse Auto Solutions ස්ථාපනය කරන්න",
+  "installCardBody": "වේගවත් ප්‍රවේශය සහ නොබැඳි බැලීම සඳහා එය ඔබේ මුල් තිරයට එක් කරන්න.",
+  "installCardInstall": "ස්ථාපනය කරන්න",
+  "installCardDismiss": "දැන් නොවේ",
+  "iosInstallHint": "මෙම යෙදුම ස්ථාපනය කිරීමට Share ඔබා, පසුව \"Add to Home Screen\" තෝරන්න.",
+  "iosInstallDismiss": "තේරුණා"
+}

@@ -24,7 +24,9 @@
     "darkMode": "අඳුරු මාදිලිය",
     "switchToLightMode": "දීප්ත මාදිලියට මාරු වන්න",
     "switchToDarkMode": "අඳුරු මාදිලියට මාරු වන්න",
-    "backToStore": "← සාප්පුවට ආපසු"
+    "backToStore": "← සාප්පුවට ආපසු",
+    "openMenu": "මෙනුව විවෘත කරන්න",
+    "closeMenu": "මෙනුව වසන්න"
   },
   "languageBanner": {
     "message": "සිංහලෙන් බලන්න · தமிழில் பார்க்க",

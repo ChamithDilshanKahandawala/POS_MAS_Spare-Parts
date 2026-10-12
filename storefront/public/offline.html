@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offline</title>
+    <link rel="icon" type="image/png" href="/logo-96.png" />
+    <style>
+      body {
+        margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        background: #faf9f7; color: #1a1a2e; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+        padding: 24px; text-align: center;
+      }
+      .card { max-width: 360px; }
+      .icon { font-size: 44px; margin-bottom: 16px; }
+      h1 { font-size: 20px; margin: 0 0 8px; }
+      p { font-size: 14px; color: #4a4a5a; margin: 0 0 24px; line-height: 1.6; }
+      button {
+        background: #e67e22; color: white; border: none; padding: 12px 28px;
+        border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;
+      }
+      @media (prefers-color-scheme: dark) {
+        body { background: #0d0d14; color: #f0ede8; }
+        p { color: #a0a0b0; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="icon">📡</div>
+      <h1 id="title">You're offline</h1>
+      <p id="body">This page hasn't been visited before, so there's nothing saved to show while you're offline. Reconnect and try again.</p>
+      <button id="retry" onclick="location.reload()">Try again</button>
+    </div>
+    <script>
+      // No React/i18next here — this is the one page precached specifically
+      // for when the whole app shell might not be reachable, so it stays a
+      // plain static file with its own tiny translation table, reading the
+      // same storefrontLanguage key the app itself saves.
+      var STRINGS = {
+        en: { title: "You're offline", body: "This page hasn't been visited before, so there's nothing saved to show while you're offline. Reconnect and try again.", retry: 'Try again' },
+        si: { title: 'ඔබ අන්තර්ජාලයෙන් විසන්ධි වී ඇත', body: 'මෙම පිටුව මීට පෙර නරඹා නොමැති බැවින්, ඔබ විසන්ධි වී සිටින විට පෙන්වීමට කිසිවක් සුරකින ලද නැත. නැවත සම්බන්ධ වී උත්සාහ කරන්න.', retry: 'නැවත උත්සාහ කරන්න' },
+        ta: { title: 'நீங்கள் ஆஃப்லைனில் உள்ளீர்கள்', body: 'இந்தப் பக்கம் இதற்கு முன் பார்க்கப்படவில்லை, எனவே நீங்கள் ஆஃப்லைனில் இருக்கும்போது காட்ட எதுவும் சேமிக்கப்படவில்லை. மீண்டும் இணைந்து முயற்சிக்கவும்.', retry: 'மீண்டும் முயற்சிக்கவும்' },
+      };
+      try {
+        var lang = localStorage.getItem('storefrontLanguage');
+        var s = STRINGS[lang] || STRINGS.en;
+        document.documentElement.lang = lang && STRINGS[lang] ? lang : 'en';
+        document.getElementById('title').textContent = s.title;
+        document.getElementById('body').textContent = s.body;
+        document.getElementById('retry').textContent = s.retry;
+      } catch (e) { /* localStorage unavailable — English default already in the markup */ }
+    </script>
+  </body>
+</html>

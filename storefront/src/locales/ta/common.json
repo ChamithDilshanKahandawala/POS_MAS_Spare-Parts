@@ -24,7 +24,9 @@
     "darkMode": "இருள் தோற்றம்",
     "switchToLightMode": "வெளிர் தோற்றத்திற்கு மாறவும்",
     "switchToDarkMode": "இருள் தோற்றத்திற்கு மாறவும்",
-    "backToStore": "← கடைக்குத் திரும்பு"
+    "backToStore": "← கடைக்குத் திரும்பு",
+    "openMenu": "மெனுவைத் திற",
+    "closeMenu": "மெனுவை மூடு"
   },
   "languageBanner": {
     "message": "සිංහලෙන් බලන්න · தமிழில் பார்க்க",

@@ -3,7 +3,8 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { registerUser } from '../api/services';
 import toast from 'react-hot-toast';
 import { User, Mail, Lock, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { GoogleLogin } from '@react-oauth/google';
+import GoogleAuthButton, { hasGoogleAuth } from '../components/GoogleAuthButton';
+import Logo from '../components/layout/Logo';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 
@@ -19,6 +20,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!navigator.onLine) return toast.error(t('pwa:offlineRegister'));
     setLoading(true);
     try {
       const res = await registerUser(formData);
@@ -65,7 +67,7 @@ export default function RegisterPage() {
             border: '3px solid var(--accent-light)',
             boxShadow: '0 8px 24px rgba(230,126,34,0.15)',
           }}>
-            <img src="/logo.png" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', background: 'white' }} />
+            <Logo size={96} style={{ width: '100%', height: '100%', objectFit: 'contain', background: 'white' }} />
           </div>
           <h1 style={{ fontSize: '24px', fontWeight: 900, color: 'var(--text-primary)' }}>{t('register.title')}</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>{t('register.subtitle')}</p>
@@ -95,19 +97,19 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '20px 0' }}>
-            <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>{t('register.orContinueWith')}</span>
-            <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
-          </div>
+          {hasGoogleAuth && (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '20px 0' }}>
+                <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>{t('register.orContinueWith')}</span>
+                <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
+              </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-            <GoogleLogin
-              onSuccess={onGoogleSuccess}
-              onError={() => toast.error(t('toast.googleRegisterFailed'))}
-              useOneTap shape="rectangular" theme="filled_black"
-            />
-          </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                <GoogleAuthButton onSuccess={onGoogleSuccess} onError={() => toast.error(t('toast.googleRegisterFailed'))} />
+              </div>
+            </>
+          )}
 
           <div style={{
             padding: '10px 14px', background: 'var(--accent-light)', borderRadius: '10px',

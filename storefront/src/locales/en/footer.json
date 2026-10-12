@@ -37,7 +37,8 @@
     "title": "📩 Get Exclusive Deals",
     "subtitle": "Subscribe for new arrivals & offers.",
     "placeholder": "your@email.com",
-    "subscribed": "✅ You're subscribed!"
+    "subscribed": "✅ You're subscribed!",
+    "subscribe": "Subscribe"
   },
   "bottomBar": {
     "rights": "All rights reserved. Built with ❤️ in Sri Lanka.",

@@ -1,0 +1,15 @@
+{
+  "offlineBanner": "You're offline — prices and stock may be out of date",
+  "offlineCheckout": "You're offline. Reconnect to place your order.",
+  "offlineLogin": "You're offline. Reconnect to sign in.",
+  "offlineRegister": "You're offline. Reconnect to create an account.",
+  "updateAvailable": "New version available",
+  "refresh": "Refresh",
+  "installMenuItem": "Install app",
+  "installCardTitle": "Install Mudiyanse Auto Solutions",
+  "installCardBody": "Add it to your home screen for faster access and offline browsing.",
+  "installCardInstall": "Install",
+  "installCardDismiss": "Not now",
+  "iosInstallHint": "Tap Share, then \"Add to Home Screen\" to install this app.",
+  "iosInstallDismiss": "Got it"
+}

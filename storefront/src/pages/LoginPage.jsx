@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff, UserPlus, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { GoogleLogin } from '@react-oauth/google';
+import GoogleAuthButton, { hasGoogleAuth } from '../components/GoogleAuthButton';
+import Logo from '../components/layout/Logo';
 
 export default function LoginPage() {
   const { t } = useTranslation(['auth', 'common']);
@@ -20,6 +21,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!navigator.onLine) return toast.error(t('pwa:offlineLogin'));
     const result = await login(email, password);
     if (result.success) {
       if (result.user?.role !== 'customer') {
@@ -65,7 +67,7 @@ export default function LoginPage() {
             border: '3px solid var(--accent-light)',
             boxShadow: '0 8px 24px rgba(230,126,34,0.15)',
           }}>
-            <img src="/logo.png" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', background: 'white' }} />
+            <Logo size={96} style={{ width: '100%', height: '100%', objectFit: 'contain', background: 'white' }} />
           </div>
           <h1 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px' }}>
             {t('login.welcomeBack')}
@@ -99,21 +101,19 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '20px 0' }}>
-            <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>{t('login.orContinueWith')}</span>
-            <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
-          </div>
+          {hasGoogleAuth && (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '20px 0' }}>
+                <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>{t('login.orContinueWith')}</span>
+                <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
+              </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-            <GoogleLogin
-              onSuccess={onGoogleSuccess}
-              onError={() => toast.error(t('toast.googleLoginFailed'))}
-              useOneTap
-              shape="rectangular"
-              theme="filled_black"
-            />
-          </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+                <GoogleAuthButton onSuccess={onGoogleSuccess} onError={() => toast.error(t('toast.googleLoginFailed'))} />
+              </div>
+            </>
+          )}
 
           <div style={{ textAlign: 'center', paddingTop: '16px', borderTop: '1px solid var(--border-light)', fontSize: '13px' }}>
             <p style={{ color: 'var(--text-muted)', marginBottom: '6px' }}>{t('login.noAccount')}</p>

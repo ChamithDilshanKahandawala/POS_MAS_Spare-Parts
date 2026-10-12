@@ -20,6 +20,21 @@
   --accent-red: #e74c3c;
   --accent-yellow: #f39c12;
   --accent-blue: #2980b9;
+  /* --accent-primary itself is only 2.85:1 on white — fine for a button
+     background (it's the white text on top that matters there) or an icon,
+     but fails WCAG AA where the raw orange is the text color (category
+     chip labels, price text, etc.). Darkened just enough to clear 4.5:1 on
+     this theme's light backgrounds; dark mode's --accent-primary already
+     clears 6:1+ as text, so it's reused unchanged there (see below). */
+  --accent-primary-text: #ab550d;
+  /* Same reasoning as --accent-primary-text: .badge-red/.badge-blue (see
+     below) sit over both a plain white card and a translucent-tinted
+     overlay (the ProductCard stock badge sits on the product image, not
+     the card background) — no single flat color clears 4.5:1 against both
+     a light and a near-black blended background, so these need their own
+     per-theme pair the same as the accent color does. */
+  --badge-red-text: #c0392b;
+  --badge-blue-text: #1f6690;
   --text-primary: #1a1a2e;
   --text-secondary: #4a4a5a;
   --text-muted: #8a8a9a;
@@ -44,9 +59,19 @@
   --accent-red: #e74c3c;
   --accent-yellow: #f39c12;
   --accent-blue: #3498db;
+  /* Unlike light mode, the plain accent color already clears 6:1+ as text
+     against this theme's dark backgrounds — no separate value needed. */
+  --accent-primary-text: #e67e22;
+  --badge-red-text: #f2685a;
+  --badge-blue-text: #4aa3e0;
   --text-primary: #f0ede8;
   --text-secondary: #a0a0b0;
-  --text-muted: #606070;
+  /* #606070 only cleared ~2.8-3.1:1 against this theme's card/secondary
+     backgrounds — WCAG AA needs 4.5:1 for normal text. Lightened until it
+     clears 4.5:1 against every dark-mode background token (see the i18n/
+     PWA task's Step 0 Lighthouse run, which found this as a systemic
+     accessibility failure, not a one-off). */
+  --text-muted: #8f8fa5;
   --border: #252535;
   --border-light: #2a2a3a;
   --hero-gradient: linear-gradient(135deg, #d35400 0%, #e67e22 50%, #f39c12 100%);
@@ -232,11 +257,11 @@ html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
   letter-spacing: 0.5px;
 }
 .badge-green { background: rgba(39, 174, 96, 0.12); color: #27ae60; border: 1px solid rgba(39,174,96,0.25); }
-.badge-red { background: rgba(231, 76, 60, 0.12); color: #e74c3c; border: 1px solid rgba(231,76,60,0.25); }
+.badge-red { background: rgba(231, 76, 60, 0.12); color: var(--badge-red-text); border: 1px solid rgba(231,76,60,0.25); }
 .badge-yellow { background: rgba(243, 156, 18, 0.12); color: #f39c12; border: 1px solid rgba(243,156,18,0.25); }
-.badge-purple { background: rgba(230, 126, 34, 0.12); color: #e67e22; border: 1px solid rgba(230,126,34,0.25); }
-.badge-blue { background: rgba(41, 128, 185, 0.12); color: #2980b9; border: 1px solid rgba(41,128,185,0.25); }
-.badge-orange { background: rgba(230, 126, 34, 0.12); color: #e67e22; border: 1px solid rgba(230,126,34,0.25); }
+.badge-purple { background: rgba(230, 126, 34, 0.12); color: var(--accent-primary-text); border: 1px solid rgba(230,126,34,0.25); }
+.badge-blue { background: rgba(41, 128, 185, 0.12); color: var(--badge-blue-text); border: 1px solid rgba(41,128,185,0.25); }
+.badge-orange { background: rgba(230, 126, 34, 0.12); color: var(--accent-primary-text); border: 1px solid rgba(230,126,34,0.25); }
 
 /* ─── Data Table ──────────────────────────────────── */
 .data-table { width: 100%; border-collapse: collapse; }

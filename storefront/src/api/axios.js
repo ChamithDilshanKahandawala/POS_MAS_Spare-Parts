@@ -1,8 +1,21 @@
 import axios from 'axios';
+import { setStaleProductData } from '../utils/staleDataSignal';
 
 const api = axios.create({
   baseURL: '/api',
   headers: { 'Content-Type': 'application/json' },
+});
+
+// src/sw.js's NetworkFirst plugin for /api/products* sets this header only
+// on its cache-fallback path (the live network request genuinely failed) —
+// never on a fresh response. Lets the UI show the stale-data banner even
+// while navigator.onLine is still true (e.g. the network request failed
+// for a reason other than true offline, like a dropped connection).
+api.interceptors.response.use((res) => {
+  if (res.config?.method === 'get' && res.config?.url?.includes('/products')) {
+    setStaleProductData(res.headers?.['x-from-sw-cache'] === '1');
+  }
+  return res;
 });
 
 // Attach JWT token to every request

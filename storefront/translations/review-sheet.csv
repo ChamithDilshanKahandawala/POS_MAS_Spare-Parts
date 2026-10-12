@@ -21,6 +21,8 @@ common:nav.darkMode,Dark Mode,අඳුරු මාදිලිය,இருள
 common:nav.switchToLightMode,Switch to Light Mode,දීප්ත මාදිලියට මාරු වන්න,வெளிர் தோற்றத்திற்கு மாறவும்,
 common:nav.switchToDarkMode,Switch to Dark Mode,අඳුරු මාදිලියට මාරු වන්න,இருள் தோற்றத்திற்கு மாறவும்,
 common:nav.backToStore,← Back to Store,← සාප්පුවට ආපසු,← கடைக்குத் திரும்பு,
+common:nav.openMenu,Open menu,මෙනුව විවෘත කරන්න,மெனுவைத் திற,
+common:nav.closeMenu,Close menu,මෙනුව වසන්න,மெனுவை மூடு,
 common:languageBanner.message,සිංහලෙන් බලන්න · தமிழில் பார்க்க,සිංහලෙන් බලන්න · தமிழில் பார்க்க,සිංහලෙන් බලන්න · தமிழில் பார்க்க,
 common:languageBanner.dismiss,Dismiss,ඉවත් කරන්න,மூடு,
 common:language.en,EN,EN,EN,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
@@ -323,6 +325,7 @@ footer:newsletter.title,📩 Get Exclusive Deals,📩 විශේෂ දීම�
 footer:newsletter.subtitle,Subscribe for new arrivals & offers.,නව භාණ්ඩ සහ දීමනා සඳහා දායක වන්න.,புதிய வருகைகள் & சலுகைகளுக்கு குழுசேரவும்.,
 footer:newsletter.placeholder,your@email.com,your@email.com,your@email.com,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
 footer:newsletter.subscribed,✅ You're subscribed!,✅ ඔබ දායක වී ඇත!,✅ நீங்கள் குழுசேர்ந்துவிட்டீர்கள்!,
+footer:newsletter.subscribe,Subscribe,දායක වන්න,குழுசேர,
 footer:bottomBar.rights,All rights reserved. Built with ❤️ in Sri Lanka.,සියලුම හිමිකම් ඇවිරිණි. ශ්‍රී ලංකාවේ ❤️ සමඟ නිර්මාණය කරන ලදී.,அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை. இலங்கையில் ❤️ உடன் உருவாக்கப்பட்டது.,
 footer:bottomBar.cashOnDelivery,Cash on Delivery,ගෙදරදී මුදල් ගෙවීම,டெலிவரியின் போது பணம்,
 footer:bottomBar.brNumber,Business Registration No. {{brNumber}},ව්‍යාපාර ලියාපදිංචි අංකය {{brNumber}},வணிக பதிவு எண் {{brNumber}},si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
@@ -446,3 +449,16 @@ terms:sections.returns.heading,Returns,ආපසු භාරදීම්,தி
 terms:sections.returns.body,"See our <1>Returns & Refunds</1> policy for how we handle returns, exchanges and refunds.","ආපසු භාරදීම්, හුවමාරු සහ මුදල් ආපසු ගෙවීම් අප හැසිරවන ආකාරය සඳහා අපගේ <1>ආපසු භාරදීම් සහ මුදල් ආපසු ගෙවීම්</1> ප්‍රතිපත්තිය බලන්න.","திரும்பப்பெறுதல், பரிமாற்றம் மற்றும் பணம் திரும்பப்பெறுதலை நாங்கள் எவ்வாறு கையாள்கிறோம் என்பதற்கு எங்கள் <1>திரும்பப்பெறுதல் & பணத்தைத் திரும்பப்பெறுதல்</1> கொள்கையைப் பார்க்கவும்.",
 terms:sections.law.heading,Governing Law,පාලක නීතිය,ஆளும் சட்டம்,
 terms:sections.law.body,These terms are governed by the laws of Sri Lanka.,මෙම නියමයන් ශ්‍රී ලංකාවේ නීති මගින් පාලනය වේ.,இந்த விதிமுறைகள் இலங்கையின் சட்டங்களால் நிர்வகிக்கப்படுகின்றன.,
+pwa:offlineBanner,You're offline — prices and stock may be out of date,ඔබ අන්තර්ජාලයෙන් විසන්ධි වී ඇත — මිල ගණන් සහ තොග යාවත්කාලීන නොවිය හැක,நீங்கள் ஆஃப்லைனில் உள்ளீர்கள் — விலைகள் மற்றும் கையிருப்பு புதுப்பிக்கப்படாமல் இருக்கலாம்,
+pwa:offlineCheckout,You're offline. Reconnect to place your order.,ඔබ අන්තර්ජාලයෙන් විසන්ධි වී ඇත. ඇණවුම තැබීමට නැවත සම්බන්ධ වන්න.,நீங்கள் ஆஃப்லைனில் உள்ளீர்கள். ஆர்டர் செய்ய மீண்டும் இணையவும்.,
+pwa:offlineLogin,You're offline. Reconnect to sign in.,ඔබ අන්තර්ජාලයෙන් විසන්ධි වී ඇත. ප්‍රවේශ වීමට නැවත සම්බන්ධ වන්න.,நீங்கள் ஆஃப்லைனில் உள்ளீர்கள். உள்நுழைய மீண்டும் இணையவும்.,
+pwa:offlineRegister,You're offline. Reconnect to create an account.,ඔබ අන්තර්ජාලයෙන් විසන්ධි වී ඇත. ගිණුමක් සෑදීමට නැවත සම්බන්ධ වන්න.,நீங்கள் ஆஃப்லைனில் உள்ளீர்கள். கணக்கை உருவாக்க மீண்டும் இணையவும்.,
+pwa:updateAvailable,New version available,නව අනුවාදයක් තිබේ,புதிய பதிப்பு கிடைக்கிறது,
+pwa:refresh,Refresh,නැවුම් කරන්න,புதுப்பிக்க,
+pwa:installMenuItem,Install app,යෙදුම ස්ථාපනය කරන්න,ஆப்ஸை நிறுவு,
+pwa:installCardTitle,Install Mudiyanse Auto Solutions,Mudiyanse Auto Solutions ස්ථාපනය කරන්න,Mudiyanse Auto Solutions ஐ நிறுவுங்கள்,si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+pwa:installCardBody,Add it to your home screen for faster access and offline browsing.,වේගවත් ප්‍රවේශය සහ නොබැඳි බැලීම සඳහා එය ඔබේ මුල් තිරයට එක් කරන්න.,விரைவான அணுகல் மற்றும் ஆஃப்லைன் உலாவலுக்கு இதை உங்கள் முகப்புத் திரையில் சேர்க்கவும்.,
+pwa:installCardInstall,Install,ස්ථාපනය කරන්න,நிறுவு,
+pwa:installCardDismiss,Not now,දැන් නොවේ,இப்போது வேண்டாம்,
+pwa:iosInstallHint,"Tap Share, then ""Add to Home Screen"" to install this app.","මෙම යෙදුම ස්ථාපනය කිරීමට Share ඔබා, පසුව ""Add to Home Screen"" තෝරන්න.","இந்த ஆப்ஸை நிறுவ Share ஐத் தட்டி, பின் ""Add to Home Screen"" ஐத் தேர்ந்தெடுக்கவும்.",si keeps English/Latin term — verify this is the intended everyday usage; ta keeps English/Latin term — verify this is the intended everyday usage
+pwa:iosInstallDismiss,Got it,තේරුණා,சரி,
