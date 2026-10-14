@@ -1,0 +1,31 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "appName": "Apexora කොන්සෝලය",
+  "nav": {
+    "overview": "දළ විශ්ලේෂණය",
+    "sellers": "විකුණුම්කරුවන්",
+    "applications": "අයදුම්පත්",
+    "listingReview": "ලැයිස්තු සමාලෝචනය",
+    "catalog": "නිෂ්පාදන නාමාවලිය",
+    "orders": "ඇණවුම්",
+    "returnsDisputes": "ආපසු ගැනීම් සහ ආරවුල්",
+    "finance": "මූල්‍ය",
+    "customers": "ගනුදෙනුකරුවන්",
+    "content": "අන්තර්ගතය",
+    "platformStaff": "වේදිකා කාර්ය මණ්ඩලය",
+    "auditLog": "විගණන සටහන",
+    "settings": "සැකසුම්",
+    "myStore": "මගේ සාප්පුව"
+  },
+  "switcher": {
+    "adminArea": "පරිපාලක",
+    "myStoreArea": "මගේ සාප්පුව",
+    "switchStore": "සාප්පුව මාරු කරන්න"
+  },
+  "comingSoon": "සන්ධිස්ථානය {{milestone}} න් පසුව ලබා ගත හැක",
+  "logout": "පිටවන්න",
+  "loading": "පූරණය වෙමින්…",
+  "error": {
+    "generic": "යමක් වැරදී ගියේය. නැවත උත්සාහ කරන්න."
+  }
+}

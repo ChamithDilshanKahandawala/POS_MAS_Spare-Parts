@@ -1,0 +1,297 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════
+   APEXORA CONSOLE — design tokens copied from
+   storefront/src/index.css (not imported across projects —
+   see the Milestone 0 task's own instruction). Keep these two
+   files in sync by hand if the storefront's palette changes;
+   this file only keeps the tokens and component classes the
+   console actually uses (dropped: receipt print styles,
+   storefront-specific product-card stagger).
+   ═══════════════════════════════════════════════════ */
+
+/* LIGHT MODE (Default) */
+:root {
+  --bg-primary: #faf9f7;
+  --bg-secondary: #f5f3ef;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fef7f0;
+  --accent-primary: #e67e22;
+  --accent-secondary: #d35400;
+  --accent-light: #fdebd0;
+  --accent-glow: rgba(230, 126, 34, 0.15);
+  --accent-green: #27ae60;
+  --accent-red: #e74c3c;
+  --accent-yellow: #f39c12;
+  --accent-blue: #2980b9;
+  --accent-primary-text: #ab550d;
+  --badge-red-text: #c0392b;
+  --badge-blue-text: #1f6690;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a5a;
+  --text-muted: #8a8a9a;
+  --border: #e8e5df;
+  --border-light: #f0ede8;
+  --hero-gradient: linear-gradient(135deg, #e67e22 0%, #f39c12 50%, #d35400 100%);
+  --card-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --card-shadow-hover: 0 8px 30px rgba(230, 126, 34, 0.12);
+}
+
+/* DARK MODE */
+[data-theme='dark'] {
+  --bg-primary: #0d0d14;
+  --bg-secondary: #14141f;
+  --bg-card: #1a1a28;
+  --bg-card-hover: #222234;
+  --accent-primary: #e67e22;
+  --accent-secondary: #f39c12;
+  --accent-light: rgba(230, 126, 34, 0.12);
+  --accent-glow: rgba(230, 126, 34, 0.2);
+  --accent-green: #27ae60;
+  --accent-red: #e74c3c;
+  --accent-yellow: #f39c12;
+  --accent-blue: #3498db;
+  --accent-primary-text: #e67e22;
+  --badge-red-text: #f2685a;
+  --badge-blue-text: #4aa3e0;
+  --text-primary: #f0ede8;
+  --text-secondary: #a0a0b0;
+  --text-muted: #8f8fa5;
+  --border: #252535;
+  --border-light: #2a2a3a;
+  --hero-gradient: linear-gradient(135deg, #d35400 0%, #e67e22 50%, #f39c12 100%);
+  --card-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  --card-shadow-hover: 0 8px 30px rgba(230, 126, 34, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  font-family: "Inter", sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Sinhala / Tamil typography — same reasoning as storefront's copy: fonts
+   load on demand (console/src/i18n/loadFonts.js), `swap` means text shows
+   in the Inter fallback until then. */
+html[lang="si"] body { font-family: "Noto Sans Sinhala", "Inter", sans-serif; }
+html[lang="ta"] body { font-family: "Noto Sans Tamil", "Inter", sans-serif; }
+html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s ease;
+}
+.glass-card:hover {
+  border-color: var(--accent-primary);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(230, 126, 34, 0.35);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-secondary:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  box-shadow: 0 2px 12px var(--accent-glow);
+}
+
+.btn-danger {
+  background: rgba(231, 76, 60, 0.08);
+  color: var(--accent-red);
+  border: 1px solid rgba(231, 76, 60, 0.25);
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-danger:hover { background: rgba(231, 76, 60, 0.15); }
+
+.input-field {
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-light);
+  border-radius: 10px;
+  padding: 11px 14px;
+  color: var(--text-primary);
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.input-field:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.input-field::placeholder { color: var(--text-muted); }
+
+.select-field {
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-light);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+.select-field:focus { border-color: var(--accent-primary); }
+.select-field option { background: var(--bg-secondary); }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.badge-green { background: rgba(39, 174, 96, 0.12); color: #27ae60; border: 1px solid rgba(39,174,96,0.25); }
+.badge-red { background: rgba(231, 76, 60, 0.12); color: var(--badge-red-text); border: 1px solid rgba(231,76,60,0.25); }
+.badge-yellow { background: rgba(243, 156, 18, 0.12); color: #f39c12; border: 1px solid rgba(243,156,18,0.25); }
+.badge-purple { background: rgba(230, 126, 34, 0.12); color: var(--accent-primary-text); border: 1px solid rgba(230,126,34,0.25); }
+.badge-blue { background: rgba(41, 128, 185, 0.12); color: var(--badge-blue-text); border: 1px solid rgba(41,128,185,0.25); }
+.badge-orange { background: rgba(230, 126, 34, 0.12); color: var(--accent-primary-text); border: 1px solid rgba(230,126,34,0.25); }
+
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600;
+  color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase;
+  border-bottom: 1px solid var(--border-light);
+}
+.data-table td {
+  padding: 14px 16px; font-size: 14px; color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+}
+.data-table tr:hover td { background: var(--accent-glow); }
+.data-table tr:last-child td { border-bottom: none; }
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 20px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: var(--card-shadow);
+}
+.stat-card::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.stat-card.green::before { background: linear-gradient(90deg, #27ae60, #1e8449); }
+.stat-card.purple::before { background: linear-gradient(90deg, #e67e22, #d35400); }
+.stat-card.orange::before { background: linear-gradient(90deg, #e67e22, #f39c12); }
+.stat-card.yellow::before { background: linear-gradient(90deg, #f39c12, #d68910); }
+.stat-card.blue::before { background: linear-gradient(90deg, #2980b9, #2471a3); }
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spin { animation: spin 0.8s linear infinite; display: inline-flex; }
+
+/* No `forwards` — see storefront/src/index.css's .animate-fade comment for
+   why: it avoids accidentally creating a containing block for
+   position:fixed descendants (the modal overlay below relies on this). */
+.animate-fade { animation: fadeIn 0.4s ease; }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+.modal-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  padding: 32px;
+  width: 90%; max-width: 600px; max-height: 90vh;
+  overflow-y: auto;
+  animation: fadeIn 0.3s ease;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@media (max-width: 768px) {
+  .modal-box { padding: 20px; border-radius: 16px; }
+}

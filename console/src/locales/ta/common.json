@@ -1,0 +1,31 @@
+{
+  "_meta": { "status": "draft — needs native speaker review" },
+  "appName": "Apexora கன்சோல்",
+  "nav": {
+    "overview": "கண்ணோட்டம்",
+    "sellers": "விற்பனையாளர்கள்",
+    "applications": "விண்ணப்பங்கள்",
+    "listingReview": "பட்டியல் மதிப்பாய்வு",
+    "catalog": "பொருட்கள் பட்டியல்",
+    "orders": "ஆர்டர்கள்",
+    "returnsDisputes": "திரும்பப்பெறுதல் & சர்ச்சைகள்",
+    "finance": "நிதி",
+    "customers": "வாடிக்கையாளர்கள்",
+    "content": "உள்ளடக்கம்",
+    "platformStaff": "தள ஊழியர்கள்",
+    "auditLog": "தணிக்கைப் பதிவு",
+    "settings": "அமைப்புகள்",
+    "myStore": "எனது கடை"
+  },
+  "switcher": {
+    "adminArea": "நிர்வாகி",
+    "myStoreArea": "எனது கடை",
+    "switchStore": "கடையை மாற்று"
+  },
+  "comingSoon": "மைல்கல் {{milestone}} க்குப் பிறகு கிடைக்கும்",
+  "logout": "வெளியேறு",
+  "loading": "ஏற்றுகிறது…",
+  "error": {
+    "generic": "ஏதோ தவறு நடந்தது. மீண்டும் முயற்சிக்கவும்."
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "appName": "Apexora Console",
+  "nav": {
+    "overview": "Overview",
+    "sellers": "Sellers",
+    "applications": "Applications",
+    "listingReview": "Listing review",
+    "catalog": "Catalog",
+    "orders": "Orders",
+    "returnsDisputes": "Returns & disputes",
+    "finance": "Finance",
+    "customers": "Customers",
+    "content": "Content",
+    "platformStaff": "Platform staff",
+    "auditLog": "Audit log",
+    "settings": "Settings",
+    "myStore": "My store"
+  },
+  "switcher": {
+    "adminArea": "Admin",
+    "myStoreArea": "My store",
+    "switchStore": "Switch store"
+  },
+  "comingSoon": "Available after Milestone {{milestone}}",
+  "logout": "Log out",
+  "loading": "Loading…",
+  "error": {
+    "generic": "Something went wrong. Please try again."
+  }
+}
