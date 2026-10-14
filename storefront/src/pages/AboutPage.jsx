@@ -1,22 +1,42 @@
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShieldCheck, Truck, Banknote, MessageCircle } from 'lucide-react';
-import { SHOP_INFO, CATEGORIES } from '../config/store';
+import { ShieldCheck, Truck, Banknote, MessageCircle, ChevronRight } from 'lucide-react';
+import { SHOP_INFO, PLATFORM_INFO, CATEGORIES, getSellerForProduct } from '../config/store';
 import useDocumentMeta from '../hooks/useDocumentMeta';
 
 const WHY_US_ICONS = [ShieldCheck, Truck, Banknote, MessageCircle];
 
 export default function AboutPage() {
-  const { t } = useTranslation('about');
-  useDocumentMeta(`${t('metaTitle')} | ${SHOP_INFO.name}`, t('metaDescription'));
+  const { t } = useTranslation(['about', 'platform']);
+  useDocumentMeta(`${t('platform:aboutApexoraHeading')} | ${PLATFORM_INFO.name}`, t('platform:aboutApexoraBody'));
 
+  const seller = getSellerForProduct();
   const storyParagraphs = t('story.paragraphs', { returnObjects: true });
   const whyUsItems = t('whyUs.items', { returnObjects: true });
 
   return (
     <div className="animate-fade" style={{ maxWidth: '820px', margin: '0 auto', paddingBottom: '40px' }}>
+      {/* ── About Apexora (the platform) ── */}
+      <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+        <h1 className="page-title">{t('platform:aboutApexoraHeading')}</h1>
+        <p style={{ color: 'var(--text-muted)', fontSize: '15px', marginTop: '8px' }}>{t('platform:aboutApexoraSubtitle')}</p>
+      </div>
+      <div className="glass-card" style={{ padding: '28px', borderRadius: '20px', marginBottom: '40px' }}>
+        <p style={{ fontSize: '14px', lineHeight: 1.75, color: 'var(--text-secondary)' }}>
+          {t('platform:aboutApexoraBody')}
+        </p>
+      </div>
+
+      {/* ── Our first store (the seller) ── */}
       <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-        <h1 className="page-title">{t('hero.heading')}</h1>
+        <h2 className="page-title" style={{ fontSize: '26px' }}>{t('platform:firstStoreHeading', { seller: seller.name })}</h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '15px', marginTop: '8px' }}>{t('hero.subtitle')}</p>
+        <Link
+          to={`/store/${seller.slug}`}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '10px', fontSize: '13px', fontWeight: 700, color: 'var(--accent-primary)', textDecoration: 'none' }}
+        >
+          {t('platform:visitStore')} <ChevronRight size={14} />
+        </Link>
       </div>
 
       <div className="glass-card" style={{ padding: '28px', borderRadius: '20px', marginBottom: '24px' }}>

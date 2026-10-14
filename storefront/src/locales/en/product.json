@@ -1,14 +1,23 @@
 {
-  "grid": { "empty": "No products found.", "emptyHint": "Try adjusting your search or category filter." },
+  "grid": {
+    "empty": "No products found.",
+    "emptyHint": "Try adjusting your search or category filter."
+  },
   "card": {
     "quickView": "Quick View",
     "add": "Add",
     "live": "LIVE",
     "inStockCount": "{{count}} in stock"
   },
-  "breadcrumb": { "home": "Home" },
-  "aria": { "breadcrumb": "Breadcrumb" },
-  "gallery": { "showImage": "Show image {{index}}" },
+  "breadcrumb": {
+    "home": "Home"
+  },
+  "aria": {
+    "breadcrumb": "Breadcrumb"
+  },
+  "gallery": {
+    "showImage": "Show image {{index}}"
+  },
   "skuPrefix": "SKU: {{sku}}",
   "stock": {
     "inStock": "In stock",
@@ -39,14 +48,19 @@
     "barcode": "Barcode",
     "unit": "Unit"
   },
-  "notFound": { "title": "Product not found", "subtitle": "This product doesn't exist or may have been removed." },
-  "error": { "title": "Something went wrong", "subtitle": "We couldn't load this product. Check your connection and try again." },
-  "whatsappMessage": "Hi! I'm interested in: {{name}} (SKU: {{sku}}) — Qty: {{qty}} — {{price}}",
+  "notFound": {
+    "title": "Product not found",
+    "subtitle": "This product doesn't exist or may have been removed."
+  },
+  "error": {
+    "title": "Something went wrong",
+    "subtitle": "We couldn't load this product. Check your connection and try again."
+  },
+  "whatsappMessage": "Hi! I'm interested in this item from {{seller}} on Apexora: {{name}} (SKU: {{sku}}) — Qty: {{qty}} — {{price}}",
   "hero": {
     "badge": "Island-wide Delivery · Cash on Delivery",
     "titleLine1": "Genuine Parts,",
     "titleLine2": "Delivered Fast.",
-    "subtitle": "Mudiyanse Auto Solutions offers the best quality spare parts for three-wheelers & bikes with guaranteed fitment and warranty.",
     "browseCatalog": "Browse Catalog",
     "genuine": "Genuine",
     "oemParts": "OEM Parts",

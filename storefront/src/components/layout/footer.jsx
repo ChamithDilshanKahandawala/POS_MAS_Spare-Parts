@@ -8,11 +8,13 @@ import {
   ChevronRight, Send,
 } from 'lucide-react';
 
-import { SHOP_INFO, PAYMENT_BADGES, formatPhoneDisplay } from '../../config/store';
+import { SHOP_INFO, PLATFORM_INFO, PAYMENT_BADGES, formatPhoneDisplay } from '../../config/store';
 import { slugify } from '../../utils/slugify';
+import ApexoraWordmark from './ApexoraWordmark';
 
 export default function Footer() {
   const { t } = useTranslation('footer');
+  const { t: tPlatform } = useTranslation('platform');
   const [email, setEmail]       = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -49,6 +51,7 @@ export default function Footer() {
   const supportLinks = [
     { label: t('support.aboutUs'),               to: '/about' },
     { label: t('support.contactUs'),             to: '/contact' },
+    { label: tPlatform('ourStores'),             to: '/store/mudiyanse-auto-solutions' },
     { label: t('support.deliveryInformation'),   to: '/delivery' },
     { label: t('support.returnRefundPolicy'),    to: '/returns' },
     { label: t('support.privacyPolicy'),         to: '/privacy' },
@@ -130,28 +133,13 @@ export default function Footer() {
 
           {/* ── Brand column ── */}
           <div>
-            {/* Logo mark */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px' }}>
-              <div style={{
-                width: '42px', height: '42px', borderRadius: '12px', flexShrink: 0,
-                background: 'linear-gradient(135deg,#e67e22,#d35400)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 4px 14px rgba(230,126,34,0.4)',
-              }}>
-                <span style={{ fontSize: '20px' }}>🏎️</span>
-              </div>
-              <div>
-                <div style={{ fontSize: '17px', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
-                  MUDIYANSE
-                </div>
-                <div style={{ fontSize: '9px', color: '#e67e22', fontWeight: 700, letterSpacing: '2.5px', textTransform: 'uppercase' }}>
-                  Auto Solutions
-                </div>
-              </div>
+            {/* Platform wordmark — see the same note in StoreLayout.jsx */}
+            <div style={{ marginBottom: '18px' }}>
+              <ApexoraWordmark size={24} />
             </div>
 
             <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: 1.75, marginBottom: '20px', maxWidth: '290px' }}>
-              {t('brand.description')}
+              {tPlatform('footerTagline')}
             </p>
 
             {/* Stars */}
@@ -364,11 +352,11 @@ export default function Footer() {
           <div>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
               © {year}{' '}
-              <strong style={{ color: 'var(--text-secondary)' }}>{SHOP_INFO.name}</strong>
+              <strong style={{ color: 'var(--text-secondary)' }}>{PLATFORM_INFO.name}</strong>
               {'. '}{t('bottomBar.rights')}
             </p>
             <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '4px 0 0' }}>
-              {t('bottomBar.brNumber', { brNumber: SHOP_INFO.brNumber })}
+              {tPlatform('footerOperatedBy', { platform: PLATFORM_INFO.name, operator: PLATFORM_INFO.operatedBy, brNumber: PLATFORM_INFO.operatorBr })}
             </p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff, UserPlus, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import GoogleAuthButton, { hasGoogleAuth } from '../components/GoogleAuthButton';
-import Logo from '../components/layout/Logo';
+import ApexoraWordmark from '../components/layout/ApexoraWordmark';
 
 export default function LoginPage() {
   const { t } = useTranslation(['auth', 'common']);
@@ -59,15 +59,12 @@ export default function LoginPage() {
       <div style={{ position: 'absolute', bottom: '-80px', left: '-80px', width: '300px', height: '300px', borderRadius: '50%', background: 'rgba(230,126,34,0.06)' }} />
 
       <div className="animate-fade" style={{ width: '100%', maxWidth: '410px', position: 'relative', zIndex: 1 }}>
-        {/* Logo */}
+        {/* Signing in is a platform (Apexora) action, not specific to any
+            one seller — same wordmark as the navbar, not the seller's own
+            logo. */}
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <div style={{
-            width: '72px', height: '72px', margin: '0 auto 14px',
-            borderRadius: '16px', overflow: 'hidden',
-            border: '3px solid var(--accent-light)',
-            boxShadow: '0 8px 24px rgba(230,126,34,0.15)',
-          }}>
-            <Logo size={96} style={{ width: '100%', height: '100%', objectFit: 'contain', background: 'white' }} />
+          <div style={{ marginBottom: '14px' }}>
+            <ApexoraWordmark size={30} style={{ justifyContent: 'center' }} />
           </div>
           <h1 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px' }}>
             {t('login.welcomeBack')}

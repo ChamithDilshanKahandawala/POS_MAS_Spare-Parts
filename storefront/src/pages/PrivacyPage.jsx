@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { SHOP_INFO } from '../config/store';
+import { SHOP_INFO, PLATFORM_INFO } from '../config/store';
 import useDocumentMeta from '../hooks/useDocumentMeta';
 
 // Draft — to be reviewed before this is treated as the shop's real,
@@ -24,7 +24,7 @@ function BulletList({ items }) {
 
 export default function PrivacyPage() {
   const { t } = useTranslation('privacy');
-  useDocumentMeta(`${t('metaTitle')} | ${SHOP_INFO.name}`, t('metaDescription'));
+  useDocumentMeta(`${t('metaTitle')} | ${PLATFORM_INFO.name}`, t('metaDescription'));
 
   const whatWeCollectItems = t('sections.whatWeCollect.items', { returnObjects: true });
   const whyWeCollectItems = t('sections.whyWeCollect.items', { returnObjects: true });
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
       </p>
 
       <Section heading={t('sections.whoWeAre.heading')}>
-        {t('sections.whoWeAre.body', { name: SHOP_INFO.name, brNumber: SHOP_INFO.brNumber })}
+        {t('sections.whoWeAre.body', { platform: PLATFORM_INFO.name, name: SHOP_INFO.name, brNumber: SHOP_INFO.brNumber })}
       </Section>
 
       <Section heading={t('sections.whatWeCollect.heading')}>

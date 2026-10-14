@@ -1,8 +1,5 @@
 {
-  "metaTitle": "About Us",
-  "metaDescription": "Mudiyanse Auto Solutions is a Mirigama-based vehicle spare parts shop serving customers island-wide across Sri Lanka.",
   "hero": {
-    "heading": "About Mudiyanse Auto Solutions",
     "subtitle": "A Mirigama-based spare parts shop, serving customers island-wide."
   },
   "story": {
@@ -20,10 +17,22 @@
   "whyUs": {
     "heading": "Why Buy From Us",
     "items": [
-      { "title": "Checked before dispatch", "desc": "Every item is checked before it's packed and sent out." },
-      { "title": "Island-wide delivery", "desc": "We deliver anywhere in Sri Lanka by courier." },
-      { "title": "Cash on Delivery", "desc": "Pay when your order arrives — no advance payment needed." },
-      { "title": "WhatsApp support", "desc": "Reach us directly on WhatsApp with questions about your order." }
+      {
+        "title": "Checked before dispatch",
+        "desc": "Every item is checked before it's packed and sent out."
+      },
+      {
+        "title": "Island-wide delivery",
+        "desc": "We deliver anywhere in Sri Lanka by courier."
+      },
+      {
+        "title": "Cash on Delivery",
+        "desc": "Pay when your order arrives — no advance payment needed."
+      },
+      {
+        "title": "WhatsApp support",
+        "desc": "Reach us directly on WhatsApp with questions about your order."
+      }
     ]
   },
   "details": {

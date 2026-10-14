@@ -1,9 +1,10 @@
 {
   "_meta": { "status": "draft — needs native speaker review" },
   "metaTitle": "எங்களை தொடர்பு கொள்ள",
-  "metaDescription": "தொலைபேசி, WhatsApp அல்லது மின்னஞ்சல் மூலம் Mudiyanse Auto Solutions ஐ தொடர்பு கொள்ளுங்கள், அல்லது மிரிகமவில் உள்ள எங்கள் கடைக்கு வாருங்கள்.",
+  "metaDescription": "தொலைபேசி, WhatsApp அல்லது மின்னஞ்சல் மூலம் Apexora ஆதரவை தொடர்பு கொள்ளுங்கள், அல்லது மிரிகமவில் உள்ள எங்கள் விற்பனையாளர் Mudiyanse Auto Solutions க்கு வாருங்கள்.",
   "heading": "எங்களை தொடர்பு கொள்ள",
   "subtitle": "அழைக்கவும், WhatsApp செய்யவும், அல்லது எங்களைச் சந்திக்க வாருங்கள் — நாங்கள் மகிழ்ச்சியுடன் உதவுவோம்.",
+  "storeLabel": "{{seller}} கடை",
   "callUs": "எங்களை அழைக்கவும்",
   "callLabel": "{{phone}} ஐ அழைக்கவும்",
   "whatsapp": "WhatsApp இல் அரட்டையடிக்க",

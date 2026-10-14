@@ -7,7 +7,6 @@
     "fastProcessing": "Fast Processing"
   },
   "brand": {
-    "description": "Sri Lanka's trusted source for premium vehicle spare parts — delivered island-wide with a guarantee of quality.",
     "reviews": "(200+ reviews)"
   },
   "quickShop": {
@@ -42,7 +41,6 @@
   },
   "bottomBar": {
     "rights": "All rights reserved. Built with ❤️ in Sri Lanka.",
-    "cashOnDelivery": "Cash on Delivery",
-    "brNumber": "Business Registration No. {{brNumber}}"
+    "cashOnDelivery": "Cash on Delivery"
   }
 }

@@ -14,9 +14,14 @@ import ProductImage from '../components/product/ProductImage';
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
 import { useTranslation } from 'react-i18next';
 import { formatLKR } from '../utils/formatLKR';
-import { SHOP_INFO, getDeliveryEstimate } from '../config/store';
+import { SHOP_INFO, PLATFORM_INFO, getDeliveryEstimate, getSellerForProduct } from '../config/store';
 
-const DEFAULT_TITLE = `${SHOP_INFO.name} · Genuine Vehicle Spare Parts`;
+const DEFAULT_TITLE = `${PLATFORM_INFO.name} | Vehicle Parts Marketplace in Sri Lanka`;
+// Every order today is fulfilled by the same single seller (no per-item
+// seller field exists in backend/models/Sale.js) — getSellerForProduct()
+// takes no args and always returns it, same as everywhere else this helper
+// is used.
+const orderSeller = getSellerForProduct();
 
 // order_status enum, from backend/models/Sale.js: Pending/Processing/
 // Shipped/Delivered map onto the 4-step happy path; Cancelled/Returned are
@@ -44,7 +49,7 @@ function SkeletonBlock({ height }) {
 }
 
 export default function OrderSuccessPage() {
-  const { t } = useTranslation('order');
+  const { t } = useTranslation(['order', 'platform']);
   const STATUS_STEPS = [
     { key: 'placed', label: t('timeline.placed') },
     { key: 'confirmed', label: t('timeline.confirmed') },
@@ -88,7 +93,7 @@ export default function OrderSuccessPage() {
 
   useEffect(() => {
     if (!order) return;
-    document.title = `Order ${order.invoice_number} | ${SHOP_INFO.name}`;
+    document.title = `Order ${order.invoice_number} | ${PLATFORM_INFO.name}`;
     return () => { document.title = DEFAULT_TITLE; };
   }, [order]);
 
@@ -136,7 +141,7 @@ export default function OrderSuccessPage() {
   const deliveryFee = order.shipping_cost_charged || 0;
 
   const whatsappHref = SHOP_INFO.whatsapp
-    ? `https://wa.me/${SHOP_INFO.whatsapp}?text=${encodeURIComponent(t('whatsapp.message', { invoiceNumber: order.invoice_number, total: formatLKR(order.total_amount) }))}`
+    ? `https://wa.me/${SHOP_INFO.whatsapp}?text=${encodeURIComponent(t('whatsapp.message', { invoiceNumber: order.invoice_number, total: formatLKR(order.total_amount), seller: orderSeller.name }))}`
     : null;
 
   const copyInvoice = async () => {
@@ -197,8 +202,8 @@ export default function OrderSuccessPage() {
               const done = i <= currentStep;
               const isLast = i === STATUS_STEPS.length - 1;
               return (
-                <div key={step.key} style={{ display: 'flex', flex: isLast ? '0 0 auto' : 1, alignItems: 'flex-start' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '64px' }}>
+                <div key={step.key} style={{ display: 'flex', flex: 1, alignItems: 'flex-start' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '64px', maxWidth: '64px' }}>
                     <div style={{
                       width: '28px', height: '28px', borderRadius: '999px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                       background: done ? 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))' : 'var(--bg-secondary)',
@@ -234,7 +239,10 @@ export default function OrderSuccessPage() {
 
       {/* Items + totals */}
       <div className="glass-card" style={{ padding: '24px', borderRadius: '16px', marginBottom: '20px' }}>
-        <h2 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '14px' }}>{t('items.title')}</h2>
+        <h2 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px' }}>{t('items.title')}</h2>
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '14px' }}>
+          {t('platform:soldBy', { seller: orderSeller.name })}
+        </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '18px' }}>
           {order.items.map((item) => (
             <div key={item.product || item.product_name} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

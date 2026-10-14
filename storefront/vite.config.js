@@ -34,9 +34,14 @@ export default defineConfig({
       filename: 'sw.js',
       includeAssets: ['logo-96.png', 'logo-96.webp', 'robots.txt'],
       manifest: {
-        name: 'Mudiyanse Auto Solutions',
-        short_name: 'Mudiyanse Auto',
-        description: 'Genuine vehicle spare parts, island-wide delivery, Cash on Delivery.',
+        // Apexora is the storefront's own brand (a marketplace); Mudiyanse
+        // Auto Solutions is its one seller today, shown throughout the UI
+        // as "Sold by Mudiyanse Auto Solutions" — see src/config/store.js's
+        // PLATFORM_INFO/SELLERS split. The installed app itself is branded
+        // as the platform, same as any marketplace app would be.
+        name: 'Apexora',
+        short_name: 'Apexora',
+        description: "Sri Lanka's marketplace for genuine vehicle parts and more, delivered island-wide.",
         theme_color: '#e67e22',
         background_color: '#faf9f7',
         display: 'standalone',

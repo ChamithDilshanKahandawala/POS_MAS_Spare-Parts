@@ -4,7 +4,7 @@ import { registerUser } from '../api/services';
 import toast from 'react-hot-toast';
 import { User, Mail, Lock, ArrowRight, CheckCircle2 } from 'lucide-react';
 import GoogleAuthButton, { hasGoogleAuth } from '../components/GoogleAuthButton';
-import Logo from '../components/layout/Logo';
+import ApexoraWordmark from '../components/layout/ApexoraWordmark';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 
@@ -61,13 +61,8 @@ export default function RegisterPage() {
 
       <div className="animate-fade" style={{ width: '100%', maxWidth: '440px', position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <div style={{
-            width: '72px', height: '72px', margin: '0 auto 14px',
-            borderRadius: '16px', overflow: 'hidden',
-            border: '3px solid var(--accent-light)',
-            boxShadow: '0 8px 24px rgba(230,126,34,0.15)',
-          }}>
-            <Logo size={96} style={{ width: '100%', height: '100%', objectFit: 'contain', background: 'white' }} />
+          <div style={{ marginBottom: '14px' }}>
+            <ApexoraWordmark size={30} />
           </div>
           <h1 style={{ fontSize: '24px', fontWeight: 900, color: 'var(--text-primary)' }}>{t('register.title')}</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>{t('register.subtitle')}</p>

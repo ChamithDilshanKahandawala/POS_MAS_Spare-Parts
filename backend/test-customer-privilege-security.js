@@ -7,17 +7,12 @@
 // real dev test data, never production.
 // Run with: node test-customer-privilege-security.js
 const { spawn } = require('child_process');
-const path = require('path');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-require('dotenv').config({ path: path.resolve(__dirname, '.env.development') });
+require('./scripts/lib/loadDevEnv')();
 
 const DEV_MONGO_URI = process.env.MONGO_URI;
 const DEV_JWT_SECRET = process.env.JWT_SECRET;
-if (!DEV_MONGO_URI || !DEV_MONGO_URI.includes('storefront_dev')) {
-  console.error('❌ Refusing to run: backend/.env.development did not resolve to the storefront_dev database. Aborting.');
-  process.exit(1);
-}
 
 const PORT = 5095;
 const api = (p, opts) => fetch(`http://localhost:${PORT}/api${p}`, opts);

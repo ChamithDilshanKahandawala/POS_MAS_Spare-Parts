@@ -1,0 +1,26 @@
+{
+  "tagline": "Vehicle parts and more, delivered across Sri Lanka",
+  "homeMetaTitle": "Apexora | Vehicle Parts Marketplace in Sri Lanka",
+  "homeMetaDescription": "Shop genuine vehicle parts on Apexora, Sri Lanka's marketplace for trusted sellers. Island-wide delivery, Cash on Delivery.",
+  "heroSubtitle": "Apexora brings you genuine, quality-checked parts for three-wheelers & bikes from trusted sellers — starting with Mudiyanse Auto Solutions, with fitment and warranty guaranteed.",
+  "soldBy": "Sold by {{seller}}",
+  "verifiedSeller": "Verified seller",
+  "visitStore": "Visit Store",
+  "ourStores": "Our Stores",
+  "footerTagline": "Sri Lanka's marketplace for genuine vehicle parts — starting with Mudiyanse Auto Solutions, with more sellers on the way.",
+  "footerOperatedBy": "{{platform}} is operated by {{operator}} · BR {{brNumber}}",
+  "aboutApexoraHeading": "About Apexora",
+  "aboutApexoraSubtitle": "Sri Lanka's marketplace for genuine parts, starting with vehicles.",
+  "aboutApexoraBody": "Apexora is a Sri Lankan online marketplace. We're starting with genuine, quality-checked vehicle spare parts — with more categories and sellers joining soon.",
+  "firstStoreHeading": "Our First Store: {{seller}}",
+  "store": {
+    "location": "Mirigama",
+    "aboutHeading": "About This Store",
+    "productsHeading": "Products from {{seller}}",
+    "notFoundTitle": "Store Not Found",
+    "notFoundSubtitle": "We couldn't find this store. It may have moved or no longer exists.",
+    "backToShop": "Back to Shop",
+    "metaTitle": "{{seller}} | Apexora",
+    "metaDescription": "Shop {{seller}}'s products on Apexora — genuine vehicle spare parts, island-wide delivery, Cash on Delivery."
+  }
+}

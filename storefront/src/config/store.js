@@ -32,6 +32,50 @@ export const SHOP_INFO = {
   brNumber: 'WP/GAM/MI/2025/00255',
 };
 
+// The storefront's own brand — a marketplace, distinct from the legal
+// entity that actually operates it (SHOP_INFO) and from any one seller on
+// it (SELLERS). Only one seller exists today, so "platform" vs "seller"
+// looks like a distinction without a difference right now, but customers
+// must see "Sold by Mudiyanse Auto Solutions" throughout (product card,
+// product detail, cart, checkout, order success, my orders) so that's
+// already true everywhere a seller name is shown, not just reachable via
+// this constant. `tagline` here is the plain-English baseline used in
+// non-reactive, build-time-only contexts (PWA manifest description,
+// JSON-LD) — the on-page, language-reactive tagline text lives in
+// locales/*/platform.json instead.
+export const PLATFORM_INFO = {
+  name: 'Apexora',
+  tagline: 'Vehicle parts and more, delivered across Sri Lanka',
+  domain: 'apexora.lk',
+  operatedBy: SHOP_INFO.name,
+  operatorBr: SHOP_INFO.brNumber,
+  supportWhatsapp: SHOP_INFO.whatsapp,
+  supportPhones: SHOP_INFO.phones,
+  supportEmail: SHOP_INFO.email,
+};
+
+// Every seller on the platform. One entry today (spreading SHOP_INFO, the
+// legal entity actually running things) — more sellers join this array
+// later without anything that reads it needing to change, since product-
+// to-seller resolution always goes through getSellerForProduct() rather
+// than assuming SELLERS[0] directly.
+export const SELLERS = [
+  { id: 'mudiyanse-auto', slug: 'mudiyanse-auto-solutions', ...SHOP_INFO },
+];
+
+// Every product belongs to the single seller above today — there's no
+// per-product seller field in backend/models/Product.js yet. This is the
+// one place that'll need to change (look up the product's real seller)
+// once multi-seller product data exists; nothing that calls it should
+// need to.
+export function getSellerForProduct() {
+  return SELLERS[0];
+}
+
+export function getSellerBySlug(slug) {
+  return SELLERS.find((s) => s.slug === slug) || null;
+}
+
 // '0757203766' -> '075 720 3766'. Local 10-digit numbers only (the only
 // format SHOP_INFO.phones uses) — anything else is returned unchanged
 // rather than mis-grouped.

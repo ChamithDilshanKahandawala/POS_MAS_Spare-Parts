@@ -31,6 +31,7 @@ const DeliveryPage = lazy(() => import('./pages/DeliveryPage'));
 const ReturnsPage = lazy(() => import('./pages/ReturnsPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
+const StorePage = lazy(() => import('./pages/StorePage'));
 
 // --- Customer Only Route ---
 // Redirecting here loses the page the customer was trying to reach (e.g.
@@ -67,6 +68,12 @@ const OrderSuccessRoute = () => {
   return <OrderSuccessPage key={id} />;
 };
 
+// Same reasoning again — remounts StorePage fresh per :slug.
+const StoreRoute = () => {
+  const { slug } = useParams();
+  return <StorePage key={slug} />;
+};
+
 function AppRoutes() {
   return (
     <Routes>
@@ -87,6 +94,7 @@ function AppRoutes() {
         <Route path="returns" element={<Suspense fallback={<PageLoader />}><ReturnsPage /></Suspense>} />
         <Route path="privacy" element={<Suspense fallback={<PageLoader />}><PrivacyPage /></Suspense>} />
         <Route path="terms" element={<Suspense fallback={<PageLoader />}><TermsPage /></Suspense>} />
+        <Route path="store/:slug" element={<Suspense fallback={<PageLoader />}><StoreRoute /></Suspense>} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

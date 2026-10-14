@@ -1,5 +1,7 @@
 {
-  "_meta": { "status": "draft — needs native speaker review" },
+  "_meta": {
+    "status": "draft — needs native speaker review"
+  },
   "trust": {
     "securePayments": "ආරක්ෂිත ගෙවීම්",
     "islandwideDelivery": "දිවයින පුරා බෙදාහැරීම",
@@ -8,7 +10,6 @@
     "fastProcessing": "වේගවත් සැකසීම"
   },
   "brand": {
-    "description": "ගුණාත්මක භාවය සහතික කරමින් දිවයින පුරා බෙදාහරින ශ්‍රී ලංකාවේ විශ්වාසනීය වාහන අමතර කොටස් ප්‍රභවය.",
     "reviews": "(සමාලෝචන 200+)"
   },
   "quickShop": {
@@ -43,7 +44,6 @@
   },
   "bottomBar": {
     "rights": "සියලුම හිමිකම් ඇවිරිණි. ශ්‍රී ලංකාවේ ❤️ සමඟ නිර්මාණය කරන ලදී.",
-    "cashOnDelivery": "ගෙදරදී මුදල් ගෙවීම",
-    "brNumber": "ව්‍යාපාර ලියාපදිංචි අංකය {{brNumber}}"
+    "cashOnDelivery": "ගෙදරදී මුදල් ගෙවීම"
   }
 }

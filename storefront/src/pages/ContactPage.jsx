@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Phone, MessageCircle, Mail, MapPin, Clock, ExternalLink } from 'lucide-react';
-import { SHOP_INFO, formatPhoneDisplay } from '../config/store';
+import { SHOP_INFO, PLATFORM_INFO, getSellerForProduct, formatPhoneDisplay } from '../config/store';
 import { isShopOpenNow } from '../utils/openStatus';
 import useDocumentMeta from '../hooks/useDocumentMeta';
 import useJsonLd from '../hooks/useJsonLd';
@@ -9,7 +9,11 @@ import { buildShopJsonLd } from '../utils/shopJsonLd';
 
 export default function ContactPage() {
   const { t } = useTranslation('contact');
-  useDocumentMeta(`${t('metaTitle')} | ${SHOP_INFO.name}`, t('metaDescription'));
+  const seller = getSellerForProduct();
+  useDocumentMeta(`${t('metaTitle')} | ${PLATFORM_INFO.name}`, t('metaDescription'));
+  // AutoPartsStore markup for the seller whose address/map/hours this page
+  // shows — see buildPlatformJsonLd() for the separate Organization markup
+  // used on the home page instead.
   useJsonLd(buildShopJsonLd());
 
   // Re-evaluated every 30s so the badge flips live across the open/close
@@ -89,6 +93,9 @@ export default function ContactPage() {
         </div>
       </div>
 
+      <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>
+        {t('storeLabel', { seller: seller.name })}
+      </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '18px' }}>
         {/* Address + hours */}
         <div className="glass-card" style={{ padding: '24px', borderRadius: '18px' }}>

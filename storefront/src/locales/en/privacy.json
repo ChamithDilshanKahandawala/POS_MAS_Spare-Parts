@@ -1,12 +1,12 @@
 {
   "metaTitle": "Privacy Policy",
-  "metaDescription": "How Mudiyanse Auto Solutions collects, uses and protects your personal data.",
+  "metaDescription": "How Apexora and its seller Mudiyanse Auto Solutions collect, use and protect your personal data.",
   "heading": "Privacy Policy",
   "lastUpdated": "Last updated: 12 October 2026",
   "sections": {
     "whoWeAre": {
       "heading": "Who We Are",
-      "body": "{{name}} (Business Registration No. {{brNumber}}) is a vehicle spare parts shop based in Mirigama, Sri Lanka, operating this storefront website."
+      "body": "{{platform}} is a Sri Lankan online marketplace. Today, every product sold on {{platform}} is sold by {{name}} (Business Registration No. {{brNumber}}), a vehicle spare parts shop based in Mirigama, Sri Lanka — the seller of record and the data controller responsible for your personal data under this policy."
     },
     "whatWeCollect": {
       "heading": "What We Collect",

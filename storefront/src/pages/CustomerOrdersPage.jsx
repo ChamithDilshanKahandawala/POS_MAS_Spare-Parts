@@ -4,9 +4,14 @@ import { getMyOrders } from '../api/services';
 import toast from 'react-hot-toast';
 import { Package, Truck, Clock, CheckCircle, Navigation } from 'lucide-react';
 import { formatLKR } from '../utils/formatLKR';
+import { getSellerForProduct } from '../config/store';
+
+// Every order today is fulfilled by the same single seller — see the
+// identical note in OrderSuccessPage.jsx.
+const orderSeller = getSellerForProduct();
 
 export default function CustomerOrdersPage() {
-  const { t } = useTranslation('order');
+  const { t } = useTranslation(['order', 'platform']);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -75,6 +80,9 @@ export default function CustomerOrdersPage() {
                   <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{o.invoice_number}</div>
                   <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px' }}>
                     {new Date(o.createdAt).toLocaleString('en-LK', { dateStyle: 'medium', timeStyle: 'short' })}
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    {t('platform:soldBy', { seller: orderSeller.name })}
                   </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>

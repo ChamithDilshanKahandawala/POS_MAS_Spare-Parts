@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-require('dotenv').config();
+require('./scripts/lib/loadDevEnv')();
 const Product = require('./models/Product');
 
 const inventoryData =

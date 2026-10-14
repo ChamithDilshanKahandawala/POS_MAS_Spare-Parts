@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
+require('./scripts/lib/loadDevEnv')();
 mongoose.connect(process.env.MONGO_URI).then(async () => {
   const User = require('./models/User');
   const user = await User.findOne({ role: 'admin' }) || await User.findOne({ role: 'super_admin' });

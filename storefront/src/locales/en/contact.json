@@ -1,8 +1,9 @@
 {
   "metaTitle": "Contact Us",
-  "metaDescription": "Contact Mudiyanse Auto Solutions by phone, WhatsApp or email, or visit our shop in Mirigama, Sri Lanka.",
+  "metaDescription": "Contact Apexora support by phone, WhatsApp or email, or visit our seller Mudiyanse Auto Solutions in Mirigama, Sri Lanka.",
   "heading": "Contact Us",
   "subtitle": "Call, WhatsApp or visit us — we're happy to help.",
+  "storeLabel": "{{seller}} Store",
   "callUs": "Call Us",
   "callLabel": "Call {{phone}}",
   "whatsapp": "Chat on WhatsApp",

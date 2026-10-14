@@ -15,9 +15,10 @@ import ProductCard from '../components/product/ProductCard';
 import { formatLKR } from '../utils/formatLKR';
 import { slugify } from '../utils/slugify';
 import { useTranslation } from 'react-i18next';
-import { WHATSAPP_NUMBER, SHOP_INFO } from '../config/store';
+import { WHATSAPP_NUMBER, PLATFORM_INFO, getSellerForProduct } from '../config/store';
+import SellerCard from '../components/product/SellerCard';
 
-const DEFAULT_TITLE = `${SHOP_INFO.name} · Genuine Vehicle Spare Parts`;
+const DEFAULT_TITLE = `${PLATFORM_INFO.name} | Vehicle Parts Marketplace in Sri Lanka`;
 
 function SkeletonBlock({ height }) {
   return (
@@ -79,7 +80,7 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!product) return;
-    document.title = `${product.name} | ${SHOP_INFO.name}`;
+    document.title = `${product.name} | ${PLATFORM_INFO.name}`;
     return () => { document.title = DEFAULT_TITLE; };
   }, [product]);
 
@@ -99,10 +100,10 @@ export default function ProductDetailPage() {
   if (loadStatus === 'loading') {
     return (
       <div className="animate-fade" style={{ display: 'flex', gap: '40px', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
-        <div style={{ flex: '1 1 0%', minWidth: 0, width: isMobile ? '100%' : undefined }}>
+        <div style={{ flex: isMobile ? '1 1 100%' : '1 1 0%', minWidth: 0, width: isMobile ? '100%' : undefined }}>
           <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: '20px', background: 'var(--bg-card)', backgroundImage: 'linear-gradient(90deg, var(--bg-card) 25%, var(--bg-secondary) 50%, var(--bg-card) 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
         </div>
-        <div style={{ flex: '1 1 0%', minWidth: 0, display: 'flex', flexDirection: 'column', gap: '14px', width: isMobile ? '100%' : undefined }}>
+        <div style={{ flex: isMobile ? '1 1 100%' : '1 1 0%', minWidth: 0, display: 'flex', flexDirection: 'column', gap: '14px', width: isMobile ? '100%' : undefined }}>
           {[24, 40, 36, 48, 50, 160].map((h, i) => <SkeletonBlock key={i} height={h} />)}
         </div>
       </div>
@@ -140,6 +141,7 @@ export default function ProductDetailPage() {
   const outOfStock = knownStock <= 0;
   const lowStock = !outOfStock && knownStock < 5;
   const effectiveQty = Math.min(qty, Math.max(knownStock, 1));
+  const seller = getSellerForProduct(product);
 
   const specs = [
     { label: t('specs.brand'), value: product.brand },
@@ -153,7 +155,7 @@ export default function ProductDetailPage() {
   const descriptionNeedsClamp = !!product.description && (product.description.split('\n').length > 6 || product.description.length > 400);
 
   const whatsappHref = WHATSAPP_NUMBER
-    ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(t('whatsappMessage', { name: product.name, sku: product.sku_code, qty: effectiveQty, price: formatLKR(product.selling_price * effectiveQty) }))}`
+    ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(t('whatsappMessage', { name: product.name, sku: product.sku_code, qty: effectiveQty, price: formatLKR(product.selling_price * effectiveQty), seller: seller.name }))}`
     : null;
 
   // CartContext's addToCart has no quantity parameter (its API isn't being
@@ -187,7 +189,7 @@ export default function ProductDetailPage() {
 
         <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
           {/* Image column */}
-          <div style={{ flex: '1 1 0%', minWidth: 0, width: isMobile ? '100%' : undefined, position: isMobile ? 'static' : 'sticky', top: '24px' }}>
+          <div style={{ flex: isMobile ? '1 1 100%' : '1 1 0%', minWidth: 0, width: isMobile ? '100%' : undefined, position: isMobile ? 'static' : 'sticky', top: '24px' }}>
             <ProductImage product={{ ...product, images: images.length ? [images[activeImage]] : [] }} priority style={{ borderRadius: '20px', border: '1px solid var(--border-light)' }}>
               {outOfStock ? (
                 <span className="badge badge-red" style={{ position: 'absolute', top: '14px', left: '14px' }}>{t('stock.outOfStock')}</span>
@@ -218,7 +220,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Info column */}
-          <div style={{ flex: '1 1 0%', minWidth: 0, width: isMobile ? '100%' : undefined }}>
+          <div style={{ flex: isMobile ? '1 1 100%' : '1 1 0%', minWidth: 0, width: isMobile ? '100%' : undefined }}>
             <h1 style={{ fontSize: '26px', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.25, marginBottom: '10px' }}>
               {product.name}
             </h1>
@@ -233,6 +235,8 @@ export default function ProductDetailPage() {
             <div style={{ fontSize: '30px', fontWeight: 900, color: 'var(--accent-primary)', marginBottom: '10px' }}>
               {formatLKR(product.selling_price)}
             </div>
+
+            <SellerCard seller={seller} />
 
             <p
               aria-live="polite"

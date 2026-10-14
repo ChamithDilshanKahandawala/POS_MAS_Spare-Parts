@@ -1,15 +1,26 @@
 {
-  "_meta": { "status": "draft — needs native speaker review" },
-  "grid": { "empty": "භාණ්ඩ හමු නොවීය.", "emptyHint": "ඔබගේ සෙවීම හෝ කාණ්ඩ පෙරහන වෙනස් කර බලන්න." },
+  "_meta": {
+    "status": "draft — needs native speaker review"
+  },
+  "grid": {
+    "empty": "භාණ්ඩ හමු නොවීය.",
+    "emptyHint": "ඔබගේ සෙවීම හෝ කාණ්ඩ පෙරහන වෙනස් කර බලන්න."
+  },
   "card": {
     "quickView": "ඉක්මන් බැල්ම",
     "add": "එකතු කරන්න",
     "live": "සජීවී",
     "inStockCount": "තොගයේ {{count}}ක් ඇත"
   },
-  "breadcrumb": { "home": "මුල් පිටුව" },
-  "aria": { "breadcrumb": "පාද සටහන" },
-  "gallery": { "showImage": "රූපය {{index}} පෙන්වන්න" },
+  "breadcrumb": {
+    "home": "මුල් පිටුව"
+  },
+  "aria": {
+    "breadcrumb": "පාද සටහන"
+  },
+  "gallery": {
+    "showImage": "රූපය {{index}} පෙන්වන්න"
+  },
   "skuPrefix": "SKU: {{sku}}",
   "stock": {
     "inStock": "තොගයේ ඇත",
@@ -40,14 +51,19 @@
     "barcode": "බාර්කෝඩය",
     "unit": "ඒකකය"
   },
-  "notFound": { "title": "භාණ්ඩය හමු නොවීය", "subtitle": "මෙම භාණ්ඩය නොපවතී, හෝ ඉවත් කර ඇති විය හැක." },
-  "error": { "title": "යමක් වැරදී ගියේය", "subtitle": "මෙම භාණ්ඩය ලබා ගත නොහැකි විය. ඔබගේ සම්බන්ධතාවය පරීක්ෂා කර නැවත උත්සාහ කරන්න." },
-  "whatsappMessage": "ආයුබෝවන්! මට {{name}} (SKU: {{sku}}) ගැන උනන්දුවක් ඇත — ප්‍රමාණය: {{qty}} — {{price}}",
+  "notFound": {
+    "title": "භාණ්ඩය හමු නොවීය",
+    "subtitle": "මෙම භාණ්ඩය නොපවතී, හෝ ඉවත් කර ඇති විය හැක."
+  },
+  "error": {
+    "title": "යමක් වැරදී ගියේය",
+    "subtitle": "මෙම භාණ්ඩය ලබා ගත නොහැකි විය. ඔබගේ සම්බන්ධතාවය පරීක්ෂා කර නැවත උත්සාහ කරන්න."
+  },
+  "whatsappMessage": "ආයුබෝවන්! Apexora හි {{seller}} ගේ මෙම භාණ්ඩය ගැන මට උනන්දුවක් ඇත: {{name}} (SKU: {{sku}}) — ප්‍රමාණය: {{qty}} — {{price}}",
   "hero": {
     "badge": "දිවයින පුරා බෙදාහැරීම · ගෙදරදී මුදල් ගෙවීම",
     "titleLine1": "සැබෑ කොටස්,",
     "titleLine2": "වේගයෙන් බෙදාහැරේ.",
-    "subtitle": "Mudiyanse Auto Solutions ත්‍රිරෝද හා බයික් සඳහා ගැළපීම සහ වගකීම සහතික කරමින් හොඳම තත්ත්වයේ අමතර කොටස් සපයයි.",
     "browseCatalog": "නාමාවලිය බලන්න",
     "genuine": "සැබෑ",
     "oemParts": "OEM කොටස්",

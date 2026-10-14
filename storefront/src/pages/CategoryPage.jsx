@@ -13,9 +13,9 @@ import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
 import ProductGrid from '../components/product/ProductGrid';
 import { useTranslation } from 'react-i18next';
 import { slugify } from '../utils/slugify';
-import { CATEGORIES, SHOP_INFO } from '../config/store';
+import { CATEGORIES, PLATFORM_INFO } from '../config/store';
 
-const DEFAULT_TITLE = `${SHOP_INFO.name} · Genuine Vehicle Spare Parts`;
+const DEFAULT_TITLE = `${PLATFORM_INFO.name} | Vehicle Parts Marketplace in Sri Lanka`;
 const PAGE_SIZE = 24;
 
 function SkeletonBar({ height, width }) {
@@ -115,7 +115,7 @@ export default function CategoryPage() {
 
   useEffect(() => {
     if (!category) return;
-    document.title = `${category} | ${SHOP_INFO.name}`;
+    document.title = `${category} | ${PLATFORM_INFO.name}`;
     return () => { document.title = DEFAULT_TITLE; };
   }, [category]);
 

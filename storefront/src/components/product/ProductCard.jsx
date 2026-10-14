@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ShoppingCart, Eye } from 'lucide-react';
 import ProductImage from './ProductImage';
 import { formatLKR } from '../../utils/formatLKR';
+import { getSellerForProduct } from '../../config/store';
 
 // Used on StorefrontPage's grid, the product detail page's "You may also
 // like" row, and anywhere else a product tile is needed. `onCardClick`
@@ -12,8 +13,10 @@ import { formatLKR } from '../../utils/formatLKR';
 // modal there).
 export default function ProductCard({ product, index = 0, isLiveUpdated, onCardClick, onAddToCart }) {
   const { t } = useTranslation('product');
+  const { t: tPlatform } = useTranslation('platform');
   const outOfStock = product.stock_quantity <= 0;
   const detailHref = `/product/${product._id}`;
+  const seller = getSellerForProduct(product);
 
   return (
     <div
@@ -87,8 +90,14 @@ export default function ProductCard({ product, index = 0, isLiveUpdated, onCardC
           <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{product.sku_code}</span>
         </div>
         <Link to={detailHref} onClick={(e) => e.stopPropagation()} style={{ textDecoration: 'none', color: 'inherit' }}>
-          <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '12px', lineHeight: 1.3 }}>{product.name}</h3>
+          <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px', lineHeight: 1.3 }}>{product.name}</h3>
         </Link>
+        <div style={{
+          fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px',
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+        }}>
+          {tPlatform('soldBy', { seller: seller.name })}
+        </div>
 
         <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--accent-primary-text)' }}>

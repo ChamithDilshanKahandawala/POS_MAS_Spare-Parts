@@ -11,7 +11,7 @@ import { slugify } from '../utils/slugify';
 import { CATEGORIES as REAL_CATEGORIES } from '../config/store';
 import useDocumentMeta from '../hooks/useDocumentMeta';
 import useJsonLd from '../hooks/useJsonLd';
-import { buildShopJsonLd } from '../utils/shopJsonLd';
+import { buildPlatformJsonLd } from '../utils/shopJsonLd';
 import InstallCard from '../components/InstallCard';
 
 // "All" stays as a local filter (there's no dedicated page for it); every
@@ -20,9 +20,9 @@ import InstallCard from '../components/InstallCard';
 const CATEGORIES = ['All', ...REAL_CATEGORIES];
 
 export default function StorefrontPage() {
-  const { t } = useTranslation(['product', 'common']);
-  useDocumentMeta(t('common:home.metaTitle'), t('common:home.metaDescription'));
-  useJsonLd(buildShopJsonLd());
+  const { t } = useTranslation(['product', 'common', 'platform']);
+  useDocumentMeta(t('platform:homeMetaTitle'), t('platform:homeMetaDescription'));
+  useJsonLd(buildPlatformJsonLd());
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -107,7 +107,7 @@ export default function StorefrontPage() {
               {t('hero.titleLine1')}<br/>{t('hero.titleLine2')}
             </h2>
             <p style={{ fontSize: '15px', opacity: 0.92, marginBottom: '24px', lineHeight: 1.7, maxWidth: '460px' }}>
-              {t('hero.subtitle')}
+              {t('platform:heroSubtitle')}
             </p>
             <button 
               onClick={() => document.getElementById('catalog').scrollIntoView({behavior: 'smooth'})}

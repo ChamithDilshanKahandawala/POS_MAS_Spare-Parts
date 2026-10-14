@@ -3,7 +3,7 @@ const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTQwYjIzZDY3NTM1
 async function test() {
   try {
     const mongoose = require('mongoose');
-    require('dotenv').config();
+    require('./scripts/lib/loadDevEnv')();
     await mongoose.connect(process.env.MONGO_URI);
     const Product = require('./models/Product');
     const product = await Product.findOne({ stock_quantity: { $gt: 0 } });

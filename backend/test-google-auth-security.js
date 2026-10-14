@@ -14,15 +14,10 @@
 //      still succeed (200) as a new customer account, proving the fix
 //      didn't break the legitimate customer Google-signup flow.
 const { spawn } = require('child_process');
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '.env.development') });
+require('./scripts/lib/loadDevEnv')();
 
 const DEV_MONGO_URI = process.env.MONGO_URI;
 const DEV_JWT_SECRET = process.env.JWT_SECRET;
-if (!DEV_MONGO_URI || !DEV_MONGO_URI.includes('storefront_dev')) {
-  console.error('❌ Refusing to run: backend/.env.development did not resolve to the storefront_dev database. Aborting rather than risk running against the wrong database.');
-  process.exit(1);
-}
 
 function fakeGoogleToken(payloadObj) {
   const b64url = (obj) => Buffer.from(JSON.stringify(obj)).toString('base64url');

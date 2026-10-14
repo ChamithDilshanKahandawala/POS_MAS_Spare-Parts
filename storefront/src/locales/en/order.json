@@ -19,7 +19,7 @@
     "qtyLine": "Qty: {{count}} × {{price}}"
   },
   "payment": { "cod": "Cash on Delivery — please keep {{amount}} ready" },
-  "whatsapp": { "cta": "Confirm on WhatsApp", "message": "Hi! I'd like to confirm my order {{invoiceNumber}}, total {{total}}. Thank you!" },
+  "whatsapp": { "cta": "Confirm on WhatsApp", "message": "Hi! I'd like to confirm my Apexora order {{invoiceNumber}} from {{seller}}, total {{total}}. Thank you!" },
   "actions": { "continueShopping": "Continue shopping", "viewOrders": "View my orders", "backToShop": "Back to shop", "tryAgain": "Try again" },
   "notFound": { "title": "Order not found", "subtitle": "We couldn't find this order, or it doesn't belong to this account." },
   "error": { "title": "Something went wrong", "subtitle": "We couldn't load this order. Check your connection and try again." },

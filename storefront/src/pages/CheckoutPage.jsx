@@ -7,7 +7,7 @@ import { createSale } from '../api/services';
 import toast from 'react-hot-toast';
 import { Truck, Phone, Check, ArrowLeft, ShieldCheck, ShoppingCart, User, MapPin, Map, Loader2 } from 'lucide-react';
 import { formatLKR, formatAmount } from '../utils/formatLKR';
-import { DELIVERY_OPTIONS } from '../config/store';
+import { DELIVERY_OPTIONS, getSellerForProduct } from '../config/store';
 
 // This page only ever mounts via the /checkout route, which is wrapped in
 // <CustomerRoute> (see App.jsx) — a logged-out visitor, or a non-customer
@@ -21,7 +21,7 @@ const DISTRICTS = [
 ];
 
 export default function CheckoutPage() {
-  const { t } = useTranslation(['checkout', 'common']);
+  const { t } = useTranslation(['checkout', 'common', 'platform']);
   const { cart, totalAmount, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -132,6 +132,19 @@ export default function CheckoutPage() {
   };
 
   if (cart.length === 0) return null; // Will redirect in useEffect
+
+  // Grouped by seller — every product resolves to the same seller today
+  // (getSellerForProduct), so this always renders one group, but the order
+  // summary is built to already show "Sold by X" per group rather than
+  // needing a rewrite once a second seller's products can end up in the
+  // same cart.
+  const sellerGroups = [];
+  for (const item of cart) {
+    const seller = getSellerForProduct(item);
+    let group = sellerGroups.find((g) => g.seller.id === seller.id);
+    if (!group) { group = { seller, items: [] }; sellerGroups.push(group); }
+    group.items.push(item);
+  }
 
   return (
     <div className="animate-fade" style={{ paddingBottom: '40px' }}>
@@ -269,14 +282,26 @@ export default function CheckoutPage() {
             </h2>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px', maxHeight: '400px', overflowY: 'auto', paddingRight: '8px' }}>
-              {cart.map(item => (
-                <div key={item._id} style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', borderBottom: '1px solid var(--border-light)', paddingBottom: '16px' }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>{item.name}</div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>{t('summary.qtyLine', { count: item.qty, price: formatLKR(item.selling_price) })}</div>
+              {sellerGroups.map((group) => (
+                <div key={group.seller.id}>
+                  <div style={{
+                    fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)',
+                    textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '10px',
+                  }}>
+                    {t('platform:soldBy', { seller: group.seller.name })}
                   </div>
-                  <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
-                    {formatLKR(item.selling_price * item.qty)}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {group.items.map(item => (
+                      <div key={item._id} style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', borderBottom: '1px solid var(--border-light)', paddingBottom: '16px' }}>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>{item.name}</div>
+                          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>{t('summary.qtyLine', { count: item.qty, price: formatLKR(item.selling_price) })}</div>
+                        </div>
+                        <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                          {formatLKR(item.selling_price * item.qty)}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}

@@ -1,38 +1,24 @@
 // Seeds the isolated dev database (storefront_dev) with realistic test
 // data: ~40 products across the real categories, one admin and one
 // customer login. This is destructive (wipes Products + the two dev
-// users first) so it carries its own guard below, in addition to (not
-// instead of) the one connectDB() applies when it actually connects —
-// this one runs first and purely from string inspection, so it can print
-// the target and refuse *before* a connection is even opened.
+// users first), so on top of loadDevEnv()'s production guard it also
+// requires an explicit --yes before touching anything.
 //
 // Usage:
 //   npm run seed:dev -- --yes                        — wipe + reseed dev
 //   npm run seed:dev -- --yes --from-prod-readonly    — also copy real
 //       product data (read-only) from production into dev; ask before
 //       using this
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env.development') });
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+const loadDevEnv = require('./lib/loadDevEnv');
+loadDevEnv();
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const connectDB = require('../config/db');
-const { PRODUCTION_DB_NAME, getDbNameFromUri } = connectDB;
 const Product = require('../models/Product');
 const User = require('../models/User');
 
 function guardAgainstProduction() {
-  const dbName = getDbNameFromUri(process.env.MONGO_URI);
-  console.log(`Target database: "${dbName || '(could not parse MONGO_URI)'}"`);
-
-  if (process.env.NODE_ENV === 'production') {
-    console.error('❌ Refusing to run: NODE_ENV=production. This script wipes data — it never runs in production, regardless of which database MONGO_URI points at.');
-    process.exit(1);
-  }
-  if (dbName === PRODUCTION_DB_NAME) {
-    console.error(`❌ Refusing to run: MONGO_URI points at the production database ("${dbName}"). Point it at a dev database (e.g. "storefront_dev") in backend/.env.development instead.`);
-    process.exit(1);
-  }
   if (!process.argv.includes('--yes')) {
     console.error('❌ Refusing to run without --yes. This wipes the Products collection and the two dev login users in the database above. Re-run as: npm run seed:dev -- --yes');
     process.exit(1);

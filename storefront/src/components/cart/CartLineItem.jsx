@@ -3,11 +3,14 @@ import { Package, Trash2 } from 'lucide-react';
 import QuantityStepper from './QuantityStepper';
 import { formatLKR } from '../../utils/formatLKR';
 import { useTranslation } from 'react-i18next';
+import { getSellerForProduct } from '../../config/store';
 
 // variant: "compact" (drawer) | "full" (/cart page)
 export default function CartLineItem({ item, variant = 'compact', liveStock, onIncrement, onDecrement, onRemove }) {
   const { t } = useTranslation('cart');
+  const { t: tPlatform } = useTranslation('platform');
   const full = variant === 'full';
+  const seller = getSellerForProduct(item);
   const thumbSize = full ? 76 : 50;
   const image = item.image || item.images?.[0];
   const knownStock = typeof liveStock === 'number' ? liveStock : item.stock_quantity;
@@ -67,6 +70,13 @@ export default function CartLineItem({ item, variant = 'compact', liveStock, onI
             {item.category}
           </span>
         )}
+
+        <span style={{
+          fontSize: '11px', color: 'var(--text-muted)',
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%',
+        }}>
+          {tPlatform('soldBy', { seller: seller.name })}
+        </span>
 
         <span style={{ fontSize: full ? '13px' : '12px', color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>
           {formatLKR(item.selling_price)} {!full && t('item.qtyTimes', { count: item.qty })}

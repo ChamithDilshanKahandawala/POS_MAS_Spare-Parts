@@ -17,9 +17,10 @@ import enReturns from '../locales/en/returns.json';
 import enPrivacy from '../locales/en/privacy.json';
 import enTerms from '../locales/en/terms.json';
 import enPwa from '../locales/en/pwa.json';
+import enPlatform from '../locales/en/platform.json';
 
 export const SUPPORTED_LANGUAGES = ['en', 'si', 'ta'];
-const NAMESPACES = ['common', 'cart', 'product', 'category', 'order', 'checkout', 'auth', 'footer', 'about', 'contact', 'delivery', 'returns', 'privacy', 'terms', 'pwa'];
+const NAMESPACES = ['common', 'cart', 'product', 'category', 'order', 'checkout', 'auth', 'footer', 'about', 'contact', 'delivery', 'returns', 'privacy', 'terms', 'pwa', 'platform'];
 const STORAGE_KEY = 'storefrontLanguage';
 
 // English stays a static/eager import, unlike si/ta below — it's both the
@@ -36,7 +37,7 @@ const STORAGE_KEY = 'storefrontLanguage';
 // actually pays off without costing the default path anything.
 const enResources = {
   common: enCommon, cart: enCart, product: enProduct, category: enCategory, order: enOrder, checkout: enCheckout, auth: enAuth, footer: enFooter,
-  about: enAbout, contact: enContact, delivery: enDelivery, returns: enReturns, privacy: enPrivacy, terms: enTerms, pwa: enPwa,
+  about: enAbout, contact: enContact, delivery: enDelivery, returns: enReturns, privacy: enPrivacy, terms: enTerms, pwa: enPwa, platform: enPlatform,
 };
 
 // Lazy by default (no `{ eager: true }`) — si/ta are code-split into their

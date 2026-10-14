@@ -7,7 +7,7 @@ import { useCart } from '../../context/CartContext';
 import { ShoppingBag, LogOut, Package, Moon, Sun, ShoppingCart, Menu, X, User, ChevronDown, LayoutGrid, Phone, Truck, Download } from 'lucide-react';
 import useInstallPrompt from '../../hooks/useInstallPrompt';
 import Footer from './footer';
-import Logo from './Logo';
+import ApexoraWordmark from './ApexoraWordmark';
 import OfflineBanner from './OfflineBanner';
 import LanguageBanner from './LanguageBanner';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -75,17 +75,15 @@ export default function StoreLayout() {
         position: 'sticky', top: 0, zIndex: 100,
         boxShadow: '0 1px 8px rgba(0,0,0,0.04)',
       }}>
-        {/* Logo */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
-          <Logo size={42} style={{
-            borderRadius: '10px',
-            background: 'white', padding: '2px', objectFit: 'contain',
-            border: '2px solid var(--accent-light)', boxSizing: 'border-box',
-          }} />
-          <div>
-            <div style={{ fontSize: '17px', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>MUDIYANSE</div>
-            <div style={{ fontSize: '9px', color: 'var(--accent-primary)', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase' }}>{t('tagline')}</div>
-          </div>
+        {/* Platform wordmark — no real Apexora logo exists yet, see
+            ApexoraWordmark.jsx. The seller's own logo (Logo.jsx) now only
+            appears where the seller specifically is represented (product
+            detail's seller card, the /store page), not here. */}
+        <Link to="/" style={{ display: 'flex', flexDirection: 'column', textDecoration: 'none' }}>
+          <ApexoraWordmark size={22} />
+          <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', marginTop: '1px' }}>
+            {t('platform:tagline')}
+          </span>
         </Link>
 
         {/* Desktop Nav */}
