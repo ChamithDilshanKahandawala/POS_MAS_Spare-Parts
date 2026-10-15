@@ -7,8 +7,21 @@ const api = axios.create({
 
 // Attach the access token to every request, and the active X-Seller-Id
 // (if any) when the caller is in the "My store" area — see
-// context/AuthContext.jsx for where both are set.
+// context/AuthContext.jsx for where both are set. A "view as seller"
+// session (also set there) takes priority over both: its token is a
+// different, read-only-scoped token, and the backend ignores X-Seller-Id
+// entirely while it's active, but this still sends it for consistency/
+// debugging.
 api.interceptors.request.use((config) => {
+  const viewAsToken = sessionStorage.getItem('consoleViewAsToken');
+  const viewAsSellerId = sessionStorage.getItem('consoleViewAsSellerId');
+
+  if (viewAsToken) {
+    config.headers.Authorization = `Bearer ${viewAsToken}`;
+    if (viewAsSellerId) config.headers['X-Seller-Id'] = viewAsSellerId;
+    return config;
+  }
+
   const accessToken = localStorage.getItem('consoleAccessToken');
   if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
 
@@ -29,6 +42,19 @@ api.interceptors.response.use(
     const original = err.config;
     const isAuthRoute = original?.url?.startsWith('/auth/');
     if (err.response?.status !== 401 || isAuthRoute || original._retried) {
+      return Promise.reject(err);
+    }
+
+    // A view-as token (20 min) expiring mid-session isn't recoverable by
+    // refreshing the admin's own access token — refreshing would succeed
+    // but the retried request would still carry the expired view-as
+    // token (the request interceptor above always prefers it when
+    // present), looping back to the same 401. Just end the session.
+    if (sessionStorage.getItem('consoleViewAsToken')) {
+      sessionStorage.removeItem('consoleViewAsToken');
+      sessionStorage.removeItem('consoleViewAsSellerId');
+      sessionStorage.removeItem('consoleViewAsSellerName');
+      window.location.href = '/admin/sellers';
       return Promise.reject(err);
     }
 

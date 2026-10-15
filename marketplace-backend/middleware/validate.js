@@ -25,4 +25,21 @@ function validate({ body, params, query } = {}) {
   };
 }
 
-module.exports = { validate };
+const OBJECT_ID_RE = /^[0-9a-fA-F]{24}$/;
+
+// A malformed id in a URL (not a validation error on *input shape*, but
+// on an *address* — the thing a 404 is for) gets a 404, never the 400
+// that the rest of this file's `validate()` uses for request bodies and
+// query strings. Same reasoning as requireSellerMember's malformed
+// X-Seller-Id handling (middleware/authMiddleware.js) — a malformed id
+// is indistinguishable from "no such resource" to the caller.
+function requireValidObjectId(paramName) {
+  return (req, res, next) => {
+    if (!OBJECT_ID_RE.test(req.params[paramName])) {
+      return res.status(404).json({ message: 'Not found' });
+    }
+    return next();
+  };
+}
+
+module.exports = { validate, requireValidObjectId };

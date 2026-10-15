@@ -1,0 +1,394 @@
+{
+  "topbar": {
+    "searchPlaceholder": "Search by name, BR number, or phone",
+    "notifications": "Notifications",
+    "notificationsEmpty": "No new notifications",
+    "account": "Account",
+    "language": "Language"
+  },
+  "viewAs": {
+    "banner": "Viewing {{seller}} — read-only",
+    "exit": "Exit"
+  },
+  "overview": {
+    "activeSellers": "Active sellers",
+    "pendingSellers": "Pending sellers",
+    "suspendedSellers": "Suspended sellers",
+    "platformStaffCount": "Platform staff",
+    "adminActionsToday": "Admin actions today",
+    "needsAttention": "Needs your attention",
+    "noApplicationsPending": "No applications waiting on review",
+    "ordersTotal": "Orders",
+    "salesTotal": "Sales",
+    "commissionTotal": "Commission",
+    "viewApplication": "Review",
+    "zeroCommissionWarning": "{{count}} categories have 0% commission — review Catalog"
+  },
+  "sellers": {
+    "title": "Sellers",
+    "searchPlaceholder": "Search by store name, BR number, or phone",
+    "allStatuses": "All statuses",
+    "table": {
+      "store": "Store",
+      "legalName": "Legal name",
+      "brNumber": "BR No.",
+      "district": "District",
+      "status": "Status",
+      "joined": "Joined",
+      "owner": "Owner"
+    },
+    "noResults": "No sellers match your filters",
+    "status": {
+      "in_review": "In review",
+      "active": "Active",
+      "suspended": "Suspended",
+      "closed": "Closed"
+    },
+    "pagination": "Page {{page}} of {{pages}}",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "sellerDetail": {
+    "back": "Back to sellers",
+    "tabs": {
+      "profile": "Profile",
+      "status": "Status actions",
+      "commission": "Commission & probation",
+      "activity": "Activity",
+      "listings": "Listings",
+      "orders": "Orders",
+      "finance": "Finance",
+      "bank": "Bank account"
+    },
+    "profile": {
+      "legalName": "Legal name",
+      "brNumber": "BR No.",
+      "district": "District",
+      "ownerName": "Owner name",
+      "nic": "NIC",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "categories": "Categories",
+      "verificationNotes": "Verification notes",
+      "members": "Members",
+      "documents": "Documents",
+      "noDocuments": "No documents on file"
+    },
+    "viewAsButton": "View as seller",
+    "viewAsStarted": "Now viewing {{seller}} read-only",
+    "actions": {
+      "approve": "Approve",
+      "suspend": "Suspend",
+      "reactivate": "Reactivate",
+      "close": "Close"
+    },
+    "noActionsAvailable": "No status actions are available from \"{{status}}\"",
+    "confirmTitle": "Confirm: {{action}}",
+    "reasonLabel": "Reason",
+    "reasonRequired": "A reason is required",
+    "reasonPlaceholder": "Why are you making this change?",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "statusUpdated": "Status updated",
+    "commission": {
+      "overrideLabel": "Commission override (%)",
+      "overridePlaceholder": "Leave blank for the platform default",
+      "probationLabel": "Probation until",
+      "save": "Save (owner only)",
+      "saved": "Overrides updated",
+      "ownerOnly": "Only the platform owner can change these"
+    },
+    "activity": {
+      "empty": "No activity recorded for this seller yet"
+    },
+    "comingSoonTab": "Available after a later milestone",
+    "bank": {
+      "status": {
+        "none": "Not set up",
+        "pending": "Pending verification",
+        "verified": "Verified",
+        "rejected": "Rejected"
+      },
+      "noAccount": "No bank account on file yet",
+      "bankName": "Bank name",
+      "branch": "Branch",
+      "accountName": "Account holder name",
+      "accountNumber": "Account number",
+      "viewFull": "View full number",
+      "rejectedReason": "Rejection reason",
+      "reject": "Reject",
+      "verify": "Verify",
+      "verified": "Bank account verified",
+      "rejected": "Bank account rejected"
+    }
+  },
+  "applications": {
+    "title": "Applications",
+    "status": {
+      "new": "New",
+      "info_requested": "Info requested",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "table": {
+      "store": "Store",
+      "owner": "Owner",
+      "district": "District",
+      "submitted": "Submitted",
+      "status": "Status"
+    },
+    "noResults": "No applications in this queue",
+    "back": "Back to applications",
+    "detail": {
+      "legalName": "Legal name",
+      "brNumber": "BR No.",
+      "ownerName": "Owner name",
+      "nic": "NIC",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "district": "District",
+      "categories": "Categories",
+      "submitted": "Submitted",
+      "documents": "Documents",
+      "viewDocument": "View",
+      "checklist": "Review checklist",
+      "checklistItems": {
+        "brVerified": "BR certificate verified",
+        "nicVerified": "NIC verified",
+        "phoneCalled": "Phone number called",
+        "addressChecked": "Address checked"
+      },
+      "notes": "Notes",
+      "addNote": "Add note",
+      "notePlaceholder": "Add an internal note…",
+      "noNotes": "No notes yet",
+      "infoRequestedMessage": "Info requested message",
+      "rejectedReason": "Rejection reason",
+      "documentTypes": {
+        "br_certificate": "BR certificate",
+        "nic_front": "NIC front",
+        "nic_back": "NIC back"
+      }
+    },
+    "actions": {
+      "requestInfo": "Request more info",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "requestInfoPlaceholder": "What's missing or unclear?",
+    "rejectReasonPlaceholder": "Why is this application being rejected?",
+    "confirm": "Submit",
+    "cancel": "Cancel",
+    "approveConfirm": "This creates the seller account and sends an owner invitation. Continue?",
+    "decisionDone": "Decision recorded"
+  },
+  "platformStaff": {
+    "title": "Platform staff",
+    "inviteButton": "Invite staff",
+    "invitePlaceholder": "person@example.com",
+    "inviteSent": "Invite sent",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "joined": "Joined"
+    },
+    "role": {
+      "platform_owner": "Owner",
+      "platform_staff": "Staff",
+      "none": "Removed"
+    },
+    "pendingInvites": "Pending invites",
+    "expiresAt": "Expires {{date}}",
+    "remove": "Remove",
+    "removeConfirm": "Remove {{name}} from platform staff?",
+    "removed": "Removed",
+    "roleChanged": "Role updated",
+    "cannotChangeSelf": "You can't change your own role",
+    "noPendingInvites": "No pending invites"
+  },
+  "auditLog": {
+    "title": "Audit log",
+    "filters": {
+      "action": "Action",
+      "targetType": "Target type",
+      "from": "From",
+      "to": "To",
+      "clear": "Clear filters"
+    },
+    "table": {
+      "time": "Time (Colombo)",
+      "actor": "Actor",
+      "role": "Role",
+      "action": "Action",
+      "target": "Target",
+      "summary": "Summary"
+    },
+    "export": "Export CSV",
+    "noResults": "No audit log entries match these filters"
+  },
+  "settings": {
+    "title": "Settings",
+    "defaultReturnWindowDays": "Default return window (days)",
+    "payoutDayOfWeek": "Payout day of week",
+    "payoutHoldDays": "Payout hold (days)",
+    "reviewRequiredForFirstNListings": "Review required for first N listings",
+    "supportPhone": "Support phone",
+    "supportEmail": "Support email",
+    "supportWhatsapp": "Support WhatsApp",
+    "prohibitedKeywords": "Global prohibited keywords",
+    "prohibitedKeywordsPlaceholder": "Type a word and press Enter",
+    "prohibitedKeywordsHint": "Merged with each category's own keywords. Matching is case-insensitive and works for English, Sinhala, and Tamil words.",
+    "save": "Save settings",
+    "saved": "Settings saved",
+    "ownerOnly": "Only the platform owner can change these",
+    "days": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    }
+  },
+  "catalog": {
+    "vehiclesLink": "Vehicles",
+    "noSelection": "Select a category to edit, or add a root category",
+    "saved": "Category saved",
+    "deleted": "Category deleted",
+    "tree": {
+      "title": "Categories",
+      "addRoot": "Add root",
+      "addChild": "Add subcategory",
+      "empty": "No categories yet",
+      "inactive": "Inactive",
+      "listingCount": "{{count}} listings"
+    },
+    "create": {
+      "title": "New category",
+      "atRoot": "Creating a root-level category",
+      "underParent": "Creating a subcategory of \"{{parent}}\"",
+      "created": "Category created"
+    },
+    "tabs": {
+      "basics": "Basics",
+      "rules": "Rules",
+      "fields": "Fields",
+      "keywords": "Keywords"
+    },
+    "basics": {
+      "slug": "Slug",
+      "slugHint": "Lowercase letters, numbers, and hyphens only — can't be changed once the category has listings",
+      "slugLocked": "This category has listings — the slug can no longer be changed",
+      "icon": "Icon",
+      "iconHint": "A short icon name, e.g. car, home, sparkles",
+      "parent": "Parent category",
+      "noParent": "— None (root level) —",
+      "active": "Active (visible for new listings)",
+      "depth": "Level {{depth}} of 3",
+      "delete": "Delete",
+      "deleteBlocked": "Categories with listings can only be deactivated, not deleted",
+      "deleteConfirmTitle": "Delete this category?",
+      "deleteConfirmBody": "This can't be undone. Categories with listings or subcategories can't be deleted — deactivate them instead."
+    },
+    "rules": {
+      "ownerOnlyNote": "Only the platform owner can change commission, regulated, and review-required",
+      "commission": "Commission (%)",
+      "returnable": "Returnable",
+      "inherit": "Inherit from parent (currently: {{value}})",
+      "windowDays": "Return window (days)",
+      "windowDaysInherit": "Inherited: {{days}} days",
+      "noteEn": "Return note (English)",
+      "noteSi": "Return note (Sinhala)",
+      "noteTa": "Return note (Tamil)",
+      "regulated": "Regulated category",
+      "reviewRequired": "Review required before listing goes live"
+    },
+    "fields": {
+      "ownFields": "Your fields",
+      "addField": "Add field",
+      "noOwnFields": "This category has no fields of its own yet",
+      "inheritedFields": "Inherited fields",
+      "noInheritedFields": "Nothing inherited from a parent category",
+      "inheritedFrom": "Inherited from {{name}}",
+      "override": "Override",
+      "editTitle": "Edit field",
+      "addTitle": "Add field",
+      "key": "Key",
+      "keyPlaceholder": "e.g. partNumber",
+      "keyLocked": "This category has listings — the key can no longer be changed",
+      "labelEn": "Label (English)",
+      "labelSi": "Label (Sinhala)",
+      "labelTa": "Label (Tamil)",
+      "helpTextEn": "Help text (English)",
+      "helpTextSi": "Help text (Sinhala)",
+      "helpTextTa": "Help text (Tamil)",
+      "type": "Field type",
+      "types": {
+        "text": "Text",
+        "number": "Number",
+        "select": "Select (one)",
+        "multiselect": "Select (many)",
+        "boolean": "Yes / No",
+        "date": "Date",
+        "fitment": "Vehicle fitment"
+      },
+      "required": "Required",
+      "unit": "Unit",
+      "min": "Minimum",
+      "max": "Maximum",
+      "maxLength": "Max length",
+      "options": "Options",
+      "optionValue": "Value",
+      "addOption": "Add option",
+      "showOnProductPage": "Show on product page",
+      "filterable": "Filterable",
+      "preview": "Preview",
+      "untitled": "Untitled field",
+      "maxLengthHint": "Up to {{n}} characters",
+      "selectPlaceholder": "Choose…",
+      "noOptionsYet": "No options added yet",
+      "fitmentPreview": "Shown to the seller as a Make → Model → Year picker."
+    },
+    "keywords": {
+      "label": "Prohibited keywords for this category",
+      "placeholder": "Type a word and press Enter",
+      "hint": "Merged with the platform's global list (Settings). Matching is case-insensitive and works for English, Sinhala, and Tamil words."
+    }
+  },
+  "vehicles": {
+    "title": "Vehicles",
+    "backToCatalog": "Back to Catalog",
+    "addMake": "Add make",
+    "searchPlaceholder": "Search makes or models",
+    "noResults": "No vehicle makes match your search",
+    "modelCount": "{{count}} models",
+    "inactive": "Inactive",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "edit": "Edit",
+    "editTitle": "Edit vehicle make",
+    "addTitle": "Add vehicle make",
+    "name": "Make name",
+    "type": "Vehicle type",
+    "types": {
+      "car": "Car",
+      "van": "Van",
+      "suv": "SUV",
+      "motorcycle": "Motorcycle",
+      "three_wheeler": "Three-wheeler",
+      "lorry": "Lorry",
+      "bus": "Bus"
+    },
+    "active": "Active",
+    "models": "Models",
+    "modelName": "Model name",
+    "yearFrom": "Year from",
+    "yearTo": "Year to",
+    "addModel": "Add model",
+    "saved": "Saved"
+  }
+}

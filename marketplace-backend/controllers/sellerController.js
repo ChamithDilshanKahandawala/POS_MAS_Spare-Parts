@@ -1,4 +1,6 @@
 const Seller = require('../models/Seller');
+const { logAction } = require('../services/auditLog');
+const { stripFullAccountNumber } = require('../utils/sanitizeSeller');
 
 // GET /api/seller/me/store — any member (owner or staff) of the seller
 // named in X-Seller-Id. requireSellerMember has already confirmed
@@ -13,7 +15,7 @@ const Seller = require('../models/Seller');
 const getMyStore = async (req, res) => {
   const seller = await Seller.findById(req.sellerId);
   if (!seller) return res.status(404).json({ message: 'Seller not found' });
-  res.json({ seller, myRole: req.sellerMember.role });
+  res.json({ seller: stripFullAccountNumber(seller), myRole: req.sellerMember.role });
 };
 
 // Dummy owner-only route — exists purely to prove requireSellerMember's
@@ -23,4 +25,32 @@ const ownerOnlyPing = async (req, res) => {
   res.json({ message: 'owner-only route reached', sellerId: req.sellerId });
 };
 
-module.exports = { getMyStore, ownerOnlyPing };
+// PATCH /api/seller/me/store — the Store settings "Profile" section:
+// display name, about text (en/si/ta), phones, WhatsApp, email,
+// operating hours, district, address, return address. Never
+// legalName/brNumber/status/commissionOverridePct/probationUntil/
+// bankAccount etc. — those aren't in routes/sellerRoutes.js's .strict()
+// schema at all, so sending them is a 400 (unknown field), never
+// silently ignored. Also the route requireActiveStore gates — a
+// suspended/closed store gets 403 here before this handler ever runs.
+const updateMyStore = async (req, res) => {
+  const before = await Seller.findById(req.sellerId);
+  if (!before) return res.status(404).json({ message: 'Seller not found' });
+
+  const seller = await Seller.findByIdAndUpdate(req.sellerId, req.body, { new: true });
+
+  await logAction({
+    actor: req.user,
+    actorRole: req.sellerMember.role,
+    action: 'seller.profile.update',
+    targetType: 'Seller',
+    targetId: seller._id,
+    before: Object.fromEntries(Object.keys(req.body).map((k) => [k, before[k]])),
+    after: Object.fromEntries(Object.keys(req.body).map((k) => [k, seller[k]])),
+    summary: `${req.user.name} updated the store profile`,
+  });
+
+  res.json({ seller: stripFullAccountNumber(seller), myRole: req.sellerMember.role });
+};
+
+module.exports = { getMyStore, ownerOnlyPing, updateMyStore };

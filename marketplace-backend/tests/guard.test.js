@@ -26,8 +26,11 @@ function runGuardCheck(mongoUri, extraEnv = {}) {
     child.stderr.on('data', (d) => { stderr += d; });
     child.on('close', (code) => resolve({ code, stdout, stderr }));
     // Forbidden-name cases exit almost instantly (no network attempt);
-    // give the allowed case enough time for a real Atlas connection.
-    setTimeout(() => { try { child.kill(); } catch { /* already exited */ } }, 5000);
+    // give the allowed case enough time for a real Atlas connection even
+    // under elevated latency (5s was observed to be too tight on an
+    // otherwise-healthy connection, failing the positive case with an
+    // empty stdout rather than a real guard problem).
+    setTimeout(() => { try { child.kill(); } catch { /* already exited */ } }, 15000);
   });
 }
 

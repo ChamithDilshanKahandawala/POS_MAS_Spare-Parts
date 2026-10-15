@@ -19,6 +19,15 @@ const requireAuth = async (req, res, next) => {
     if (!user.isActive) return res.status(403).json({ message: 'Account deactivated' });
 
     req.user = user;
+    // "View as seller" (services/tokens.js's signViewAsToken) — a
+    // short-lived, read-only lens an admin opens on one specific seller.
+    // requireSellerMember below grants scoped access for it; every
+    // non-GET request is rejected there regardless of the token's
+    // validity.
+    if (decoded.purpose === 'view_as' && decoded.viewAs) {
+      req.isReadOnlyViewAs = true;
+      req.viewAsSellerId = decoded.viewAs;
+    }
     return next();
   } catch {
     return res.status(401).json({ message: 'Not authorized, token invalid or expired' });
@@ -41,6 +50,20 @@ const requirePlatform = (roles) => (req, res, next) => {
 // who isn't on it.
 const requireSellerMember = (roles) => async (req, res, next) => {
   try {
+    // View-as scoping ignores X-Seller-Id entirely — the seller it's
+    // allowed to see is embedded in the token itself (requireAuth above),
+    // not client-asserted, and the role check is bypassed (an admin
+    // viewing-as should see whatever an owner would) but only for GET;
+    // every write is blocked outright, independent of role.
+    if (req.isReadOnlyViewAs) {
+      if (req.method !== 'GET') {
+        return res.status(403).json({ message: 'Read-only: this view-as session cannot make changes' });
+      }
+      req.sellerId = req.viewAsSellerId;
+      req.sellerMember = { role: 'seller_owner', viewAs: true };
+      return next();
+    }
+
     const sellerId = req.headers['x-seller-id'];
     if (!sellerId) {
       return res.status(404).json({ message: 'Seller not found' });

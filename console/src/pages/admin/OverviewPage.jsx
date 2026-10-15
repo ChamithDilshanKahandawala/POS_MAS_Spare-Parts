@@ -1,80 +1,100 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Store, CheckCircle, XCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Store, Clock, XCircle, UserCog, Activity, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getSellers } from '../../api/services';
+import { getOverview } from '../../api/services';
+import EmptyState from '../../components/EmptyState';
 
-// Milestone 0's only real admin data source is GET /api/admin/sellers —
-// everything shown here is derived from that, nothing fabricated. The
-// richer Overview (pending applications, platform staff count, admin
-// actions today) described in the parked Seller Admin dashboard work
-// needs routes that don't exist yet; this stays within what's real.
+function StatCard({ icon: Icon, color, label, value }) {
+  return (
+    <div className={`stat-card ${color}`}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', color: 'var(--text-muted)' }}>
+        {Icon && <Icon size={16} />} <span style={{ fontSize: '12px', fontWeight: 600 }}>{label}</span>
+      </div>
+      <div style={{ fontSize: '28px', fontWeight: 800 }}>{value ?? '—'}</div>
+    </div>
+  );
+}
+
 export default function OverviewPage() {
-  const { t } = useTranslation();
-  const [sellers, setSellers] = useState(null);
+  const { t, i18n } = useTranslation(['admin', 'common']);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
-    getSellers()
-      .then(({ data }) => { if (active) setSellers(data.sellers); })
-      .catch(() => toast.error(t('error.generic')))
+    getOverview()
+      .then(({ data: d }) => { if (active) setData(d); })
+      .catch(() => toast.error(t('common:error.generic')))
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [t]);
 
-  if (loading) return <div>{t('loading')}</div>;
+  if (loading) return <div>{t('common:loading')}</div>;
+  if (!data) return <div>{t('common:error.generic')}</div>;
 
-  const total = sellers?.length || 0;
-  const active = sellers?.filter((s) => s.status === 'active').length || 0;
-  const suspended = sellers?.filter((s) => s.status === 'suspended').length || 0;
+  const dateFormatter = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' });
 
   return (
     <div className="animate-fade">
-      <h1 className="page-title" style={{ marginBottom: '20px' }}>{t('nav.overview')}</h1>
+      <h1 className="page-title" style={{ marginBottom: '20px' }}>{t('common:nav.overview')}</h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '28px' }}>
-        <div className="stat-card purple">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', color: 'var(--text-muted)' }}>
-            <Store size={16} /> <span style={{ fontSize: '12px', fontWeight: 600 }}>{t('nav.sellers')}</span>
-          </div>
-          <div style={{ fontSize: '28px', fontWeight: 800 }}>{total}</div>
-        </div>
-        <div className="stat-card green">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', color: 'var(--text-muted)' }}>
-            <CheckCircle size={16} /> <span style={{ fontSize: '12px', fontWeight: 600 }}>Active</span>
-          </div>
-          <div style={{ fontSize: '28px', fontWeight: 800 }}>{active}</div>
-        </div>
-        <div className="stat-card orange">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', color: 'var(--text-muted)' }}>
-            <XCircle size={16} /> <span style={{ fontSize: '12px', fontWeight: 600 }}>Suspended</span>
-          </div>
-          <div style={{ fontSize: '28px', fontWeight: 800 }}>{suspended}</div>
-        </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '16px', marginBottom: '20px' }}>
+        <StatCard icon={Store} color="green" label={t('overview.activeSellers')} value={data.activeSellers} />
+        <StatCard icon={Clock} color="yellow" label={t('overview.pendingSellers')} value={data.pendingSellers} />
+        <StatCard icon={XCircle} color="orange" label={t('overview.suspendedSellers')} value={data.suspendedSellers} />
+        <StatCard icon={UserCog} color="purple" label={t('overview.platformStaffCount')} value={data.platformStaffCount} />
+        <StatCard icon={Activity} color="blue" label={t('overview.adminActionsToday')} value={data.adminActionsToday} />
       </div>
 
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px', marginBottom: '20px' }}>
+        <StatCard icon={Activity} color="blue" label={t('overview.ordersTotal')} value={data.ordersTotal} />
+        <StatCard icon={Activity} color="blue" label={t('overview.salesTotal')} value={data.salesTotal} />
+        <StatCard icon={Activity} color="blue" label={t('overview.commissionTotal')} value={data.commissionTotal} />
+      </div>
+
+      {data.zeroCommissionCategories > 0 && (
+        <Link
+          to="/admin/catalog"
+          className="glass-card"
+          style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 20px', marginBottom: '20px', textDecoration: 'none', color: 'var(--accent-primary-text)', fontWeight: 600, fontSize: '13px' }}
+        >
+          <AlertTriangle size={16} />
+          {t('overview.zeroCommissionWarning', { count: data.zeroCommissionCategories })}
+        </Link>
+      )}
+
       <div className="glass-card" style={{ padding: '20px' }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '14px' }}>{t('nav.sellers')}</h2>
-        <table className="data-table">
-          <thead>
-            <tr><th>Store</th><th>Legal name</th><th>BR No.</th><th>Status</th></tr>
-          </thead>
-          <tbody>
-            {sellers?.map((s) => (
-              <tr key={s._id}>
-                <td>{s.name}</td>
-                <td>{s.legalName}</td>
-                <td>{s.brNumber}</td>
-                <td>
-                  <span className={`badge ${s.status === 'active' ? 'badge-green' : s.status === 'suspended' ? 'badge-red' : 'badge-yellow'}`}>
-                    {s.status}
-                  </span>
-                </td>
+        <h2 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '14px' }}>{t('overview.needsAttention')}</h2>
+        {data.needsAttention.length === 0 ? (
+          <EmptyState title={t('overview.noApplicationsPending')} />
+        ) : (
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>{t('applications.table.store')}</th>
+                <th>{t('applications.table.status')}</th>
+                <th>{t('applications.table.submitted')}</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.needsAttention.map((app) => (
+                <tr key={app._id}>
+                  <td>{app.storeName}</td>
+                  <td><span className="badge badge-yellow">{t(`applications.status.${app.status}`)}</span></td>
+                  <td>{dateFormatter.format(new Date(app.createdAt))}</td>
+                  <td>
+                    <Link className="btn-secondary" style={{ padding: '6px 12px', fontSize: '12px' }} to={`/admin/applications/${app._id}`}>
+                      {t('overview.viewApplication')}
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

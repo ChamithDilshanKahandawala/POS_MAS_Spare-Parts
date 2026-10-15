@@ -21,8 +21,26 @@ export function RequirePlatform() {
   return <Outlet />;
 }
 
+export function RequirePlatformOwner() {
+  const { isPlatformOwner } = useAuth();
+  if (!isPlatformOwner) return <Navigate to="/admin" replace />;
+  return <Outlet />;
+}
+
 export function RequireSeller() {
-  const { isSeller } = useAuth();
-  if (!isSeller) return <Navigate to="/admin" replace />;
+  // A "view as seller" session grants read-only access to the seller
+  // area without the admin needing a real SellerMember row of their own
+  // — see context/AuthContext.jsx's startViewAs.
+  const { isSeller, isViewAs } = useAuth();
+  if (!isSeller && !isViewAs) return <Navigate to="/admin" replace />;
+  return <Outlet />;
+}
+
+export function RequireSellerOwner() {
+  // isActiveSellerOwner is true for a real seller_owner membership on the
+  // active store OR a view-as session (the backend's synthetic
+  // owner-level read access) — see context/AuthContext.jsx.
+  const { isActiveSellerOwner } = useAuth();
+  if (!isActiveSellerOwner) return <Navigate to="/seller" replace />;
   return <Outlet />;
 }

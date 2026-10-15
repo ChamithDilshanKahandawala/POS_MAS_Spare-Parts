@@ -26,6 +26,15 @@ const userSchema = new mongoose.Schema(
     // for the same reason the password is.
     refreshTokenHash: { type: String, default: null },
     refreshTokenExpiresAt: { type: Date, default: null },
+
+    // "Step-up" re-authentication (Milestone 1B's bank account flow) —
+    // a SEPARATE OTP from the login one above, so stepping up in one tab
+    // can never invalidate a pending login in another. stepUpVerifiedAt
+    // is the actual gate routes check (controllers/sellerBankController.js);
+    // it's set once the OTP is verified and only counts for 5 minutes.
+    stepUpOtpHash: { type: String, default: null },
+    stepUpOtpExpiresAt: { type: Date, default: null },
+    stepUpVerifiedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

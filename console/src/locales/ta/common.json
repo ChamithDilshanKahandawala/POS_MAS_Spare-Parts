@@ -1,5 +1,7 @@
 {
-  "_meta": { "status": "draft — needs native speaker review" },
+  "_meta": {
+    "status": "draft — needs native speaker review"
+  },
   "appName": "Apexora கன்சோல்",
   "nav": {
     "overview": "கண்ணோட்டம்",
@@ -27,5 +29,21 @@
   "loading": "ஏற்றுகிறது…",
   "error": {
     "generic": "ஏதோ தவறு நடந்தது. மீண்டும் முயற்சிக்கவும்."
-  }
+  },
+  "languages": {
+    "en": "English",
+    "si": "සිංහල",
+    "ta": "தமிழ்"
+  },
+  "save": "சேமி",
+  "cancel": "ரத்து செய்",
+  "yes": "ஆம்",
+  "no": "இல்லை",
+  "menu": "பட்டி",
+  "topbar": {
+    "notifications": "அறிவிப்புகள்",
+    "notificationsEmpty": "புதிய அறிவிப்புகள் இல்லை",
+    "viewAllNotifications": "அனைத்து அறிவிப்புகளையும் காண்க"
+  },
+  "more": "மேலும்"
 }

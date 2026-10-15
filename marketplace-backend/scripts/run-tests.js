@@ -34,8 +34,12 @@ async function main() {
   // --test-timeout: Node's default is 0 (no timeout) — a single hung test
   // (e.g. a stalled MongoDB connection) would otherwise block the whole
   // run forever with no signal anything was wrong, rather than failing
-  // loudly. 30s is generous for anything in this suite, which is all
-  // local HTTP + a handful of real Atlas round-trips.
+  // loudly. 90s is generous for anything in this suite, which is all
+  // local HTTP + a handful of real Atlas round-trips — milestone1b.test.js's
+  // before() hook alone (6 users, 3 sellers, 6 full login flows) came
+  // within range of the previous 30s budget on an ordinary (not even
+  // degraded) connection, timing out its first test and cascading every
+  // other test in the file to an instant false failure.
   //
   // --test-concurrency=1: each tests/*.test.js file runs in its own
   // process (Node's default --test-isolation=process) but they all share
@@ -46,7 +50,7 @@ async function main() {
   // (discovered the hard way). Forcing one file at a time removes the
   // race entirely; this suite is small enough that losing parallelism
   // doesn't meaningfully slow it down.
-  const result = spawnSync('node', ['--test', '--test-timeout=30000', '--test-concurrency=1'], {
+  const result = spawnSync('node', ['--test', '--test-timeout=90000', '--test-concurrency=1'], {
     cwd: path.join(__dirname, '..'),
     env: { ...process.env, NODE_ENV: 'test' },
     stdio: 'inherit',

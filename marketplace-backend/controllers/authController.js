@@ -128,6 +128,7 @@ const getMe = async (req, res) => {
     sellerMemberships: memberships.map((m) => ({
       sellerId: m.seller._id,
       sellerName: m.seller.name,
+      sellerStatus: m.seller.status,
       role: m.role,
     })),
   });

@@ -20,6 +20,10 @@ const User = require('../models/User');
 const Seller = require('../models/Seller');
 const SellerMember = require('../models/SellerMember');
 const AuditLog = require('../models/AuditLog');
+const SellerApplication = require('../models/SellerApplication');
+const Invite = require('../models/Invite');
+const PlatformSettings = require('../models/PlatformSettings');
+const Notification = require('../models/Notification');
 
 // Deliberately not config/db.js's connectDB() — that guard requires the
 // database to be exactly apexora_dev (it's built for the main app) and
@@ -41,6 +45,10 @@ async function wipeDatabase() {
     Seller.deleteMany({}),
     SellerMember.deleteMany({}),
     AuditLog.deleteMany({}),
+    SellerApplication.deleteMany({}),
+    Invite.deleteMany({}),
+    PlatformSettings.deleteMany({}),
+    Notification.deleteMany({}),
   ]);
 }
 
@@ -82,5 +90,9 @@ module.exports = {
   Seller,
   SellerMember,
   AuditLog,
+  SellerApplication,
+  Invite,
+  PlatformSettings,
+  Notification,
   mongoose,
 };

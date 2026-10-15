@@ -1,0 +1,33 @@
+const mongoose = require('mongoose');
+
+// Per-user notifications (bell icon, notifications list). A user only
+// ever sees their own — every route in controllers/notificationsController.js
+// scopes by `user: req.user._id`, never by id alone, the same reasoning
+// as requireSellerMember never trusting a client-supplied seller id.
+const notificationSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    type: {
+      type: String,
+      required: true,
+      enum: [
+        'application.approved',
+        'seller.suspended',
+        'seller.reactivated',
+        'bank.verified',
+        'bank.rejected',
+        'bank.resubmitted',
+        'staff.invite_accepted',
+      ],
+    },
+    title: { type: String, required: true },
+    body: { type: String, default: '' },
+    link: { type: String, default: null }, // console-relative path, e.g. "/seller/settings"
+    read: { type: Boolean, default: false },
+  },
+  { timestamps: true }
+);
+
+notificationSchema.index({ user: 1, createdAt: -1 });
+
+module.exports = mongoose.model('Notification', notificationSchema);

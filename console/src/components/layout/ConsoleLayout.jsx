@@ -1,83 +1,90 @@
+import { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Sun, Moon, LogOut } from 'lucide-react';
+import { X, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../context/useAuth';
-import { useTheme } from '../../context/useTheme';
+import SidebarNav from './SidebarNav';
+import SellerSidebarNav from './SellerSidebarNav';
+import SellerBottomNav from './SellerBottomNav';
+import Topbar from './Topbar';
 
-// Milestone 0's layout is intentionally just this: one page per area
-// (Overview, Seller Home) and the Admin <-> My Store switcher — there's
-// no multi-item sidebar yet because there's nothing else built to link
-// to. The parked Seller Admin dashboard work (Milestone 1A) is where the
-// full sidebar (Sellers, Applications, Catalog, Orders, ...) belongs;
-// building it now would just be dead links to routes that don't exist.
 export default function ConsoleLayout() {
-  const { t } = useTranslation();
-  const location = useLocation();
+  const { t } = useTranslation(['common', 'seller']);
   const navigate = useNavigate();
-  const { user, hasBothAreas, sellerMemberships, activeSellerId, setActiveSellerId, logout } = useAuth();
-  const { isDarkMode, toggleTheme } = useTheme();
+  const location = useLocation();
+  const { isPlatform, isSeller, isViewAs, viewAsSession, activeMembership, stopViewAs } = useAuth();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const inAdminArea = location.pathname.startsWith('/admin');
+  const inSellerArea = location.pathname.startsWith('/seller');
+  const showAdminSidebar = isPlatform && !isViewAs && !inSellerArea;
+  const showSellerSidebar = (isSeller || isViewAs) && inSellerArea;
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login', { replace: true });
+  // Not shown during view-as — an admin browsing a suspended seller
+  // already knows that from the Seller detail page they came from, and
+  // every write is already blocked for them regardless (read-only token).
+  const suspendedOrClosed = !isViewAs && inSellerArea && ['suspended', 'closed'].includes(activeMembership?.sellerStatus);
+
+  const handleExitViewAs = () => {
+    stopViewAs();
+    navigate('/admin/sellers');
   };
 
   return (
-    <div style={{ minHeight: '100vh' }}>
-      <header style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '14px 24px', borderBottom: '1px solid var(--border-light)', background: 'var(--bg-card)',
-      }}>
-        <span className="page-title" style={{ fontSize: '18px' }}>{t('appName')}</span>
+    <div className="console-shell">
+      {showAdminSidebar && (
+        <aside className="console-sidebar">
+          <div className="console-sidebar-brand page-title">{t('common:appName')}</div>
+          <SidebarNav />
+        </aside>
+      )}
+      {showSellerSidebar && (
+        <aside className="console-sidebar">
+          <div className="console-sidebar-brand page-title">{t('common:appName')}</div>
+          <SellerSidebarNav />
+        </aside>
+      )}
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {hasBothAreas && (
-            <div style={{ display: 'flex', gap: '6px' }}>
-              <button
-                className={inAdminArea ? 'btn-primary' : 'btn-secondary'}
-                style={{ padding: '7px 14px', fontSize: '12px' }}
-                onClick={() => navigate('/admin')}
-              >
-                {t('switcher.adminArea')}
-              </button>
-              <button
-                className={!inAdminArea ? 'btn-primary' : 'btn-secondary'}
-                style={{ padding: '7px 14px', fontSize: '12px' }}
-                onClick={() => navigate('/seller')}
-              >
-                {t('switcher.myStoreArea')}
+      <div className="console-main-col">
+        <Topbar onOpenDrawer={() => setDrawerOpen(true)} showMenuButton={showAdminSidebar} />
+
+        {isViewAs && (
+          <div className="view-as-banner">
+            <span>{t('admin:viewAs.banner', { seller: viewAsSession.sellerName })}</span>
+            <button className="btn-secondary" style={{ padding: '5px 10px', fontSize: '12px' }} onClick={handleExitViewAs}>
+              {t('admin:viewAs.exit')}
+            </button>
+          </div>
+        )}
+
+        {suspendedOrClosed && (
+          <div className="store-status-banner">
+            <span>
+              <AlertTriangle size={14} style={{ verticalAlign: '-2px', marginRight: '6px' }} />
+              <strong>{t(`seller:storeStatus.${activeMembership.sellerStatus}Title`)}</strong> — {t('seller:storeStatus.contactSupport')}
+            </span>
+          </div>
+        )}
+
+        <main className={`console-main${inSellerArea ? ' seller-area-main' : ''}`}>
+          <Outlet />
+        </main>
+      </div>
+
+      {inSellerArea && (isSeller || isViewAs) && <SellerBottomNav />}
+
+      {showAdminSidebar && drawerOpen && (
+        <div className="modal-overlay" style={{ alignItems: 'flex-end' }} onClick={() => setDrawerOpen(false)}>
+          <div className="console-drawer-sheet" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px 10px' }}>
+              <span style={{ fontWeight: 700, fontSize: '13px' }}>{t('common:menu')}</span>
+              <button className="btn-secondary" style={{ padding: '6px' }} onClick={() => setDrawerOpen(false)} aria-label={t('common:cancel')}>
+                <X size={14} />
               </button>
             </div>
-          )}
-
-          {!inAdminArea && sellerMemberships.length > 1 && (
-            <select
-              className="select-field"
-              value={activeSellerId || ''}
-              onChange={(e) => setActiveSellerId(e.target.value)}
-              style={{ fontSize: '12px', width: 'auto' }}
-            >
-              {sellerMemberships.map((m) => (
-                <option key={m.sellerId} value={m.sellerId}>{m.sellerName}</option>
-              ))}
-            </select>
-          )}
-
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{user?.name}</span>
-          <button className="btn-secondary" onClick={toggleTheme} style={{ padding: '7px 10px' }} aria-label="Toggle theme">
-            {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
-          </button>
-          <button className="btn-secondary" onClick={handleLogout} style={{ padding: '7px 10px', fontSize: '12px' }}>
-            <LogOut size={14} /> {t('logout')}
-          </button>
+            <SidebarNav onNavigate={() => setDrawerOpen(false)} />
+          </div>
         </div>
-      </header>
-
-      <main style={{ padding: '28px' }}>
-        <Outlet />
-      </main>
+      )}
     </div>
   );
 }

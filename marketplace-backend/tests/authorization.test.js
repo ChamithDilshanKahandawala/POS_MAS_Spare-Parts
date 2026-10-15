@@ -120,7 +120,7 @@ test('privileged field (role) in a seller-status-update body is rejected with 40
   const res = await request(app)
     .patch(`/api/admin/sellers/${sellerB._id}/status`)
     .set('Authorization', `Bearer ${tokens.platformOwner}`)
-    .send({ status: 'suspended', role: 'platform_owner' });
+    .send({ action: 'suspend', reason: 'test', role: 'platform_owner' });
   assert.equal(res.status, 400);
 });
 
@@ -136,14 +136,14 @@ test('every admin action writes exactly one audit-log entry', async () => {
   const res = await request(app)
     .patch(`/api/admin/sellers/${sellerB._id}/status`)
     .set('Authorization', `Bearer ${tokens.platformOwner}`)
-    .send({ status: 'suspended' });
+    .send({ action: 'suspend', reason: 'test suspension' });
   assert.equal(res.status, 200);
 
   const after = await AuditLog.countDocuments({ targetId: sellerB._id.toString() });
   assert.equal(after, before + 1, 'exactly one new audit-log entry should have been written');
 
   const entry = await AuditLog.findOne({ targetId: sellerB._id.toString() }).sort({ createdAt: -1 });
-  assert.equal(entry.action, 'seller.status.update');
+  assert.equal(entry.action, 'seller.status.suspend');
   assert.equal(entry.actorRole, 'platform_owner');
   assert.deepEqual(entry.before, { status: 'active' });
   assert.deepEqual(entry.after, { status: 'suspended' });
@@ -152,7 +152,20 @@ test('every admin action writes exactly one audit-log entry', async () => {
   await request(app)
     .patch(`/api/admin/sellers/${sellerB._id}/status`)
     .set('Authorization', `Bearer ${tokens.platformOwner}`)
-    .send({ status: 'active' });
+    .send({ action: 'reactivate', reason: 'revert test' });
+});
+
+test('invalid status transition returns 409 and changes nothing', async () => {
+  // sellerA is 'active' by default — 'approve' only accepts 'in_review'.
+  const before = await Seller.findById(sellerA._id);
+  const res = await request(app)
+    .patch(`/api/admin/sellers/${sellerA._id}/status`)
+    .set('Authorization', `Bearer ${tokens.platformOwner}`)
+    .send({ action: 'approve', reason: 'test' });
+  assert.equal(res.status, 409);
+
+  const after = await Seller.findById(sellerA._id);
+  assert.equal(after.status, before.status);
 });
 
 test('there is no route to edit or delete an audit-log entry', async () => {

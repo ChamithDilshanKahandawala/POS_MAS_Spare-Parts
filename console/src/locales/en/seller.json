@@ -1,0 +1,213 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "orders": "Orders",
+    "returns": "Returns",
+    "finance": "Finance",
+    "performance": "Performance",
+    "categoriesFees": "Categories & fees",
+    "settings": "Store settings",
+    "staff": "Staff",
+    "activity": "Activity log",
+    "notifications": "Notifications"
+  },
+  "storeStatus": {
+    "in_review": "In review",
+    "active": "Active",
+    "suspended": "Suspended",
+    "closed": "Closed",
+    "suspendedTitle": "Your store is suspended",
+    "closedTitle": "Your store is closed",
+    "contactSupport": "Contact Apexora support to resolve this before making changes."
+  },
+  "home": {
+    "title": "Home",
+    "probationUntil": "On probation until {{date}}",
+    "checklistTitle": "Get your store ready",
+    "checklistProgress": "{{completed}} of {{total}} done",
+    "checklistItems": {
+      "logo": "Add a store logo",
+      "banner": "Add a store banner",
+      "aboutText": "Write an about text",
+      "hours": "Set your operating hours",
+      "returnAddress": "Add a return address",
+      "bankVerified": "Verify your bank account",
+      "firstListing": "List your first product"
+    },
+    "ordersToday": "Orders today",
+    "pendingPayout": "Pending payout",
+    "noDataYet": "Available after Milestone {{milestone}}"
+  },
+  "settings": {
+    "title": "Store settings",
+    "tabs": {
+      "profile": "Profile",
+      "bank": "Bank account"
+    },
+    "viewOnly": "Only the store owner can save changes",
+    "profile": {
+      "displayName": "Display name",
+      "aboutTextEn": "About (English) — required",
+      "aboutTextSi": "About (Sinhala) — optional",
+      "aboutTextTa": "About (Tamil) — optional",
+      "phones": "Phone numbers",
+      "addPhone": "Add another number",
+      "removePhone": "Remove",
+      "whatsapp": "WhatsApp number",
+      "email": "Email",
+      "district": "District",
+      "address": "Address",
+      "returnAddress": "Return address",
+      "hours": "Operating hours",
+      "closed": "Closed",
+      "open": "Open",
+      "close": "Close",
+      "legalName": "Legal name",
+      "brNumber": "BR number",
+      "readOnlyNotice": "Legal name and BR number are set by Apexora — contact support to change them",
+      "logo": "Store logo",
+      "banner": "Store banner",
+      "uploadLogo": "Upload logo",
+      "uploadBanner": "Upload banner",
+      "changeLogo": "Change logo",
+      "changeBanner": "Change banner",
+      "fileHint": "JPG, PNG, or WebP — up to 5MB",
+      "save": "Save changes",
+      "saved": "Profile updated",
+      "days": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun"
+      }
+    },
+    "bank": {
+      "stepUpIntro": "Confirming your password and a one-time code keeps your bank details safe.",
+      "stepUpPassword": "Your password",
+      "sendCode": "Send code",
+      "codeLabel": "One-time code",
+      "codeSent": "Code sent — check the dev console",
+      "confirmCode": "Confirm",
+      "confirmed": "Confirmed — you can now save your bank account",
+      "needsStepUp": "Please confirm it's you — re-enter your password and the one-time code to continue.",
+      "bankName": "Bank name",
+      "branch": "Branch",
+      "accountName": "Account holder name",
+      "accountNumber": "Account number",
+      "accountNumberHint": "6-20 digits",
+      "reason": "Reason for this change (optional)",
+      "save": "Save bank account",
+      "saved": "Bank account submitted for verification",
+      "status": {
+        "none": "Not set up yet",
+        "pending": "Pending verification",
+        "verified": "Verified",
+        "rejected": "Rejected"
+      },
+      "rejectedReason": "Rejection reason",
+      "currentAccount": "On file: {{bankName}}, ending in {{last4}}",
+      "noAccount": "No bank account on file yet"
+    }
+  },
+  "staff": {
+    "title": "Staff",
+    "inviteButton": "Invite staff",
+    "invitePlaceholder": "person@example.com",
+    "inviteSent": "Invite sent",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "joined": "Joined"
+    },
+    "roleLabel": "Staff",
+    "pendingInvites": "Pending invites",
+    "noPendingInvites": "No pending invites",
+    "expiresAt": "Expires {{date}}",
+    "remove": "Remove",
+    "removeConfirm": "Remove {{name}} from your team?",
+    "removed": "Removed",
+    "cannotRemoveSelf": "You can't remove yourself",
+    "ownerLabel": "Owner"
+  },
+  "activity": {
+    "title": "Activity log",
+    "filters": {
+      "from": "From",
+      "to": "To",
+      "clear": "Clear filters"
+    },
+    "table": {
+      "time": "Time (Colombo)",
+      "actor": "Actor",
+      "role": "Role",
+      "action": "Action",
+      "summary": "Summary"
+    },
+    "noResults": "No activity in this period"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "No notifications yet"
+  },
+  "categoriesFees": {
+    "title": "Categories & fees",
+    "subtitle": "Your effective commission and return rules for each category, including any special rate Apexora has set for your store.",
+    "empty": "No active categories yet",
+    "commission": "{{pct}}% commission",
+    "returnableDays": "Returnable ({{days}} days)",
+    "notReturnable": "Not returnable",
+    "regulated": "Regulated",
+    "reviewRequired": "Review required"
+  },
+  "apply": {
+    "heading": "Become an Apexora seller",
+    "subtitle": "Tell us about your store — it takes about 5 minutes.",
+    "steps": {
+      "business": "Business details",
+      "owner": "Owner details",
+      "documents": "Documents"
+    },
+    "storeName": "Store name",
+    "legalName": "Legal (registered) name",
+    "brNumber": "Business Registration number",
+    "ownerName": "Owner's full name",
+    "nic": "NIC number",
+    "phone": "Phone number",
+    "email": "Email",
+    "address": "Business address",
+    "district": "District",
+    "categories": "What do you sell? (comma-separated)",
+    "brCertificate": "BR certificate",
+    "nicFront": "NIC — front",
+    "nicBack": "NIC — back",
+    "fileHint": "PDF, JPG, or PNG — up to 5MB",
+    "submit": "Submit application",
+    "submitting": "Submitting…",
+    "thankYouTitle": "Thanks — we've got your application",
+    "thankYouBody": "We'll call you within 2 working days. You'll also get an email once a decision is made.",
+    "backToStart": "Submit another application",
+    "invalidFile": "That file doesn't look like a real {{types}} — please check and try again",
+    "error": "Couldn't submit your application. Please check the form and try again."
+  },
+  "inviteAccept": {
+    "heading": "You're invited to Apexora",
+    "ownerSubtitle": "You've been invited to run {{seller}} on Apexora.",
+    "staffSubtitle": "You've been invited to join the {{seller}} team on Apexora.",
+    "platformSubtitle": "You've been invited to join the Apexora platform team.",
+    "nameLabel": "Your name",
+    "passwordLabel": "Choose a password",
+    "existingAccountNotice": "You already have an Apexora account — just confirm below to accept.",
+    "submit": "Accept invite",
+    "submitting": "Accepting…",
+    "invalidOrExpired": "This invite link is invalid or has expired.",
+    "invalidOrExpiredHint": "Ask whoever invited you to send a new one.",
+    "success": "Invite accepted — logging you in…",
+    "goToLogin": "Go to login"
+  }
+}

@@ -1,0 +1,397 @@
+{
+  "_meta": {
+    "status": "draft — needs native speaker review"
+  },
+  "topbar": {
+    "searchPlaceholder": "නම, ව්‍යාපාර ලියාපදිංචි අංකය, හෝ දුරකථන අංකය අනුව සොයන්න",
+    "notifications": "දැනුම්දීම්",
+    "notificationsEmpty": "නව දැනුම්දීම් නැත",
+    "account": "ගිණුම",
+    "language": "භාෂාව"
+  },
+  "viewAs": {
+    "banner": "{{seller}} නරඹමින් — කියවීමට පමණි",
+    "exit": "ඉවත් වන්න"
+  },
+  "overview": {
+    "activeSellers": "ක්‍රියාත්මක විකුණුම්කරුවන්",
+    "pendingSellers": "අපේක්ෂිත විකුණුම්කරුවන්",
+    "suspendedSellers": "අත්හිටුවූ විකුණුම්කරුවන්",
+    "platformStaffCount": "වේදිකා කාර්ය මණ්ඩලය",
+    "adminActionsToday": "අද පරිපාලක ක්‍රියා",
+    "needsAttention": "ඔබේ අවධානය අවශ්‍යයි",
+    "noApplicationsPending": "සමාලෝචනය සඳහා අයදුම්පත් නැත",
+    "ordersTotal": "ඇණවුම්",
+    "salesTotal": "විකුණුම්",
+    "commissionTotal": "කමිස්",
+    "viewApplication": "සමාලෝචනය කරන්න",
+    "zeroCommissionWarning": "වර්ග {{count}} කට කමිස් 0%ක් ඇත — නාමාවලිය සමාලෝචනය කරන්න"
+  },
+  "sellers": {
+    "title": "විකුණුම්කරුවන්",
+    "searchPlaceholder": "සාප්පු නම, ව්‍යාපාර ලියාපදිංචි අංකය, හෝ දුරකථන අංකය අනුව සොයන්න",
+    "allStatuses": "සියලු තත්ත්ව",
+    "table": {
+      "store": "සාප්පුව",
+      "legalName": "නෛතික නම",
+      "brNumber": "ව්‍යාපාර අංකය",
+      "district": "දිස්ත්‍රික්කය",
+      "status": "තත්ත්වය",
+      "joined": "එක්වූ දිනය",
+      "owner": "හිමිකරු"
+    },
+    "noResults": "ඔබේ පෙරහන්වලට ගැළපෙන විකුණුම්කරුවන් නැත",
+    "status": {
+      "in_review": "සමාලෝචනයේ",
+      "active": "ක්‍රියාත්මක",
+      "suspended": "අත්හිටුවා ඇත",
+      "closed": "වසා ඇත"
+    },
+    "pagination": "පිටුව {{page}} න් {{pages}}",
+    "previous": "පෙර",
+    "next": "ඊළඟ"
+  },
+  "sellerDetail": {
+    "back": "විකුණුම්කරුවන් වෙත ආපසු",
+    "tabs": {
+      "profile": "පැතිකඩ",
+      "status": "තත්ත්ව ක්‍රියා",
+      "commission": "කමිස් සහ පරික්ෂණ කාලය",
+      "activity": "ක්‍රියාකාරකම්",
+      "listings": "ලැයිස්තු",
+      "orders": "ඇණවුම්",
+      "finance": "මූල්‍ය",
+      "bank": "බැංකු ගිණුම"
+    },
+    "profile": {
+      "legalName": "නෛතික නම",
+      "brNumber": "ව්‍යාපාර ලියාපදිංචි අංකය",
+      "district": "දිස්ත්‍රික්කය",
+      "ownerName": "හිමිකරුගේ නම",
+      "nic": "ජාතික හැඳුනුම්පත",
+      "phone": "දුරකථනය",
+      "email": "ඊමේල්",
+      "address": "ලිපිනය",
+      "categories": "වර්ග",
+      "verificationNotes": "සත්‍යාපන සටහන්",
+      "members": "සාමාජිකයින්",
+      "documents": "ලේඛන",
+      "noDocuments": "ලේඛන නැත"
+    },
+    "viewAsButton": "විකුණුම්කරු ලෙස බලන්න",
+    "viewAsStarted": "දැන් {{seller}} කියවීමට පමණි නරඹමින්",
+    "actions": {
+      "approve": "අනුමත කරන්න",
+      "suspend": "අත්හිටුවන්න",
+      "reactivate": "නැවත සක්‍රීය කරන්න",
+      "close": "වසන්න"
+    },
+    "noActionsAvailable": "\"{{status}}\" තත්ත්වයෙන් තත්ත්ව ක්‍රියා නොමැත",
+    "confirmTitle": "තහවුරු කරන්න: {{action}}",
+    "reasonLabel": "හේතුව",
+    "reasonRequired": "හේතුවක් අවශ්‍යයි",
+    "reasonPlaceholder": "ඔබ මෙම වෙනස්කම සිදු කරන්නේ ඇයි?",
+    "confirm": "තහවුරු කරන්න",
+    "cancel": "අවලංගු කරන්න",
+    "statusUpdated": "තත්ත්වය යාවත්කාලීන කරන ලදී",
+    "commission": {
+      "overrideLabel": "කමිස් අභිබවීම (%)",
+      "overridePlaceholder": "වේදිකා පෙරනිමිය සඳහා හිස් තබන්න",
+      "probationLabel": "පරික්ෂණ කාලය දක්වා",
+      "save": "සුරකින්න (හිමිකරු පමණි)",
+      "saved": "අභිබවීම් යාවත්කාලීන කරන ලදී",
+      "ownerOnly": "මෙය වෙනස් කළ හැක්කේ වේදිකා හිමිකරුට පමණි"
+    },
+    "activity": {
+      "empty": "මෙම විකුණුම්කරු සඳහා තවම ක්‍රියාකාරකම් සටහන් වී නැත"
+    },
+    "comingSoonTab": "පසු සන්ධිස්ථානයකින් පසු ලබා ගත හැක",
+    "bank": {
+      "status": {
+        "none": "සකසා නැත",
+        "pending": "සත්‍යාපනය අපේක්ෂිතයි",
+        "verified": "සත්‍යාපිතයි",
+        "rejected": "ප්‍රතික්ෂේප කරන ලදී"
+      },
+      "noAccount": "තවම බැංකු ගිණුමක් ගොනුවේ නැත",
+      "bankName": "බැංකුවේ නම",
+      "branch": "ශාඛාව",
+      "accountName": "ගිණුම් හිමියාගේ නම",
+      "accountNumber": "ගිණුම් අංකය",
+      "viewFull": "සම්පූර්ණ අංකය බලන්න",
+      "rejectedReason": "ප්‍රතික්ෂේප කිරීමේ හේතුව",
+      "reject": "ප්‍රතික්ෂේප කරන්න",
+      "verify": "සත්‍යාපනය කරන්න",
+      "verified": "බැංකු ගිණුම සත්‍යාපනය කරන ලදී",
+      "rejected": "බැංකු ගිණුම ප්‍රතික්ෂේප කරන ලදී"
+    }
+  },
+  "applications": {
+    "title": "අයදුම්පත්",
+    "status": {
+      "new": "නව",
+      "info_requested": "තොරතුරු ඉල්ලා ඇත",
+      "approved": "අනුමත කරන ලදී",
+      "rejected": "ප්‍රතික්ෂේප කරන ලදී"
+    },
+    "table": {
+      "store": "සාප්පුව",
+      "owner": "හිමිකරු",
+      "district": "දිස්ත්‍රික්කය",
+      "submitted": "ඉදිරිපත් කළ දිනය",
+      "status": "තත්ත්වය"
+    },
+    "noResults": "මෙම පෙළේ අයදුම්පත් නැත",
+    "back": "අයදුම්පත් වෙත ආපසු",
+    "detail": {
+      "legalName": "නෛතික නම",
+      "brNumber": "ව්‍යාපාර ලියාපදිංචි අංකය",
+      "ownerName": "හිමිකරුගේ නම",
+      "nic": "ජාතික හැඳුනුම්පත",
+      "phone": "දුරකථනය",
+      "email": "ඊමේල්",
+      "address": "ලිපිනය",
+      "district": "දිස්ත්‍රික්කය",
+      "categories": "වර්ග",
+      "submitted": "ඉදිරිපත් කළ දිනය",
+      "documents": "ලේඛන",
+      "viewDocument": "බලන්න",
+      "checklist": "සමාලෝචන ලැයිස්තුව",
+      "checklistItems": {
+        "brVerified": "ව්‍යාපාර ලියාපදිංචි සහතිකය සත්‍යාපනය කරන ලදී",
+        "nicVerified": "ජාතික හැඳුනුම්පත සත්‍යාපනය කරන ලදී",
+        "phoneCalled": "දුරකථන අංකයට කතා කරන ලදී",
+        "addressChecked": "ලිපිනය පරීක්ෂා කරන ලදී"
+      },
+      "notes": "සටහන්",
+      "addNote": "සටහනක් එකතු කරන්න",
+      "notePlaceholder": "අභ්‍යන්තර සටහනක් එකතු කරන්න…",
+      "noNotes": "තවම සටහන් නැත",
+      "infoRequestedMessage": "ඉල්ලූ තොරතුරු පණිවිඩය",
+      "rejectedReason": "ප්‍රතික්ෂේප කිරීමේ හේතුව",
+      "documentTypes": {
+        "br_certificate": "ව්‍යාපාර ලියාපදිංචි සහතිකය",
+        "nic_front": "ජා.හැ.පත (ඉදිරිපස)",
+        "nic_back": "ජා.හැ.පත (පිටුපස)"
+      }
+    },
+    "actions": {
+      "requestInfo": "තවත් තොරතුරු ඉල්ලන්න",
+      "approve": "අනුමත කරන්න",
+      "reject": "ප්‍රතික්ෂේප කරන්න"
+    },
+    "requestInfoPlaceholder": "අඩුපාඩුව හෝ පැහැදිලි නැති දේ කුමක්ද?",
+    "rejectReasonPlaceholder": "මෙම අයදුම්පත ප්‍රතික්ෂේප කරන්නේ ඇයි?",
+    "confirm": "ඉදිරිපත් කරන්න",
+    "cancel": "අවලංගු කරන්න",
+    "approveConfirm": "මෙය විකුණුම්කරු ගිණුම සකස් කර හිමිකරු වෙත ආරාධනාවක් යවයි. ඉදිරියට යන්නද?",
+    "decisionDone": "තීරණය සටහන් කරන ලදී"
+  },
+  "platformStaff": {
+    "title": "වේදිකා කාර්ය මණ්ඩලය",
+    "inviteButton": "කාර්ය මණ්ඩලයට ආරාධනා කරන්න",
+    "invitePlaceholder": "person@example.com",
+    "inviteSent": "ආරාධනය යවන ලදී",
+    "table": {
+      "name": "නම",
+      "email": "ඊමේල්",
+      "role": "තනතුර",
+      "joined": "එක්වූ දිනය"
+    },
+    "role": {
+      "platform_owner": "හිමිකරු",
+      "platform_staff": "කාර්ය මණ්ඩලය",
+      "none": "ඉවත් කරන ලදී"
+    },
+    "pendingInvites": "අපේක්ෂිත ආරාධනා",
+    "expiresAt": "{{date}} දින කල් ඉකුත් වේ",
+    "remove": "ඉවත් කරන්න",
+    "removeConfirm": "{{name}} වේදිකා කාර්ය මණ්ඩලයෙන් ඉවත් කරන්නද?",
+    "removed": "ඉවත් කරන ලදී",
+    "roleChanged": "තනතුර යාවත්කාලීන කරන ලදී",
+    "cannotChangeSelf": "ඔබේම තනතුර වෙනස් කළ නොහැක",
+    "noPendingInvites": "අපේක්ෂිත ආරාධනා නැත"
+  },
+  "auditLog": {
+    "title": "විගණන සටහන",
+    "filters": {
+      "action": "ක්‍රියාව",
+      "targetType": "ඉලක්ක වර්ගය",
+      "from": "සිට",
+      "to": "දක්වා",
+      "clear": "පෙරහන් හිස් කරන්න"
+    },
+    "table": {
+      "time": "වේලාව (කොළඹ)",
+      "actor": "ක්‍රියාකරු",
+      "role": "තනතුර",
+      "action": "ක්‍රියාව",
+      "target": "ඉලක්කය",
+      "summary": "සාරාංශය"
+    },
+    "export": "CSV බාගන්න",
+    "noResults": "මෙම පෙරහන්වලට ගැළපෙන විගණන සටහන් නැත"
+  },
+  "settings": {
+    "title": "සැකසුම්",
+    "defaultReturnWindowDays": "පෙරනිමි ආපසු දීමේ කාල සීමාව (දින)",
+    "payoutDayOfWeek": "ගෙවීම් සතියේ දිනය",
+    "payoutHoldDays": "ගෙවීම් රැඳවුම් (දින)",
+    "reviewRequiredForFirstNListings": "පළමු N ලැයිස්තු සඳහා සමාලෝචනය අවශ්‍යයි",
+    "supportPhone": "සහාය දුරකථනය",
+    "supportEmail": "සහාය ඊමේල්",
+    "supportWhatsapp": "සහාය WhatsApp",
+    "prohibitedKeywords": "ගෝලීය තහනම් වචන",
+    "prohibitedKeywordsPlaceholder": "වචනයක් ටයිප් කර Enter ඔබන්න",
+    "prohibitedKeywordsHint": "එක් එක් වර්ගයේ තමන්ගේම වචන සමඟ ඒකාබද්ධ වේ. ගැළපීම ඉංග්‍රීසි, සිංහල සහ දෙමළ වචන සඳහා කේස්-සංවේදී නොවේ.",
+    "save": "සැකසුම් සුරකින්න",
+    "saved": "සැකසුම් සුරකින ලදී",
+    "ownerOnly": "මෙය වෙනස් කළ හැක්කේ වේදිකා හිමිකරුට පමණි",
+    "days": {
+      "0": "ඉරිදා",
+      "1": "සඳුදා",
+      "2": "අඟහරුවාදා",
+      "3": "බදාදා",
+      "4": "බ්‍රහස්පතින්දා",
+      "5": "සිකුරාදා",
+      "6": "සෙනසුරාදා"
+    }
+  },
+  "catalog": {
+    "vehiclesLink": "වාහන",
+    "noSelection": "සංස්කරණය කිරීමට වර්ගයක් තෝරන්න, හෝ මුල් වර්ගයක් එකතු කරන්න",
+    "saved": "වර්ගය සුරකින ලදී",
+    "deleted": "වර්ගය මකන ලදී",
+    "tree": {
+      "title": "වර්ග",
+      "addRoot": "මුල් වර්ගයක් එකතු කරන්න",
+      "addChild": "උප-වර්ගයක් එකතු කරන්න",
+      "empty": "තවම වර්ග නැත",
+      "inactive": "අක්‍රීය",
+      "listingCount": "නාමාවලි {{count}}"
+    },
+    "create": {
+      "title": "නව වර්ගය",
+      "atRoot": "මුල් මට්ටමේ වර්ගයක් සාදමින්",
+      "underParent": "\"{{parent}}\" හි උප-වර්ගයක් සාදමින්",
+      "created": "වර්ගය සාදන ලදී"
+    },
+    "tabs": {
+      "basics": "මූලික",
+      "rules": "නීති",
+      "fields": "ක්ෂේත්‍ර",
+      "keywords": "තහනම් වචන"
+    },
+    "basics": {
+      "slug": "ස්ලග්",
+      "slugHint": "කුඩා අකුරු, සංඛ්‍යා සහ හයිෆන් පමණි — වර්ගයට නාමාවලි ඇත්නම් වෙනස් කළ නොහැක",
+      "slugLocked": "මෙම වර්ගයට නාමාවලි ඇත — ස්ලගය තවදුරටත් වෙනස් කළ නොහැක",
+      "icon": "නිරූපකය",
+      "iconHint": "කෙටි නිරූපක නමක්, උදා: car, home, sparkles",
+      "parent": "මූල වර්ගය",
+      "noParent": "— කිසිවක් නැත (මුල් මට්ටම) —",
+      "active": "ක්‍රියාත්මක (නව නාමාවලි සඳහා පෙනේ)",
+      "depth": "මට්ටම 3න් {{depth}}",
+      "delete": "මකන්න",
+      "deleteBlocked": "නාමාවලි ඇති වර්ග අක්‍රීය කළ හැකි නම් මකා දැමිය නොහැක",
+      "deleteConfirmTitle": "මෙම වර්ගය මකන්නද?",
+      "deleteConfirmBody": "මෙය අහෝසි කළ නොහැක. නාමාවලි හෝ උප-වර්ග ඇති වර්ග මකා දැමිය නොහැක — ඒ වෙනුවට අක්‍රීය කරන්න."
+    },
+    "rules": {
+      "ownerOnlyNote": "කමිස්, නියාමනය සහ සමාලෝචන අවශ්‍යතාව වෙනස් කළ හැක්කේ වේදිකා හිමිකරුට පමණි",
+      "commission": "කමිස් (%)",
+      "returnable": "ආපසු දිය හැකි",
+      "inherit": "මූලයෙන් උරුම වේ (දැනට: {{value}})",
+      "windowDays": "ආපසු දීමේ කාල සීමාව (දින)",
+      "windowDaysInherit": "උරුම වූයේ: දින {{days}}",
+      "noteEn": "ආපසු දීමේ සටහන (ඉංග්‍රීසි)",
+      "noteSi": "ආපසු දීමේ සටහන (සිංහල)",
+      "noteTa": "ආපසු දීමේ සටහන (දෙමළ)",
+      "regulated": "නියාමනය කළ වර්ගයක්",
+      "reviewRequired": "නාමාවලිය ප්‍රකාශයට පත් කිරීමට පෙර සමාලෝචනය අවශ්‍යයි"
+    },
+    "fields": {
+      "ownFields": "ඔබේ ක්ෂේත්‍ර",
+      "addField": "ක්ෂේත්‍රයක් එකතු කරන්න",
+      "noOwnFields": "මෙම වර්ගයට තවම තමන්ගේම ක්ෂේත්‍ර නැත",
+      "inheritedFields": "උරුම වූ ක්ෂේත්‍ර",
+      "noInheritedFields": "මූල වර්ගයකින් උරුම වූ කිසිවක් නැත",
+      "inheritedFrom": "{{name}} වලින් උරුම විය",
+      "override": "අභිබවන්න",
+      "editTitle": "ක්ෂේත්‍රය සංස්කරණය කරන්න",
+      "addTitle": "ක්ෂේත්‍රයක් එකතු කරන්න",
+      "key": "යතුර",
+      "keyPlaceholder": "උදා: partNumber",
+      "keyLocked": "මෙම වර්ගයට නාමාවලි ඇත — යතුර තවදුරටත් වෙනස් කළ නොහැක",
+      "labelEn": "ලේබලය (ඉංග්‍රීසි)",
+      "labelSi": "ලේබලය (සිංහල)",
+      "labelTa": "ලේබලය (දෙමළ)",
+      "helpTextEn": "උපකාරක පෙළ (ඉංග්‍රීසි)",
+      "helpTextSi": "උපකාරක පෙළ (සිංහල)",
+      "helpTextTa": "උපකාරක පෙළ (දෙමළ)",
+      "type": "ක්ෂේත්‍ර වර්ගය",
+      "types": {
+        "text": "පෙළ",
+        "number": "සංඛ්‍යාව",
+        "select": "තෝරන්න (එකක්)",
+        "multiselect": "තෝරන්න (බහු)",
+        "boolean": "ඔව් / නැත",
+        "date": "දිනය",
+        "fitment": "වාහන ගැළපුම"
+      },
+      "required": "අනිවාර්යයි",
+      "unit": "ඒකකය",
+      "min": "අවම",
+      "max": "උපරිම",
+      "maxLength": "උපරිම දිග",
+      "options": "විකල්ප",
+      "optionValue": "අගය",
+      "addOption": "විකල්පයක් එකතු කරන්න",
+      "showOnProductPage": "නිෂ්පාදන පිටුවේ පෙන්වන්න",
+      "filterable": "පෙරහන් කළ හැකි",
+      "preview": "පෙරදසුන",
+      "untitled": "නම් නොකළ ක්ෂේත්‍රය",
+      "maxLengthHint": "අකුරු {{n}} ක් දක්වා",
+      "selectPlaceholder": "තෝරන්න…",
+      "noOptionsYet": "තවම විකල්ප එකතු කර නැත",
+      "fitmentPreview": "විකුණුම්කරුට පෙනෙන්නේ වෙළඳ නාමය → මාදිලිය → වර්ෂය තෝරකය ලෙසයි."
+    },
+    "keywords": {
+      "label": "මෙම වර්ගය සඳහා තහනම් වචන",
+      "placeholder": "වචනයක් ටයිප් කර Enter ඔබන්න",
+      "hint": "වේදිකාවේ ගෝලීය ලැයිස්තුව (සැකසුම්) සමඟ ඒකාබද්ධ වේ. ගැළපීම ඉංග්‍රීසි, සිංහල සහ දෙමළ වචන සඳහා කේස්-සංවේදී නොවේ."
+    }
+  },
+  "vehicles": {
+    "title": "වාහන",
+    "backToCatalog": "නාමාවලිය වෙත ආපසු",
+    "addMake": "වෙළඳ නාමයක් එකතු කරන්න",
+    "searchPlaceholder": "වෙළඳ නාම හෝ මාදිලි සොයන්න",
+    "noResults": "ඔබේ සෙවීමට ගැළපෙන වෙළඳ නාම නැත",
+    "modelCount": "මාදිලි {{count}}",
+    "inactive": "අක්‍රීය",
+    "activate": "සක්‍රීය කරන්න",
+    "deactivate": "අක්‍රීය කරන්න",
+    "edit": "සංස්කරණය",
+    "editTitle": "වාහන වෙළඳ නාමය සංස්කරණය කරන්න",
+    "addTitle": "වාහන වෙළඳ නාමයක් එකතු කරන්න",
+    "name": "වෙළඳ නාමය",
+    "type": "වාහන වර්ගය",
+    "types": {
+      "car": "කාර්",
+      "van": "වෑන්",
+      "suv": "SUV",
+      "motorcycle": "මෝටර් සයිකලය",
+      "three_wheeler": "ත්‍රිරෝද රථය",
+      "lorry": "ලොරිය",
+      "bus": "බස් රථය"
+    },
+    "active": "ක්‍රියාත්මක",
+    "models": "මාදිලි",
+    "modelName": "මාදිලියේ නම",
+    "yearFrom": "වර්ෂය සිට",
+    "yearTo": "වර්ෂය දක්වා",
+    "addModel": "මාදිලියක් එකතු කරන්න",
+    "saved": "සුරකින ලදී"
+  }
+}

@@ -26,5 +26,21 @@
   "loading": "Loading…",
   "error": {
     "generic": "Something went wrong. Please try again."
-  }
+  },
+  "languages": {
+    "en": "English",
+    "si": "සිංහල",
+    "ta": "தமிழ்"
+  },
+  "save": "Save",
+  "cancel": "Cancel",
+  "yes": "Yes",
+  "no": "No",
+  "menu": "Menu",
+  "topbar": {
+    "notifications": "Notifications",
+    "notificationsEmpty": "No new notifications",
+    "viewAllNotifications": "View all notifications"
+  },
+  "more": "More"
 }

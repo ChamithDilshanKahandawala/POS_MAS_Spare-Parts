@@ -1,5 +1,7 @@
 {
-  "_meta": { "status": "draft — needs native speaker review" },
+  "_meta": {
+    "status": "draft — needs native speaker review"
+  },
   "appName": "Apexora කොන්සෝලය",
   "nav": {
     "overview": "දළ විශ්ලේෂණය",
@@ -27,5 +29,21 @@
   "loading": "පූරණය වෙමින්…",
   "error": {
     "generic": "යමක් වැරදී ගියේය. නැවත උත්සාහ කරන්න."
-  }
+  },
+  "languages": {
+    "en": "English",
+    "si": "සිංහල",
+    "ta": "தமிழ்"
+  },
+  "save": "සුරකින්න",
+  "cancel": "අවලංගු කරන්න",
+  "yes": "ඔව්",
+  "no": "නැත",
+  "menu": "මෙනුව",
+  "topbar": {
+    "notifications": "දැනුම්දීම්",
+    "notificationsEmpty": "නව දැනුම්දීම් නැත",
+    "viewAllNotifications": "සියලු දැනුම්දීම් බලන්න"
+  },
+  "more": "තවත්"
 }

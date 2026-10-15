@@ -5,129 +5,30 @@ const Product = require('./models/Product');
 const inventoryData =
 [
   {
-    "sku_code": "TWLWL02",
-    "name": "WELLAMPITI BUFFER LIGHT Q2 MULTICOLOR",
+    "sku_code": "TWF113",
+    "name": "FM ANTANA BLACK",
     "buying_price": 800,
-    "selling_price": 1500,
+    "selling_price": 1200,
+    "stock_quantity": 10,
+    "sub_category": "Front",
+    "category": "Three-Wheel"
+  },
+  {
+    "sku_code": "AHDD04",
+    "name": "DIGITAL CLOCK M",
+    "buying_price": 500,
+    "selling_price": 1000,
     "stock_quantity": 9,
-    "sub_category": "Wellampiti Light",
-    "category": "Three-Wheel"
+    "sub_category": "DASHBOARD",
+    "category": "ANYVEHICLE"
   },
   {
-    "sku_code": "TWLWL32",
-    "name": "WELLAMPITI BUFFER LIGHT Q2 BLUE",
-    "buying_price": 800,
-    "selling_price": 1500,
-    "stock_quantity": 3,
-    "sub_category": "Wellampiti Light",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWLWL18",
-    "name": "WELLAMPITI GLASS LIGHT Q2 RED MULTICOLOR",
-    "buying_price": 800,
-    "selling_price": 1500,
-    "stock_quantity": 2,
-    "sub_category": "Wellampiti Light",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWLWL17",
-    "name": "WELLAMPITI BADA LIGHT Q2 MULTICOLOR",
-    "buying_price": 800,
-    "selling_price": 1500,
-    "stock_quantity": 7,
-    "sub_category": "Wellampiti Light",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWLWL03",
-    "name": "WELLAMPITI BADA LIGHT Q2 BLUE",
-    "buying_price": 800,
-    "selling_price": 1500,
-    "stock_quantity": 3,
-    "sub_category": "Wellampiti Light",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWLWL05",
-    "name": "WELLAMPITI MADA CARPET LIGHT PAIR RED",
-    "buying_price": 550,
-    "selling_price": 1000,
-    "stock_quantity": 7,
-    "sub_category": "Wellampiti Light",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWLWL33",
-    "name": "WELLAMPITI MADA CARPET LIGHT PAIR GREEN",
-    "buying_price": 550,
-    "selling_price": 1000,
+    "sku_code": "TWF114",
+    "name": "MIRROR ARM RED",
+    "buying_price": 300,
+    "selling_price": 550,
     "stock_quantity": 5,
-    "sub_category": "Wellampiti Light",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWLWL34",
-    "name": "WELLAMPITI MADA CARPET LIGHT PAIR BLUE",
-    "buying_price": 550,
-    "selling_price": 1000,
-    "stock_quantity": 3,
-    "sub_category": "Wellampiti Light",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWLWL35",
-    "name": "LIGHT HORN GUARD DARMA CHAKRAYA MT",
-    "buying_price": 4950,
-    "selling_price": 6100,
-    "stock_quantity": 3,
-    "sub_category": "MTD MODIFICATION",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWLWL36",
-    "name": "KULLA LONG LIGHT MT",
-    "buying_price": 2950,
-    "selling_price": 4100,
-    "stock_quantity": 3,
-    "sub_category": "MTD MODIFICATION",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWLWL37",
-    "name": "SIDE MIRROR WITH LIGHT MT",
-    "buying_price": 2050,
-    "selling_price": 3300,
-    "stock_quantity": 3,
-    "sub_category": "MTD MODIFICATION",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWLWL38",
-    "name": "LIGHT HORN GUARD WITH NUMBER MT",
-    "buying_price": 5350,
-    "selling_price": 6600,
-    "stock_quantity": 1,
-    "sub_category": "MTD MODIFICATION",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWLWL39",
-    "name": "DASHBOARD LONG LIGHT MT",
-    "buying_price": 2950,
-    "selling_price": 4100,
-    "stock_quantity": 3,
-    "sub_category": "MTD MODIFICATION",
-    "category": "Three-Wheel"
-  },
-  {
-    "sku_code": "TWLWL40",
-    "name": "BACK DOOR LIGHT MT",
-    "buying_price": 3850,
-    "selling_price": 5100,
-    "stock_quantity": 1,
-    "sub_category": "MTD MODIFICATION",
+    "sub_category": "Front",
     "category": "Three-Wheel"
   }
 ];
