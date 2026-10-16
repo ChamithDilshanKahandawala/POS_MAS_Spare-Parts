@@ -1,6 +1,7 @@
 const Seller = require('../models/Seller');
 const { logAction } = require('../services/auditLog');
 const { stripFullAccountNumber } = require('../utils/sanitizeSeller');
+const { generateUniqueSlug } = require('../services/sellerSlug');
 
 // GET /api/seller/me/store — any member (owner or staff) of the seller
 // named in X-Seller-Id. requireSellerMember has already confirmed
@@ -37,7 +38,12 @@ const updateMyStore = async (req, res) => {
   const before = await Seller.findById(req.sellerId);
   if (!before) return res.status(404).json({ message: 'Seller not found' });
 
-  const seller = await Seller.findByIdAndUpdate(req.sellerId, req.body, { new: true });
+  const patch = { ...req.body };
+  if (patch.displayName && patch.displayName.trim() && patch.displayName.trim() !== before.displayName) {
+    patch.slug = await generateUniqueSlug(patch.displayName, before._id);
+  }
+
+  const seller = await Seller.findByIdAndUpdate(req.sellerId, patch, { new: true });
 
   await logAction({
     actor: req.user,

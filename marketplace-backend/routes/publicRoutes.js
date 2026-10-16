@@ -5,8 +5,10 @@ const router = express.Router();
 
 const { submitApplication, getInvite, acceptInvite } = require('../controllers/publicController');
 const { getPublicCategoryTree, getPublicVehicles } = require('../controllers/publicCatalogController');
+const { listPublicListings, getPublicListingDetail } = require('../controllers/publicListingsController');
+const { getPublicMediaVariant } = require('../controllers/mediaController');
 const { upload, handleUploadErrors } = require('../middleware/upload');
-const { validate } = require('../middleware/validate');
+const { validate, requireValidObjectId } = require('../middleware/validate');
 const asyncHandler = require('../middleware/asyncHandler');
 
 // Generous enough for a real applicant filling the form a couple of
@@ -78,5 +80,37 @@ router.post(
 // --- Catalog (Milestone 2, public) ---
 router.get('/catalog/categories', asyncHandler(getPublicCategoryTree));
 router.get('/vehicles', asyncHandler(getPublicVehicles));
+
+// --- Listings (Milestone 3, public read API for Milestone 5) ---
+const OBJECT_ID_RE = /^[0-9a-fA-F]{24}$/;
+
+const listPublicListingsQuerySchema = z.object({
+  category: z.string().regex(OBJECT_ID_RE).optional(),
+  search: z.string().trim().max(200).optional(),
+  make: z.string().regex(OBJECT_ID_RE).optional(),
+  model: z.string().trim().max(80).optional(),
+  year: z.coerce.number().int().optional(),
+  priceMin: z.coerce.number().int().min(0).optional(),
+  priceMax: z.coerce.number().int().min(0).optional(),
+  condition: z.enum(['new', 'used', 'reconditioned']).optional(),
+  sort: z.enum(['newest', 'price_asc', 'price_desc']).optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).optional(),
+}).strict();
+
+const publicMediaParamsSchema = z.object({
+  id: z.string(),
+  size: z.enum(['thumb', 'medium', 'large']),
+  format: z.enum(['webp', 'jpg']),
+}).strict();
+
+router.get('/listings', validate({ query: listPublicListingsQuerySchema }), asyncHandler(listPublicListings));
+router.get('/listings/:id', requireValidObjectId('id'), asyncHandler(getPublicListingDetail));
+router.get(
+  '/media/:id/:size/:format',
+  requireValidObjectId('id'),
+  validate({ params: publicMediaParamsSchema }),
+  asyncHandler(getPublicMediaVariant)
+);
 
 module.exports = router;

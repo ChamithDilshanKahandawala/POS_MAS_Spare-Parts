@@ -1,8 +1,15 @@
 import axios from 'axios';
 
+// A hard timeout matters beyond the usual "don't hang the UI forever":
+// the listing wizard's autosave serializes every save for a page session
+// onto one promise chain (see ListingWizardPage.jsx's saveQueue), so a
+// single request that never settles — a dropped connection, an OS
+// suspending background network I/O — would otherwise block every save
+// after it for the rest of the session with no way to recover.
 const api = axios.create({
   baseURL: '/api',
   headers: { 'Content-Type': 'application/json' },
+  timeout: 30000,
 });
 
 // Attach the access token to every request, and the active X-Seller-Id

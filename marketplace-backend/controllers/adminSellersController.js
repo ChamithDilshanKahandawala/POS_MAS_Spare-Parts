@@ -120,11 +120,11 @@ const updateSellerStatus = async (req, res) => {
 // PATCH /api/admin/sellers/:id/overrides — owner only. Commission % and/
 // or probation date; reason required whenever either actually changes.
 const updateSellerOverrides = async (req, res) => {
-  const { commissionOverridePct, probationUntil, reason } = req.body;
+  const { commissionOverridePct, probationUntil, reviewExempt, reason } = req.body;
   const seller = await Seller.findById(req.params.id);
   if (!seller) return res.status(404).json({ message: 'Seller not found' });
 
-  const before = { commissionOverridePct: seller.commissionOverridePct, probationUntil: seller.probationUntil };
+  const before = { commissionOverridePct: seller.commissionOverridePct, probationUntil: seller.probationUntil, reviewExempt: seller.reviewExempt };
   let changed = false;
 
   if (commissionOverridePct !== undefined && commissionOverridePct !== seller.commissionOverridePct) {
@@ -139,6 +139,10 @@ const updateSellerOverrides = async (req, res) => {
       changed = true;
     }
   }
+  if (reviewExempt !== undefined && reviewExempt !== seller.reviewExempt) {
+    seller.reviewExempt = reviewExempt;
+    changed = true;
+  }
 
   if (!changed) return res.json({ seller }); // no-op, nothing to audit
 
@@ -150,7 +154,7 @@ const updateSellerOverrides = async (req, res) => {
     targetType: 'Seller',
     targetId: seller._id,
     before,
-    after: { commissionOverridePct: seller.commissionOverridePct, probationUntil: seller.probationUntil },
+    after: { commissionOverridePct: seller.commissionOverridePct, probationUntil: seller.probationUntil, reviewExempt: seller.reviewExempt },
     summary: `Updated overrides for ${seller.name}. Reason: ${reason}`,
   });
 

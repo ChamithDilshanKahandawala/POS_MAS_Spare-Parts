@@ -9,7 +9,9 @@ const platformSettingsSchema = new mongoose.Schema(
     defaultReturnWindowDays: { type: Number, default: 7 },
     payoutDayOfWeek: { type: Number, min: 0, max: 6, default: 1 }, // 0=Sunday
     payoutHoldDays: { type: Number, default: 3 },
-    reviewRequiredForFirstNListings: { type: Number, default: 5 },
+    // Milestone 3: a seller's first N listings always go to review,
+    // regardless of category rules, unless reviewExempt (Seller.js).
+    reviewRequiredForFirstNListings: { type: Number, default: 20 },
     supportPhone: { type: String, default: '' },
     supportEmail: { type: String, default: '' },
     supportWhatsapp: { type: String, default: '' },

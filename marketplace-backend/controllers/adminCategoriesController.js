@@ -1,6 +1,7 @@
 const Category = require('../models/Category');
 const { getEffectiveCategory, buildTree, MAX_DEPTH } = require('../services/categoryRules');
 const { logAction } = require('../services/auditLog');
+const { flagListingsForCategoryChange } = require('../services/listingDrift');
 
 // GET /api/admin/catalog/categories — every category, active or not
 // (admin needs to see and manage both), as a nested tree.
@@ -109,6 +110,8 @@ const updateCategory = async (req, res) => {
     after: category.toObject(),
     summary: `Updated category "${category.name.en}"`,
   });
+
+  if (bumpSchemaVersion) await flagListingsForCategoryChange(category._id);
 
   res.json({ category });
 };

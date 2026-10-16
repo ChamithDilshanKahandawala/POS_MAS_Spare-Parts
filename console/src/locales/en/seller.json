@@ -209,5 +209,163 @@
     "invalidOrExpiredHint": "Ask whoever invited you to send a new one.",
     "success": "Invite accepted — logging you in…",
     "goToLogin": "Go to login"
+  },
+  "products": {
+    "addListing": "Add listing",
+    "tabs": {
+      "all": "All",
+      "draft": "Draft",
+      "in_review": "In review",
+      "published": "Published",
+      "rejected": "Rejected",
+      "hidden": "Hidden",
+      "suspended": "Suspended",
+      "needsUpdate": "Needs update"
+    },
+    "status": {
+      "draft": "Draft",
+      "in_review": "In review",
+      "published": "Published",
+      "rejected": "Rejected",
+      "hidden": "Hidden",
+      "suspended": "Suspended"
+    },
+    "searchPlaceholder": "Search by title or SKU",
+    "allCategories": "All categories",
+    "noResults": "No listings match your filters",
+    "untitled": "Untitled listing",
+    "table": {
+      "title": "Listing",
+      "price": "Price",
+      "stock": "Stock",
+      "status": "Status"
+    },
+    "needsUpdateBadge": "Needs update",
+    "pendingRevisionBadge": "Changes waiting for review",
+    "outOfStockBadge": "Out of stock",
+    "lowStockBadge": "Low stock",
+    "hide": "Hide",
+    "show": "Show",
+    "duplicate": "Duplicate",
+    "duplicated": "Duplicated",
+    "delete": "Delete",
+    "deleteConfirmTitle": "Delete this draft?",
+    "deleted": "Deleted",
+    "saved": "Saved",
+    "pagination": "Page {{page}} of {{pages}}"
+  },
+  "wizard": {
+    "backToProducts": "Back to products",
+    "newListing": "New listing",
+    "editListing": "Edit listing",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "notSavedRetrying": "Not saved — retrying…",
+    "saveFailed": "Couldn't save — check your connection",
+    "tryAgain": "Try again",
+    "unsavedRestored": "Restored your unsaved changes",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "stillHasProblems": "A few things still need fixing — see the checklist below",
+    "publishedNow": "Published — your listing is live",
+    "sentForReview": "Sent for review — we'll notify you once it's decided",
+    "rejectedBanner": "This listing was not approved",
+    "pendingRevisionBanner": "Your changes are waiting for review — customers still see the current live version",
+    "steps": {
+      "category": "Category",
+      "basics": "Basic details",
+      "details": "Category details",
+      "photos": "Photos",
+      "pricing": "Price & stock",
+      "returns": "Returns & warranty",
+      "preview": "Preview"
+    },
+    "category": {
+      "intro": "Pick the category that best matches your item — this decides which fields you'll fill in and your commission rate.",
+      "changeWarning": "Changing the category on a published listing always needs admin review."
+    },
+    "basics": {
+      "titleEn": "Title (English)",
+      "titleSi": "Title (Sinhala)",
+      "titleTa": "Title (Tamil)",
+      "titleHint": "10–120 characters. Be specific — include brand and model if relevant.",
+      "brand": "Brand",
+      "condition": "Condition",
+      "conditions": {
+        "new": "New",
+        "used": "Used",
+        "reconditioned": "Reconditioned"
+      },
+      "sku": "SKU (optional)",
+      "descriptionEn": "Description (English)",
+      "descriptionSi": "Description (Sinhala)",
+      "descriptionTa": "Description (Tamil)",
+      "descriptionHint": "Describe the item — condition, what's included, anything a buyer should know."
+    },
+    "details": {
+      "noFields": "This category has no extra fields to fill in",
+      "inheritedFrom": "from {{name}}"
+    },
+    "fitment": {
+      "make": "Make",
+      "selectMake": "Select a make…",
+      "model": "Model",
+      "modelPlaceholder": "Type or pick a model",
+      "yearFrom": "Year from",
+      "yearTo": "Year to",
+      "add": "Add",
+      "types": {
+        "car": "Car",
+        "van": "Van",
+        "suv": "SUV",
+        "motorcycle": "Motorcycle",
+        "three_wheeler": "Three-wheeler",
+        "lorry": "Lorry",
+        "bus": "Bus"
+      }
+    },
+    "photos": {
+      "guidance": "Add 1–8 clear photos. The first photo is your cover photo — buyers see it first.",
+      "add": "Add photo",
+      "uploading": "Uploading…",
+      "uploaded": "{{count}} photo(s) uploaded",
+      "cover": "Cover",
+      "countHint": "{{count}} of {{max}} photos"
+    },
+    "pricing": {
+      "price": "Price (Rs)",
+      "wasPrice": "Was price (Rs, optional)",
+      "youReceive": "You'll receive about Rs {{amount}}",
+      "stock": "Stock",
+      "lowStockAlert": "Low stock alert at",
+      "weight": "Weight (grams)",
+      "dimensions": "Package dimensions (cm)",
+      "dimL": "Length",
+      "dimW": "Width",
+      "dimH": "Height"
+    },
+    "returns": {
+      "categoryRule": "This category's return rule",
+      "returnableDays": "Returnable within {{days}} days",
+      "notReturnable": "Not returnable",
+      "warrantyType": "Warranty",
+      "warrantyTypes": {
+        "none": "No warranty",
+        "days": "Days",
+        "months": "Months"
+      },
+      "warrantyValue": {
+        "days": "Number of days",
+        "months": "Number of months"
+      },
+      "minWarrantyHint": "This category requires at least {{months}} month(s) of warranty"
+    },
+    "preview": {
+      "noTitle": "Untitled listing",
+      "checklistTitle": "Before you submit",
+      "allGood": "Everything looks good — ready to submit",
+      "noOptionsYet": "Nothing to fix"
+    }
   }
 }

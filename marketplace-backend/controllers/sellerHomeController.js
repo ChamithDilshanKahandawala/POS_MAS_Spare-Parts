@@ -1,10 +1,10 @@
 const Seller = require('../models/Seller');
+const Listing = require('../models/Listing');
 
-// "Get your store ready" checklist — every item except the last is
-// computed from real data on the Seller document; `available: false`
-// items (first listing, needs Milestone 3's Product model) are always
-// shown but never counted toward progress, and never fabricated as done.
-function buildChecklist(seller) {
+// "Get your store ready" checklist — every item is computed from real
+// data; `available: false` would mean "no milestone to check this yet",
+// which no longer applies to any item now that Milestone 3 exists.
+function buildChecklist(seller, hasAnyListing) {
   const hasHours = seller.operatingHours.some((d) => !d.closed && d.open && d.close);
   const items = [
     { key: 'logo', done: !!seller.logo?.path, available: true },
@@ -13,7 +13,7 @@ function buildChecklist(seller) {
     { key: 'hours', done: hasHours, available: true },
     { key: 'returnAddress', done: !!seller.returnAddress?.trim(), available: true },
     { key: 'bankVerified', done: seller.bankAccount?.status === 'verified', available: true },
-    { key: 'firstListing', done: false, available: false }, // Milestone 3
+    { key: 'firstListing', done: hasAnyListing, available: true },
   ];
   const countable = items.filter((i) => i.available);
   const completed = countable.filter((i) => i.done).length;
@@ -28,6 +28,10 @@ const getHome = async (req, res) => {
   const seller = await Seller.findById(req.sellerId);
   if (!seller) return res.status(404).json({ message: 'Seller not found' });
 
+  // "List your first product" means actually submitted it, not just
+  // started a draft.
+  const hasAnyListing = await Listing.exists({ seller: req.sellerId, status: { $ne: 'draft' } });
+
   res.json({
     seller: {
       id: seller._id,
@@ -37,7 +41,7 @@ const getHome = async (req, res) => {
       probationUntil: seller.probationUntil,
     },
     myRole: req.sellerMember.role,
-    checklist: buildChecklist(seller),
+    checklist: buildChecklist(seller, !!hasAnyListing),
     ordersToday: null,
     pendingPayout: null,
   });

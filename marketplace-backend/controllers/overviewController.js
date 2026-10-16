@@ -3,6 +3,7 @@ const User = require('../models/User');
 const SellerApplication = require('../models/SellerApplication');
 const AuditLog = require('../models/AuditLog');
 const Category = require('../models/Category');
+const Listing = require('../models/Listing');
 const { getColomboMidnightUTC } = require('../utils/colomboDate');
 
 // GET /api/admin/overview — every number here is a real query, nothing
@@ -10,13 +11,14 @@ const { getColomboMidnightUTC } = require('../utils/colomboDate');
 // falsely imply there's real data to report) until their milestones
 // exist.
 const getOverview = async (req, res) => {
-  const [activeSellers, pendingSellers, suspendedSellers, pendingApplications, platformStaffCount, zeroCommissionCategories] = await Promise.all([
+  const [activeSellers, pendingSellers, suspendedSellers, pendingApplications, platformStaffCount, zeroCommissionCategories, listingsAwaitingReview] = await Promise.all([
     Seller.countDocuments({ status: 'active' }),
     Seller.countDocuments({ status: 'in_review' }),
     Seller.countDocuments({ status: 'suspended' }),
     SellerApplication.countDocuments({ status: { $in: ['new', 'info_requested'] } }),
     User.countDocuments({ platformRole: { $in: ['platform_owner', 'platform_staff'] } }),
     Category.countDocuments({ active: true, commissionRateBps: 0 }),
+    Listing.countDocuments({ $or: [{ status: 'in_review' }, { 'pendingRevision.fields': { $ne: null } }] }),
   ]);
 
   const todayStart = getColomboMidnightUTC(new Date());
@@ -36,6 +38,7 @@ const getOverview = async (req, res) => {
     adminActionsToday,
     needsAttention,
     zeroCommissionCategories,
+    listingsAwaitingReview,
     // Deliberately not real numbers — see the comment above.
     ordersTotal: null,
     salesTotal: null,

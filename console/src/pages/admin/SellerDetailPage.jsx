@@ -2,10 +2,11 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Eye, Package, ShoppingCart, Wallet, Landmark } from 'lucide-react';
+import { ArrowLeft, Eye, Package, ShoppingCart, Wallet, Landmark, AlertTriangle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import {
   getSeller, updateSellerStatus, updateSellerOverrides, viewAsSeller,
-  getSellerBankFull, verifySellerBank, rejectSellerBank,
+  getSellerBankFull, verifySellerBank, rejectSellerBank, getListingQueue,
 } from '../../api/services';
 import { useAuth } from '../../context/useAuth';
 import EmptyState from '../../components/EmptyState';
@@ -39,6 +40,9 @@ export default function SellerDetailPage() {
   const [overrideReason, setOverrideReason] = useState('');
   const [fullAccountNumber, setFullAccountNumber] = useState(null);
   const [rejectReason, setRejectReason] = useState(null);
+  const [reviewExempt, setReviewExempt] = useState(false);
+  const [listings, setListings] = useState(null);
+  const [listingsLoading, setListingsLoading] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -47,6 +51,7 @@ export default function SellerDetailPage() {
         setDetail(data);
         setCommissionPct(data.seller.commissionOverridePct ?? '');
         setProbationUntil(data.seller.probationUntil ? data.seller.probationUntil.slice(0, 10) : '');
+        setReviewExempt(!!data.seller.reviewExempt);
       })
       .catch(() => toast.error(t('common:error.generic')))
       .finally(() => setLoading(false));
@@ -58,6 +63,19 @@ export default function SellerDetailPage() {
   // not a render-triggered setState cascade.
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { load(); }, [load]);
+
+  // Lazy-loads the seller's listings only once, the first time the
+  // Listings tab is actually opened — same fetch-on-change reasoning as
+  // every other load() effect in this console.
+  useEffect(() => {
+    if (tab !== 'listings' || listings) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setListingsLoading(true);
+    getListingQueue({ seller: id, status: 'all', limit: 50 })
+      .then(({ data }) => setListings(data.listings))
+      .catch(() => toast.error(t('common:error.generic')))
+      .finally(() => setListingsLoading(false));
+  }, [tab, id, listings, t]);
 
   const dateTimeFormatter = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Colombo' });
 
@@ -84,6 +102,7 @@ export default function SellerDetailPage() {
       await updateSellerOverrides(id, {
         commissionOverridePct: commissionPct === '' ? null : Number(commissionPct),
         probationUntil: probationUntil ? new Date(probationUntil).toISOString() : null,
+        reviewExempt,
         reason: overrideReason.trim(),
       });
       toast.success(t('sellerDetail.commission.saved'));
@@ -270,6 +289,10 @@ export default function SellerDetailPage() {
             disabled={!isPlatformOwner}
             onChange={(e) => setProbationUntil(e.target.value)}
           />
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', marginBottom: '14px' }}>
+            <input type="checkbox" checked={reviewExempt} disabled={!isPlatformOwner} onChange={(e) => setReviewExempt(e.target.checked)} />
+            {t('sellerDetail.commission.reviewExempt')}
+          </label>
           {isPlatformOwner && (
             <>
               <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('sellerDetail.reasonLabel')}</label>
@@ -374,7 +397,45 @@ export default function SellerDetailPage() {
         </div>
       )}
 
-      {tab === 'listings' && <EmptyState icon={Package} title={t('sellerDetail.comingSoonTab')} />}
+      {tab === 'listings' && (
+        <div className="glass-card" style={{ padding: '20px' }}>
+          {listingsLoading ? (
+            <div>{t('common:loading')}</div>
+          ) : !listings || listings.length === 0 ? (
+            <EmptyState icon={Package} title={t('sellerDetail.listings.empty')} />
+          ) : (
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>{t('products.table.title')}</th>
+                  <th>{t('products.table.price')}</th>
+                  <th>{t('products.table.status')}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {listings.map((l) => (
+                  <tr key={l._id}>
+                    <td>{l.title?.en || t('products.untitled')}</td>
+                    <td>Rs {(l.priceCents / 100).toLocaleString()}</td>
+                    <td>
+                      <span className="badge badge-blue">{t(`products.status.${l.status}`)}</span>
+                      {l.needsUpdate && <AlertTriangle size={12} style={{ marginLeft: '6px', verticalAlign: '-2px', color: 'var(--accent-yellow)' }} />}
+                    </td>
+                    <td>
+                      {['in_review', 'published', 'hidden', 'suspended'].includes(l.status) && (
+                        <Link className="btn-secondary" style={{ padding: '6px 12px', fontSize: '12px' }} to={`/admin/listing-review/${l._id}`}>
+                          {t('sellerDetail.listings.view')}
+                        </Link>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
       {tab === 'orders' && <EmptyState icon={ShoppingCart} title={t('sellerDetail.comingSoonTab')} />}
       {tab === 'finance' && <EmptyState icon={Wallet} title={t('sellerDetail.comingSoonTab')} />}
     </div>

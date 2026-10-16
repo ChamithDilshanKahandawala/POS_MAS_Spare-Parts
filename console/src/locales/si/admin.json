@@ -25,7 +25,8 @@
     "salesTotal": "විකුණුම්",
     "commissionTotal": "කමිස්",
     "viewApplication": "සමාලෝචනය කරන්න",
-    "zeroCommissionWarning": "වර්ග {{count}} කට කමිස් 0%ක් ඇත — නාමාවලිය සමාලෝචනය කරන්න"
+    "zeroCommissionWarning": "වර්ග {{count}} කට කමිස් 0%ක් ඇත — නාමාවලිය සමාලෝචනය කරන්න",
+    "listingsAwaitingReview": "සමාලෝචනය සඳහා බලාපොරොත්තුවෙන් සිටින නාමාවලි"
   },
   "sellers": {
     "title": "විකුණුම්කරුවන්",
@@ -98,12 +99,17 @@
       "overrideLabel": "කමිස් අභිබවීම (%)",
       "overridePlaceholder": "වේදිකා පෙරනිමිය සඳහා හිස් තබන්න",
       "probationLabel": "පරික්ෂණ කාලය දක්වා",
+      "reviewExempt": "නාමාවලි සමාලෝචනයෙන් නිදහස්",
       "save": "සුරකින්න (හිමිකරු පමණි)",
       "saved": "අභිබවීම් යාවත්කාලීන කරන ලදී",
       "ownerOnly": "මෙය වෙනස් කළ හැක්කේ වේදිකා හිමිකරුට පමණි"
     },
     "activity": {
       "empty": "මෙම විකුණුම්කරු සඳහා තවම ක්‍රියාකාරකම් සටහන් වී නැත"
+    },
+    "listings": {
+      "empty": "මෙම විකුණුම්කරුට තවම නාමාවලි නැත",
+      "view": "බලන්න"
     },
     "comingSoonTab": "පසු සන්ධිස්ථානයකින් පසු ලබා ගත හැක",
     "bank": {
@@ -308,7 +314,9 @@
       "noteSi": "ආපසු දීමේ සටහන (සිංහල)",
       "noteTa": "ආපසු දීමේ සටහන (දෙමළ)",
       "regulated": "නියාමනය කළ වර්ගයක්",
-      "reviewRequired": "නාමාවලිය ප්‍රකාශයට පත් කිරීමට පෙර සමාලෝචනය අවශ්‍යයි"
+      "reviewRequired": "නාමාවලිය ප්‍රකාශයට පත් කිරීමට පෙර සමාලෝචනය අවශ්‍යයි",
+      "minWarrantyMonths": "අවම වගකීම (මාස)",
+      "minWarrantyInherit": "උරුම වූයේ: මාස {{months}}"
     },
     "fields": {
       "ownFields": "ඔබේ ක්ෂේත්‍ර",
@@ -393,5 +401,77 @@
     "yearTo": "වර්ෂය දක්වා",
     "addModel": "මාදිලියක් එකතු කරන්න",
     "saved": "සුරකින ලදී"
+  },
+  "products": {
+    "untitled": "නම් නොකළ නාමාවලිය",
+    "table": {
+      "title": "නාමාවලිය",
+      "price": "මිල",
+      "status": "තත්ත්වය"
+    },
+    "status": {
+      "draft": "කටුවදහර",
+      "in_review": "සමාලෝචනයේ",
+      "published": "ප්‍රකාශිතයි",
+      "rejected": "ප්‍රතික්ෂේප කරන ලදී",
+      "hidden": "සඟවා ඇත",
+      "suspended": "අත්හිටුවා ඇත"
+    }
+  },
+  "listingReview": {
+    "noResults": "දැනට සමාලෝචනය සඳහා බලාපොරොත්තුවෙන් කිසිවක් නැත",
+    "filters": {
+      "allTypes": "සියලු වර්ග",
+      "new": "නව ඉදිරිපත් කිරීම",
+      "revision": "සංශෝධනය",
+      "allCategories": "සියලු වර්ග",
+      "regulatedOnly": "නියාමනය කළ වර්ග පමණි",
+      "clearSeller": "විකුණුම්කරු පෙරහන හිස් කරන්න"
+    },
+    "table": {
+      "title": "නාමාවලිය",
+      "seller": "විකුණුම්කරු",
+      "category": "වර්ගය",
+      "type": "වර්ගය",
+      "updated": "යාවත්කාලීන කළ"
+    },
+    "detail": {
+      "back": "පෙළ වෙත ආපසු",
+      "approve": "අනුමත කරන්න",
+      "approved": "අනුමත කරන ලදී",
+      "reject": "ප්‍රතික්ෂේප කරන්න",
+      "rejected": "ප්‍රතික්ෂේප කරන ලදී",
+      "suspend": "අත්හිටුවන්න",
+      "suspended": "අත්හිටුවා ඇත",
+      "reinstatePublished": "ප්‍රකාශිත ලෙස නැවත පිහිටුවන්න",
+      "reinstateHidden": "සැඟවූ ලෙස නැවත පිහිටුවන්න",
+      "reinstated": "නැවත පිහිටුවන ලදී",
+      "onProbation": "විකුණුම්කරු පරික්ෂණ කාලයේ",
+      "reviewExempt": "සමාලෝචනයෙන් නිදහස් විකුණුම්කරු",
+      "sellerInfo": "විකුණුම්කරු",
+      "sellerName": "සාප්පු නම",
+      "everPublished": "කවදා හෝ ප්‍රකාශිත නාමාවලි",
+      "brand": "වෙළඳ නාමය",
+      "condition": "තත්ත්වය",
+      "sku": "SKU",
+      "stock": "තොගය",
+      "regulated": "නියාමනය කළ වර්ගයක්",
+      "diffTitle": "වෙනස් වූයේ කුමක්ද",
+      "diffField": "ක්ෂේත්‍රය",
+      "diffLive": "දැන් ප්‍රකාශිතයි",
+      "diffProposed": "යෝජිත",
+      "notePlaceholder": "විකුණුම්කරු සඳහා සටහනක් එකතු කරන්න (අත්‍යවශ්‍ය නොවේ)…",
+      "reasonPlaceholder": "මෙම නාමාවලිය අත්හිටුවන්නේ ඇයි?",
+      "reasons": {
+        "photo_mismatch": "ඡායාරූපය අයිතමයට නොගැලපේ",
+        "missing_registration": "ලියාපදිංචි අංකය අස්ථානගතයි",
+        "price_wrong": "මිල වැරදියි යැයි පෙනේ",
+        "prohibited_item": "තහනම් අයිතමයක්",
+        "poor_photos": "අඩු ගුණාත්මක ඡායාරූප",
+        "wrong_category": "වැරදි වර්ගය",
+        "contact_in_text": "පෙළෙහි සම්බන්ධතා විස්තර",
+        "other": "වෙනත්"
+      }
+    }
   }
 }

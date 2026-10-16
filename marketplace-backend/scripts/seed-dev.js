@@ -73,9 +73,13 @@ async function seed() {
   // admin verification.
   const sellerA = await Seller.create({
     name: 'Mudiyanse Auto Solutions',
+    slug: 'mudiyanse-auto-solutions',
     legalName: 'Mudiyanse Auto Solutions',
     brNumber: 'WP/GAM/MI/2025/00255',
     status: 'active',
+    // Milestone 3: exempt from listing review regardless of probation or
+    // category rules — per the milestone's own seed instruction.
+    reviewExempt: true,
     displayName: 'Mudiyanse Auto Solutions',
     aboutText: { en: 'Genuine and quality spare parts for all vehicle types, serving Gampaha since 2015.', si: '', ta: '' },
     phones: ['0332222222', '0771234567'],
@@ -99,6 +103,7 @@ async function seed() {
   // seller-facing "verified" badge both have a real example.
   const sellerB = await Seller.create({
     name: 'Partner Store',
+    slug: 'partner-store',
     legalName: 'Partner Store (Pvt) Ltd',
     brNumber: 'WP/COL/00000/2026',
     status: 'active',
@@ -107,7 +112,7 @@ async function seed() {
       accountNumber: '200998877665', last4: '7665', status: 'verified', submittedAt: new Date(), verifiedAt: new Date(),
     },
   });
-  const sellerC = await Seller.create({ name: 'Suspended Store', legalName: 'Suspended Store (Pvt) Ltd', brNumber: 'WP/COL/00001/2026', status: 'suspended' });
+  const sellerC = await Seller.create({ name: 'Suspended Store', slug: 'suspended-store', legalName: 'Suspended Store (Pvt) Ltd', brNumber: 'WP/COL/00001/2026', status: 'suspended' });
 
   const sellerAOwner = await makeUser({ name: 'Mudiyanse Owner', email: 'seller-a-owner@apexora.test' });
   const sellerAStaff = await makeUser({ name: 'Mudiyanse Staff', email: 'seller-a-staff@apexora.test' });

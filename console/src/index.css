@@ -506,3 +506,20 @@ html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
   .seller-area-main { padding-bottom: 76px; } /* clears the fixed bottom nav */
   .store-status-banner { padding: 10px 16px; flex-direction: column; align-items: flex-start; gap: 6px; }
 }
+
+/* ═══════════════════════════════════════════════════
+   MILESTONE 3 — listing wizard preview step, admin
+   review detail: side by side on desktop, stacked on
+   narrow screens. Same pattern as .catalog-layout.
+   ═══════════════════════════════════════════════════ */
+
+.sidebar-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) 1fr;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+@media (max-width: 900px) {
+  .sidebar-detail-layout { grid-template-columns: 1fr; }
+}

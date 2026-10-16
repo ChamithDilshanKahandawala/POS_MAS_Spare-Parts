@@ -10,16 +10,24 @@ const { stepUpStart, stepUpVerify, getBank, updateBank } = require('../controlle
 const { listStaff, inviteStaff, removeStaff } = require('../controllers/sellerStaffController');
 const { listActivity } = require('../controllers/sellerActivityController');
 const { getSellerCategoryTree } = require('../controllers/sellerCatalogController');
+const {
+  listListings, getListingDetail, createListing, updateListing, checkListingDraft,
+  submitListing, hideListing, showListing, deleteListing, duplicateListing, getCommissionPreview,
+} = require('../controllers/sellerListingsController');
+const { uploadListingMedia, deleteListingMedia, getSellerMediaVariant } = require('../controllers/mediaController');
 const { requireAuth, requireSellerMember } = require('../middleware/authMiddleware');
 const requireActiveStore = require('../middleware/requireActiveStore');
 const requireFreshStepUp = require('../middleware/requireFreshStepUp');
 const { validate, requireValidObjectId } = require('../middleware/validate');
 const { upload, handleUploadErrors } = require('../middleware/upload');
+const { uploadMedia } = require('../middleware/uploadMedia');
 const asyncHandler = require('../middleware/asyncHandler');
 const Seller = require('../models/Seller');
+const { CONDITIONS, WARRANTY_TYPES } = require('../models/Listing');
 
 const OWNER = ['seller_owner'];
 const ANY_MEMBER = ['seller_owner', 'seller_staff'];
+const OBJECT_ID_RE = /^[0-9a-fA-F]{24}$/;
 
 const dayHoursSchema = z.object({
   day: z.enum(Seller.WEEKDAYS),
@@ -66,6 +74,80 @@ const activityQuerySchema = z.object({
   to: z.string().optional(),
   page: z.coerce.number().int().min(1).optional(),
   limit: z.coerce.number().int().min(1).optional(),
+}).strict();
+
+// --- Listings (Milestone 3) ---
+// Deliberately permissive — real business-rule validation (title length,
+// prohibited words, required category fields, ...) lives entirely in
+// services/listingChecks.js and runs at submit/revision time, never here.
+// This schema only enforces shape, so an in-progress autosaved draft is
+// never blocked by content it hasn't gotten to yet.
+const listingLocalizedZod = z.object({
+  en: z.string().max(5000).optional(),
+  si: z.string().max(5000).optional(),
+  ta: z.string().max(5000).optional(),
+}).strict();
+
+const fitmentItemZod = z.object({
+  makeId: z.string().regex(OBJECT_ID_RE).nullable().optional(),
+  modelName: z.string().trim().max(80).optional(),
+  yearFrom: z.number().int().nullable().optional(),
+  yearTo: z.number().int().nullable().optional(),
+}).strict();
+
+const dimensionsZod = z.object({
+  l: z.number().min(0).nullable().optional(),
+  w: z.number().min(0).nullable().optional(),
+  h: z.number().min(0).nullable().optional(),
+}).strict();
+
+const warrantyZod = z.object({
+  type: z.enum(WARRANTY_TYPES),
+  value: z.number().int().min(0),
+}).strict();
+
+const listingBodySchema = z.object({
+  title: listingLocalizedZod.optional(),
+  description: listingLocalizedZod.optional(),
+  categoryId: z.string().regex(OBJECT_ID_RE).optional(),
+  brand: z.string().trim().max(120).optional(),
+  condition: z.enum(CONDITIONS).optional(),
+  sku: z.string().trim().max(60).optional(),
+  attributes: z.record(z.string(), z.any()).optional(),
+  fitment: z.array(fitmentItemZod).max(20).optional(),
+  images: z.array(z.string().regex(OBJECT_ID_RE)).max(8).optional(),
+  priceCents: z.number().int().min(0).optional(),
+  wasPriceCents: z.number().int().min(0).nullable().optional(),
+  stock: z.number().int().min(0).optional(),
+  lowStockAlert: z.number().int().min(0).nullable().optional(),
+  weightGrams: z.number().min(0).optional(),
+  dimensions: dimensionsZod.optional(),
+  warranty: warrantyZod.optional(),
+}).strict();
+
+const createListingBodySchema = z.object({ categoryId: z.string().regex(OBJECT_ID_RE) }).strict();
+
+const listListingsQuerySchema = z.object({
+  status: z.enum(['draft', 'in_review', 'published', 'rejected', 'hidden', 'suspended']).optional(),
+  needsUpdate: z.enum(['true', 'false']).optional(),
+  search: z.string().trim().max(200).optional(),
+  categoryId: z.string().regex(OBJECT_ID_RE).optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).optional(),
+}).strict();
+
+const commissionPreviewQuerySchema = z.object({
+  categoryId: z.string().regex(OBJECT_ID_RE),
+  priceCents: z.coerce.number().int().min(0),
+}).strict();
+
+// id's format is checked by requireValidObjectId (-> 404), registered
+// before this on every route that uses it — not re-validated here, just
+// passed through so .strict() doesn't reject it as an unknown key.
+const mediaVariantParamsSchema = z.object({
+  id: z.string(),
+  size: z.enum(['thumb', 'medium', 'large']),
+  format: z.enum(['webp', 'jpg']),
 }).strict();
 
 // Bank step-up shares the login OTP's brute-force concerns — same shape
@@ -149,5 +231,84 @@ router.get('/activity', requireAuth, requireSellerMember(ANY_MEMBER), validate({
 
 // --- Catalog (Milestone 2, read-only) ---
 router.get('/catalog/categories', requireAuth, requireSellerMember(ANY_MEMBER), asyncHandler(getSellerCategoryTree));
+
+// --- Listings (Milestone 3) ---
+// commission-preview and :id/... sub-paths are registered before the
+// bare '/:id' routes further down — same ordering lesson as Milestone
+// 2's reorder-before-:id (routes/adminRoutes.js).
+router.get(
+  '/listings/commission-preview',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  validate({ query: commissionPreviewQuerySchema }),
+  asyncHandler(getCommissionPreview)
+);
+router.get('/listings', requireAuth, requireSellerMember(ANY_MEMBER), validate({ query: listListingsQuerySchema }), asyncHandler(listListings));
+router.post(
+  '/listings',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  requireActiveStore,
+  validate({ body: createListingBodySchema }),
+  asyncHandler(createListing)
+);
+router.get('/listings/:id', requireAuth, requireSellerMember(ANY_MEMBER), requireValidObjectId('id'), asyncHandler(getListingDetail));
+router.patch(
+  '/listings/:id',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  requireActiveStore,
+  requireValidObjectId('id'),
+  validate({ body: listingBodySchema }),
+  asyncHandler(updateListing)
+);
+router.delete('/listings/:id', requireAuth, requireSellerMember(ANY_MEMBER), requireActiveStore, requireValidObjectId('id'), asyncHandler(deleteListing));
+router.post(
+  '/listings/:id/check',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  requireValidObjectId('id'),
+  validate({ body: z.object({}).strict() }),
+  asyncHandler(checkListingDraft)
+);
+router.post(
+  '/listings/:id/submit',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  requireActiveStore,
+  requireValidObjectId('id'),
+  validate({ body: z.object({}).strict() }),
+  asyncHandler(submitListing)
+);
+router.post('/listings/:id/hide', requireAuth, requireSellerMember(ANY_MEMBER), requireActiveStore, requireValidObjectId('id'), asyncHandler(hideListing));
+router.post('/listings/:id/show', requireAuth, requireSellerMember(ANY_MEMBER), requireActiveStore, requireValidObjectId('id'), asyncHandler(showListing));
+router.post(
+  '/listings/:id/duplicate',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  requireActiveStore,
+  requireValidObjectId('id'),
+  asyncHandler(duplicateListing)
+);
+
+// --- Listing media (Milestone 3) ---
+router.post(
+  '/listings/:id/media',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  requireActiveStore,
+  requireValidObjectId('id'),
+  handleUploadErrors(uploadMedia.array('files', 8)),
+  asyncHandler(uploadListingMedia)
+);
+router.delete('/media/:id', requireAuth, requireSellerMember(ANY_MEMBER), requireActiveStore, requireValidObjectId('id'), asyncHandler(deleteListingMedia));
+router.get(
+  '/media/:id/:size/:format',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  requireValidObjectId('id'),
+  validate({ params: mediaVariantParamsSchema }),
+  asyncHandler(getSellerMediaVariant)
+);
 
 module.exports = router;

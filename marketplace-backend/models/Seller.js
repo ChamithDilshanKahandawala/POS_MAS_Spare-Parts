@@ -14,6 +14,11 @@ function defaultOperatingHours() {
 const sellerSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true }, // store name
+    // Milestone 3: stable public-URL handle (services/sellerSlug.js) —
+    // set at approval time from the store name, regenerated if
+    // displayName later changes. sparse: older rows created before this
+    // field existed are never ambiguously "" colliding with each other.
+    slug: { type: String, trim: true, lowercase: true, unique: true, sparse: true },
     legalName: { type: String, required: true, trim: true }, // read-only to sellers — admin-controlled
     brNumber: { type: String, required: true, trim: true }, // read-only to sellers — admin-controlled
     status: { type: String, enum: ['in_review', 'active', 'suspended', 'closed'], default: 'active' },
@@ -38,6 +43,10 @@ const sellerSchema = new mongoose.Schema(
     // Optional admin overrides (Seller detail page, owner only).
     commissionOverridePct: { type: Number, default: null },
     probationUntil: { type: Date, default: null },
+    // Milestone 3: skips listing review entirely regardless of probation
+    // or category rules — owner-only, audited (adminSellersController.js's
+    // updateSellerOverrides).
+    reviewExempt: { type: Boolean, default: false },
 
     application: { type: mongoose.Schema.Types.ObjectId, ref: 'SellerApplication', default: null },
 

@@ -159,8 +159,11 @@ test('home checklist reflects real profile state', async () => {
   assert.equal(res.status, 200);
   const aboutItem = res.body.checklist.items.find((i) => i.key === 'aboutText');
   assert.equal(aboutItem.done, true); // set in the previous test
+  // Milestone 3: firstListing is a real, checkable item now — this
+  // seller hasn't submitted one yet, so it's available but not done.
   const firstListingItem = res.body.checklist.items.find((i) => i.key === 'firstListing');
-  assert.equal(firstListingItem.available, false);
+  assert.equal(firstListingItem.available, true);
+  assert.equal(firstListingItem.done, false);
   assert.equal(res.body.ordersToday, null);
   assert.equal(res.body.pendingPayout, null);
 });

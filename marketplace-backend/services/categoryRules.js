@@ -28,6 +28,7 @@ function mergeEffectiveRules(chain) {
   let returnNote = { en: '', si: '', ta: '' };
   let regulated = false;
   let reviewRequired = false;
+  let warrantyMinMonths = 0;
   const attributeSchema = [];
   const keywordSet = new Set();
 
@@ -37,6 +38,7 @@ function mergeEffectiveRules(chain) {
     if (cat.returnPolicy?.note?.en) returnNote = cat.returnPolicy.note;
     if (cat.regulated !== null && cat.regulated !== undefined) regulated = cat.regulated;
     if (cat.reviewRequired !== null && cat.reviewRequired !== undefined) reviewRequired = cat.reviewRequired;
+    if (cat.warrantyRule?.minMonths !== null && cat.warrantyRule?.minMonths !== undefined) warrantyMinMonths = cat.warrantyRule.minMonths;
 
     for (const kw of cat.prohibitedKeywords || []) keywordSet.add(kw.toLowerCase());
 
@@ -57,6 +59,7 @@ function mergeEffectiveRules(chain) {
     returnPolicy: { returnable, windowDays, note: returnNote },
     regulated,
     reviewRequired,
+    warrantyRule: { minMonths: warrantyMinMonths },
     attributeSchema,
     prohibitedKeywords: [...keywordSet],
   };
@@ -104,4 +107,31 @@ function buildTree(categories, parentId = null) {
     .map((c) => ({ category: c, children: buildTree(categories, c._id) }));
 }
 
-module.exports = { getAncestorChain, mergeEffectiveRules, getEffectiveCategory, getEffectiveCommissionBps, buildTree, MAX_DEPTH: require('../models/Category').MAX_DEPTH };
+// A category plus every descendant's id (itself included) — "browse this
+// category" (public listings, the drift-flagging sweep) means everything
+// under it too, not just exact matches.
+async function getDescendantAndSelfIds(categoryId) {
+  const all = await Category.find({}).select('_id parentId');
+  const ids = new Set([String(categoryId)]);
+  let grew = true;
+  while (grew) {
+    grew = false;
+    for (const c of all) {
+      if (c.parentId && ids.has(String(c.parentId)) && !ids.has(String(c._id))) {
+        ids.add(String(c._id));
+        grew = true;
+      }
+    }
+  }
+  return [...ids];
+}
+
+module.exports = {
+  getAncestorChain,
+  mergeEffectiveRules,
+  getEffectiveCategory,
+  getEffectiveCommissionBps,
+  buildTree,
+  getDescendantAndSelfIds,
+  MAX_DEPTH: require('../models/Category').MAX_DEPTH,
+};

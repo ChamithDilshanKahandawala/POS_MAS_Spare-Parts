@@ -4,6 +4,7 @@ const { logAction } = require('../services/auditLog');
 const { createInvite } = require('../services/invites');
 const { clampLimit } = require('../utils/pagination');
 const { readFile } = require('../services/storage');
+const { generateUniqueSlug } = require('../services/sellerSlug');
 
 const MAX_APPLICATIONS_LIMIT = 100;
 
@@ -131,8 +132,10 @@ const approveApplication = async (req, res) => {
     return res.status(409).json({ message: `Cannot approve: application is already ${application.status}` });
   }
 
+  const slug = await generateUniqueSlug(application.storeName);
   const seller = await Seller.create({
     name: application.storeName,
+    slug,
     legalName: application.legalName,
     brNumber: application.brNumber,
     status: 'in_review',

@@ -1,20 +1,22 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Store, Clock, XCircle, UserCog, Activity, AlertTriangle } from 'lucide-react';
+import { Store, Clock, XCircle, UserCog, Activity, AlertTriangle, ClipboardCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getOverview } from '../../api/services';
 import EmptyState from '../../components/EmptyState';
 
-function StatCard({ icon: Icon, color, label, value }) {
-  return (
-    <div className={`stat-card ${color}`}>
+function StatCard({ icon: Icon, color, label, value, to }) {
+  const content = (
+    <>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', color: 'var(--text-muted)' }}>
         {Icon && <Icon size={16} />} <span style={{ fontSize: '12px', fontWeight: 600 }}>{label}</span>
       </div>
       <div style={{ fontSize: '28px', fontWeight: 800 }}>{value ?? '—'}</div>
-    </div>
+    </>
   );
+  if (to) return <Link to={to} className={`stat-card ${color}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>{content}</Link>;
+  return <div className={`stat-card ${color}`}>{content}</div>;
 }
 
 export default function OverviewPage() {
@@ -46,6 +48,7 @@ export default function OverviewPage() {
         <StatCard icon={XCircle} color="orange" label={t('overview.suspendedSellers')} value={data.suspendedSellers} />
         <StatCard icon={UserCog} color="purple" label={t('overview.platformStaffCount')} value={data.platformStaffCount} />
         <StatCard icon={Activity} color="blue" label={t('overview.adminActionsToday')} value={data.adminActionsToday} />
+        <StatCard icon={ClipboardCheck} color="yellow" label={t('overview.listingsAwaitingReview')} value={data.listingsAwaitingReview} to="/admin/listing-review" />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px', marginBottom: '20px' }}>

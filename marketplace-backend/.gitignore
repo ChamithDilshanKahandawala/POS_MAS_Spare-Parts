@@ -5,3 +5,7 @@ node_modules/
 .env.production
 .DS_Store
 uploads/
+
+# Cached MongoDB binary for the in-memory test database (scripts/lib/
+# testDb.js) — downloaded once, reused by every later `npm test` run.
+.cache/

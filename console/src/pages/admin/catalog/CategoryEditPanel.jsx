@@ -64,6 +64,7 @@ export default function CategoryEditPanel({ detail, flatCategories, isPlatformOw
   const [returnNoteTa, setReturnNoteTa] = useState(category.returnPolicy?.note?.ta || '');
   const [regulated, setRegulated] = useState(category.regulated ?? null);
   const [reviewRequired, setReviewRequired] = useState(category.reviewRequired ?? null);
+  const [minWarrantyMonths, setMinWarrantyMonths] = useState(category.warrantyRule?.minMonths ?? null);
 
   const [ownFields, setOwnFields] = useState(category.attributeSchema || []);
   const [keywords, setKeywords] = useState(category.prohibitedKeywords || []);
@@ -85,6 +86,7 @@ export default function CategoryEditPanel({ detail, flatCategories, isPlatformOw
         windowDays: windowDays === '' ? null : windowDays,
         note: { en: returnNoteEn.trim(), si: returnNoteSi.trim(), ta: returnNoteTa.trim() },
       },
+      warrantyRule: { minMonths: minWarrantyMonths === '' ? null : minWarrantyMonths },
       prohibitedKeywords: keywords,
       attributeSchema: ownFields,
     };
@@ -199,6 +201,15 @@ export default function CategoryEditPanel({ detail, flatCategories, isPlatformOw
             <div style={{ marginTop: '6px' }}>
               <NullableBooleanSelect value={reviewRequired} onChange={setReviewRequired} disabled={!isPlatformOwner} effectiveValue={effective.reviewRequired} t={t} />
             </div>
+          </div>
+          <div>
+            <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('catalog.rules.minWarrantyMonths')}</label>
+            <input
+              type="number" min="0" className="input-field" style={{ marginTop: '6px' }}
+              placeholder={t('catalog.rules.minWarrantyInherit', { months: effective.warrantyRule?.minMonths || 0 })}
+              value={minWarrantyMonths ?? ''}
+              onChange={(e) => setMinWarrantyMonths(e.target.value === '' ? null : Number(e.target.value))}
+            />
           </div>
         </div>
       )}

@@ -13,7 +13,7 @@ export const NAV_ITEMS = [
   { key: 'overview', path: '/admin', icon: LayoutDashboard },
   { key: 'sellers', path: '/admin/sellers', icon: Store },
   { key: 'applications', path: '/admin/applications', icon: FileText },
-  { key: 'listingReview', path: '/admin/listing-review', icon: ClipboardCheck, comingSoonMilestone: 2 },
+  { key: 'listingReview', path: '/admin/listing-review', icon: ClipboardCheck },
   { key: 'catalog', path: '/admin/catalog', icon: Package },
   { key: 'orders', path: '/admin/orders', icon: ShoppingCart, comingSoonMilestone: 3 },
   { key: 'returnsDisputes', path: '/admin/returns-disputes', icon: RotateCcw, comingSoonMilestone: 3 },

@@ -61,6 +61,9 @@ export const updateVehicleMake = (id, body) => api.patch(`/admin/vehicles/${id}`
 // --- Catalog: seller (read-only, own effective rates) ---
 export const getSellerCategoryTree = () => api.get('/seller/catalog/categories');
 
+// --- Catalog: public vehicles (fitment picker) ---
+export const getPublicVehicles = () => api.get('/public/vehicles');
+
 // --- Public (seller application + invite acceptance) ---
 export const submitSellerApplication = (formData) => api.post('/public/seller-applications', formData, {
   headers: { 'Content-Type': 'multipart/form-data' },
@@ -96,6 +99,44 @@ export const inviteMyStaff = (email) => api.post('/seller/staff/invite', { email
 export const removeMyStaff = (id) => api.delete(`/seller/staff/${id}`);
 
 export const getMyActivity = (params) => api.get('/seller/activity', { params });
+
+// --- Seller: listings (Milestone 3) ---
+export const getMyListings = (params) => api.get('/seller/listings', { params });
+export const getMyListing = (id) => api.get(`/seller/listings/${id}`);
+export const createMyListing = (categoryId) => api.post('/seller/listings', { categoryId });
+export const updateMyListing = (id, body) => api.patch(`/seller/listings/${id}`, body);
+export const checkMyListing = (id) => api.post(`/seller/listings/${id}/check`, {});
+export const submitMyListing = (id) => api.post(`/seller/listings/${id}/submit`, {});
+export const hideMyListing = (id) => api.post(`/seller/listings/${id}/hide`, {});
+export const showMyListing = (id) => api.post(`/seller/listings/${id}/show`, {});
+export const deleteMyListing = (id) => api.delete(`/seller/listings/${id}`);
+export const duplicateMyListing = (id) => api.post(`/seller/listings/${id}/duplicate`, {});
+export const getCommissionPreview = (categoryId, priceCents) => api.get('/seller/listings/commission-preview', { params: { categoryId, priceCents } });
+
+// Photos are much bigger than a JSON autosave body and can take far
+// longer to upload on a slow connection — the shared 30s client timeout
+// would cut off a perfectly good slow upload, so this gets its own,
+// longer budget plus upload-progress for the step's progress bar.
+export const uploadListingMedia = (listingId, files, onProgress) => {
+  const formData = new FormData();
+  for (const file of files) formData.append('files', file);
+  return api.post(`/seller/listings/${listingId}/media`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 120000,
+    onUploadProgress: onProgress ? (e) => onProgress(e.total ? Math.round((e.loaded / e.total) * 100) : 0) : undefined,
+  });
+};
+export const deleteMyMedia = (id) => api.delete(`/seller/media/${id}`);
+export const getMyMediaBlob = (id, size = 'medium', format = 'jpg') => api.get(`/seller/media/${id}/${size}/${format}`, { responseType: 'blob' });
+
+// --- Admin: listing review (Milestone 3) ---
+export const getListingQueue = (params) => api.get('/admin/listings', { params });
+export const getListingReviewDetail = (id) => api.get(`/admin/listings/${id}`);
+export const approveListing = (id) => api.post(`/admin/listings/${id}/approve`, {});
+export const rejectListing = (id, reasons, note) => api.post(`/admin/listings/${id}/reject`, { reasons, note });
+export const suspendListing = (id, reason) => api.post(`/admin/listings/${id}/suspend`, { reason });
+export const reinstateListing = (id, to) => api.post(`/admin/listings/${id}/reinstate`, { to });
+export const getAdminMediaBlob = (id, size = 'medium', format = 'jpg') => api.get(`/admin/listings/media/${id}/${size}/${format}`, { responseType: 'blob' });
 
 // --- Notifications (shared across admin + seller) ---
 export const getNotifications = (params) => api.get('/notifications', { params });

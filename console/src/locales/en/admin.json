@@ -22,7 +22,8 @@
     "salesTotal": "Sales",
     "commissionTotal": "Commission",
     "viewApplication": "Review",
-    "zeroCommissionWarning": "{{count}} categories have 0% commission — review Catalog"
+    "zeroCommissionWarning": "{{count}} categories have 0% commission — review Catalog",
+    "listingsAwaitingReview": "Listings awaiting review"
   },
   "sellers": {
     "title": "Sellers",
@@ -95,12 +96,17 @@
       "overrideLabel": "Commission override (%)",
       "overridePlaceholder": "Leave blank for the platform default",
       "probationLabel": "Probation until",
+      "reviewExempt": "Exempt from listing review",
       "save": "Save (owner only)",
       "saved": "Overrides updated",
       "ownerOnly": "Only the platform owner can change these"
     },
     "activity": {
       "empty": "No activity recorded for this seller yet"
+    },
+    "listings": {
+      "empty": "This seller has no listings yet",
+      "view": "View"
     },
     "comingSoonTab": "Available after a later milestone",
     "bank": {
@@ -305,7 +311,9 @@
       "noteSi": "Return note (Sinhala)",
       "noteTa": "Return note (Tamil)",
       "regulated": "Regulated category",
-      "reviewRequired": "Review required before listing goes live"
+      "reviewRequired": "Review required before listing goes live",
+      "minWarrantyMonths": "Minimum warranty (months)",
+      "minWarrantyInherit": "Inherited: {{months}} month(s)"
     },
     "fields": {
       "ownFields": "Your fields",
@@ -390,5 +398,77 @@
     "yearTo": "Year to",
     "addModel": "Add model",
     "saved": "Saved"
+  },
+  "products": {
+    "untitled": "Untitled listing",
+    "table": {
+      "title": "Listing",
+      "price": "Price",
+      "status": "Status"
+    },
+    "status": {
+      "draft": "Draft",
+      "in_review": "In review",
+      "published": "Published",
+      "rejected": "Rejected",
+      "hidden": "Hidden",
+      "suspended": "Suspended"
+    }
+  },
+  "listingReview": {
+    "noResults": "Nothing waiting on review right now",
+    "filters": {
+      "allTypes": "All types",
+      "new": "New submission",
+      "revision": "Revision",
+      "allCategories": "All categories",
+      "regulatedOnly": "Regulated categories only",
+      "clearSeller": "Clear seller filter"
+    },
+    "table": {
+      "title": "Listing",
+      "seller": "Seller",
+      "category": "Category",
+      "type": "Type",
+      "updated": "Updated"
+    },
+    "detail": {
+      "back": "Back to queue",
+      "approve": "Approve",
+      "approved": "Approved",
+      "reject": "Reject",
+      "rejected": "Rejected",
+      "suspend": "Suspend",
+      "suspended": "Suspended",
+      "reinstatePublished": "Reinstate as published",
+      "reinstateHidden": "Reinstate as hidden",
+      "reinstated": "Reinstated",
+      "onProbation": "Seller on probation",
+      "reviewExempt": "Review-exempt seller",
+      "sellerInfo": "Seller",
+      "sellerName": "Store name",
+      "everPublished": "Listings ever published",
+      "brand": "Brand",
+      "condition": "Condition",
+      "sku": "SKU",
+      "stock": "Stock",
+      "regulated": "Regulated category",
+      "diffTitle": "What changed",
+      "diffField": "Field",
+      "diffLive": "Live now",
+      "diffProposed": "Proposed",
+      "notePlaceholder": "Add a note for the seller (optional)…",
+      "reasonPlaceholder": "Why is this listing being suspended?",
+      "reasons": {
+        "photo_mismatch": "Photo doesn't match the item",
+        "missing_registration": "Missing registration number",
+        "price_wrong": "Price looks wrong",
+        "prohibited_item": "Prohibited item",
+        "poor_photos": "Poor quality photos",
+        "wrong_category": "Wrong category",
+        "contact_in_text": "Contact details in text",
+        "other": "Other"
+      }
+    }
   }
 }

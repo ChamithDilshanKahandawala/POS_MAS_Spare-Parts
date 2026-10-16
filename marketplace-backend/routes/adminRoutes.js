@@ -36,12 +36,17 @@ const {
   reorderCategories,
 } = require('../controllers/adminCategoriesController');
 const { listMakes, createMake, updateMake } = require('../controllers/adminVehiclesController');
+const {
+  listReviewQueue, getReviewDetail, approveListing, rejectListing, suspendListing, reinstateListing,
+} = require('../controllers/adminListingsController');
+const { getAdminMediaVariant } = require('../controllers/mediaController');
 const { requireAuth, requirePlatform } = require('../middleware/authMiddleware');
 const { validate, requireValidObjectId } = require('../middleware/validate');
 const restrictFieldsToOwner = require('../middleware/restrictFieldsToOwner');
 const asyncHandler = require('../middleware/asyncHandler');
 const { FIELD_TYPES } = require('../models/Category');
 const { VEHICLE_TYPES } = require('../models/VehicleMake');
+const { REJECTION_REASONS } = require('../models/Listing');
 
 const PLATFORM_ROLES = ['platform_owner', 'platform_staff'];
 const OWNER_ONLY = ['platform_owner'];
@@ -70,6 +75,7 @@ const updateStatusBodySchema = z.object({
 const updateOverridesBodySchema = z.object({
   commissionOverridePct: z.number().min(0).max(100).nullable().optional(),
   probationUntil: z.string().datetime().nullable().optional(),
+  reviewExempt: z.boolean().optional(),
   reason: z.string().trim().min(1, 'Reason is required'),
 }).strict();
 
@@ -167,6 +173,10 @@ const returnPolicyZod = z.object({
   note: localizedZod().optional(),
 }).strict();
 
+const warrantyRuleZod = z.object({
+  minMonths: z.number().int().min(0).nullable().optional(),
+}).strict();
+
 const slugZod = z.string().trim().min(1).max(80).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be lowercase letters, numbers, and hyphens only');
 
 const createCategoryBodySchema = z.object({
@@ -178,6 +188,7 @@ const createCategoryBodySchema = z.object({
   active: z.boolean().optional(),
   commissionRateBps: z.number().int().min(0).max(5000).optional(),
   returnPolicy: returnPolicyZod.optional(),
+  warrantyRule: warrantyRuleZod.optional(),
   regulated: z.boolean().nullable().optional(),
   reviewRequired: z.boolean().nullable().optional(),
   prohibitedKeywords: z.array(z.string().trim().min(1)).optional(),
@@ -189,6 +200,37 @@ const updateCategoryBodySchema = createCategoryBodySchema.partial();
 const reorderCategoriesBodySchema = z.object({
   parentId: z.string().regex(OBJECT_ID_RE).nullable(),
   orderedIds: z.array(z.string().regex(OBJECT_ID_RE)).min(1),
+}).strict();
+
+// --- Listings (Milestone 3) ---
+
+const listingQueueQuerySchema = z.object({
+  seller: z.string().regex(OBJECT_ID_RE).optional(),
+  category: z.string().regex(OBJECT_ID_RE).optional(),
+  type: z.enum(['new', 'revision']).optional(),
+  regulated: z.enum(['true', 'false']).optional(),
+  status: z.enum(['all', 'draft', 'in_review', 'published', 'rejected', 'hidden', 'suspended']).optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).optional(),
+}).strict();
+
+const rejectListingBodySchema = z.object({
+  reasons: z.array(z.enum(REJECTION_REASONS)).min(1, 'At least one reason is required'),
+  note: z.string().trim().max(2000).optional(),
+}).strict();
+
+const suspendListingBodySchema = z.object({
+  reason: z.string().trim().min(1, 'Reason is required'),
+}).strict();
+
+const reinstateListingBodySchema = z.object({
+  to: z.enum(['published', 'hidden']),
+}).strict();
+
+const adminMediaParamsSchema = z.object({
+  id: z.string(),
+  size: z.enum(['thumb', 'medium', 'large']),
+  format: z.enum(['webp', 'jpg']),
 }).strict();
 
 // --- Catalog: vehicles ---
@@ -449,6 +491,62 @@ router.delete(
   requirePlatform(PLATFORM_ROLES),
   requireValidObjectId('id'),
   asyncHandler(deleteCategory)
+);
+
+// --- Listings (Milestone 3) ---
+router.get(
+  '/listings',
+  requireAuth,
+  requirePlatform(PLATFORM_ROLES),
+  validate({ query: listingQueueQuerySchema }),
+  asyncHandler(listReviewQueue)
+);
+router.get(
+  '/listings/:id',
+  requireAuth,
+  requirePlatform(PLATFORM_ROLES),
+  requireValidObjectId('id'),
+  asyncHandler(getReviewDetail)
+);
+router.post(
+  '/listings/:id/approve',
+  requireAuth,
+  requirePlatform(PLATFORM_ROLES),
+  requireValidObjectId('id'),
+  validate({ body: emptyBodySchema }),
+  asyncHandler(approveListing)
+);
+router.post(
+  '/listings/:id/reject',
+  requireAuth,
+  requirePlatform(PLATFORM_ROLES),
+  requireValidObjectId('id'),
+  validate({ body: rejectListingBodySchema }),
+  asyncHandler(rejectListing)
+);
+router.post(
+  '/listings/:id/suspend',
+  requireAuth,
+  requirePlatform(PLATFORM_ROLES),
+  requireValidObjectId('id'),
+  validate({ body: suspendListingBodySchema }),
+  asyncHandler(suspendListing)
+);
+router.post(
+  '/listings/:id/reinstate',
+  requireAuth,
+  requirePlatform(PLATFORM_ROLES),
+  requireValidObjectId('id'),
+  validate({ body: reinstateListingBodySchema }),
+  asyncHandler(reinstateListing)
+);
+router.get(
+  '/listings/media/:id/:size/:format',
+  requireAuth,
+  requirePlatform(PLATFORM_ROLES),
+  requireValidObjectId('id'),
+  validate({ params: adminMediaParamsSchema }),
+  asyncHandler(getAdminMediaVariant)
 );
 
 // --- Catalog: vehicles (Milestone 2) ---

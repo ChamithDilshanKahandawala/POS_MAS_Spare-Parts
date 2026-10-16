@@ -63,6 +63,13 @@ const categorySchema = new mongoose.Schema(
       windowDays: { type: Number, default: null },
       note: localizedText(),
     },
+    // Milestone 3: minimum warranty a listing in this category must
+    // offer, in months (0/null = no minimum). Nullable-sentinel, inherits
+    // like returnPolicy — an explicit 0 is a real "no minimum required"
+    // override, not "unset".
+    warrantyRule: {
+      minMonths: { type: Number, default: null },
+    },
     regulated: { type: Boolean, default: null },
     reviewRequired: { type: Boolean, default: null },
     prohibitedKeywords: { type: [String], default: [] },
