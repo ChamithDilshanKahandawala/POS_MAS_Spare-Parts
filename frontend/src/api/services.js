@@ -37,6 +37,7 @@ export const getLowStockAlerts= ()       => api.get('/products/low-stock/alerts'
 // --- EXCEL IMPORT / EXPORT ---
 export const importProductsExcel = (formData) =>
   api.post('/products/import', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+export const importProductsJson = (items) => api.post('/products/import-json', { items });
 export const exportProductsExcel = () =>
   api.get('/products/export', { responseType: 'blob' });
 

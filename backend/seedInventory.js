@@ -5,33 +5,34 @@ const Product = require('./models/Product');
 const inventoryData =
 [
   {
-    "sku_code": "TWF113",
-    "name": "FM ANTANA BLACK",
-    "buying_price": 800,
-    "selling_price": 1200,
-    "stock_quantity": 10,
-    "sub_category": "Front",
-    "category": "Three-Wheel"
+    "sku_code": "DV17",
+    "name": "HOT WHEEL 1 PCS Q2",
+    "buying_price": 230,
+    "selling_price": 450,
+    "stock_quantity": 20,
+    "sub_category": "Diecast",
+    "category": "Toys"
   },
   {
-    "sku_code": "AHDD04",
-    "name": "DIGITAL CLOCK M",
-    "buying_price": 500,
-    "selling_price": 1000,
-    "stock_quantity": 9,
-    "sub_category": "DASHBOARD",
-    "category": "ANYVEHICLE"
+    "sku_code": "DV18",
+    "name": "HOT WHEEL 1 PCS Q3",
+    "buying_price": 80,
+    "selling_price": 200,
+    "stock_quantity": 20,
+    "sub_category": "Diecast",
+    "category": "Toys"
   },
   {
-    "sku_code": "TWF114",
-    "name": "MIRROR ARM RED",
-    "buying_price": 300,
-    "selling_price": 550,
-    "stock_quantity": 5,
-    "sub_category": "Front",
-    "category": "Three-Wheel"
+    "sku_code": "DV01",
+    "name": "HOT WHEEL 1 PCS Q1",
+    "buying_price": 250,
+    "selling_price": 500,
+    "stock_quantity": 8,
+    "sub_category": "Hot Wheel",
+    "category": "Toys"
   }
 ];
+
 async function seedInventory() {
   try {
     await mongoose.connect(process.env.MONGO_URI);

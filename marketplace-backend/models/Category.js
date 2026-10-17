@@ -18,9 +18,9 @@ const fieldOptionSchema = new mongoose.Schema({
 // One field in a category's listing form (Milestone 3 reads this to
 // build the form). `key` is the stable identifier a listing's attribute
 // values are stored under — immutable once the category has listings,
-// enforced in controllers/adminCategoriesController.js by checking
-// listingCount before allowing a rename, never here (the schema itself
-// has no way to know "the old value"). Keeps its own real `_id`
+// enforced in controllers/adminCategoriesController.js by counting real
+// Listing documents before allowing a rename, never here (the schema
+// itself has no way to know "the old value"). Keeps its own real `_id`
 // (Mongoose's default for a subdocument) SEPARATE from `key` specifically
 // so a rename (same _id, different key) can be told apart from a
 // remove-and-add (different _id entirely) — that distinction is exactly
@@ -77,12 +77,14 @@ const categorySchema = new mongoose.Schema(
     attributeSchema: { type: [attributeFieldSchema], default: [] },
     schemaVersion: { type: Number, default: 1 },
 
-    // Milestone 3 stub: real listing creation will increment/recompute
-    // this. Until then it's always 0, which is the correct "nothing
-    // references this category yet" state — every delete/rename-guard
-    // check in controllers/adminCategoriesController.js reads this one
-    // field, so swapping in a real aggregation later is a one-line change
-    // there, not a schema change here.
+    // Display-only counter for the Catalog page — nudged by +1/-1
+    // wherever a listing's categoryId is set/changed/removed
+    // (sellerListingsController.js, adminListingsController.js). It can
+    // drift from reality (a direct DB write bypassing those controllers
+    // skips it entirely), so nothing that GATES a write on "does this
+    // category have listings" trusts this field — those checks in
+    // controllers/adminCategoriesController.js count real Listing
+    // documents instead. Rebuild it with `npm run recount:categories`.
     listingCount: { type: Number, default: 0 },
   },
   { timestamps: true }

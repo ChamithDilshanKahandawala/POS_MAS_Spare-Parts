@@ -1,7 +1,20 @@
 const Category = require('../models/Category');
+const Listing = require('../models/Listing');
 const { getEffectiveCategory, buildTree, MAX_DEPTH } = require('../services/categoryRules');
 const { logAction } = require('../services/auditLog');
 const { flagListingsForCategoryChange } = require('../services/listingDrift');
+
+// `Category.listingCount` is a denormalized display counter, nudged by
+// +1/-1 at every point a listing's categoryId changes (sellerListings
+// Controller's adjustCategoryListingCount) — it CAN drift from reality
+// (a direct DB delete/migration skips it entirely, as happened with the
+// debug-run cleanup earlier this session). Anything that gates a write
+// on "does this category have listings" counts the real Listing
+// documents instead, so it can never be fooled by a stale counter;
+// listingCount itself stays purely cosmetic (Catalog page display).
+async function hasActiveListings(categoryId) {
+  return (await Listing.countDocuments({ categoryId })) > 0;
+}
 
 // GET /api/admin/catalog/categories — every category, active or not
 // (admin needs to see and manage both), as a nested tree.
@@ -69,7 +82,7 @@ const updateCategory = async (req, res) => {
   const before = category.toObject();
 
   if (req.body.slug !== undefined && req.body.slug !== category.slug) {
-    if (category.listingCount > 0) {
+    if (await hasActiveListings(category._id)) {
       return res.status(409).json({ message: 'Cannot rename the slug: this category has active listings' });
     }
     const dup = await Category.findOne({ slug: req.body.slug, _id: { $ne: category._id } });
@@ -83,7 +96,7 @@ const updateCategory = async (req, res) => {
     depth = result.depth;
   }
 
-  if (req.body.attributeSchema !== undefined && category.listingCount > 0) {
+  if (req.body.attributeSchema !== undefined && (await hasActiveListings(category._id))) {
     const oldKeyById = new Map(category.attributeSchema.map((f) => [String(f._id), f.key]));
     for (const field of req.body.attributeSchema) {
       if (field._id && oldKeyById.has(String(field._id))) {
@@ -123,7 +136,7 @@ const deleteCategory = async (req, res) => {
   const category = await Category.findById(req.params.id);
   if (!category) return res.status(404).json({ message: 'Category not found' });
 
-  if (category.listingCount > 0) {
+  if (await hasActiveListings(category._id)) {
     return res.status(409).json({ message: 'Cannot delete: this category has active listings. Deactivate it instead.' });
   }
   const childCount = await Category.countDocuments({ parentId: category._id });

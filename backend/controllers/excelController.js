@@ -75,6 +75,73 @@ const importProducts = async (req, res) => {
   } catch (err) { res.status(500).json({ message: err.message }); }
 };
 
+// POST /api/products/import-json — Bulk upload via a pasted JSON array,
+// same create-or-update-by-sku_code behavior as the Excel import above
+// (kept as a separate function rather than branching importProducts on
+// content-type, so the Excel path — file parsing, column-name aliases —
+// stays untouched).
+const MAX_JSON_IMPORT_ITEMS = 500;
+
+const importProductsJson = async (req, res) => {
+  try {
+    const items = req.body.items;
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: 'Expected a non-empty "items" array' });
+    }
+    if (items.length > MAX_JSON_IMPORT_ITEMS) {
+      return res.status(400).json({ message: `Too many items — max ${MAX_JSON_IMPORT_ITEMS} per import` });
+    }
+
+    let created = 0, updated = 0, errors = [];
+
+    for (let i = 0; i < items.length; i++) {
+      const row = items[i] || {};
+      const label = row.sku_code || row.name || `item ${i + 1}`;
+      try {
+        const skuValue = String(row.sku_code || '').trim();
+        const data = {
+          name: String(row.name || '').trim(),
+          category: String(row.category || 'Three-Wheel').trim(),
+          buying_price: Number(row.buying_price || 0),
+          selling_price: Number(row.selling_price || 0),
+          stock_quantity: Number(row.stock_quantity || 0),
+          unit: String(row.unit || 'Units').trim(),
+          low_stock_threshold: Number(row.low_stock_threshold || 5),
+          description: String(row.description || '').trim(),
+          barcode: String(row.barcode || '').trim(),
+          brand: String(row.brand || '').trim(),
+          sub_category: String(row.sub_category || '').trim(),
+          tags: row.tags,
+        };
+        if (skuValue) data.sku_code = skuValue;
+
+        if (!data.name) { errors.push(`${label}: no name`); continue; }
+
+        if (data.sku_code) {
+          const existing = await Product.findOne({ sku_code: data.sku_code });
+          if (existing) {
+            existing.set(normalizeProductPayload(data));
+            await existing.save();
+            updated++;
+          } else {
+            await Product.create(normalizeProductPayload(data));
+            created++;
+          }
+        } else {
+          await Product.create(normalizeProductPayload(data));
+          created++;
+        }
+      } catch (e) {
+        errors.push(`${label}: ${e.message}`);
+      }
+    }
+
+    res.json({ message: 'Import done', created, updated, errors: errors.slice(0, 20) });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // GET /api/products/export  — Download all products as Excel
 const exportProducts = async (req, res) => {
   try {
@@ -138,4 +205,4 @@ const exportProducts = async (req, res) => {
   }
 };
 
-module.exports = { importProducts, exportProducts, upload };
+module.exports = { importProducts, importProductsJson, exportProducts, upload };

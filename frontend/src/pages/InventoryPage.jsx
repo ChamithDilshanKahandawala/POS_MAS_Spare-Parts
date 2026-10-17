@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { getProducts, createProduct, updateProduct, deleteProduct, importProductsExcel, exportProductsExcel } from '../api/services';
+import { getProducts, createProduct, updateProduct, deleteProduct, importProductsExcel, importProductsJson, exportProductsExcel } from '../api/services';
 import { useAuth } from '../context/AuthContext';
-import { Plus, Search, Edit2, Trash2, X, Package, ChevronLeft, ChevronRight, Upload, Download, Scan } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, X, Package, ChevronLeft, ChevronRight, Upload, Download, Scan, Braces } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const CATEGORIES = ['Three-Wheel', 'Bike', 'Car', 'SUV', 'Off-Road', 'KeyTag', 'Toys', 'Ornaments'];
@@ -27,6 +27,9 @@ export default function InventoryPage() {
   const [saving, setSaving] = useState(false);
   const [importing, setImporting] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [jsonModalOpen, setJsonModalOpen] = useState(false);
+  const [jsonText, setJsonText] = useState('');
+  const [jsonImporting, setJsonImporting] = useState(false);
   const fileInputRef = useRef(null);
   const barcodeRef = useRef(null);
   const barcodeBuffer = useRef('');
@@ -126,6 +129,35 @@ export default function InventoryPage() {
     }
   };
 
+  // ── JSON Import (paste an array like seedInventory.js's shape) ──────────────
+  const handleJsonImport = async () => {
+    let items;
+    try {
+      items = JSON.parse(jsonText);
+    } catch {
+      toast.error('Not valid JSON — check for a missing bracket or comma');
+      return;
+    }
+    if (!Array.isArray(items) || items.length === 0) {
+      toast.error('Expected a JSON array of products, e.g. [{"sku_code": "...", "name": "...", ...}]');
+      return;
+    }
+    setJsonImporting(true);
+    try {
+      const { data } = await importProductsJson(items);
+      toast.success(`✅ ${data.created} added, ${data.updated} updated!`);
+      if (data.errors?.length) toast.error(`${data.errors.length} item(s) had errors — see console`, { duration: 5000 });
+      if (data.errors?.length) console.warn('Import JSON errors:', data.errors);
+      setJsonModalOpen(false);
+      setJsonText('');
+      fetchProducts();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Import failed');
+    } finally {
+      setJsonImporting(false);
+    }
+  };
+
   // ── Excel Export ─────────────────────────────────────────────────────────────
   const handleExport = async () => {
     setExporting(true);
@@ -166,6 +198,10 @@ export default function InventoryPage() {
               <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" onChange={handleImport} style={{display:'none'}}/>
               <button className="btn-secondary" onClick={()=>fileInputRef.current.click()} disabled={importing} style={{gap:'6px'}}>
                 <Upload size={15}/> {importing?'Importing...':'Import Excel'}
+              </button>
+              {/* Import JSON */}
+              <button className="btn-secondary" onClick={()=>setJsonModalOpen(true)} style={{gap:'6px'}}>
+                <Braces size={15}/> Import JSON
               </button>
               {/* Export */}
               <button className="btn-secondary" onClick={handleExport} disabled={exporting} style={{gap:'6px',borderColor:'rgba(34,197,94,0.3)',color:'#22c55e'}}>
@@ -337,6 +373,37 @@ export default function InventoryPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* JSON Import Modal */}
+      {jsonModalOpen && createPortal(
+        <div className="modal-overlay" onClick={() => !jsonImporting && setJsonModalOpen(false)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()} style={{ maxWidth: '640px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>Import products (JSON)</h2>
+              <button onClick={() => setJsonModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                <X size={20} />
+              </button>
+            </div>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+              Paste an array of products — same sku_code is updated, a new one is added. Up to 500 at once.
+            </p>
+            <textarea
+              className="input-field"
+              value={jsonText}
+              onChange={e => setJsonText(e.target.value)}
+              placeholder={'[\n  {\n    "sku_code": "DV17",\n    "name": "HOT WHEEL 1 PCS Q2",\n    "buying_price": 230,\n    "selling_price": 450,\n    "stock_quantity": 20,\n    "sub_category": "Diecast",\n    "category": "Toys"\n  }\n]'}
+              style={{ width: '100%', minHeight: '260px', fontFamily: 'monospace', fontSize: '12px', resize: 'vertical' }}
+            />
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px' }}>
+              <button type="button" className="btn-secondary" onClick={() => setJsonModalOpen(false)} disabled={jsonImporting}>Cancel</button>
+              <button type="button" className="btn-primary" onClick={handleJsonImport} disabled={jsonImporting || !jsonText.trim()}>
+                {jsonImporting ? 'Importing...' : 'Import'}
+              </button>
+            </div>
           </div>
         </div>,
         document.body

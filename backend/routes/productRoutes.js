@@ -9,7 +9,7 @@ const {
   deleteProduct,
   getLowStockAlerts,
 } = require('../controllers/productController');
-const { importProducts, exportProducts, upload } = require('../controllers/excelController');
+const { importProducts, importProductsJson, exportProducts, upload } = require('../controllers/excelController');
 const { protect, adminOnly, staffOnly, optionalAuth } = require('../middleware/authMiddleware');
 const { searchLimiter, bulkOpsLimiter } = require('../middleware/rateLimiter');
 
@@ -18,6 +18,7 @@ const { searchLimiter, bulkOpsLimiter } = require('../middleware/rateLimiter');
 // customer-privilege audit.
 router.get('/low-stock/alerts', protect, staffOnly, getLowStockAlerts);
 router.post('/import', protect, adminOnly, bulkOpsLimiter, upload.single('file'), importProducts);
+router.post('/import-json', protect, adminOnly, bulkOpsLimiter, importProductsJson);
 router.get('/export', protect, adminOnly, bulkOpsLimiter, exportProducts);
 router.get('/search', optionalAuth, searchLimiter, searchProducts);
 router.get('/', optionalAuth, getProducts);

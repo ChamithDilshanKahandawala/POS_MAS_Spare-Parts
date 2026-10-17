@@ -2,7 +2,7 @@ const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const {
   app, request, wipeDatabase, createUser, loginFlow,
-  Seller, SellerMember, AuditLog, mongoose,
+  Seller, SellerMember, AuditLog, Listing, mongoose,
 } = require('./helpers');
 const Category = require('../models/Category');
 const VehicleMake = require('../models/VehicleMake');
@@ -187,10 +187,12 @@ test('a non-integer commissionRateBps is rejected', async () => {
   assert.equal(res.status, 400);
 });
 
-// --- Rename guard (simulated via the listingCount hook) ---
+// --- Rename/delete guards ("has listings" is a real Listing count, not
+// the denormalized listingCount display field — see
+// controllers/adminCategoriesController.js's hasActiveListings) ---
 
 test('slug rename is blocked once the category has listings', async () => {
-  await Category.findByIdAndUpdate(vehiclePartsCar._id, { listingCount: 3 });
+  const listing = await Listing.create({ seller: sellerA._id, categoryId: vehiclePartsCar._id });
 
   const res = await request(app)
     .patch(`/api/admin/catalog/categories/${vehiclePartsCar._id}`)
@@ -198,13 +200,13 @@ test('slug rename is blocked once the category has listings', async () => {
     .send({ slug: 'test-vehicle-parts-car-renamed' });
   assert.equal(res.status, 409);
 
-  await Category.findByIdAndUpdate(vehiclePartsCar._id, { listingCount: 0 }); // revert
+  await Listing.deleteOne({ _id: listing._id });
 });
 
 test('a field key rename is blocked once the category has listings, but adding a new field is not', async () => {
   const before = await Category.findById(vehiclePartsCar._id);
   const existingField = before.attributeSchema.find((f) => f.key === 'condition');
-  await Category.findByIdAndUpdate(vehiclePartsCar._id, { listingCount: 3 });
+  const listing = await Listing.create({ seller: sellerA._id, categoryId: vehiclePartsCar._id });
 
   const renameRes = await request(app)
     .patch(`/api/admin/catalog/categories/${vehiclePartsCar._id}`)
@@ -223,11 +225,11 @@ test('a field key rename is blocked once the category has listings, but adding a
     });
   assert.equal(addRes.status, 200, 'adding a new required field must still be allowed even with listings on the category');
 
-  await Category.findByIdAndUpdate(vehiclePartsCar._id, { listingCount: 0 }); // revert
+  await Listing.deleteOne({ _id: listing._id });
 });
 
 test('a category with listings cannot be deleted, only deactivated', async () => {
-  await Category.findByIdAndUpdate(vehiclePartsCar._id, { listingCount: 3 });
+  const listing = await Listing.create({ seller: sellerA._id, categoryId: vehiclePartsCar._id });
   const deleteRes = await request(app)
     .delete(`/api/admin/catalog/categories/${vehiclePartsCar._id}`)
     .set('Authorization', `Bearer ${tokens.platformOwner}`);
@@ -240,7 +242,31 @@ test('a category with listings cannot be deleted, only deactivated', async () =>
   assert.equal(deactivateRes.status, 200);
   assert.equal(deactivateRes.body.category.active, false);
 
-  await Category.findByIdAndUpdate(vehiclePartsCar._id, { listingCount: 0, active: true }); // revert
+  await Listing.deleteOne({ _id: listing._id });
+  await Category.findByIdAndUpdate(vehiclePartsCar._id, { active: true }); // revert
+});
+
+test('a stale listingCount does not block or allow what the real Listing count would', async () => {
+  // Simulates exactly what happened to two categories during this
+  // session's test-data cleanup: Listing documents deleted directly
+  // (bypassing adjustCategoryListingCount), leaving listingCount stale.
+  // A category delete must go by the real count, not that stale field.
+  // Uses its own throwaway leaf category — it gets deleted for real.
+  const throwawayRes = await request(app)
+    .post('/api/admin/catalog/categories')
+    .set('Authorization', `Bearer ${tokens.platformOwner}`)
+    .send({ name: name('Stale Count Throwaway'), slug: 'test-stale-count-throwaway', parentId: vehicleParts._id });
+  assert.equal(throwawayRes.status, 201);
+  const throwaway = throwawayRes.body.category;
+
+  const listing = await Listing.create({ seller: sellerA._id, categoryId: throwaway._id });
+  await Listing.deleteOne({ _id: listing._id }); // direct delete — listingCount is never touched
+  await Category.findByIdAndUpdate(throwaway._id, { listingCount: 7 }); // stale, as if it had drifted
+
+  const deleteRes = await request(app)
+    .delete(`/api/admin/catalog/categories/${throwaway._id}`)
+    .set('Authorization', `Bearer ${tokens.platformOwner}`);
+  assert.equal(deleteRes.status, 200, 'a stale nonzero listingCount must not block a delete when zero real listings remain');
 });
 
 // --- Public endpoint ---

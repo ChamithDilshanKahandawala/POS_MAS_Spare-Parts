@@ -8,6 +8,7 @@
     "dev": "NODE_ENV=development nodemon server.js",
     "seed:dev": "NODE_ENV=development node scripts/seed-dev.js",
     "cleanup:media": "NODE_ENV=development node scripts/cleanupMedia.js",
+    "recount:categories": "NODE_ENV=development node scripts/recountCategories.js",
     "lint": "eslint .",
     "test": "NODE_ENV=test node scripts/run-tests.js"
   },
