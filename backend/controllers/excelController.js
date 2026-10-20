@@ -93,6 +93,10 @@ const importProductsJson = async (req, res) => {
     }
 
     let created = 0, updated = 0, errors = [];
+    // Per-item outcome, in input order, so the UI can show exactly which
+    // item did what — not just a total count — and point at the exact
+    // row when one fails instead of a generic "N errors" toast.
+    const results = [];
 
     for (let i = 0; i < items.length; i++) {
       const row = items[i] || {};
@@ -115,7 +119,11 @@ const importProductsJson = async (req, res) => {
         };
         if (skuValue) data.sku_code = skuValue;
 
-        if (!data.name) { errors.push(`${label}: no name`); continue; }
+        if (!data.name) {
+          errors.push(`${label}: no name`);
+          results.push({ sku_code: skuValue, name: data.name, status: 'error', message: 'No name given' });
+          continue;
+        }
 
         if (data.sku_code) {
           const existing = await Product.findOne({ sku_code: data.sku_code });
@@ -123,20 +131,24 @@ const importProductsJson = async (req, res) => {
             existing.set(normalizeProductPayload(data));
             await existing.save();
             updated++;
+            results.push({ sku_code: data.sku_code, name: data.name, status: 'updated' });
           } else {
-            await Product.create(normalizeProductPayload(data));
+            const saved = await Product.create(normalizeProductPayload(data));
             created++;
+            results.push({ sku_code: saved.sku_code, name: saved.name, status: 'created' });
           }
         } else {
-          await Product.create(normalizeProductPayload(data));
+          const saved = await Product.create(normalizeProductPayload(data));
           created++;
+          results.push({ sku_code: saved.sku_code, name: saved.name, status: 'created' });
         }
       } catch (e) {
         errors.push(`${label}: ${e.message}`);
+        results.push({ sku_code: row.sku_code || '', name: row.name || '', status: 'error', message: e.message });
       }
     }
 
-    res.json({ message: 'Import done', created, updated, errors: errors.slice(0, 20) });
+    res.json({ message: 'Import done', created, updated, errors: errors.slice(0, 20), results });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

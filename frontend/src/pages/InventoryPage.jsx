@@ -30,6 +30,7 @@ export default function InventoryPage() {
   const [jsonModalOpen, setJsonModalOpen] = useState(false);
   const [jsonText, setJsonText] = useState('');
   const [jsonImporting, setJsonImporting] = useState(false);
+  const [jsonResults, setJsonResults] = useState(null); // [{sku_code, name, status, message}] after a run
   const fileInputRef = useRef(null);
   const barcodeRef = useRef(null);
   const barcodeBuffer = useRef('');
@@ -145,17 +146,21 @@ export default function InventoryPage() {
     setJsonImporting(true);
     try {
       const { data } = await importProductsJson(items);
-      toast.success(`✅ ${data.created} added, ${data.updated} updated!`);
-      if (data.errors?.length) toast.error(`${data.errors.length} item(s) had errors — see console`, { duration: 5000 });
-      if (data.errors?.length) console.warn('Import JSON errors:', data.errors);
-      setJsonModalOpen(false);
-      setJsonText('');
+      setJsonResults(data.results || []);
+      if (data.errors?.length) toast.error(`${data.created + data.updated} of ${items.length} saved — ${data.errors.length} failed, see list below`, { duration: 5000 });
+      else toast.success(`✅ ${data.created} added, ${data.updated} updated — all saved!`);
       fetchProducts();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Import failed');
     } finally {
       setJsonImporting(false);
     }
+  };
+
+  const closeJsonModal = () => {
+    setJsonModalOpen(false);
+    setJsonText('');
+    setJsonResults(null);
   };
 
   // ── Excel Export ─────────────────────────────────────────────────────────────
@@ -380,30 +385,71 @@ export default function InventoryPage() {
 
       {/* JSON Import Modal */}
       {jsonModalOpen && createPortal(
-        <div className="modal-overlay" onClick={() => !jsonImporting && setJsonModalOpen(false)}>
+        <div className="modal-overlay" onClick={() => !jsonImporting && closeJsonModal()}>
           <div className="modal-box" onClick={e => e.stopPropagation()} style={{ maxWidth: '640px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>Import products (JSON)</h2>
-              <button onClick={() => setJsonModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+              <button onClick={closeJsonModal} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
                 <X size={20} />
               </button>
             </div>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>
-              Paste an array of products — same sku_code is updated, a new one is added. Up to 500 at once.
-            </p>
-            <textarea
-              className="input-field"
-              value={jsonText}
-              onChange={e => setJsonText(e.target.value)}
-              placeholder={'[\n  {\n    "sku_code": "DV17",\n    "name": "HOT WHEEL 1 PCS Q2",\n    "buying_price": 230,\n    "selling_price": 450,\n    "stock_quantity": 20,\n    "sub_category": "Diecast",\n    "category": "Toys"\n  }\n]'}
-              style={{ width: '100%', minHeight: '260px', fontFamily: 'monospace', fontSize: '12px', resize: 'vertical' }}
-            />
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px' }}>
-              <button type="button" className="btn-secondary" onClick={() => setJsonModalOpen(false)} disabled={jsonImporting}>Cancel</button>
-              <button type="button" className="btn-primary" onClick={handleJsonImport} disabled={jsonImporting || !jsonText.trim()}>
-                {jsonImporting ? 'Importing...' : 'Import'}
-              </button>
-            </div>
+
+            {jsonResults ? (
+              <>
+                {/* Per-item outcome — exactly which items got added/updated,
+                    and the reason for anything that failed, instead of a
+                    toast the admin might not have caught in time. */}
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '10px' }}>
+                  {jsonResults.filter(r => r.status === 'created').length} added ·{' '}
+                  {jsonResults.filter(r => r.status === 'updated').length} updated ·{' '}
+                  {jsonResults.filter(r => r.status === 'error').length} failed{' '}
+                  (of {jsonResults.length})
+                </p>
+                <div style={{ maxHeight: '340px', overflowY: 'auto', border: '1px solid var(--border-light)', borderRadius: '10px' }}>
+                  {jsonResults.map((r, i) => (
+                    <div key={i} style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px',
+                      padding: '8px 12px', fontSize: '13px',
+                      borderBottom: i < jsonResults.length - 1 ? '1px solid var(--border-light)' : 'none',
+                    }}>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {r.name || '(no name)'}
+                        </div>
+                        {r.sku_code && <div style={{ fontFamily: 'monospace', fontSize: '11px', color: 'var(--text-muted)' }}>{r.sku_code}</div>}
+                        {r.status === 'error' && <div style={{ fontSize: '12px', color: '#ef4444', marginTop: '2px' }}>{r.message}</div>}
+                      </div>
+                      <span className={`badge ${r.status === 'created' ? 'badge-green' : r.status === 'updated' ? 'badge-purple' : 'badge-red'}`} style={{ flexShrink: 0 }}>
+                        {r.status === 'created' ? 'Added' : r.status === 'updated' ? 'Updated' : 'Failed'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px' }}>
+                  <button type="button" className="btn-secondary" onClick={() => setJsonResults(null)}>Import more</button>
+                  <button type="button" className="btn-primary" onClick={closeJsonModal}>Done</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                  Paste an array of products — same sku_code is updated, a new one is added. Up to 500 at once.
+                </p>
+                <textarea
+                  className="input-field"
+                  value={jsonText}
+                  onChange={e => setJsonText(e.target.value)}
+                  placeholder={'[\n  {\n    "sku_code": "DV17",\n    "name": "HOT WHEEL 1 PCS Q2",\n    "buying_price": 230,\n    "selling_price": 450,\n    "stock_quantity": 20,\n    "sub_category": "Diecast",\n    "category": "Toys"\n  }\n]'}
+                  style={{ width: '100%', minHeight: '260px', fontFamily: 'monospace', fontSize: '12px', resize: 'vertical' }}
+                />
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px' }}>
+                  <button type="button" className="btn-secondary" onClick={closeJsonModal} disabled={jsonImporting}>Cancel</button>
+                  <button type="button" className="btn-primary" onClick={handleJsonImport} disabled={jsonImporting || !jsonText.trim()}>
+                    {jsonImporting ? 'Importing...' : 'Import'}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>,
         document.body

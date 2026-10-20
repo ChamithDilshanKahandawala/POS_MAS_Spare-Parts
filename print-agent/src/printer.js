@@ -99,10 +99,7 @@ function sendRawToPrinter(buffer) {
 async function buildEscPosBuffer(saleData) {
   const receipt = formatReceipt(saleData);
   const { shop, meta, items, totals, helpers } = receipt;
-  const { LINE_WIDTH, padLeft, padRight, fmtAmount, buildItemRow } = helpers;
-
-  const DIVIDER_HEAVY = '='.repeat(LINE_WIDTH);
-  const DIVIDER_LIGHT = '-'.repeat(LINE_WIDTH);
+  const { fmtAmount } = helpers;
 
   const printer = new ThermalPrinter({
     type:         PrinterTypes.EPSON,
@@ -112,6 +109,11 @@ async function buildEscPosBuffer(saleData) {
     removeSpecialCharacters: false,
     lineCharacter: '-',
   });
+
+  // Dividers/column math go through drawLine()/leftRight() everywhere
+  // below instead of hand-repeating a hardcoded width, so they always
+  // match whatever width the printer is actually configured with.
+  const money = (v) => `Rs. ${fmtAmount(v)}`;
 
   // ── HEADER ────────────────────────────────────────────────────────────────
   printer.alignCenter();
@@ -126,65 +128,73 @@ async function buildEscPosBuffer(saleData) {
 
   // ── META ──────────────────────────────────────────────────────────────────
   printer.alignLeft();
-  printer.println(DIVIDER_HEAVY);
-  printer.println(`Invoice: ${meta.invoiceNumber}`);
-  printer.println(`Date:    ${meta.dateTime}`);
-  printer.println(`Cashier: ${meta.cashierName}`);
+  printer.drawLine('=');
+  printer.leftRight('Invoice:', meta.invoiceNumber);
+  printer.leftRight('Date:', meta.dateTime);
+  printer.leftRight('Cashier:', meta.cashierName);
   if (meta.saleSource !== 'shop') {
     const lbl = meta.saleSource === 'whatsapp' ? 'WhatsApp' : 'Online';
-    printer.println(`Source:  ${lbl}`);
+    printer.leftRight('Source:', lbl);
   }
-  printer.println(DIVIDER_LIGHT);
-
-  // ── ITEMS HEADER ──────────────────────────────────────────────────────────
-  printer.println('Item');
-  printer.println(padLeft(`${'Qty'}   ${'Unit Price'}   ${'Total'}`, LINE_WIDTH));
-  printer.println(DIVIDER_LIGHT);
+  printer.drawLine('-');
 
   // ── LINE ITEMS ────────────────────────────────────────────────────────────
+  // Name on its own bold line (word-wraps to a 2nd/3rd line automatically
+  // when too long for one line — never truncated), then "qty x unit price"
+  // left vs. the line total right, same way Square/Toast/Clover-style
+  // receipts lay items out — a customer can check the math at a glance
+  // without hunting across three separately-aligned numbers.
   for (const item of items) {
-    printer.println('');                      // spacer BEFORE item (top breathing room)
-    printer.println(buildItemRow(item));      // name lines + values line
+    printer.bold(true);
+    printer.println(item.name);
+    printer.bold(false);
+    printer.leftRight(`  ${item.qty} x ${fmtAmount(item.unitPrice)}`, fmtAmount(item.lineTotal));
     if (item.discount > 0) {
-      printer.println(padLeft(`Disc: -Rs. ${fmtAmount(item.discount * (item.qty ?? 1))}`, LINE_WIDTH));
+      printer.leftRight('  Discount', `-${fmtAmount(item.discount * (item.qty ?? 1))}`);
     }
-    printer.println('');                      // spacer AFTER item (bottom breathing room)
+    printer.println('');
   }
 
-  printer.println(DIVIDER_LIGHT);
+  printer.drawLine('-');
 
   // ── TOTALS ────────────────────────────────────────────────────────────────
-  printer.alignRight();
-  printer.println(`Subtotal:  Rs. ${fmtAmount(totals.subtotal)}`);
-  if (totals.discount > 0) printer.println(`Discount: -Rs. ${fmtAmount(totals.discount)}`);
-  if (totals.shipping  > 0) printer.println(`Shipping:  Rs. ${fmtAmount(totals.shipping)}`);
-  if (totals.kokoCharge > 0) printer.println(`KOKO Fee:  Rs. ${fmtAmount(totals.kokoCharge)}`);
+  printer.leftRight('Subtotal', money(totals.subtotal));
+  if (totals.discount  > 0) printer.leftRight('Discount', `-${money(totals.discount)}`);
+  if (totals.shipping  > 0) printer.leftRight('Shipping', money(totals.shipping));
+  if (totals.kokoCharge > 0) printer.leftRight('KOKO Fee', money(totals.kokoCharge));
+  printer.drawLine('-');
+
+  // Inverted (black-bar) TOTAL — the one number a customer should be able
+  // to find instantly without reading the rest of the receipt.
   printer.bold(true);
   printer.setTextDoubleHeight();
-  printer.println(`TOTAL: Rs. ${fmtAmount(totals.total)}`);
+  printer.invert(true);
+  printer.leftRight('TOTAL', money(totals.total));
+  printer.invert(false);
   printer.setTextNormal();
   printer.bold(false);
-  printer.println(DIVIDER_LIGHT);
+  printer.drawLine('-');
 
   // ── PAYMENT ───────────────────────────────────────────────────────────────
-  printer.alignLeft();
-  printer.println(`Payment:  ${meta.paymentMethod}`);
+  printer.leftRight('Payment:', meta.paymentMethod);
   if (meta.paymentMethod === 'Cash' && totals.amountPaid > 0) {
-    printer.println(`Paid:     Rs. ${fmtAmount(totals.amountPaid)}`);
-    printer.println(`Change:   Rs. ${fmtAmount(totals.change)}`);
+    printer.leftRight('Paid:', money(totals.amountPaid));
+    printer.leftRight('Change:', money(totals.change));
   }
   if (meta.paymentMethod === 'COD') {
     const cod = saleData.cod_amount || saleData.codAmount || 0;
-    if (cod > 0) printer.println(`COD Amt:  Rs. ${fmtAmount(cod)}`);
+    if (cod > 0) printer.leftRight('COD Amt:', money(cod));
   }
 
   // ── FOOTER ────────────────────────────────────────────────────────────────
-  printer.println(DIVIDER_HEAVY);
+  printer.drawLine('=');
   printer.alignCenter();
   printer.bold(true);
   printer.println(shop.footer);
   printer.bold(false);
-  printer.println(DIVIDER_HEAVY);
+  printer.setTextNormal();
+  printer.println('Please keep this receipt for returns');
+  printer.drawLine('=');
 
   // Get the ESC/POS buffer from node-thermal-printer
   const printerBuffer = printer.getBuffer();

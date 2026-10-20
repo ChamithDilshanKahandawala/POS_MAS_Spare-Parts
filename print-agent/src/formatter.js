@@ -9,33 +9,6 @@ const SHOP = {
   footer:  'Thank You.. Come Again..',
 };
 
-const LINE_WIDTH = 48; // characters at standard font on 80mm
-
-/**
- * Pad a string on the left to a given width.
- */
-function padLeft(str, width) {
-  str = String(str);
-  return str.length >= width ? str : ' '.repeat(width - str.length) + str;
-}
-
-/**
- * Pad a string on the right to a given width.
- */
-function padRight(str, width) {
-  str = String(str);
-  return str.length >= width ? str : str + ' '.repeat(width - str.length);
-}
-
-/**
- * Truncate a string to maxLen, appending '...' if truncated.
- */
-function truncate(str, maxLen) {
-  str = String(str);
-  if (str.length <= maxLen) return str;
-  return str.slice(0, maxLen - 3) + '...';
-}
-
 /**
  * Format a number as Sri Lankan Rupees: "1,234.00"
  * (the "Rs." prefix is added in the formatter where needed)
@@ -61,23 +34,6 @@ function fmtDateTime(isoString) {
   } catch {
     return isoString;
   }
-}
-
-/**
- * Build one item row. Multi-line layout to prevent truncation:
- * Line 1: Full Item Name
- * Line 2: right-aligned Qty, Price, Total
- * Line 3: blank (for line gap)
- */
-function buildItemRow(item) {
-  const name    = String(item.name || item.product_name || 'Item');
-  const qty     = padLeft(String(item.qty ?? item.quantity), 4);
-  const price   = padLeft(fmtAmount(item.unitPrice ?? item.selling_price), 10);
-  const total   = padLeft(fmtAmount(item.lineTotal ?? item.line_total), 11);
-  
-  const valuesLine = padLeft(`${qty} ${price} ${total}`, LINE_WIDTH);
-  
-  return `${name}\n${valuesLine}`;
 }
 
 /**
@@ -135,14 +91,9 @@ export function formatReceipt(sale) {
       change,
     },
     helpers: {
-      LINE_WIDTH,
-      padLeft,
-      padRight,
-      truncate,
       fmtAmount,
-      buildItemRow,
     },
   };
 }
 
-export { SHOP, LINE_WIDTH, padLeft, padRight, truncate, fmtAmount, buildItemRow };
+export { SHOP, fmtAmount };
