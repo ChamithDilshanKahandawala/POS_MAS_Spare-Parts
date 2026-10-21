@@ -28,6 +28,7 @@ const Category = require('../models/Category');
 const VehicleMake = require('../models/VehicleMake');
 const Listing = require('../models/Listing');
 const Media = require('../models/Media');
+const PosSyncRun = require('../models/PosSyncRun');
 
 // Deliberately not config/db.js's connectDB() — that guard requires the
 // database to be exactly apexora_dev (it's built for the main app) and
@@ -57,6 +58,7 @@ async function wipeDatabase() {
     VehicleMake.deleteMany({}),
     Listing.deleteMany({}),
     Media.deleteMany({}),
+    PosSyncRun.deleteMany({}),
   ]);
 }
 
@@ -106,5 +108,6 @@ module.exports = {
   VehicleMake,
   Listing,
   Media,
+  PosSyncRun,
   mongoose,
 };

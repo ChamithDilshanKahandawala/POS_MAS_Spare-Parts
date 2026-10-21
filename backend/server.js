@@ -82,6 +82,7 @@ app.use('/api/sales',     require('./routes/saleRoutes'));
 app.use('/api/customers', require('./routes/customerRoutes'));
 app.use('/api/suppliers', require('./routes/supplierRoutes'));
 app.use('/api/returns',   require('./routes/returnRoutes'));
+app.use('/api/integration', require('./routes/integrationRoutes')); // Apexora marketplace — read-only, see routes/integrationRoutes.js
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'OK', time: new Date() }));

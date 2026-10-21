@@ -29,6 +29,7 @@ import ActivityLogPage from './pages/seller/ActivityLogPage';
 import NotificationsPage from './pages/seller/NotificationsPage';
 import CategoriesFeesPage from './pages/seller/CategoriesFeesPage';
 import ProductsPage from './pages/seller/ProductsPage';
+import ImportFromPosPage from './pages/seller/ImportFromPosPage';
 import ListingWizardPage from './pages/seller/wizard/ListingWizardPage';
 import ComingSoonSellerPage from './pages/seller/ComingSoonSellerPage';
 
@@ -52,6 +53,7 @@ const ActivityLogRoute = sellerRoute(ActivityLogPage);
 const NotificationsRoute = sellerRoute(NotificationsPage);
 const CategoriesFeesRoute = sellerRoute(CategoriesFeesPage);
 const ProductsRoute = sellerRoute(ProductsPage);
+const ImportFromPosRoute = sellerRoute(ImportFromPosPage);
 const ListingWizardRoute = sellerRoute(ListingWizardPage);
 
 export default function App() {
@@ -93,6 +95,7 @@ export default function App() {
                 <Route element={<RequireSeller />}>
                   <Route path="/seller" element={<SellerRoute />} />
                   <Route path="/seller/products" element={<ProductsRoute />} />
+                  <Route path="/seller/products/import-pos" element={<ImportFromPosRoute />} />
                   <Route path="/seller/products/new" element={<ListingWizardRoute />} />
                   <Route path="/seller/products/:id/edit" element={<ListingWizardRoute />} />
                   <Route path="/seller/orders" element={<ComingSoonSellerPage navKey="orders" milestone={6} />} />

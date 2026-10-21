@@ -40,6 +40,7 @@ const {
   listReviewQueue, getReviewDetail, approveListing, rejectListing, suspendListing, reinstateListing,
 } = require('../controllers/adminListingsController');
 const { getAdminMediaVariant } = require('../controllers/mediaController');
+const { getPosStatus, updatePosConnection } = require('../controllers/adminPosController');
 const { requireAuth, requirePlatform } = require('../middleware/authMiddleware');
 const { validate, requireValidObjectId } = require('../middleware/validate');
 const restrictFieldsToOwner = require('../middleware/restrictFieldsToOwner');
@@ -82,6 +83,14 @@ const updateOverridesBodySchema = z.object({
   commissionOverridePct: z.number().min(0).max(100).nullable().optional(),
   probationUntil: z.string().datetime().nullable().optional(),
   reviewExempt: z.boolean().optional(),
+  reason: z.string().trim().min(1, 'Reason is required'),
+}).strict();
+
+// --- POS connection (Milestone 4) ---
+const updatePosConnectionBodySchema = z.object({
+  enabled: z.boolean().optional(),
+  baseUrl: z.string().trim().url().optional(),
+  integrationKey: z.string().trim().min(8).optional(),
   reason: z.string().trim().min(1, 'Reason is required'),
 }).strict();
 
@@ -311,6 +320,23 @@ router.post(
   requirePlatform(PLATFORM_ROLES),
   requireValidObjectId('id'),
   asyncHandler(viewAsSeller)
+);
+
+// --- POS connection (Milestone 4) ---
+router.get(
+  '/sellers/:id/pos',
+  requireAuth,
+  requirePlatform(PLATFORM_ROLES),
+  requireValidObjectId('id'),
+  asyncHandler(getPosStatus)
+);
+router.patch(
+  '/sellers/:id/pos',
+  requireAuth,
+  requirePlatform(OWNER_ONLY),
+  requireValidObjectId('id'),
+  validate({ body: updatePosConnectionBodySchema }),
+  asyncHandler(updatePosConnection)
 );
 
 // --- Bank verification (Milestone 1B) ---

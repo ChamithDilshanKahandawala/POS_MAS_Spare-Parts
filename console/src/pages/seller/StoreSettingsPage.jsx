@@ -1,12 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, RefreshCw } from 'lucide-react';
 import {
   getMyStore, updateMyStore, uploadLogo, uploadBanner, getLogoBlob, getBannerBlob,
+  getMyPosStatus, syncPosNow,
 } from '../../api/services';
 import { useAuth } from '../../context/useAuth';
 import BankAccountTab from './BankAccountTab';
+import EmptyState from '../../components/EmptyState';
 
 const WEEKDAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
@@ -258,6 +260,101 @@ function ProfileTab() {
   );
 }
 
+const POS_STATUS_BADGE = { off: 'badge-blue', connected: 'badge-green', failing: 'badge-red' };
+
+function PosConnectionTab() {
+  const { t, i18n } = useTranslation(['seller', 'common']);
+  const { isActiveSellerOwner } = useAuth();
+  const [status, setStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+
+  const dateTimeFormatter = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Colombo' });
+
+  const load = useCallback(() => {
+    setLoading(true);
+    getMyPosStatus()
+      .then(({ data }) => setStatus(data))
+      .catch(() => toast.error(t('common:error.generic')))
+      .finally(() => setLoading(false));
+  }, [t]);
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { load(); }, [load]);
+
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      await syncPosNow();
+      toast.success(t('settings.pos.syncStarted'));
+      load();
+    } catch (err) {
+      toast.error(err.response?.data?.message || t('common:error.generic'));
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  if (loading || !status) return <div>{t('common:loading')}</div>;
+
+  if (!status.enabled) {
+    return <EmptyState title={t('settings.pos.notConnected')} description={t('settings.pos.notConnectedHint')} />;
+  }
+
+  return (
+    <div className="glass-card" style={{ padding: '20px', maxWidth: '640px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+        <span className={`badge ${POS_STATUS_BADGE[status.status]}`}>{t(`settings.pos.status.${status.status}`)}</span>
+        {isActiveSellerOwner && (
+          <button className="btn-secondary" disabled={syncing} onClick={handleSync}>
+            <RefreshCw size={14} /> {t('settings.pos.syncNow')}
+          </button>
+        )}
+      </div>
+
+      <Field label={t('settings.pos.baseUrl')} value={status.baseUrl} readOnly />
+      <Field label={t('settings.pos.keyLast4')} value={status.keyLast4 ? `•••• ${status.keyLast4}` : '—'} readOnly />
+      <Field
+        label={t('settings.pos.lastSuccessfulSync')}
+        value={status.lastSuccessfulSyncAt ? dateTimeFormatter.format(new Date(status.lastSuccessfulSyncAt)) : t('settings.pos.never')}
+        readOnly
+      />
+
+      <div style={{ marginTop: '18px' }}>
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>{t('settings.pos.recentRuns')}</div>
+        {status.runs.length === 0 ? (
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('settings.pos.noRuns')}</div>
+        ) : (
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>{t('settings.pos.table.started')}</th>
+                <th>{t('settings.pos.table.trigger')}</th>
+                <th>{t('settings.pos.table.status')}</th>
+                <th>{t('settings.pos.table.updated')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {status.runs.map((run) => (
+                <tr key={run._id}>
+                  <td>{dateTimeFormatter.format(new Date(run.startedAt))}</td>
+                  <td>{t(`settings.pos.trigger.${run.trigger}`)}</td>
+                  <td>
+                    <span className={`badge ${run.status === 'success' ? 'badge-green' : run.status === 'failed' ? 'badge-red' : 'badge-yellow'}`}>
+                      {t(`settings.pos.runStatus.${run.status}`)}
+                    </span>
+                  </td>
+                  <td>{run.listingsUpdated}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function StoreSettingsPage() {
   const { t } = useTranslation('seller');
   const [tab, setTab] = useState('profile');
@@ -273,9 +370,14 @@ export default function StoreSettingsPage() {
         <button className={tab === 'bank' ? 'btn-primary' : 'btn-secondary'} style={{ padding: '7px 14px', fontSize: '12px' }} onClick={() => setTab('bank')}>
           {t('settings.tabs.bank')}
         </button>
+        <button className={tab === 'pos' ? 'btn-primary' : 'btn-secondary'} style={{ padding: '7px 14px', fontSize: '12px' }} onClick={() => setTab('pos')}>
+          {t('settings.tabs.pos')}
+        </button>
       </div>
 
-      {tab === 'profile' ? <ProfileTab /> : <BankAccountTab />}
+      {tab === 'profile' && <ProfileTab />}
+      {tab === 'bank' && <BankAccountTab />}
+      {tab === 'pos' && <PosConnectionTab />}
     </div>
   );
 }

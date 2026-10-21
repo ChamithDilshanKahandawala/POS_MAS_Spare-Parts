@@ -113,6 +113,16 @@ export const deleteMyListing = (id) => api.delete(`/seller/listings/${id}`);
 export const duplicateMyListing = (id) => api.post(`/seller/listings/${id}/duplicate`, {});
 export const getCommissionPreview = (categoryId, priceCents) => api.get('/seller/listings/commission-preview', { params: { categoryId, priceCents } });
 
+// --- Seller: POS connection (Milestone 4) ---
+export const getMyPosStatus = () => api.get('/seller/pos/status');
+export const getPosProducts = (params) => api.get('/seller/pos/products', { params });
+export const importPosProducts = (posProductIds) => api.post('/seller/pos/import', { posProductIds });
+export const syncPosNow = () => api.post('/seller/pos/sync', {});
+
+// --- Admin: seller POS connection (Milestone 4) ---
+export const getSellerPosStatus = (id) => api.get(`/admin/sellers/${id}/pos`);
+export const updateSellerPosConnection = (id, body) => api.patch(`/admin/sellers/${id}/pos`, body);
+
 // Photos are much bigger than a JSON autosave body and can take far
 // longer to upload on a slow connection — the shared 30s client timeout
 // would cut off a perfectly good slow upload, so this gets its own,

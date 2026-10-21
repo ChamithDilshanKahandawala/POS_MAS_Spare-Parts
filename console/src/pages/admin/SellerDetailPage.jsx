@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import {
   getSeller, updateSellerStatus, updateSellerOverrides, viewAsSeller,
   getSellerBankFull, verifySellerBank, rejectSellerBank, getListingQueue,
+  getSellerPosStatus, updateSellerPosConnection,
 } from '../../api/services';
 import { useAuth } from '../../context/useAuth';
 import EmptyState from '../../components/EmptyState';
@@ -22,7 +23,8 @@ const TRANSITIONS = {
 
 const BANK_STATUS_BADGE = { none: 'badge-blue', pending: 'badge-yellow', verified: 'badge-green', rejected: 'badge-red' };
 
-const TABS = ['profile', 'status', 'commission', 'bank', 'activity', 'listings', 'orders', 'finance'];
+const TABS = ['profile', 'status', 'commission', 'bank', 'pos', 'activity', 'listings', 'orders', 'finance'];
+const POS_STATUS_BADGE = { off: 'badge-blue', connected: 'badge-green', failing: 'badge-red' };
 
 export default function SellerDetailPage() {
   const { t, i18n } = useTranslation(['admin', 'common']);
@@ -43,6 +45,9 @@ export default function SellerDetailPage() {
   const [reviewExempt, setReviewExempt] = useState(false);
   const [listings, setListings] = useState(null);
   const [listingsLoading, setListingsLoading] = useState(false);
+  const [posStatus, setPosStatus] = useState(null);
+  const [posLoading, setPosLoading] = useState(false);
+  const [posForm, setPosForm] = useState({ enabled: false, baseUrl: '', integrationKey: '', reason: '' });
 
   const load = useCallback(() => {
     setLoading(true);
@@ -76,6 +81,42 @@ export default function SellerDetailPage() {
       .catch(() => toast.error(t('common:error.generic')))
       .finally(() => setListingsLoading(false));
   }, [tab, id, listings, t]);
+
+  const loadPosStatus = useCallback(() => {
+    setPosLoading(true);
+    getSellerPosStatus(id)
+      .then(({ data }) => {
+        setPosStatus(data);
+        setPosForm((f) => ({ ...f, enabled: data.posConnection.enabled, baseUrl: data.posConnection.baseUrl }));
+      })
+      .catch(() => toast.error(t('common:error.generic')))
+      .finally(() => setPosLoading(false));
+  }, [id, t]);
+
+  // Lazy-loads the same way the Listings tab does above — only the first
+  // time this tab is actually opened.
+  useEffect(() => {
+    if (tab !== 'pos' || posStatus) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadPosStatus();
+  }, [tab, posStatus, loadPosStatus]);
+
+  const submitPosConnection = async () => {
+    if (!posForm.reason.trim()) return;
+    setSubmitting(true);
+    try {
+      const body = { enabled: posForm.enabled, baseUrl: posForm.baseUrl, reason: posForm.reason.trim() };
+      if (posForm.integrationKey.trim()) body.integrationKey = posForm.integrationKey.trim();
+      await updateSellerPosConnection(id, body);
+      toast.success(t('sellerDetail.pos.saved'));
+      setPosForm((f) => ({ ...f, integrationKey: '', reason: '' }));
+      loadPosStatus();
+    } catch (err) {
+      toast.error(err.response?.data?.message || t('common:error.generic'));
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const dateTimeFormatter = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Colombo' });
 
@@ -364,6 +405,106 @@ export default function SellerDetailPage() {
                 </div>
               </div>
             </div>
+          )}
+        </div>
+      )}
+
+      {tab === 'pos' && (
+        <div className="glass-card" style={{ padding: '20px', maxWidth: '640px' }}>
+          {posLoading || !posStatus ? <div>{t('common:loading')}</div> : (
+            <>
+              {(() => {
+                const lastRun = posStatus.runs[0] || null;
+                const computedStatus = !posStatus.posConnection.enabled
+                  ? 'off'
+                  : (lastRun?.status === 'failed' && posStatus.posConnection.consecutiveFailures >= 3 ? 'failing' : 'connected');
+                return (
+                  <span className={`badge ${POS_STATUS_BADGE[computedStatus]}`} style={{ marginBottom: '14px', display: 'inline-block' }}>
+                    {t(`sellerDetail.pos.status.${computedStatus}`)}
+                  </span>
+                );
+              })()}
+
+              <Field label={t('sellerDetail.pos.keyLast4')} value={posStatus.posConnection.keyLast4 ? `•••• ${posStatus.posConnection.keyLast4}` : '—'} />
+              <Field
+                label={t('sellerDetail.pos.lastSuccessfulSync')}
+                value={posStatus.posConnection.lastSuccessfulSyncAt ? dateTimeFormatter.format(new Date(posStatus.posConnection.lastSuccessfulSyncAt)) : t('sellerDetail.pos.never')}
+              />
+
+              {isPlatformOwner ? (
+                <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                    <input type="checkbox" checked={posForm.enabled} onChange={(e) => setPosForm((f) => ({ ...f, enabled: e.target.checked }))} />
+                    {t('sellerDetail.pos.enabledLabel')}
+                  </label>
+                  <div>
+                    <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('sellerDetail.pos.baseUrl')}</label>
+                    <input
+                      className="input-field" style={{ width: '100%', marginTop: '6px' }}
+                      placeholder="http://localhost:5001"
+                      value={posForm.baseUrl}
+                      onChange={(e) => setPosForm((f) => ({ ...f, baseUrl: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('sellerDetail.pos.integrationKey')}</label>
+                    <input
+                      className="input-field" style={{ width: '100%', marginTop: '6px' }}
+                      type="password"
+                      placeholder={t('sellerDetail.pos.integrationKeyPlaceholder')}
+                      value={posForm.integrationKey}
+                      onChange={(e) => setPosForm((f) => ({ ...f, integrationKey: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('sellerDetail.reasonLabel')}</label>
+                    <textarea
+                      className="input-field" style={{ width: '100%', minHeight: '60px', marginTop: '6px' }}
+                      placeholder={t('sellerDetail.reasonPlaceholder')}
+                      value={posForm.reason}
+                      onChange={(e) => setPosForm((f) => ({ ...f, reason: e.target.value }))}
+                    />
+                  </div>
+                  <button className="btn-primary" disabled={!posForm.reason.trim() || submitting} style={{ alignSelf: 'flex-start' }} onClick={submitPosConnection}>
+                    {t('sellerDetail.pos.save')}
+                  </button>
+                </div>
+              ) : (
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '12px' }}>{t('sellerDetail.commission.ownerOnly')}</div>
+              )}
+
+              <div style={{ marginTop: '20px' }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>{t('sellerDetail.pos.recentRuns')}</div>
+                {posStatus.runs.length === 0 ? (
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('sellerDetail.pos.noRuns')}</div>
+                ) : (
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>{t('sellerDetail.pos.table.started')}</th>
+                        <th>{t('sellerDetail.pos.table.trigger')}</th>
+                        <th>{t('sellerDetail.pos.table.status')}</th>
+                        <th>{t('sellerDetail.pos.table.updated')}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {posStatus.runs.map((run) => (
+                        <tr key={run._id}>
+                          <td>{dateTimeFormatter.format(new Date(run.startedAt))}</td>
+                          <td>{t(`sellerDetail.pos.trigger.${run.trigger}`)}</td>
+                          <td>
+                            <span className={`badge ${run.status === 'success' ? 'badge-green' : run.status === 'failed' ? 'badge-red' : 'badge-yellow'}`}>
+                              {t(`sellerDetail.pos.runStatus.${run.status}`)}
+                            </span>
+                          </td>
+                          <td>{run.listingsUpdated}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </>
           )}
         </div>
       )}

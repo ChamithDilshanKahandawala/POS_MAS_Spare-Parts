@@ -43,7 +43,8 @@
     "title": "Store settings",
     "tabs": {
       "profile": "Profile",
-      "bank": "Bank account"
+      "bank": "Bank account",
+      "pos": "POS connection"
     },
     "viewOnly": "Only the store owner can save changes",
     "profile": {
@@ -111,6 +112,38 @@
       "rejectedReason": "Rejection reason",
       "currentAccount": "On file: {{bankName}}, ending in {{last4}}",
       "noAccount": "No bank account on file yet"
+    },
+    "pos": {
+      "syncNow": "Sync now",
+      "syncStarted": "Sync started",
+      "baseUrl": "POS base URL",
+      "keyLast4": "Integration key",
+      "lastSuccessfulSync": "Last successful sync",
+      "never": "Never",
+      "recentRuns": "Recent sync runs",
+      "noRuns": "No sync runs yet",
+      "notConnected": "Not connected to a POS",
+      "notConnectedHint": "Ask Apexora to connect your POS to start importing and syncing products automatically.",
+      "status": {
+        "off": "Off",
+        "connected": "Connected",
+        "failing": "Failing"
+      },
+      "trigger": {
+        "scheduled": "Scheduled",
+        "manual": "Manual"
+      },
+      "runStatus": {
+        "running": "Running",
+        "success": "Success",
+        "failed": "Failed"
+      },
+      "table": {
+        "started": "Started",
+        "trigger": "Trigger",
+        "status": "Status",
+        "updated": "Listings updated"
+      }
     }
   },
   "staff": {
@@ -252,7 +285,8 @@
     "deleteConfirmTitle": "Delete this draft?",
     "deleted": "Deleted",
     "saved": "Saved",
-    "pagination": "Page {{page}} of {{pages}}"
+    "pagination": "Page {{page}} of {{pages}}",
+    "importFromPos": "Import from POS"
   },
   "wizard": {
     "backToProducts": "Back to products",
@@ -367,5 +401,27 @@
       "allGood": "Everything looks good — ready to submit",
       "noOptionsYet": "Nothing to fix"
     }
+  },
+  "importFromPos": {
+    "back": "Back to products",
+    "title": "Import from POS",
+    "subtitle": "Create draft listings from your POS products — add photos, fitment, and anything else through the normal wizard before publishing.",
+    "createDrafts": "Create drafts ({{count}})",
+    "searchPlaceholder": "Search by name or SKU",
+    "allCategories": "All POS categories",
+    "notImportedOnly": "Not yet imported",
+    "noResults": "No POS products match your filters",
+    "table": {
+      "name": "Name",
+      "sku": "SKU",
+      "category": "Category",
+      "price": "Price",
+      "stock": "Stock",
+      "status": "Status"
+    },
+    "linkedTo": "Linked to: {{title}}",
+    "notImported": "Not imported",
+    "createdCount": "{{count}} draft(s) created",
+    "skippedCount": "{{count}} skipped"
   }
 }

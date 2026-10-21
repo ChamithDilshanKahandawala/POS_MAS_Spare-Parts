@@ -15,6 +15,7 @@ const {
   submitListing, hideListing, showListing, deleteListing, duplicateListing, getCommissionPreview,
 } = require('../controllers/sellerListingsController');
 const { uploadListingMedia, deleteListingMedia, getSellerMediaVariant } = require('../controllers/mediaController');
+const { listProducts: listPosProducts, importSelected: importPosProducts, syncNow: syncPosNow, getStatus: getPosStatus } = require('../controllers/sellerPosController');
 const { requireAuth, requireSellerMember } = require('../middleware/authMiddleware');
 const requireActiveStore = require('../middleware/requireActiveStore');
 const requireFreshStepUp = require('../middleware/requireFreshStepUp');
@@ -156,6 +157,17 @@ const mediaVariantParamsSchema = z.object({
   id: z.string(),
   size: z.enum(['thumb', 'medium', 'large']),
   format: z.enum(['webp', 'jpg']),
+}).strict();
+
+// --- POS (Milestone 4) ---
+const posProductsQuerySchema = z.object({
+  search: z.string().trim().max(200).optional(),
+  category: z.string().trim().max(120).optional(),
+  notImported: z.enum(['true', 'false']).optional(),
+}).strict();
+
+const posImportBodySchema = z.object({
+  posProductIds: z.array(z.string().trim().min(1)).min(1).max(200),
 }).strict();
 
 // Bank step-up shares the login OTP's brute-force concerns — same shape
@@ -322,5 +334,37 @@ router.get(
   validate({ params: mediaVariantParamsSchema }),
   asyncHandler(getSellerMediaVariant)
 );
+
+// --- POS (Milestone 4) ---
+// Only visible/usable when the seller's own posConnection.enabled is
+// true — loadEnabledSeller (controllers/sellerPosController.js) 404s
+// every route below the same way for "disabled" as for "not a member",
+// so a non-connected seller can't distinguish the two. /status is the
+// one exception: it must work even when disabled, so the console can
+// show "off" rather than erroring.
+router.get(
+  '/pos/products',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  validate({ query: posProductsQuerySchema }),
+  asyncHandler(listPosProducts)
+);
+router.post(
+  '/pos/import',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  requireActiveStore,
+  validate({ body: posImportBodySchema }),
+  asyncHandler(importPosProducts)
+);
+router.post(
+  '/pos/sync',
+  requireAuth,
+  requireSellerMember(OWNER),
+  requireActiveStore,
+  validate({ body: z.object({}).strict() }),
+  asyncHandler(syncPosNow)
+);
+router.get('/pos/status', requireAuth, requireSellerMember(ANY_MEMBER), asyncHandler(getPosStatus));
 
 module.exports = router;

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Search, ChevronLeft, ChevronRight, Plus, Copy, Trash2, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Plus, Copy, Trash2, Eye, EyeOff, AlertTriangle, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
-  getMyListings, updateMyListing, hideMyListing, showMyListing, deleteMyListing, duplicateMyListing, getSellerCategoryTree,
+  getMyListings, updateMyListing, hideMyListing, showMyListing, deleteMyListing, duplicateMyListing, getSellerCategoryTree, getMyPosStatus,
 } from '../../api/services';
 import { localized } from '../../utils/localized';
 import EmptyState from '../../components/EmptyState';
@@ -58,6 +58,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [pendingDelete, setPendingDelete] = useState(null);
+  const [posEnabled, setPosEnabled] = useState(false);
 
   const tab = searchParams.get('status') || 'all';
   const search = searchParams.get('search') || '';
@@ -80,6 +81,13 @@ export default function ProductsPage() {
 
   useEffect(() => {
     getSellerCategoryTree().then(({ data }) => setCategories(flattenCategories(data.tree))).catch(() => {});
+  }, []);
+
+  // "Import from POS" only ever makes sense once the owner has turned
+  // the connection on (admin side) — getMyPosStatus never 404s, it just
+  // reports enabled: false for every seller that isn't connected.
+  useEffect(() => {
+    getMyPosStatus().then(({ data }) => setPosEnabled(data.enabled)).catch(() => {});
   }, []);
 
   const updateParam = (key, value) => {
@@ -135,9 +143,16 @@ export default function ProductsPage() {
     <div className="animate-fade">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
         <h1 className="page-title">{t('seller:nav.products')}</h1>
-        <Link className="btn-primary" to="/seller/products/new">
-          <Plus size={14} /> {t('products.addListing')}
-        </Link>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {posEnabled && (
+            <Link className="btn-secondary" to="/seller/products/import-pos">
+              <Download size={14} /> {t('products.importFromPos')}
+            </Link>
+          )}
+          <Link className="btn-primary" to="/seller/products/new">
+            <Plus size={14} /> {t('products.addListing')}
+          </Link>
+        </div>
       </div>
 
       <div style={{ display: 'flex', gap: '6px', marginBottom: '16px', flexWrap: 'wrap', borderBottom: '1px solid var(--border-light)', paddingBottom: '2px' }}>

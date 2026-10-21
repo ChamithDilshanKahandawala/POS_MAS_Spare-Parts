@@ -18,6 +18,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const sellerRoutes = require('./routes/sellerRoutes');
 const publicRoutes = require('./routes/publicRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const { startPosSyncScheduler } = require('./services/posSyncScheduler');
 
 const app = express();
 
@@ -73,6 +74,9 @@ async function start() {
   app.listen(PORT, () => {
     console.log(`🚀 Apexora marketplace API listening on port ${PORT} (NODE_ENV=${NODE_ENV})`);
   });
+  // Only runs for a real server start, never when server.js is required
+  // as `app` by the test suite — see services/posSyncScheduler.js.
+  startPosSyncScheduler();
 }
 
 if (require.main === module) {

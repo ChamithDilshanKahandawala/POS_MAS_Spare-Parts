@@ -46,7 +46,8 @@
     "title": "සාප්පු සැකසුම්",
     "tabs": {
       "profile": "පැතිකඩ",
-      "bank": "බැංකු ගිණුම"
+      "bank": "බැංකු ගිණුම",
+      "pos": "POS සම්බන්ධතාවය"
     },
     "viewOnly": "වෙනස්කම් සුරැකීමට හිමිකරුට පමණක් හැකිය",
     "profile": {
@@ -114,6 +115,38 @@
       "rejectedReason": "ප්‍රතික්ෂේප කිරීමේ හේතුව",
       "currentAccount": "ගොනුවේ ඇත: {{bankName}}, {{last4}} න් අවසන් වේ",
       "noAccount": "තවම බැංකු ගිණුමක් ගොනුවේ නැත"
+    },
+    "pos": {
+      "syncNow": "දැන් සමමුහුර්ත කරන්න",
+      "syncStarted": "සමමුහුර්තකරණය ආරම්භ විය",
+      "baseUrl": "POS මූලික URL",
+      "keyLast4": "ඒකාබද්ධ කිරීමේ යතුර",
+      "lastSuccessfulSync": "අවසන් සාර්ථක සමමුහුර්තකරණය",
+      "never": "කවදාවත් නැත",
+      "recentRuns": "මෑත සමමුහුර්තකරණ ක්‍රියාත්මක කිරීම්",
+      "noRuns": "තවම සමමුහුර්තකරණ ක්‍රියාත්මක කිරීම් නැත",
+      "notConnected": "POS වෙත සම්බන්ධ වී නැත",
+      "notConnectedHint": "නිෂ්පාදන ස්වයංක්‍රීයව ආනයනය කර සමමුහුර්ත කිරීම ආරම්භ කිරීමට ඔබේ POS එක සම්බන්ධ කරන්න Apexora ගෙන් ඉල්ලන්න.",
+      "status": {
+        "off": "අක්‍රිය",
+        "connected": "සම්බන්ධිතයි",
+        "failing": "අසාර්ථකයි"
+      },
+      "trigger": {
+        "scheduled": "කාලසටහන්ගත",
+        "manual": "හස්තීය"
+      },
+      "runStatus": {
+        "running": "ක්‍රියාත්මක වෙමින්",
+        "success": "සාර්ථකයි",
+        "failed": "අසාර්ථකයි"
+      },
+      "table": {
+        "started": "ආරම්භය",
+        "trigger": "ක්‍රියාකාරකය",
+        "status": "තත්ත්වය",
+        "updated": "යවන ලද නාමාවලි"
+      }
     }
   },
   "staff": {
@@ -255,7 +288,8 @@
     "deleteConfirmTitle": "මෙම කටුවදහර මකන්නද?",
     "deleted": "මකන ලදී",
     "saved": "සුරකින ලදී",
-    "pagination": "පිටුව {{page}} න් {{pages}}"
+    "pagination": "පිටුව {{page}} න් {{pages}}",
+    "importFromPos": "POS වලින් ආනයනය කරන්න"
   },
   "wizard": {
     "backToProducts": "නිෂ්පාදන වෙත ආපසු",
@@ -370,5 +404,27 @@
       "allGood": "සියල්ල හරි — ඉදිරිපත් කිරීමට සූදානම්",
       "noOptionsYet": "නිවැරදි කිරීමට කිසිවක් නැත"
     }
+  },
+  "importFromPos": {
+    "back": "නිෂ්පාදන වෙත ආපසු",
+    "title": "POS වලින් ආනයනය කරන්න",
+    "subtitle": "ඔබේ POS නිෂ්පාදනවලින් කටුපිටපත් නාමාවලි සාදන්න — පළ කිරීමට පෙර සාමාන්‍ය විශාරදයා හරහා ඡායාරූප, ගැලපුම, සහ වෙනත් සියල්ල එකතු කරන්න.",
+    "createDrafts": "කටුපිටපත් සාදන්න ({{count}})",
+    "searchPlaceholder": "නම හෝ SKU මගින් සොයන්න",
+    "allCategories": "සියලුම POS කාණ්ඩ",
+    "notImportedOnly": "තවම ආනයනය කර නැත",
+    "noResults": "ඔබේ පෙරහන් වලට ගැළපෙන POS නිෂ්පාදන නැත",
+    "table": {
+      "name": "නම",
+      "sku": "SKU",
+      "category": "කාණ්ඩය",
+      "price": "මිල",
+      "stock": "තොගය",
+      "status": "තත්ත්වය"
+    },
+    "linkedTo": "සම්බන්ධිතයි: {{title}}",
+    "notImported": "ආනයනය කර නැත",
+    "createdCount": "කටුපිටපත් {{count}} ක් සාදන ලදී",
+    "skippedCount": "{{count}} ක් මඟ හරින ලදී"
   }
 }

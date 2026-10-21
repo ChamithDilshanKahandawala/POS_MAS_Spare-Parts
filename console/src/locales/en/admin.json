@@ -59,7 +59,8 @@
       "listings": "Listings",
       "orders": "Orders",
       "finance": "Finance",
-      "bank": "Bank account"
+      "bank": "Bank account",
+      "pos": "POS connection"
     },
     "profile": {
       "legalName": "Legal name",
@@ -127,6 +128,39 @@
       "verify": "Verify",
       "verified": "Bank account verified",
       "rejected": "Bank account rejected"
+    },
+    "pos": {
+      "status": {
+        "off": "Off",
+        "connected": "Connected",
+        "failing": "Failing"
+      },
+      "keyLast4": "Integration key",
+      "lastSuccessfulSync": "Last successful sync",
+      "never": "Never",
+      "enabledLabel": "Connection enabled",
+      "baseUrl": "POS base URL",
+      "integrationKey": "Integration key",
+      "integrationKeyPlaceholder": "Leave blank to keep the current key",
+      "save": "Save (owner only)",
+      "saved": "POS connection updated",
+      "recentRuns": "Recent sync runs",
+      "noRuns": "No sync runs yet",
+      "trigger": {
+        "scheduled": "Scheduled",
+        "manual": "Manual"
+      },
+      "runStatus": {
+        "running": "Running",
+        "success": "Success",
+        "failed": "Failed"
+      },
+      "table": {
+        "started": "Started",
+        "trigger": "Trigger",
+        "status": "Status",
+        "updated": "Listings updated"
+      }
     }
   },
   "applications": {

@@ -92,6 +92,25 @@ const sellerSchema = new mongoose.Schema(
       verifiedAt: { type: Date, default: null },
       rejectedReason: { type: String, default: '' },
     },
+
+    // --- Milestone 4: POS connection (Seller 1 / Mudiyanse Auto Solutions
+    // for now). Admin-owner only turns this on, audited — see
+    // controllers/adminPosController.js. encryptedKey follows the same
+    // never-returned-by-default pattern as bankAccount.accountNumber
+    // above; only keyLast4 is ever shown ("key saved, ends in ••••1234").
+    posConnection: {
+      enabled: { type: Boolean, default: false },
+      baseUrl: { type: String, default: '' }, // e.g. http://localhost:5001 in dev
+      encryptedKey: { type: String, default: null, select: false },
+      keyLast4: { type: String, default: '' },
+      lastSuccessfulSyncAt: { type: Date, default: null },
+      consecutiveFailures: { type: Number, default: 0 },
+      // Set true once 3 consecutive sync failures have already been
+      // notified about, so the same notification isn't re-sent on every
+      // failed run after that — cleared back to false the moment a sync
+      // succeeds again.
+      failureNotified: { type: Boolean, default: false },
+    },
   },
   { timestamps: true }
 );

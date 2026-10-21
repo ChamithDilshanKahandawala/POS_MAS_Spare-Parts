@@ -25,6 +25,8 @@ const notificationSchema = new mongoose.Schema(
         'listing.suspended',
         'listing.reinstated',
         'listing.needs_update',
+        'pos.sync_failing',
+        'pos.product_removed',
       ],
     },
     title: { type: String, required: true },
