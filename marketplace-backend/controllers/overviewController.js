@@ -27,7 +27,8 @@ const getOverview = async (req, res) => {
   const needsAttention = await SellerApplication.find({ status: { $in: ['new', 'info_requested'] } })
     .sort({ createdAt: 1 })
     .limit(10)
-    .select('storeName status createdAt');
+    .select('storeName status createdAt')
+    .lean();
 
   res.json({
     activeSellers,

@@ -1,12 +1,19 @@
 const Category = require('../models/Category');
 const VehicleMake = require('../models/VehicleMake');
+const cache = require('../services/cache');
 
 // GET /api/public/catalog/categories — active categories, names/slugs/
 // icons only. No commission, no return/regulated/review rules, no
 // prohibitedKeywords — those are internal to Apexora and sellers, never
-// shown to shoppers.
+// shown to shoppers. Cached — this is read on nearly every page/wizard
+// step and categories change rarely; invalidated by every category write
+// (adminCategoriesController.js).
 const getPublicCategoryTree = async (req, res) => {
-  const categories = await Category.find({ active: true }).select('name slug icon parentId sortOrder');
+  let categories = cache.get('category:active:public');
+  if (!categories) {
+    categories = await Category.find({ active: true }).select('name slug icon parentId sortOrder').lean();
+    cache.set('category:active:public', categories);
+  }
   const byId = new Map(categories.map((c) => [String(c._id), { id: c._id, name: c.name, slug: c.slug, icon: c.icon, sortOrder: c.sortOrder, children: [] }]));
   const activeIds = new Set(byId.keys());
 
@@ -27,9 +34,15 @@ const getPublicCategoryTree = async (req, res) => {
   res.json({ tree: sortTree(roots) });
 };
 
-// GET /api/public/vehicles — active makes, active models only.
+// GET /api/public/vehicles — active makes, active models only. Cached —
+// read on every fitment-category wizard step; invalidated by every
+// vehicle make write (adminVehiclesController.js).
 const getPublicVehicles = async (req, res) => {
-  const makes = await VehicleMake.find({ active: true }).select('name type models').sort({ name: 1 });
+  let makes = cache.get('vehicleMake:active');
+  if (!makes) {
+    makes = await VehicleMake.find({ active: true }).select('name type models').sort({ name: 1 }).lean();
+    cache.set('vehicleMake:active', makes);
+  }
   const result = makes.map((m) => ({
     id: m._id,
     name: m.name,

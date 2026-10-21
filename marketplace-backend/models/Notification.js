@@ -35,6 +35,12 @@ const notificationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Serves the plain notification list (filter by user, sorted newest
+// first — listNotifications's main query).
 notificationSchema.index({ user: 1, createdAt: -1 });
+// Serves the unread-count query (listNotifications's second
+// countDocuments call: {user, read:false}) and would also serve an
+// unread-only list view if one gets added later.
+notificationSchema.index({ user: 1, read: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Notification', notificationSchema);

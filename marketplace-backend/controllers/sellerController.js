@@ -14,7 +14,7 @@ const { generateUniqueSlug } = require('../services/sellerSlug');
 // valid member, caught by the test suite (both the owner and staff
 // "succeeds for store A" cases failed until this was fixed).
 const getMyStore = async (req, res) => {
-  const seller = await Seller.findById(req.sellerId);
+  const seller = await Seller.findById(req.sellerId).lean();
   if (!seller) return res.status(404).json({ message: 'Seller not found' });
   res.json({ seller: stripFullAccountNumber(seller), myRole: req.sellerMember.role });
 };
@@ -35,7 +35,7 @@ const ownerOnlyPing = async (req, res) => {
 // silently ignored. Also the route requireActiveStore gates — a
 // suspended/closed store gets 403 here before this handler ever runs.
 const updateMyStore = async (req, res) => {
-  const before = await Seller.findById(req.sellerId);
+  const before = await Seller.findById(req.sellerId).lean();
   if (!before) return res.status(404).json({ message: 'Seller not found' });
 
   const patch = { ...req.body };
@@ -43,7 +43,7 @@ const updateMyStore = async (req, res) => {
     patch.slug = await generateUniqueSlug(patch.displayName, before._id);
   }
 
-  const seller = await Seller.findByIdAndUpdate(req.sellerId, patch, { new: true });
+  const seller = await Seller.findByIdAndUpdate(req.sellerId, patch, { new: true }).lean();
 
   await logAction({
     actor: req.user,

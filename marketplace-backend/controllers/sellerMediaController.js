@@ -47,7 +47,7 @@ const uploadBanner = uploadHandlerFor('banner', processBanner);
 // read an arbitrary file off disk.
 function getMediaHandlerFor(field) {
   return async (req, res) => {
-    const seller = await Seller.findById(req.sellerId).select(field);
+    const seller = await Seller.findById(req.sellerId).select(field).lean();
     if (!seller || !seller[field]?.path) return res.status(404).json({ message: 'Not found' });
     res.set('Content-Type', 'image/jpeg');
     res.send(readFile(seller[field].path));

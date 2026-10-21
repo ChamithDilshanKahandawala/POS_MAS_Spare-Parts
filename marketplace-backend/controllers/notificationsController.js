@@ -11,7 +11,7 @@ const listNotifications = async (req, res) => {
   const safeLimit = clampLimit(limit, 20, MAX_NOTIFICATIONS_LIMIT);
 
   const [entries, total, unreadCount] = await Promise.all([
-    Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).skip((page - 1) * safeLimit).limit(safeLimit),
+    Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).skip((page - 1) * safeLimit).limit(safeLimit).lean(),
     Notification.countDocuments({ user: req.user._id }),
     Notification.countDocuments({ user: req.user._id, read: false }),
   ]);
@@ -28,7 +28,7 @@ const markRead = async (req, res) => {
     { _id: req.params.id, user: req.user._id },
     { read: true },
     { new: true }
-  );
+  ).lean();
   if (!notification) return res.status(404).json({ message: 'Not found' });
   res.json({ notification });
 };

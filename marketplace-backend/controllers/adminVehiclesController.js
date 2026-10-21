@@ -1,6 +1,7 @@
 const VehicleMake = require('../models/VehicleMake');
 const { logAction } = require('../services/auditLog');
 const { clampLimit } = require('../utils/pagination');
+const cache = require('../services/cache');
 
 const MAX_MAKES_LIMIT = 200;
 
@@ -15,7 +16,7 @@ const listMakes = async (req, res) => {
 
   const safeLimit = clampLimit(limit, 50, MAX_MAKES_LIMIT);
   const [makes, total] = await Promise.all([
-    VehicleMake.find(query).sort({ name: 1 }).skip((page - 1) * safeLimit).limit(safeLimit),
+    VehicleMake.find(query).sort({ name: 1 }).skip((page - 1) * safeLimit).limit(safeLimit).lean(),
     VehicleMake.countDocuments(query),
   ]);
 
@@ -24,10 +25,11 @@ const listMakes = async (req, res) => {
 
 // POST /api/admin/vehicles
 const createMake = async (req, res) => {
-  const existing = await VehicleMake.findOne({ name: req.body.name, type: req.body.type });
+  const existing = await VehicleMake.findOne({ name: req.body.name, type: req.body.type }).lean();
   if (existing) return res.status(409).json({ message: 'A make with this name and type already exists' });
 
   const make = await VehicleMake.create(req.body);
+  cache.invalidate('vehicleMake:');
 
   await logAction({
     actor: req.user,
@@ -53,6 +55,7 @@ const updateMake = async (req, res) => {
   const before = make.toObject();
   Object.assign(make, req.body);
   await make.save();
+  cache.invalidate('vehicleMake:');
 
   await logAction({
     actor: req.user,

@@ -118,21 +118,30 @@ export default function ListingWizardPage() {
         setLastSaved(new Date());
         setSaveStatus('saved');
         clearBackup(listingId);
-      } catch {
-        // Any failure (network error, 5xx, or a timed-out request) goes
-        // through the same backoff — the spec doesn't ask us to tell
-        // those apart, and a seller on a flaky connection sees the same
-        // "not saved" problem either way. The retry re-enqueues `run`
-        // itself (not `flushSave`) so it stays serialized on saveQueue
-        // exactly like any other save attempt, with no self-reference to
-        // the memoized `flushSave` callback.
+      } catch (err) {
+        // Any failure (network error, 5xx, a timed-out request, or a 429
+        // from the autosave rate limiter) goes through the same backoff —
+        // a seller on a flaky connection, and a seller who's just typed
+        // fast enough to trip the limiter, see the same "not saved"
+        // problem either way, and never lose what they typed (it stays in
+        // listingRef + the localStorage backup regardless). The retry
+        // re-enqueues `run` itself (not `flushSave`) so it stays
+        // serialized on saveQueue exactly like any other save attempt,
+        // with no self-reference to the memoized `flushSave` callback.
         const attempt = retryAttempt.current;
         if (attempt < RETRY_DELAYS_MS.length) {
           setSaveStatus('retrying');
           retryAttempt.current = attempt + 1;
+          // A 429 carries how long to actually wait (Retry-After, in
+          // seconds) — prefer that over the fixed backoff when present,
+          // rather than guessing and possibly retrying into the same
+          // still-active limit window.
+          const retryAfterHeader = err?.response?.status === 429 ? err.response.headers?.['retry-after'] : null;
+          const retryAfterMs = retryAfterHeader ? Number(retryAfterHeader) * 1000 : NaN;
+          const delay = Number.isFinite(retryAfterMs) && retryAfterMs > 0 ? retryAfterMs : RETRY_DELAYS_MS[attempt];
           retryTimer.current = setTimeout(() => {
             saveQueue.current = saveQueue.current.then(run, run);
-          }, RETRY_DELAYS_MS[attempt]);
+          }, delay);
         } else {
           setSaveStatus('error');
         }

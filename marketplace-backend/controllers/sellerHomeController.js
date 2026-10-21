@@ -25,7 +25,7 @@ function buildChecklist(seller, hasAnyListing) {
 // don't exist yet — ordersToday/pendingPayout are null, never 0, so the
 // UI can't mistake "no data yet" for "zero today").
 const getHome = async (req, res) => {
-  const seller = await Seller.findById(req.sellerId);
+  const seller = await Seller.findById(req.sellerId).lean();
   if (!seller) return res.status(404).json({ message: 'Seller not found' });
 
   // "List your first product" means actually submitted it, not just

@@ -61,7 +61,7 @@ async function flagListingsForCategoryChange(categoryId) {
   }
 
   for (const [sellerId, count] of flaggedBySeller) {
-    const members = await SellerMember.find({ seller: sellerId, status: 'active' });
+    const members = await SellerMember.find({ seller: sellerId, status: 'active' }).lean();
     await Promise.all(members.map((m) => notify({
       userId: m.user,
       type: 'listing.needs_update',

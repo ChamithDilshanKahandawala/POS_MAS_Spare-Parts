@@ -44,12 +44,18 @@ const { requireAuth, requirePlatform } = require('../middleware/authMiddleware')
 const { validate, requireValidObjectId } = require('../middleware/validate');
 const restrictFieldsToOwner = require('../middleware/restrictFieldsToOwner');
 const asyncHandler = require('../middleware/asyncHandler');
+const { writeLimiter } = require('../middleware/rateLimiter');
 const { FIELD_TYPES } = require('../models/Category');
 const { VEHICLE_TYPES } = require('../models/VehicleMake');
 const { REJECTION_REASONS } = require('../models/Listing');
 
 const PLATFORM_ROLES = ['platform_owner', 'platform_staff'];
 const OWNER_ONLY = ['platform_owner'];
+
+// A broad safety net against hammering any admin write route — keyed by
+// user when authenticated, by IP otherwise (middleware/rateLimiter.js).
+// Reads are never throttled by this (writeLimiter skips GET/HEAD).
+router.use(writeLimiter);
 
 const OBJECT_ID_RE = /^[0-9a-fA-F]{24}$/;
 

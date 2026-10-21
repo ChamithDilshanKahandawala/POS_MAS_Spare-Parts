@@ -69,7 +69,11 @@ const requireSellerMember = (roles) => async (req, res, next) => {
       return res.status(404).json({ message: 'Seller not found' });
     }
 
-    const membership = await SellerMember.findOne({ user: req.user._id, seller: sellerId, status: 'active' });
+    // Never .save()'d by anything downstream — req.sellerMember already
+    // has to tolerate being a plain object anyway (the view-as branch
+    // above sets it to one), so this is safe to lean like the rest of
+    // this file's read-only lookups.
+    const membership = await SellerMember.findOne({ user: req.user._id, seller: sellerId, status: 'active' }).lean();
     if (!membership) {
       return res.status(404).json({ message: 'Seller not found' });
     }

@@ -21,7 +21,7 @@ const listActivity = async (req, res) => {
 
   const safeLimit = clampLimit(limit, 50, MAX_ACTIVITY_LIMIT);
   const [entries, total] = await Promise.all([
-    AuditLog.find(query).populate('actor', 'name email').sort({ createdAt: -1 }).skip((page - 1) * safeLimit).limit(safeLimit),
+    AuditLog.find(query).populate('actor', 'name email').sort({ createdAt: -1 }).skip((page - 1) * safeLimit).limit(safeLimit).lean(),
     AuditLog.countDocuments(query),
   ]);
 

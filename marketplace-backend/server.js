@@ -38,7 +38,14 @@ app.use(cors({
   credentials: true,
 }));
 
-app.use(express.json());
+// An explicit, intentional cap rather than Express's own default
+// (100kb) — generous enough for the largest legitimate body here (a
+// category's full attributeSchema with many options, or a listing's
+// localized text fields), small enough that a JSON body can't be used
+// to exhaust memory. File uploads go through multer separately (its own
+// size limits in middleware/upload.js and middleware/uploadMedia.js) and
+// are unaffected by this.
+app.use(express.json({ limit: '200kb' }));
 
 app.get('/', (req, res) => res.json({ message: 'Apexora marketplace API' }));
 

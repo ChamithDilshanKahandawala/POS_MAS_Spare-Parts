@@ -61,7 +61,7 @@ const stepUpVerify = async (req, res) => {
 // defensive way updateBank() below does — never trust one layer alone
 // for something this sensitive.
 const getBank = async (req, res) => {
-  const seller = await Seller.findById(req.sellerId);
+  const seller = await Seller.findById(req.sellerId).lean();
   if (!seller) return res.status(404).json({ message: 'Seller not found' });
   res.json({ bankAccount: stripFullAccountNumber(seller).bankAccount });
 };
@@ -104,7 +104,7 @@ const updateBank = async (req, res) => {
   });
 
   if (wasVerified) {
-    const platformOwners = await User.find({ platformRole: 'platform_owner' });
+    const platformOwners = await User.find({ platformRole: 'platform_owner' }).lean();
     await Promise.all(platformOwners.map((owner) => notify({
       userId: owner._id,
       type: 'bank.resubmitted',

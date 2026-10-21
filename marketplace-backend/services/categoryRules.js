@@ -9,7 +9,7 @@ async function getAncestorChain(category) {
   const chain = [category];
   let current = category;
   while (current.parentId) {
-    current = await Category.findById(current.parentId);
+    current = await Category.findById(current.parentId).lean();
     if (!current) break;
     chain.unshift(current);
   }
@@ -70,13 +70,13 @@ function mergeEffectiveRules(chain) {
 // Global platform keywords are merged in here too, not in
 // mergeEffectiveRules, since they come from a different collection.
 async function getEffectiveCategory(categoryId) {
-  const category = await Category.findById(categoryId);
+  const category = await Category.findById(categoryId).lean();
   if (!category) return null;
 
   const chain = await getAncestorChain(category);
   const effective = mergeEffectiveRules(chain);
 
-  const settings = await PlatformSettings.findById('platform-settings');
+  const settings = await PlatformSettings.findById('platform-settings').lean();
   const globalKeywords = (settings?.prohibitedKeywords || []).map((k) => k.toLowerCase());
   const prohibitedKeywords = [...new Set([...globalKeywords, ...effective.prohibitedKeywords])];
 
@@ -111,7 +111,7 @@ function buildTree(categories, parentId = null) {
 // category" (public listings, the drift-flagging sweep) means everything
 // under it too, not just exact matches.
 async function getDescendantAndSelfIds(categoryId) {
-  const all = await Category.find({}).select('_id parentId');
+  const all = await Category.find({}).select('_id parentId').lean();
   const ids = new Set([String(categoryId)]);
   let grew = true;
   while (grew) {

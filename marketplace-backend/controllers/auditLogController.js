@@ -26,7 +26,7 @@ const listAuditLog = async (req, res) => {
   const safeLimit = clampLimit(limit, 50, MAX_AUDIT_LOG_LIMIT);
 
   const [entries, total] = await Promise.all([
-    AuditLog.find(query).populate('actor', 'name email').sort({ createdAt: -1 }).skip((page - 1) * safeLimit).limit(safeLimit),
+    AuditLog.find(query).populate('actor', 'name email').sort({ createdAt: -1 }).skip((page - 1) * safeLimit).limit(safeLimit).lean(),
     AuditLog.countDocuments(query),
   ]);
 
@@ -45,7 +45,7 @@ const exportAuditLogCsv = async (req, res) => {
   const { actor, action, targetType, from, to } = req.query;
   const query = buildQuery({ actor, action, targetType, from, to });
 
-  const entries = await AuditLog.find(query).populate('actor', 'name email').sort({ createdAt: -1 });
+  const entries = await AuditLog.find(query).populate('actor', 'name email').sort({ createdAt: -1 }).lean();
 
   const header = ['Time (UTC)', 'Actor', 'Role', 'Action', 'Target type', 'Target ID', 'Summary'];
   const rows = entries.map((e) => [

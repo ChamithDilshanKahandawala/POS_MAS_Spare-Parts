@@ -18,7 +18,7 @@ async function generateUniqueSlug(name, excludeSellerId = null) {
   for (;;) {
     const query = { slug: candidate };
     if (excludeSellerId) query._id = { $ne: excludeSellerId };
-    const existing = await Seller.findOne(query).select('_id');
+    const existing = await Seller.findOne(query).select('_id').lean();
     if (!existing) return candidate;
     candidate = `${base}-${n}`;
     n += 1;

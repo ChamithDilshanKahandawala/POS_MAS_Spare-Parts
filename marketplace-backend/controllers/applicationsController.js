@@ -17,7 +17,7 @@ const listApplications = async (req, res) => {
 
   const safeLimit = clampLimit(limit, 20, MAX_APPLICATIONS_LIMIT);
   const [applications, total] = await Promise.all([
-    SellerApplication.find(query).sort({ createdAt: 1 }).skip((page - 1) * safeLimit).limit(safeLimit),
+    SellerApplication.find(query).sort({ createdAt: 1 }).skip((page - 1) * safeLimit).limit(safeLimit).lean(),
     SellerApplication.countDocuments(query),
   ]);
 
@@ -26,7 +26,7 @@ const listApplications = async (req, res) => {
 
 // GET /api/admin/applications/:id
 const getApplicationDetail = async (req, res) => {
-  const application = await SellerApplication.findById(req.params.id);
+  const application = await SellerApplication.findById(req.params.id).lean();
   if (!application) return res.status(404).json({ message: 'Application not found' });
   res.json({ application });
 };
@@ -36,7 +36,7 @@ const getApplicationDetail = async (req, res) => {
 // from the client — it's looked up on the application record, so this
 // can't be used to read an arbitrary file off disk.
 const getApplicationDocument = async (req, res) => {
-  const application = await SellerApplication.findById(req.params.id);
+  const application = await SellerApplication.findById(req.params.id).lean();
   if (!application) return res.status(404).json({ message: 'Application not found' });
 
   const document = application.documents.find((d) => d.type === req.params.type);

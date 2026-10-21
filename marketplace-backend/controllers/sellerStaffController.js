@@ -9,8 +9,8 @@ const { createInvite } = require('../services/invites');
 // controllers/platformStaffController.js's listPlatformStaff.
 const listStaff = async (req, res) => {
   const [members, pendingInvites] = await Promise.all([
-    SellerMember.find({ seller: req.sellerId, status: 'active' }).populate('user', 'name email'),
-    Invite.find({ seller: req.sellerId, role: 'seller_staff', status: 'pending', expiresAt: { $gt: new Date() } }).select('email expiresAt createdAt'),
+    SellerMember.find({ seller: req.sellerId, status: 'active' }).populate('user', 'name email').lean(),
+    Invite.find({ seller: req.sellerId, role: 'seller_staff', status: 'pending', expiresAt: { $gt: new Date() } }).select('email expiresAt createdAt').lean(),
   ]);
   res.json({ members, pendingInvites });
 };
@@ -19,8 +19,8 @@ const listStaff = async (req, res) => {
 const inviteStaff = async (req, res) => {
   const { email } = req.body;
 
-  const seller = await Seller.findById(req.sellerId).select('name');
-  const members = await SellerMember.find({ seller: req.sellerId, status: 'active' }).populate('user', 'email');
+  const seller = await Seller.findById(req.sellerId).select('name').lean();
+  const members = await SellerMember.find({ seller: req.sellerId, status: 'active' }).populate('user', 'email').lean();
   if (members.some((m) => m.user?.email === email)) {
     return res.status(409).json({ message: 'This person is already on your team' });
   }

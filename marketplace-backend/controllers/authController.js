@@ -92,7 +92,7 @@ const refresh = async (req, res) => {
     return res.status(401).json({ message: 'Invalid or expired refresh token' });
   }
 
-  const user = await User.findById(decoded.id);
+  const user = await User.findById(decoded.id).lean();
   if (!user || !user.isActive) return res.status(401).json({ message: 'Invalid or expired refresh token' });
   if (!user.refreshTokenExpiresAt || user.refreshTokenExpiresAt < new Date()) {
     return res.status(401).json({ message: 'Invalid or expired refresh token' });
@@ -122,7 +122,7 @@ const logout = async (req, res) => {
 // could assert on its own. This is what drives the Admin/My-store
 // switcher's options.
 const getMe = async (req, res) => {
-  const memberships = await SellerMember.find({ user: req.user._id, status: 'active' }).populate('seller', 'name status');
+  const memberships = await SellerMember.find({ user: req.user._id, status: 'active' }).populate('seller', 'name status').lean();
   res.json({
     user: { id: req.user._id, name: req.user.name, email: req.user.email, platformRole: req.user.platformRole },
     sellerMemberships: memberships.map((m) => ({

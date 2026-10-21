@@ -53,7 +53,7 @@ const listListings = async (req, res) => {
   const safeLimit = clampLimit(limit, 20, MAX_LISTINGS_LIMIT);
   const sellerObjectId = new mongoose.Types.ObjectId(req.sellerId);
   const [listings, total, counts, needsUpdateCount] = await Promise.all([
-    Listing.find(query).sort({ updatedAt: -1 }).skip((page - 1) * safeLimit).limit(safeLimit).populate('images'),
+    Listing.find(query).sort({ updatedAt: -1 }).skip((page - 1) * safeLimit).limit(safeLimit).populate('images').lean(),
     Listing.countDocuments(query),
     Listing.aggregate([{ $match: { seller: sellerObjectId } }, { $group: { _id: '$status', count: { $sum: 1 } } }]),
     Listing.countDocuments({ seller: req.sellerId, needsUpdate: true }),
@@ -63,7 +63,7 @@ const listListings = async (req, res) => {
   for (const row of counts) if (countsByStatus[row._id] !== undefined) countsByStatus[row._id] = row.count;
 
   res.json({
-    listings: listings.map((l) => ({ ...l.toObject(), hasPendingRevision: !!l.pendingRevision?.fields })),
+    listings: listings.map((l) => ({ ...l, hasPendingRevision: !!l.pendingRevision?.fields })),
     total,
     page: Number(page),
     pages: Math.ceil(total / safeLimit),
@@ -73,11 +73,11 @@ const listListings = async (req, res) => {
 
 // GET /api/seller/listings/:id
 const getListingDetail = async (req, res) => {
-  const listing = await Listing.findOne({ _id: req.params.id, seller: req.sellerId }).populate('images');
+  const listing = await Listing.findOne({ _id: req.params.id, seller: req.sellerId }).populate('images').lean();
   if (!listing) return res.status(404).json({ message: 'Listing not found' });
 
   const resolved = await resolveEffective(listing.categoryId);
-  const seller = await Seller.findById(req.sellerId);
+  const seller = await Seller.findById(req.sellerId).lean();
 
   res.json({
     listing,
@@ -138,7 +138,7 @@ const updateListing = async (req, res) => {
   // seller's (404, not 400 — same "can't confirm it exists" reasoning as
   // requireSellerMember's X-Seller-Id handling).
   if (body.images) {
-    const owned = await Media.find({ _id: { $in: body.images }, seller: req.sellerId });
+    const owned = await Media.find({ _id: { $in: body.images }, seller: req.sellerId }).lean();
     if (owned.length !== body.images.length) return res.status(404).json({ message: 'One or more photos were not found' });
     const previousIds = (listing.images || []).map(String);
     const nextIds = body.images.map(String);
@@ -220,7 +220,7 @@ const updateListing = async (req, res) => {
   const problems = runListingChecks(merged, resolved.effective);
   if (problems.length > 0) return res.json({ listing, problems });
 
-  const seller = await Seller.findById(req.sellerId);
+  const seller = await Seller.findById(req.sellerId).lean();
   const reviewRequired = await needsReview({ seller, effective: resolved.effective, categoryChanged });
 
   const contentPatch = {};
@@ -257,13 +257,13 @@ const updateListing = async (req, res) => {
 // POST /api/seller/listings/:id/check — dry run, never saves. Lets the
 // wizard's Preview step show a live problem checklist before Submit.
 const checkListingDraft = async (req, res) => {
-  const listing = await Listing.findOne({ _id: req.params.id, seller: req.sellerId });
+  const listing = await Listing.findOne({ _id: req.params.id, seller: req.sellerId }).lean();
   if (!listing) return res.status(404).json({ message: 'Listing not found' });
 
   const resolved = await resolveEffective(listing.categoryId);
   if (!resolved) return res.status(404).json({ message: 'Category not found' });
 
-  const problems = runListingChecks(listing.toObject(), resolved.effective);
+  const problems = runListingChecks(listing, resolved.effective);
   res.json({ problems });
 };
 
@@ -282,7 +282,7 @@ const submitListing = async (req, res) => {
   const problems = runListingChecks(listing.toObject(), resolved.effective);
   if (problems.length > 0) return res.json({ listing, problems });
 
-  const seller = await Seller.findById(req.sellerId);
+  const seller = await Seller.findById(req.sellerId).lean();
   const reviewRequired = await needsReview({ seller, effective: resolved.effective, categoryChanged: false });
 
   const from = listing.status;
@@ -333,7 +333,7 @@ const deleteListing = async (req, res) => {
   if (!listing) return res.status(404).json({ message: 'Listing not found' });
   if (listing.status !== 'draft') return res.status(409).json({ message: 'Only draft listings can be deleted.' });
 
-  const media = await Media.find({ listing: listing._id });
+  const media = await Media.find({ listing: listing._id }).lean();
   for (const m of media) {
     for (const size of ['thumb', 'medium', 'large']) {
       deleteFile(m.variants[size].webp);
@@ -356,7 +356,7 @@ const deleteListing = async (req, res) => {
 // complexity of two listings sharing ownership of the same Media rows) —
 // the seller re-uploads for the new listing.
 const duplicateListing = async (req, res) => {
-  const original = await Listing.findOne({ _id: req.params.id, seller: req.sellerId });
+  const original = await Listing.findOne({ _id: req.params.id, seller: req.sellerId }).lean();
   if (!original) return res.status(404).json({ message: 'Listing not found' });
 
   const copy = await Listing.create({
@@ -391,7 +391,7 @@ const getCommissionPreview = async (req, res) => {
   const { categoryId, priceCents } = req.query;
   const resolved = await resolveEffective(categoryId);
   if (!resolved) return res.status(404).json({ message: 'Category not found' });
-  const seller = await Seller.findById(req.sellerId);
+  const seller = await Seller.findById(req.sellerId).lean();
   res.json(commissionPreview({ category: resolved.category, seller, priceCents: Number(priceCents) }));
 };
 

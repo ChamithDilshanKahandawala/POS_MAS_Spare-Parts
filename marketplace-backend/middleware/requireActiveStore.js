@@ -7,7 +7,7 @@ const Seller = require('../models/Seller');
 // session never reaches here on a write — requireSellerMember already
 // 403s every non-GET for it before this middleware would run.
 const requireActiveStore = async (req, res, next) => {
-  const seller = await Seller.findById(req.sellerId).select('status');
+  const seller = await Seller.findById(req.sellerId).select('status').lean();
   if (!seller) return res.status(404).json({ message: 'Seller not found' });
   if (seller.status === 'suspended' || seller.status === 'closed') {
     return res.status(403).json({ message: `This store is ${seller.status} — contact Apexora support to resolve this before making changes.` });

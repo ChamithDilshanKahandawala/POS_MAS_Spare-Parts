@@ -4,7 +4,7 @@ const { logAction } = require('../services/auditLog');
 // GET /api/admin/settings — any platform role can read; see routes for
 // why only owner can save.
 const getSettings = async (req, res) => {
-  const settings = await PlatformSettings.findById('platform-settings') || await PlatformSettings.create({});
+  const settings = await PlatformSettings.findById('platform-settings').lean() || await PlatformSettings.create({});
   res.json({ settings });
 };
 

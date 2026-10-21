@@ -12,7 +12,7 @@ const { clampLimit } = require('../utils/pagination');
 const MAX_QUEUE_LIMIT = 100;
 
 async function regulatedCategoryIds() {
-  const categories = await Category.find({});
+  const categories = await Category.find({}).lean();
   const ids = [];
   for (const c of categories) {
     const resolved = await getEffectiveCategory(c._id);
@@ -53,13 +53,14 @@ const listReviewQueue = async (req, res) => {
   const [listings, total] = await Promise.all([
     Listing.find(query).sort({ updatedAt: 1 }).skip((page - 1) * safeLimit).limit(safeLimit)
       .populate('seller', 'name displayName status')
-      .populate('categoryId', 'name slug'),
+      .populate('categoryId', 'name slug')
+      .lean(),
     Listing.countDocuments(query),
   ]);
 
   res.json({
     listings: listings.map((l) => ({
-      ...l.toObject(),
+      ...l,
       isRevision: !!l.pendingRevision?.fields,
     })),
     total,
@@ -88,17 +89,17 @@ function diffRevision(listing) {
 // plus (for a revision) the live-vs-proposed diff, plus seller/probation
 // context an admin needs to decide.
 const getReviewDetail = async (req, res) => {
-  const listing = await Listing.findById(req.params.id).populate('images').populate('categoryId');
+  const listing = await Listing.findById(req.params.id).populate('images').populate('categoryId').lean();
   if (!listing) return res.status(404).json({ message: 'Listing not found' });
 
-  const seller = await Seller.findById(listing.seller);
+  const seller = await Seller.findById(listing.seller).lean();
   const resolved = await getEffectiveCategory(listing.categoryId._id);
   const everPublished = await countEverPublished(listing.seller);
   const onProbation = await isSellerOnProbation(listing.seller);
 
   res.json({
     listing,
-    customerView: toPublicListing({ ...listing.toObject(), seller }),
+    customerView: toPublicListing({ ...listing, seller }),
     effective: resolved?.effective || null,
     isRevision: !!listing.pendingRevision?.fields,
     revisionDiff: diffRevision(listing),
@@ -107,7 +108,7 @@ const getReviewDetail = async (req, res) => {
 };
 
 async function notifyOwnersAndStaff(sellerId, payload) {
-  const members = await SellerMember.find({ seller: sellerId, status: 'active' });
+  const members = await SellerMember.find({ seller: sellerId, status: 'active' }).lean();
   await Promise.all(members.map((m) => notify({ userId: m.user, ...payload })));
 }
 

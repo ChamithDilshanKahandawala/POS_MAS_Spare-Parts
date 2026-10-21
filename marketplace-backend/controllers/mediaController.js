@@ -14,7 +14,7 @@ const MEDIA_SUBDIR = 'listing-media';
 // seller owns). All-or-nothing: if any file in the batch fails the real
 // magic-byte/size check, nothing in the batch is saved.
 const uploadListingMedia = async (req, res) => {
-  const listing = await Listing.findOne({ _id: req.params.id, seller: req.sellerId });
+  const listing = await Listing.findOne({ _id: req.params.id, seller: req.sellerId }).lean();
   if (!listing) return res.status(404).json({ message: 'Listing not found' });
 
   const files = req.files || [];
@@ -74,7 +74,7 @@ function streamVariant(media, size, format, res) {
 
 // GET /api/seller/media/:id/:size/:format — own media only.
 const getSellerMediaVariant = async (req, res) => {
-  const media = await Media.findOne({ _id: req.params.id, seller: req.sellerId });
+  const media = await Media.findOne({ _id: req.params.id, seller: req.sellerId }).lean();
   if (!media) return res.status(404).json({ message: 'Not found' });
   streamVariant(media, req.params.size, req.params.format, res);
 };
@@ -83,7 +83,7 @@ const getSellerMediaVariant = async (req, res) => {
 // platform staff reviewing a listing need to see the real photos
 // regardless of who uploaded them.
 const getAdminMediaVariant = async (req, res) => {
-  const media = await Media.findById(req.params.id);
+  const media = await Media.findById(req.params.id).lean();
   if (!media) return res.status(404).json({ message: 'Not found' });
   streamVariant(media, req.params.size, req.params.format, res);
 };
@@ -98,9 +98,9 @@ const getAdminMediaVariant = async (req, res) => {
 // revision is approved, so the `images: media._id` check below is what
 // actually excludes it, not just the listing's status.
 const getPublicMediaVariant = async (req, res) => {
-  const media = await Media.findById(req.params.id);
+  const media = await Media.findById(req.params.id).lean();
   if (!media || !media.listing) return res.status(404).json({ message: 'Not found' });
-  const listing = await Listing.findOne({ _id: media.listing, status: 'published', images: media._id }).select('_id');
+  const listing = await Listing.findOne({ _id: media.listing, status: 'published', images: media._id }).select('_id').lean();
   if (!listing) return res.status(404).json({ message: 'Not found' });
   streamVariant(media, req.params.size, req.params.format, res);
 };

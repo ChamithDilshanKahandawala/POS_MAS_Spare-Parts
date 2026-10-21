@@ -13,7 +13,7 @@ const MAX_SELLERS_LIMIT = 100;
 // every active owner/staff member of a seller, so a notification reaches
 // whoever's actually running the store, not just the owner.
 async function notifyStoreMembers(sellerId, { type, title, body, link }) {
-  const members = await SellerMember.find({ seller: sellerId, status: 'active' }).select('user');
+  const members = await SellerMember.find({ seller: sellerId, status: 'active' }).select('user').lean();
   await Promise.all(members.map((m) => notify({ userId: m.user, type, title, body, link })));
 }
 
@@ -38,18 +38,18 @@ const listSellers = async (req, res) => {
   sortObj[sortField] = sort.startsWith('-') ? -1 : 1;
 
   const [sellers, total] = await Promise.all([
-    Seller.find(query).sort(sortObj).skip((page - 1) * safeLimit).limit(safeLimit),
+    Seller.find(query).sort(sortObj).skip((page - 1) * safeLimit).limit(safeLimit).lean(),
     Seller.countDocuments(query),
   ]);
 
   // Owner name per row, without an N+1 query per seller.
   const sellerIds = sellers.map((s) => s._id);
-  const owners = await SellerMember.find({ seller: { $in: sellerIds }, role: 'seller_owner', status: 'active' }).populate('user', 'name email');
+  const owners = await SellerMember.find({ seller: { $in: sellerIds }, role: 'seller_owner', status: 'active' }).populate('user', 'name email').lean();
   const ownerBySellerId = {};
   for (const o of owners) ownerBySellerId[o.seller.toString()] = o.user;
 
   res.json({
-    sellers: sellers.map((s) => ({ ...s.toObject(), owner: ownerBySellerId[s._id.toString()] || null })),
+    sellers: sellers.map((s) => ({ ...s, owner: ownerBySellerId[s._id.toString()] || null })),
     total,
     page: Number(page),
     pages: Math.ceil(total / safeLimit),
@@ -58,11 +58,11 @@ const listSellers = async (req, res) => {
 
 // GET /api/admin/sellers/:id — profile + members + (Activity tab) recent audit entries.
 const getSellerDetail = async (req, res) => {
-  const seller = await Seller.findById(req.params.id);
+  const seller = await Seller.findById(req.params.id).lean();
   if (!seller) return res.status(404).json({ message: 'Seller not found' });
 
-  const members = await SellerMember.find({ seller: seller._id, status: 'active' }).populate('user', 'name email isActive');
-  const recentActivity = await AuditLog.find({ targetType: 'Seller', targetId: seller._id.toString() }).sort({ createdAt: -1 }).limit(20);
+  const members = await SellerMember.find({ seller: seller._id, status: 'active' }).populate('user', 'name email isActive').lean();
+  const recentActivity = await AuditLog.find({ targetType: 'Seller', targetId: seller._id.toString() }).sort({ createdAt: -1 }).limit(20).lean();
 
   res.json({ seller, members, recentActivity });
 };
@@ -165,7 +165,7 @@ const updateSellerOverrides = async (req, res) => {
 // token scoped to this one seller. Every write route under /api/seller/*
 // rejects it (middleware/authMiddleware.js's requireSellerMember).
 const viewAsSeller = async (req, res) => {
-  const seller = await Seller.findById(req.params.id);
+  const seller = await Seller.findById(req.params.id).lean();
   if (!seller) return res.status(404).json({ message: 'Seller not found' });
 
   const token = signViewAsToken(req.user, seller._id);
@@ -192,7 +192,7 @@ const getSellerBank = async (req, res) => {
   // select() calls causes Mongoose/MongoDB's "Path collision" error —
   // '+path' alone is enough (default projection already includes
   // everything except accountNumber; '+' just un-hides that one field).
-  const seller = await Seller.findById(req.params.id).select('+bankAccount.accountNumber');
+  const seller = await Seller.findById(req.params.id).select('+bankAccount.accountNumber').lean();
   if (!seller) return res.status(404).json({ message: 'Seller not found' });
 
   await logAction({

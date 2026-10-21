@@ -12,9 +12,9 @@ const PlatformSettings = require('../models/PlatformSettings');
 // same rules but can see different commission numbers.
 const getSellerCategoryTree = async (req, res) => {
   const [categories, seller, settings] = await Promise.all([
-    Category.find({ active: true }),
-    Seller.findById(req.sellerId).select('commissionOverridePct'),
-    PlatformSettings.findById('platform-settings'),
+    Category.find({ active: true }).lean(),
+    Seller.findById(req.sellerId).select('commissionOverridePct').lean(),
+    PlatformSettings.findById('platform-settings').lean(),
   ]);
   if (!seller) return res.status(404).json({ message: 'Seller not found' });
 

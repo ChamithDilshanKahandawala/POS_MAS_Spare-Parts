@@ -22,12 +22,20 @@ const { validate, requireValidObjectId } = require('../middleware/validate');
 const { upload, handleUploadErrors } = require('../middleware/upload');
 const { uploadMedia } = require('../middleware/uploadMedia');
 const asyncHandler = require('../middleware/asyncHandler');
+const { writeLimiter, uploadLimiter, autosaveLimiter } = require('../middleware/rateLimiter');
 const Seller = require('../models/Seller');
 const { CONDITIONS, WARRANTY_TYPES } = require('../models/Listing');
 
 const OWNER = ['seller_owner'];
 const ANY_MEMBER = ['seller_owner', 'seller_staff'];
 const OBJECT_ID_RE = /^[0-9a-fA-F]{24}$/;
+
+// A broad safety net against hammering any seller write route — keyed by
+// user when authenticated, by IP otherwise (middleware/rateLimiter.js).
+// Reads are never throttled by this (writeLimiter skips GET/HEAD); the
+// step-up and upload routes below additionally get their own tighter
+// limiter on top of this one.
+router.use(writeLimiter);
 
 const dayHoursSchema = z.object({
   day: z.enum(Seller.WEEKDAYS),
@@ -180,6 +188,7 @@ router.post(
   requireAuth,
   requireSellerMember(OWNER),
   requireActiveStore,
+  uploadLimiter,
   handleUploadErrors(upload.single('file')),
   asyncHandler(uploadLogo)
 );
@@ -189,6 +198,7 @@ router.post(
   requireAuth,
   requireSellerMember(OWNER),
   requireActiveStore,
+  uploadLimiter,
   handleUploadErrors(upload.single('file')),
   asyncHandler(uploadBanner)
 );
@@ -259,6 +269,7 @@ router.patch(
   requireSellerMember(ANY_MEMBER),
   requireActiveStore,
   requireValidObjectId('id'),
+  autosaveLimiter,
   validate({ body: listingBodySchema }),
   asyncHandler(updateListing)
 );
@@ -298,6 +309,7 @@ router.post(
   requireSellerMember(ANY_MEMBER),
   requireActiveStore,
   requireValidObjectId('id'),
+  uploadLimiter,
   handleUploadErrors(uploadMedia.array('files', 8)),
   asyncHandler(uploadListingMedia)
 );

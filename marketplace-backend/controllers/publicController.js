@@ -74,7 +74,7 @@ const getInvite = async (req, res) => {
 
   let sellerName = null;
   if (invite.seller) {
-    const seller = await Seller.findById(invite.seller).select('name');
+    const seller = await Seller.findById(invite.seller).select('name').lean();
     sellerName = seller?.name || null;
   }
 
@@ -122,7 +122,7 @@ const acceptInvite = async (req, res) => {
       { upsert: true }
     );
 
-    const seller = await Seller.findById(invite.seller).select('name');
+    const seller = await Seller.findById(invite.seller).select('name').lean();
 
     if (invite.role === 'seller_owner') {
       await notify({
@@ -133,7 +133,7 @@ const acceptInvite = async (req, res) => {
         link: '/seller',
       });
     } else {
-      const owners = await SellerMember.find({ seller: invite.seller, role: 'seller_owner', status: 'active' }).select('user');
+      const owners = await SellerMember.find({ seller: invite.seller, role: 'seller_owner', status: 'active' }).select('user').lean();
       await Promise.all(owners.map((o) => notify({
         userId: o.user,
         type: 'staff.invite_accepted',

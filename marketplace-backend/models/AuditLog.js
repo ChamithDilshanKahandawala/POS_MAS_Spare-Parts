@@ -17,4 +17,14 @@ const auditLogSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Serves getSellerDetail's "recent activity" tab and sellerActivity
+// Controller's listActivity — both filter by exactly targetType+targetId,
+// sorted newest first.
+auditLogSchema.index({ targetType: 1, targetId: 1, createdAt: -1 });
+// listAuditLog's own filters (actor/action/date-range) are each optional
+// and used in combination, so a single compound index can't cover every
+// shape — this one serves the single most common one (the admin log
+// screen's default view: just date-sorted, often narrowed by action).
+auditLogSchema.index({ action: 1, createdAt: -1 });
+
 module.exports = mongoose.model('AuditLog', auditLogSchema);

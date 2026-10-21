@@ -18,7 +18,7 @@ async function countEverPublished(sellerId) {
 }
 
 async function isSellerOnProbation(sellerId) {
-  const settings = await PlatformSettings.findById('platform-settings');
+  const settings = await PlatformSettings.findById('platform-settings').lean();
   const threshold = settings?.reviewRequiredForFirstNListings ?? 20;
   if (threshold <= 0) return false;
   const published = await countEverPublished(sellerId);

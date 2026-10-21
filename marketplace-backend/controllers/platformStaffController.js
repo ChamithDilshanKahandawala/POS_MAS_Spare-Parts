@@ -8,8 +8,8 @@ const { createInvite } = require('../services/invites');
 // invited but hasn't accepted yet.
 const listPlatformStaff = async (req, res) => {
   const [staff, pendingInvites] = await Promise.all([
-    User.find({ platformRole: { $in: ['platform_staff', 'platform_owner'] } }).select('name email platformRole createdAt'),
-    Invite.find({ role: 'platform_staff', status: 'pending', expiresAt: { $gt: new Date() } }).select('email expiresAt createdAt'),
+    User.find({ platformRole: { $in: ['platform_staff', 'platform_owner'] } }).select('name email platformRole createdAt').lean(),
+    Invite.find({ role: 'platform_staff', status: 'pending', expiresAt: { $gt: new Date() } }).select('email expiresAt createdAt').lean(),
   ]);
   res.json({ staff, pendingInvites });
 };
@@ -20,7 +20,7 @@ const listPlatformStaff = async (req, res) => {
 const inviteStaff = async (req, res) => {
   const { email } = req.body;
 
-  const existing = await User.findOne({ email });
+  const existing = await User.findOne({ email }).lean();
   if (existing && ['platform_staff', 'platform_owner'].includes(existing.platformRole)) {
     return res.status(409).json({ message: 'This person is already platform staff' });
   }

@@ -3,6 +3,7 @@ const Listing = require('../models/Listing');
 const { getEffectiveCategory, buildTree, MAX_DEPTH } = require('../services/categoryRules');
 const { logAction } = require('../services/auditLog');
 const { flagListingsForCategoryChange } = require('../services/listingDrift');
+const cache = require('../services/cache');
 
 // `Category.listingCount` is a denormalized display counter, nudged by
 // +1/-1 at every point a listing's categoryId changes (sellerListings
@@ -19,7 +20,7 @@ async function hasActiveListings(categoryId) {
 // GET /api/admin/catalog/categories — every category, active or not
 // (admin needs to see and manage both), as a nested tree.
 const getCategoryTree = async (req, res) => {
-  const categories = await Category.find({});
+  const categories = await Category.find({}).lean();
   res.json({ tree: buildTree(categories) });
 };
 
@@ -36,7 +37,7 @@ async function validateParentAndDepth(parentId, excludeId = null) {
   if (excludeId && String(parentId) === String(excludeId)) {
     return { depth: null, error: 'A category cannot be its own parent' };
   }
-  const parent = await Category.findById(parentId);
+  const parent = await Category.findById(parentId).lean();
   if (!parent) return { depth: null, error: 'Parent category not found' };
   const depth = parent.depth + 1;
   if (depth > MAX_DEPTH) {
@@ -52,10 +53,11 @@ const createCategory = async (req, res) => {
   const { depth, error } = await validateParentAndDepth(parentId);
   if (error) return res.status(400).json({ message: error });
 
-  const existing = await Category.findOne({ slug });
+  const existing = await Category.findOne({ slug }).lean();
   if (existing) return res.status(409).json({ message: 'That slug is already in use' });
 
   const category = await Category.create({ ...req.body, parentId: parentId || null, depth });
+  cache.invalidate('category:');
 
   await logAction({
     actor: req.user,
@@ -85,7 +87,7 @@ const updateCategory = async (req, res) => {
     if (await hasActiveListings(category._id)) {
       return res.status(409).json({ message: 'Cannot rename the slug: this category has active listings' });
     }
-    const dup = await Category.findOne({ slug: req.body.slug, _id: { $ne: category._id } });
+    const dup = await Category.findOne({ slug: req.body.slug, _id: { $ne: category._id } }).lean();
     if (dup) return res.status(409).json({ message: 'That slug is already in use' });
   }
 
@@ -112,6 +114,7 @@ const updateCategory = async (req, res) => {
   Object.assign(category, req.body, { depth });
   if (bumpSchemaVersion) category.schemaVersion += 1;
   await category.save();
+  cache.invalidate('category:');
 
   await logAction({
     actor: req.user,
@@ -145,6 +148,7 @@ const deleteCategory = async (req, res) => {
   }
 
   await category.deleteOne();
+  cache.invalidate('category:');
 
   await logAction({
     actor: req.user,
@@ -166,7 +170,7 @@ const deleteCategory = async (req, res) => {
 const reorderCategories = async (req, res) => {
   const { parentId, orderedIds } = req.body;
 
-  const categories = await Category.find({ _id: { $in: orderedIds } });
+  const categories = await Category.find({ _id: { $in: orderedIds } }).lean();
   if (categories.length !== orderedIds.length) {
     return res.status(400).json({ message: 'One or more category ids were not found' });
   }
@@ -175,6 +179,7 @@ const reorderCategories = async (req, res) => {
   }
 
   await Promise.all(orderedIds.map((id, index) => Category.updateOne({ _id: id }, { sortOrder: index })));
+  cache.invalidate('category:');
 
   await logAction({
     actor: req.user,

@@ -19,8 +19,8 @@ const SORTS = {
 // are cheap.
 async function visibilityFilter() {
   const [activeCategoryIds, activeSellerIds] = await Promise.all([
-    Category.find({ active: true }).select('_id').then((rows) => rows.map((r) => r._id)),
-    Seller.find({ status: 'active' }).select('_id').then((rows) => rows.map((r) => r._id)),
+    Category.find({ active: true }).select('_id').lean().then((rows) => rows.map((r) => r._id)),
+    Seller.find({ status: 'active' }).select('_id').lean().then((rows) => rows.map((r) => r._id)),
   ]);
   return { status: 'published', stock: { $gt: 0 }, categoryId: { $in: activeCategoryIds }, seller: { $in: activeSellerIds } };
 }
@@ -70,7 +70,7 @@ const listPublicListings = async (req, res) => {
 
   const [listings, total] = await Promise.all([
     Listing.find(query).sort(sortObj).skip((page - 1) * safeLimit).limit(safeLimit)
-      .populate('images').populate('seller', 'name displayName district slug'),
+      .populate('images').populate('seller', 'name displayName district slug').lean(),
     Listing.countDocuments(query),
   ]);
 
@@ -88,7 +88,7 @@ const listPublicListings = async (req, res) => {
 const getPublicListingDetail = async (req, res) => {
   const query = await visibilityFilter();
   const listing = await Listing.findOne({ _id: req.params.id, ...query })
-    .populate('images').populate('seller', 'name displayName district slug');
+    .populate('images').populate('seller', 'name displayName district slug').lean();
   if (!listing) return res.status(404).json({ message: 'Listing not found' });
 
   res.json({ listing: toPublicListing(listing) });

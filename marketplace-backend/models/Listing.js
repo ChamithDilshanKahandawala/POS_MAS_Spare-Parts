@@ -117,6 +117,19 @@ const listingSchema = new mongoose.Schema(
 listingSchema.index({ seller: 1, status: 1 });
 listingSchema.index({ categoryId: 1, status: 1 });
 listingSchema.index({ 'title.en': 'text', 'description.en': 'text', sku: 'text', brand: 'text' });
+// adminListingsController.js's listReviewQueue: oldest-first, filtered by
+// status (in_review, or published/hidden for a pending revision).
+// There's no separate "submittedAt" field on a listing — updatedAt is
+// what the queue actually sorts by, so that's what this indexes.
+listingSchema.index({ status: 1, updatedAt: 1 });
+// publicListingsController.js's listPublicListings: status is always
+// 'published' here, category is the most common filter, priceCents is
+// both a range filter (priceMin/priceMax) and a sort key.
+listingSchema.index({ status: 1, categoryId: 1, priceCents: 1 });
+// The "newest first" sort (the default) uses publishedAt, not
+// priceCents — covered separately since a single compound index can't
+// serve both sort orders well at once.
+listingSchema.index({ status: 1, publishedAt: -1 });
 
 module.exports = mongoose.model('Listing', listingSchema);
 module.exports.CONDITIONS = CONDITIONS;
