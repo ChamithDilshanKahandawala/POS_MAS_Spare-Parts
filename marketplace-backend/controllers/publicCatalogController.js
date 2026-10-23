@@ -3,18 +3,25 @@ const VehicleMake = require('../models/VehicleMake');
 const cache = require('../services/cache');
 
 // GET /api/public/catalog/categories — active categories, names/slugs/
-// icons only. No commission, no return/regulated/review rules, no
-// prohibitedKeywords — those are internal to Apexora and sellers, never
-// shown to shoppers. Cached — this is read on nearly every page/wizard
-// step and categories change rarely; invalidated by every category write
+// icons, PLUS returnPolicy/warrantyRule (Milestone 5: the storefront's
+// product detail page shows "Returnable within N days"/minimum warranty
+// straight from this). Still no commission, no regulated/reviewRequired,
+// no prohibitedKeywords — those stay internal to Apexora and sellers,
+// never shown to shoppers; returnPolicy/warrantyRule are themselves
+// customer-facing policy text, not internal rules, so they're the one
+// exception. Cached — this is read on nearly every page/wizard step and
+// categories change rarely; invalidated by every category write
 // (adminCategoriesController.js).
 const getPublicCategoryTree = async (req, res) => {
   let categories = cache.get('category:active:public');
   if (!categories) {
-    categories = await Category.find({ active: true }).select('name slug icon parentId sortOrder').lean();
+    categories = await Category.find({ active: true }).select('name slug icon parentId sortOrder returnPolicy warrantyRule').lean();
     cache.set('category:active:public', categories);
   }
-  const byId = new Map(categories.map((c) => [String(c._id), { id: c._id, name: c.name, slug: c.slug, icon: c.icon, sortOrder: c.sortOrder, children: [] }]));
+  const byId = new Map(categories.map((c) => [String(c._id), {
+    id: c._id, name: c.name, slug: c.slug, icon: c.icon, sortOrder: c.sortOrder,
+    returnPolicy: c.returnPolicy, warrantyRule: c.warrantyRule, children: [],
+  }]));
   const activeIds = new Set(byId.keys());
 
   const roots = [];

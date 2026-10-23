@@ -14,6 +14,9 @@ import LanguageSwitcher from './LanguageSwitcher';
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion';
 import { slugify } from '../../utils/slugify';
 import { CATEGORIES } from '../../config/store';
+import { isMarketplace } from '../../api/dataSource';
+import { localizedPick } from '../../api/marketplaceAdapters';
+import useMarketplaceCategories from '../../hooks/useMarketplaceCategories';
 
 // framer-motion (the CartDrawer's slide/fade transitions) is ~110 KB on its
 // own — StoreLayout is the one component every single route mounts, so an
@@ -25,7 +28,7 @@ import { CATEGORIES } from '../../config/store';
 const CartDrawer = lazy(() => import('../cart/CartDrawer'));
 
 export default function StoreLayout() {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const { user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const { cart, setIsCartOpen } = useCart();
@@ -37,6 +40,10 @@ export default function StoreLayout() {
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
   const reducedMotion = usePrefersReducedMotion();
   const { canInstall, isIOSHint, promptInstall } = useInstallPrompt();
+  const marketplaceCategories = useMarketplaceCategories();
+  const navCategories = isMarketplace
+    ? marketplaceCategories.map((node) => ({ key: node.slug, label: localizedPick(node.name, i18n.language), to: `/category/${node.slug}` }))
+    : CATEGORIES.map((c) => ({ key: c, label: c, to: `/category/${slugify(c)}` }));
 
   // Badge "bounce" — a plain CSS keyframe (see the <style> block below)
   // played fresh each time by keying the span on cart.length so React
@@ -58,12 +65,17 @@ export default function StoreLayout() {
       <LanguageBanner />
 
       {/* ── Top announcement bar ── */}
+      {/* Marketplace mode gets its own, softer wording (follow-up #2) —
+          "100% Genuine Parts Guaranteed" is a claim Apexora can't actually
+          back for every third-party seller's listing, unlike pos mode's
+          single shop making a first-party claim about its own stock
+          (common.json's announcementBar, untouched). */}
       <div style={{
         background: 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))',
         color: 'white', textAlign: 'center', padding: '6px 16px',
         fontSize: '12px', fontWeight: 600, letterSpacing: '0.3px',
       }}>
-        {t('announcementBar')}
+        {isMarketplace ? t('marketplace:announcementBar') : t('announcementBar')}
       </div>
 
       {/* ── Main Navbar ── */}
@@ -91,7 +103,11 @@ export default function StoreLayout() {
           {/* Nav Links */}
           {[
             { to: '/', label: t('nav.store'), icon: ShoppingBag },
-            ...(user ? [{ to: '/orders', label: t('nav.myOrders'), icon: Package }] : []),
+            // My Orders only makes sense once there's a real order to
+            // show — marketplace mode has no checkout yet (Part A's
+            // "coming soon" message), so there's never anything there.
+            ...(user && !isMarketplace ? [{ to: '/orders', label: t('nav.myOrders'), icon: Package }] : []),
+            ...(user && isMarketplace ? [{ to: '/account', label: t('nav.myAccount'), icon: User }] : []),
             { to: '/contact', label: t('nav.contact'), icon: Phone },
             { to: '/delivery', label: t('nav.delivery'), icon: Truck },
           ].map(link => {
@@ -137,9 +153,9 @@ export default function StoreLayout() {
                   boxShadow: '0 10px 30px rgba(0,0,0,0.12)', zIndex: 100,
                   animation: 'fadeIn 0.15s ease',
                 }}>
-                  {CATEGORIES.map((c) => (
+                  {navCategories.map((c) => (
                     <Link
-                      key={c} to={`/category/${slugify(c)}`} onClick={() => setCategoryDropdown(false)}
+                      key={c.key} to={c.to} onClick={() => setCategoryDropdown(false)}
                       style={{
                         padding: '9px 12px', borderRadius: '8px', textDecoration: 'none',
                         color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500,
@@ -148,7 +164,7 @@ export default function StoreLayout() {
                       onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-secondary)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
-                      {c}
+                      {c.label}
                     </Link>
                   ))}
                 </div>
@@ -238,7 +254,7 @@ export default function StoreLayout() {
                     boxShadow: '0 10px 30px rgba(0,0,0,0.12)', zIndex: 100,
                     animation: 'fadeIn 0.15s ease',
                   }}>
-                    <Link to="/orders" onClick={() => setUserDropdown(false)} style={{
+                    <Link to={isMarketplace ? '/account' : '/orders'} onClick={() => setUserDropdown(false)} style={{
                       display: 'flex', alignItems: 'center', gap: '8px',
                       padding: '10px 14px', borderRadius: '8px', textDecoration: 'none',
                       color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500,
@@ -247,7 +263,7 @@ export default function StoreLayout() {
                       onMouseEnter={e => e.currentTarget.style.background='var(--bg-secondary)'}
                       onMouseLeave={e => e.currentTarget.style.background='transparent'}
                     >
-                      <Package size={15} /> {t('nav.myOrders')}
+                      {isMarketplace ? <User size={15} /> : <Package size={15} />} {isMarketplace ? t('nav.myAccount') : t('nav.myOrders')}
                     </Link>
                     <div style={{ height: '1px', background: 'var(--border-light)', margin: '4px 10px' }} />
                     <button onClick={handleLogout} style={{
@@ -334,12 +350,12 @@ export default function StoreLayout() {
             textDecoration: 'none', fontWeight: 600, fontSize: '14px',
           }}><ShoppingBag size={16} /> {t('nav.store')}</Link>
           {user && (
-            <Link to="/orders" onClick={() => setMobileMenuOpen(false)} style={{
+            <Link to={isMarketplace ? '/account' : '/orders'} onClick={() => setMobileMenuOpen(false)} style={{
               display: 'flex', alignItems: 'center', gap: '8px', padding: '12px', borderRadius: '10px',
-              color: isActive('/orders') ? 'var(--accent-primary)' : 'var(--text-secondary)',
-              background: isActive('/orders') ? 'var(--accent-light)' : 'transparent',
+              color: isActive(isMarketplace ? '/account' : '/orders') ? 'var(--accent-primary)' : 'var(--text-secondary)',
+              background: isActive(isMarketplace ? '/account' : '/orders') ? 'var(--accent-light)' : 'transparent',
               textDecoration: 'none', fontWeight: 600, fontSize: '14px',
-            }}><Package size={16} /> {t('nav.myOrders')}</Link>
+            }}>{isMarketplace ? <User size={16} /> : <Package size={16} />} {isMarketplace ? t('nav.myAccount') : t('nav.myOrders')}</Link>
           )}
           <Link to="/contact" onClick={() => setMobileMenuOpen(false)} style={{
             display: 'flex', alignItems: 'center', gap: '8px', padding: '12px', borderRadius: '10px',
@@ -366,16 +382,16 @@ export default function StoreLayout() {
           </button>
           {mobileCategoriesOpen && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', paddingLeft: '12px', marginBottom: '4px' }}>
-              {CATEGORIES.map((c) => (
+              {navCategories.map((c) => (
                 <Link
-                  key={c} to={`/category/${slugify(c)}`}
+                  key={c.key} to={c.to}
                   onClick={() => { setMobileMenuOpen(false); setMobileCategoriesOpen(false); }}
                   style={{
                     padding: '10px 12px', borderRadius: '8px', textDecoration: 'none',
                     color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500,
                   }}
                 >
-                  {c}
+                  {c.label}
                 </Link>
               ))}
             </div>

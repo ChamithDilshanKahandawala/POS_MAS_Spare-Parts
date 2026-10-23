@@ -5,7 +5,8 @@ const router = express.Router();
 
 const { submitApplication, getInvite, acceptInvite } = require('../controllers/publicController');
 const { getPublicCategoryTree, getPublicVehicles } = require('../controllers/publicCatalogController');
-const { listPublicListings, getPublicListingDetail } = require('../controllers/publicListingsController');
+const { listPublicListings, getPublicListingDetail, getRelatedListings } = require('../controllers/publicListingsController');
+const { getStorePage, getStoreLogo, getStoreBanner } = require('../controllers/publicStoreController');
 const { getPublicMediaVariant } = require('../controllers/mediaController');
 const { upload, handleUploadErrors } = require('../middleware/upload');
 const { validate, requireValidObjectId } = require('../middleware/validate');
@@ -86,7 +87,10 @@ const OBJECT_ID_RE = /^[0-9a-fA-F]{24}$/;
 
 const listPublicListingsQuerySchema = z.object({
   category: z.string().regex(OBJECT_ID_RE).optional(),
+  q: z.string().trim().min(1).max(200).optional(),
   search: z.string().trim().max(200).optional(),
+  brand: z.string().trim().max(120).optional(),
+  sellerSlug: z.string().trim().max(80).optional(),
   make: z.string().regex(OBJECT_ID_RE).optional(),
   model: z.string().trim().max(80).optional(),
   year: z.coerce.number().int().optional(),
@@ -104,13 +108,21 @@ const publicMediaParamsSchema = z.object({
   format: z.enum(['webp', 'jpg']),
 }).strict();
 
+const storeSlugParamsSchema = z.object({ slug: z.string().trim().min(1) }).strict();
+
 router.get('/listings', validate({ query: listPublicListingsQuerySchema }), asyncHandler(listPublicListings));
 router.get('/listings/:id', requireValidObjectId('id'), asyncHandler(getPublicListingDetail));
+router.get('/listings/:id/related', requireValidObjectId('id'), asyncHandler(getRelatedListings));
 router.get(
   '/media/:id/:size/:format',
   requireValidObjectId('id'),
   validate({ params: publicMediaParamsSchema }),
   asyncHandler(getPublicMediaVariant)
 );
+
+// --- Store page (Milestone 5) ---
+router.get('/stores/:slug', validate({ params: storeSlugParamsSchema }), asyncHandler(getStorePage));
+router.get('/stores/:slug/logo', validate({ params: storeSlugParamsSchema }), asyncHandler(getStoreLogo));
+router.get('/stores/:slug/banner', validate({ params: storeSlugParamsSchema }), asyncHandler(getStoreBanner));
 
 module.exports = router;

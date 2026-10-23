@@ -77,11 +77,53 @@ registerRoute(
   'GET'
 );
 
-// Everything else — /api/auth*, /api/sales*, Socket.IO, and any non-GET
-// request — has no matching route below this point, on purpose. No route
-// means the SW never intercepts it at all: the browser's normal network
-// stack handles it exactly as if there were no service worker, so login,
-// checkout, and order placement can never be silently answered from cache.
+// Milestone 5 — marketplace-backend's public catalog (listings,
+// categories, stores, vehicles), same NetworkFirst/no-timeout reasoning
+// as the POS /api/products rule above: a live request always wins no
+// matter how slow, the cache is only a fallback for when it genuinely
+// fails. Cross-origin (marketplace-backend runs on its own origin, not
+// this app's), so this uses a match FUNCTION rather than the plain
+// RegExp shorthand above — Workbox's RegExp/string route matching only
+// ever considers same-origin requests; a function matcher is the one way
+// to opt a specific cross-origin request in. GET-only (3rd arg) on top
+// of the explicit method check below, and the path allowlist itself
+// already excludes /api/auth*, /api/customer* (profile/addresses/
+// vehicles) and every non-GET request — those always hit the real
+// network, exactly like the POS's auth/sales routes never had a rule
+// here either.
+const MARKETPLACE_ORIGIN = (() => {
+  try {
+    return new URL(import.meta.env.VITE_MARKETPLACE_API_URL || 'http://localhost:5002').origin;
+  } catch {
+    return null;
+  }
+})();
+const MARKETPLACE_PUBLIC_GET_RE = /^\/api\/public\/(listings|catalog\/categories|stores|vehicles)/;
+
+registerRoute(
+  ({ url, request }) => (
+    request.method === 'GET'
+    && !!MARKETPLACE_ORIGIN
+    && url.origin === MARKETPLACE_ORIGIN
+    && MARKETPLACE_PUBLIC_GET_RE.test(url.pathname)
+  ),
+  new NetworkFirst({
+    cacheName: 'api-marketplace-public-cache',
+    plugins: [
+      new CacheableResponsePlugin({ statuses: [0, 200] }),
+      new ExpirationPlugin({ maxEntries: 150, maxAgeSeconds: 60 * 60 * 24 }),
+      markServedFromCache,
+    ],
+  }),
+  'GET'
+);
+
+// Everything else — /api/auth*, /api/customer*, /api/sales*, Socket.IO,
+// and any non-GET request — has no matching route below this point, on
+// purpose. No route means the SW never intercepts it at all: the
+// browser's normal network stack handles it exactly as if there were no
+// service worker, so login, checkout, and order placement can never be
+// silently answered from cache.
 
 // SPA routing — any navigation that isn't itself a precached URL (e.g.
 // /product/:id, /about) falls back to the precached app shell, which is

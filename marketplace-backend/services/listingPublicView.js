@@ -13,6 +13,7 @@ function toPublicListing(listing) {
     description: listing.description,
     categoryId: listing.categoryId,
     brand: listing.brand,
+    sku: listing.sku,
     condition: listing.condition,
     attributes: listing.attributes,
     fitment: listing.fitment,

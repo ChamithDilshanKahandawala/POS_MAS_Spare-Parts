@@ -1,27 +1,30 @@
 {
-  "_meta": { "status": "draft — needs native speaker review" },
-  "tagline": "වාහන කොටස් සහ තවත් බොහෝ දේ, ශ්‍රී ලංකාව පුරා ගෙනැවිත් දේ",
-  "homeMetaTitle": "Apexora | ශ්‍රී ලංකාවේ වාහන කොටස් වෙළඳපොළ",
-  "homeMetaDescription": "Apexora හි සැබෑ වාහන කොටස් මිලදී ගන්න — විශ්වාසනීය විකුණුම්කරුවන් සඳහා ශ්‍රී ලංකාවේ වෙළඳපොළ. දිවයින පුරා බෙදාහැරීම, ගෙදරදී මුදල් ගෙවීම.",
-  "heroSubtitle": "Apexora විශ්වාසනීය විකුණුම්කරුවන්ගෙන් සැබෑ, ගුණාත්මකභාවය පරීක්ෂා කළ ත්‍රිරෝද හා බයික් කොටස් ගෙන එයි — Mudiyanse Auto Solutions සමඟ ආරම්භ වේ, ගැළපීම සහ වගකීම සහතිකයි.",
-  "soldBy": "විකුණන්නේ {{seller}}",
-  "verifiedSeller": "තහවුරු කළ විකුණුම්කරු",
-  "visitStore": "සාප්පුව බලන්න",
-  "ourStores": "අපගේ සාප්පු",
-  "footerTagline": "සැබෑ වාහන කොටස් සඳහා ශ්‍රී ලංකාවේ වෙළඳපොළ — Mudiyanse Auto Solutions සමඟ ආරම්භ වේ, තවත් විකුණුම්කරුවන් එක්වෙමින්.",
-  "footerOperatedBy": "{{platform}} මෙහෙයවනු ලබන්නේ {{operator}} විසිනි · BR {{brNumber}}",
-  "aboutApexoraHeading": "Apexora ගැන",
-  "aboutApexoraSubtitle": "සැබෑ කොටස් සඳහා ශ්‍රී ලංකාවේ වෙළඳපොළ, වාහන වලින් ආරම්භ වේ.",
-  "aboutApexoraBody": "Apexora යනු ශ්‍රී ලාංකික අන්තර්ජාල වෙළඳපොළකි. අපි සැබෑ, ගුණාත්මකභාවය පරීක්ෂා කළ වාහන අමතර කොටස් වලින් ආරම්භ කරමු — ඉක්මනින් තවත් කාණ්ඩ සහ විකුණුම්කරුවන් එක්වේ.",
-  "firstStoreHeading": "අපගේ පළමු සාප්පුව: {{seller}}",
-  "store": {
-    "location": "මීරිගම",
-    "aboutHeading": "මෙම සාප්පුව ගැන",
-    "productsHeading": "{{seller}} හි භාණ්ඩ",
-    "notFoundTitle": "සාප්පුව හමු නොවීය",
-    "notFoundSubtitle": "අපට මෙම සාප්පුව සොයාගත නොහැකි විය. එය ගෙන ගොස් ඇති හෝ තවදුරටත් නොපවතින්න පුළුවන.",
-    "backToShop": "සාප්පුවට ආපසු",
-    "metaTitle": "{{seller}} | Apexora",
-    "metaDescription": "Apexora හි {{seller}} ගේ භාණ්ඩ මිලදී ගන්න — සැබෑ වාහන අමතර කොටස්, දිවයින පුරා බෙදාහැරීම, ගෙදරදී මුදල් ගෙවීම."
-  }
+ "_meta": {
+  "status": "draft — needs native speaker review"
+ },
+ "tagline": "වාහන කොටස් සහ තවත් බොහෝ දේ, ශ්‍රී ලංකාව පුරා ගෙනැවිත් දේ",
+ "homeMetaTitle": "Apexora | ශ්‍රී ලංකාවේ වාහන කොටස් වෙළඳපොළ",
+ "homeMetaDescription": "Apexora හි සැබෑ වාහන කොටස් මිලදී ගන්න — විශ්වාසනීය විකුණුම්කරුවන් සඳහා ශ්‍රී ලංකාවේ වෙළඳපොළ. දිවයින පුරා බෙදාහැරීම, ගෙදරදී මුදල් ගෙවීම.",
+ "heroSubtitle": "Apexora විශ්වාසනීය විකුණුම්කරුවන්ගෙන් සැබෑ, ගුණාත්මකභාවය පරීක්ෂා කළ ත්‍රිරෝද හා බයික් කොටස් ගෙන එයි — Mudiyanse Auto Solutions සමඟ ආරම්භ වේ, ගැළපීම සහ වගකීම සහතිකයි.",
+ "soldBy": "විකුණන්නේ {{seller}}",
+ "verifiedSeller": "තහවුරු කළ විකුණුම්කරු",
+ "visitStore": "සාප්පුව බලන්න",
+ "ourStores": "අපගේ සාප්පු",
+ "footerTagline": "සැබෑ වාහන කොටස් සඳහා ශ්‍රී ලංකාවේ වෙළඳපොළ — Mudiyanse Auto Solutions සමඟ ආරම්භ වේ, තවත් විකුණුම්කරුවන් එක්වෙමින්.",
+ "footerOperatedBy": "{{platform}} මෙහෙයවනු ලබන්නේ {{operator}} විසිනි · BR {{brNumber}}",
+ "aboutApexoraHeading": "Apexora ගැන",
+ "aboutApexoraSubtitle": "සැබෑ කොටස් සඳහා ශ්‍රී ලංකාවේ වෙළඳපොළ, වාහන වලින් ආරම්භ වේ.",
+ "aboutApexoraBody": "Apexora යනු ශ්‍රී ලාංකික අන්තර්ජාල වෙළඳපොළකි. අපි සැබෑ, ගුණාත්මකභාවය පරීක්ෂා කළ වාහන අමතර කොටස් වලින් ආරම්භ කරමු — ඉක්මනින් තවත් කාණ්ඩ සහ විකුණුම්කරුවන් එක්වේ.",
+ "firstStoreHeading": "අපගේ පළමු සාප්පුව: {{seller}}",
+ "store": {
+  "location": "මීරිගම",
+  "aboutHeading": "මෙම සාප්පුව ගැන",
+  "productsHeading": "{{seller}} හි භාණ්ඩ",
+  "notFoundTitle": "සාප්පුව හමු නොවීය",
+  "notFoundSubtitle": "අපට මෙම සාප්පුව සොයාගත නොහැකි විය. එය ගෙන ගොස් ඇති හෝ තවදුරටත් නොපවතින්න පුළුවන.",
+  "backToShop": "සාප්පුවට ආපසු",
+  "metaTitle": "{{seller}} | Apexora",
+  "metaDescription": "Apexora හි {{seller}} ගේ භාණ්ඩ මිලදී ගන්න — සැබෑ වාහන අමතර කොටස්, දිවයින පුරා බෙදාහැරීම, ගෙදරදී මුදල් ගෙවීම.",
+  "allCategories": "සියල්ල"
+ }
 }

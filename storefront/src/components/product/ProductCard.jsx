@@ -11,9 +11,14 @@ import { getSellerForProduct } from '../../config/store';
 // the Add button (StorefrontPage uses it to open the quick-view modal;
 // the detail page's related row uses it to also navigate, since there's no
 // modal there).
-export default function ProductCard({ product, index = 0, isLiveUpdated, onCardClick, onAddToCart }) {
+// `fitmentBadge`: 'fits' | 'check' | undefined — only ever set by a
+// marketplace-mode page (CategoryPageMarketplace/SearchPage/etc.) when a
+// vehicle is selected; a pos-mode caller never passes it, so this is a
+// purely additive, backward-compatible prop.
+export default function ProductCard({ product, index = 0, isLiveUpdated, onCardClick, onAddToCart, fitmentBadge }) {
   const { t } = useTranslation('product');
   const { t: tPlatform } = useTranslation('platform');
+  const { t: tMarket } = useTranslation('marketplace');
   const outOfStock = product.stock_quantity <= 0;
   const detailHref = `/product/${product._id}`;
   const seller = getSellerForProduct(product);
@@ -90,7 +95,12 @@ export default function ProductCard({ product, index = 0, isLiveUpdated, onCardC
           <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{product.sku_code}</span>
         </div>
         <Link to={detailHref} onClick={(e) => e.stopPropagation()} style={{ textDecoration: 'none', color: 'inherit' }}>
-          <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px', lineHeight: 1.3 }}>{product.name}</h3>
+          {/* h2, not h3 — every page that shows a product grid has
+              exactly one h1 above it (the page's own title) and nothing
+              at h2 in between, so h3 here would skip a level
+              (Lighthouse's heading-order audit, found via a real run
+              against the category page). */}
+          <h2 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px', lineHeight: 1.3 }}>{product.name}</h2>
         </Link>
         <div style={{
           fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px',
@@ -98,6 +108,15 @@ export default function ProductCard({ product, index = 0, isLiveUpdated, onCardC
         }}>
           {tPlatform('soldBy', { seller: seller.name })}
         </div>
+
+        {fitmentBadge && (
+          <span
+            className={`badge ${fitmentBadge === 'fits' ? 'badge-green' : 'badge-yellow'}`}
+            style={{ marginBottom: '10px', alignSelf: 'flex-start' }}
+          >
+            {fitmentBadge === 'fits' ? tMarket('fitment.fitsYourVehicle') : tMarket('fitment.checkFitment')}
+          </span>
+        )}
 
         <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--accent-primary-text)' }}>

@@ -7,6 +7,7 @@ import { CartProvider } from './context/CartContext';
 import StoreLayout from './components/layout/StoreLayout';
 import PageLoader from './components/layout/PageLoader';
 import UpdatePrompt from './components/UpdatePrompt';
+import { isMarketplace } from './api/dataSource';
 
 // StorefrontPage (the index route) stays a direct, eager import — it's
 // always the first thing a visitor needs, so wrapping it in lazy() would
@@ -32,6 +33,11 @@ const ReturnsPage = lazy(() => import('./pages/ReturnsPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const StorePage = lazy(() => import('./pages/StorePage'));
+// Marketplace-only — never imported (let alone routed to) in pos mode.
+const SearchPage = isMarketplace ? lazy(() => import('./pages/SearchPage')) : null;
+const ForgotPasswordPage = isMarketplace ? lazy(() => import('./pages/ForgotPasswordPage')) : null;
+const ResetPasswordPage = isMarketplace ? lazy(() => import('./pages/ResetPasswordPage')) : null;
+const MyAccountPage = isMarketplace ? lazy(() => import('./pages/MyAccountPage')) : null;
 
 // --- Customer Only Route ---
 // Redirecting here loses the page the customer was trying to reach (e.g.
@@ -79,15 +85,19 @@ function AppRoutes() {
     <Routes>
       <Route path="/login" element={<Suspense fallback={<PageLoader />}><LoginPage /></Suspense>} />
       <Route path="/register" element={<Suspense fallback={<PageLoader />}><RegisterPage /></Suspense>} />
+      {isMarketplace && <Route path="/forgot-password" element={<Suspense fallback={<PageLoader />}><ForgotPasswordPage /></Suspense>} />}
+      {isMarketplace && <Route path="/reset-password" element={<Suspense fallback={<PageLoader />}><ResetPasswordPage /></Suspense>} />}
 
       <Route path="/" element={<StoreLayout />}>
         <Route index element={<StorefrontPage />} />
         <Route path="cart" element={<Suspense fallback={<PageLoader />}><CartPage /></Suspense>} />
         <Route path="product/:id" element={<Suspense fallback={<PageLoader />}><ProductDetailRoute /></Suspense>} />
         <Route path="category/:slug" element={<Suspense fallback={<PageLoader />}><CategoryRoute /></Suspense>} />
+        {isMarketplace && <Route path="search" element={<Suspense fallback={<PageLoader />}><SearchPage /></Suspense>} />}
         <Route path="checkout" element={<CustomerRoute><Suspense fallback={<PageLoader />}><CheckoutPage /></Suspense></CustomerRoute>} />
         <Route path="order-success/:id" element={<CustomerRoute><Suspense fallback={<PageLoader />}><OrderSuccessRoute /></Suspense></CustomerRoute>} />
         <Route path="orders" element={<CustomerRoute><Suspense fallback={<PageLoader />}><CustomerOrdersPage /></Suspense></CustomerRoute>} />
+        {isMarketplace && <Route path="account" element={<CustomerRoute><Suspense fallback={<PageLoader />}><MyAccountPage /></Suspense></CustomerRoute>} />}
         <Route path="about" element={<Suspense fallback={<PageLoader />}><AboutPage /></Suspense>} />
         <Route path="contact" element={<Suspense fallback={<PageLoader />}><ContactPage /></Suspense>} />
         <Route path="delivery" element={<Suspense fallback={<PageLoader />}><DeliveryPage /></Suspense>} />

@@ -18,9 +18,11 @@ import enPrivacy from '../locales/en/privacy.json';
 import enTerms from '../locales/en/terms.json';
 import enPwa from '../locales/en/pwa.json';
 import enPlatform from '../locales/en/platform.json';
+import enMarketplace from '../locales/en/marketplace.json';
+import enAccount from '../locales/en/account.json';
 
 export const SUPPORTED_LANGUAGES = ['en', 'si', 'ta'];
-const NAMESPACES = ['common', 'cart', 'product', 'category', 'order', 'checkout', 'auth', 'footer', 'about', 'contact', 'delivery', 'returns', 'privacy', 'terms', 'pwa', 'platform'];
+const NAMESPACES = ['common', 'cart', 'product', 'category', 'order', 'checkout', 'auth', 'footer', 'about', 'contact', 'delivery', 'returns', 'privacy', 'terms', 'pwa', 'platform', 'marketplace', 'account'];
 const STORAGE_KEY = 'storefrontLanguage';
 
 // English stays a static/eager import, unlike si/ta below — it's both the
@@ -38,6 +40,7 @@ const STORAGE_KEY = 'storefrontLanguage';
 const enResources = {
   common: enCommon, cart: enCart, product: enProduct, category: enCategory, order: enOrder, checkout: enCheckout, auth: enAuth, footer: enFooter,
   about: enAbout, contact: enContact, delivery: enDelivery, returns: enReturns, privacy: enPrivacy, terms: enTerms, pwa: enPwa, platform: enPlatform,
+  marketplace: enMarketplace, account: enAccount,
 };
 
 // Lazy by default (no `{ eager: true }`) — si/ta are code-split into their

@@ -1,0 +1,43 @@
+{
+ "title": "My Account",
+ "tabs": {
+  "profile": "Profile",
+  "addresses": "Addresses",
+  "vehicles": "My Vehicles"
+ },
+ "profile": {
+  "name": "Name",
+  "email": "Email",
+  "phone": "Phone",
+  "preferredLanguage": "Preferred language",
+  "save": "Save changes",
+  "saved": "Profile updated"
+ },
+ "addresses": {
+  "label": "Label (e.g. Home)",
+  "line1": "Address line 1",
+  "line2": "Address line 2 (optional)",
+  "city": "City",
+  "selectDistrict": "Select district…",
+  "landmark": "Landmark (optional)",
+  "phone": "Contact phone",
+  "save": "Save address",
+  "addNew": "Add new address",
+  "added": "Address added",
+  "removed": "Address removed",
+  "untitled": "Address",
+  "default": "Default",
+  "makeDefault": "Make default",
+  "empty": "No addresses saved yet."
+ },
+ "vehicles": {
+  "selectMake": "Select make…",
+  "selectModel": "Select model…",
+  "yearOptional": "Year (optional)",
+  "add": "Add vehicle",
+  "added": "Vehicle added",
+  "empty": "No saved vehicles yet.",
+  "useForFiltering": "Use for filtering",
+  "nowFiltering": "Now showing parts for this vehicle"
+ }
+}

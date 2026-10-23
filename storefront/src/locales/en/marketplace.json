@@ -1,0 +1,74 @@
+{
+ "announcementBar": "🚚 Island-wide Delivery, Cash on Delivery · Quality-Checked Sellers",
+ "trust": {
+  "cashOnDelivery": "Cash on Delivery",
+  "qualityCheckedSellers": "Quality-Checked Sellers"
+ },
+ "hero": {
+  "titleLine1": "Quality Parts,",
+  "titleLine2": "Delivered Fast.",
+  "subtitle": "Apexora connects you with quality-checked sellers for three-wheeler & bike parts across Sri Lanka — starting with Mudiyanse Auto Solutions, with more sellers on the way. Warranty terms are set by each seller, as stated on their listing.",
+  "qualityChecked": "Quality-Checked",
+  "qualityCheckedSub": "Sellers",
+  "warrantyAsStated": "Warranty",
+  "warrantyAsStatedSub": "As Stated"
+ },
+ "search": {
+  "placeholder": "Search for parts, brands, SKUs…",
+  "go": "Search",
+  "title": "Search",
+  "resultsFor": "Results for \"{{query}}\""
+ },
+ "vehiclePicker": {
+  "heading": "Shop by vehicle",
+  "make": "Make",
+  "selectMake": "Select make…",
+  "model": "Model",
+  "selectModel": "Select model…",
+  "year": "Year",
+  "anyYear": "Any year",
+  "showParts": "Show parts"
+ },
+ "vehicleFilterBar": {
+  "showingFor": "Showing parts for {{vehicle}}",
+  "change": "Change",
+  "clear": "Clear"
+ },
+ "fitment": {
+  "fitsYourVehicle": "Fits your vehicle",
+  "checkFitment": "Check fitment",
+  "tableTitle": "Vehicle fitment"
+ },
+ "home": {
+  "categoriesHeading": "Shop by category",
+  "latestHeading": "Latest listings",
+  "storesHeading": "Featured stores"
+ },
+ "category": {
+  "condition": "Condition",
+  "conditions": {
+   "new": "New",
+   "used": "Used",
+   "reconditioned": "Reconditioned"
+  },
+  "price": "Price"
+ },
+ "checkoutComingSoon": {
+  "title": "Online ordering is coming soon",
+  "body": "We're not able to take orders online just yet on the marketplace — but you can still order right now by sending us your cart on WhatsApp.",
+  "orderOnWhatsapp": "Order on WhatsApp",
+  "whatsappIntro": "Hi! I'd like to order the following from Apexora:",
+  "soldBy": "Sold by {{seller}}",
+  "total": "Total: {{total}}",
+  "backToCart": "← Back to cart"
+ },
+ "returns": {
+  "returnableWithin": "Returnable within {{days}} days",
+  "notReturnable": "Not returnable",
+  "warranty": "{{value}} {{unit}} warranty",
+  "warrantyUnit": {
+   "days": "day(s)",
+   "months": "month(s)"
+  }
+ }
+}

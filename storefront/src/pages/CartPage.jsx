@@ -10,9 +10,11 @@ import OrderSummary from '../components/cart/OrderSummary';
 import EmptyCart from '../components/cart/EmptyCart';
 import { formatLKR } from '../utils/formatLKR';
 import { useTranslation } from 'react-i18next';
+import { getItemSeller } from '../api/marketplaceAdapters';
 
 export default function CartPage() {
   const { t } = useTranslation('cart');
+  const { t: tPlatform } = useTranslation('platform');
   const { cart, updateQty, removeFromCart, addToCart, totalAmount } = useCart();
   const navigate = useNavigate();
   const isMobile = useIsMobile(1024);
@@ -57,6 +59,19 @@ export default function CartPage() {
     );
   }
 
+  // Grouped by seller — a pos-mode cart only ever has one group (the
+  // single hardcoded seller), a marketplace-mode cart can genuinely have
+  // several; getItemSeller() (src/api/marketplaceAdapters.js) resolves
+  // either shape the same way CheckoutPage already does.
+  const sellerGroups = [];
+  for (const item of cart) {
+    const seller = getItemSeller(item);
+    let group = sellerGroups.find((g) => (g.seller.slug || g.seller.id) === (seller.slug || seller.id));
+    if (!group) { group = { seller, items: [] }; sellerGroups.push(group); }
+    group.items.push(item);
+  }
+  const showSellerGroups = sellerGroups.length > 1;
+
   return (
     <>
     <div className="animate-fade" style={{ paddingBottom: isMobile ? '110px' : '40px' }}>
@@ -73,16 +88,29 @@ export default function CartPage() {
         {/* Line items */}
         <div style={{ flex: isMobile ? '1 1 100%' : '2 1 0%', minWidth: 0 }}>
           <div className="glass-card" style={{ padding: '8px 20px', borderRadius: '20px' }}>
-            {cart.map((item) => (
-              <CartLineItem
-                key={item._id}
-                item={item}
-                variant="full"
-                liveStock={liveStock[item._id]}
-                onIncrement={() => updateQty(item._id, 1)}
-                onDecrement={() => updateQty(item._id, -1)}
-                onRemove={() => handleRemove(item)}
-              />
+            {sellerGroups.map((group, gi) => (
+              <div key={group.seller.slug || group.seller.id}>
+                {showSellerGroups && (
+                  <div style={{
+                    fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase',
+                    letterSpacing: '0.4px', padding: gi === 0 ? '14px 0 6px' : '18px 0 6px',
+                    borderTop: gi > 0 ? '1px solid var(--border-light)' : undefined,
+                  }}>
+                    {tPlatform('soldBy', { seller: group.seller.name })}
+                  </div>
+                )}
+                {group.items.map((item) => (
+                  <CartLineItem
+                    key={item._id}
+                    item={item}
+                    variant="full"
+                    liveStock={liveStock[item._id]}
+                    onIncrement={() => updateQty(item._id, 1)}
+                    onDecrement={() => updateQty(item._id, -1)}
+                    onRemove={() => handleRemove(item)}
+                  />
+                ))}
+              </div>
             ))}
           </div>
         </div>

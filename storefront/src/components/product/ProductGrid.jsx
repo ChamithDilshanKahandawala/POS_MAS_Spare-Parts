@@ -4,7 +4,10 @@ import ProductCard from './ProductCard';
 
 // Grid + loading skeleton + empty state, shared by StorefrontPage and
 // anywhere else a product grid is needed.
-export default function ProductGrid({ products, loading, liveUpdatedIds, onCardClick, onAddToCart, columns }) {
+// `getFitmentBadge`: optional (product) => 'fits' | 'check' | undefined —
+// only ever passed by a marketplace-mode page with a vehicle selected;
+// omitted everywhere else, in which case no card ever shows a badge.
+export default function ProductGrid({ products, loading, liveUpdatedIds, onCardClick, onAddToCart, columns, getFitmentBadge }) {
   const { t } = useTranslation('product');
   const gridStyle = { display: 'grid', gridTemplateColumns: columns || 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' };
 
@@ -43,6 +46,7 @@ export default function ProductGrid({ products, loading, liveUpdatedIds, onCardC
           isLiveUpdated={liveUpdatedIds?.has(p._id)}
           onCardClick={onCardClick ? () => onCardClick(p) : undefined}
           onAddToCart={onAddToCart}
+          fitmentBadge={getFitmentBadge?.(p)}
         />
       ))}
     </div>

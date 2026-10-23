@@ -1,0 +1,74 @@
+{
+ "announcementBar": "🚚 දිවයින පුරා බෙදාහැරීම, ගෙදරටම ගෙවීම · තත්ත්වය පරීක්ෂා කළ විකුණුම්කරුවන්",
+ "trust": {
+  "cashOnDelivery": "ගෙදරටම ගෙවීම",
+  "qualityCheckedSellers": "තත්ත්වය පරීක්ෂා කළ විකුණුම්කරුවන්"
+ },
+ "hero": {
+  "titleLine1": "තත්ත්වයෙන් යුත් කොටස්,",
+  "titleLine2": "ඉක්මනින් ලබා දේ.",
+  "subtitle": "Apexora ඔබව ශ්‍රී ලංකාව පුරා තත්ත්වය පරීක්ෂා කළ විකුණුම්කරුවන් සමඟ සම්බන්ධ කරයි — Mudiyanse Auto Solutions සමඟ ආරම්භ වී, තවත් විකුණුම්කරුවන් එමින් පවතී. වගකීම් කොන්දේසි එක් එක් විකුණුම්කරු විසින් ඔවුන්ගේ නාමාවලියේ දක්වා ඇති පරිදි සකසා ඇත.",
+  "qualityChecked": "තත්ත්වය පරීක්ෂා කළ",
+  "qualityCheckedSub": "විකුණුම්කරුවන්",
+  "warrantyAsStated": "වගකීම",
+  "warrantyAsStatedSub": "දන්වා ඇති පරිදි"
+ },
+ "search": {
+  "placeholder": "කොටස්, බ්‍රෑන්ඩ්, SKU සොයන්න…",
+  "go": "සොයන්න",
+  "title": "සොයන්න",
+  "resultsFor": "\"{{query}}\" සඳහා ප්‍රතිඵල"
+ },
+ "vehiclePicker": {
+  "heading": "වාහනය අනුව සොයන්න",
+  "make": "සමාගම",
+  "selectMake": "සමාගම තෝරන්න…",
+  "model": "මාදිලිය",
+  "selectModel": "මාදිලිය තෝරන්න…",
+  "year": "වර්ෂය",
+  "anyYear": "ඕන වර්ෂයක්",
+  "showParts": "කොටස් පෙන්වන්න"
+ },
+ "vehicleFilterBar": {
+  "showingFor": "{{vehicle}} සඳහා කොටස් පෙන්වමින්",
+  "change": "වෙනස් කරන්න",
+  "clear": "ඉවත් කරන්න"
+ },
+ "fitment": {
+  "fitsYourVehicle": "ඔබේ වාහනයට ගැළපේ",
+  "checkFitment": "ගැළපීම පරීක්ෂා කරන්න",
+  "tableTitle": "වාහන ගැළපීම"
+ },
+ "home": {
+  "categoriesHeading": "කාණ්ඩය අනුව සොයන්න",
+  "latestHeading": "අලුත්ම නාමාවලි",
+  "storesHeading": "විශේෂ වෙළඳසැල්"
+ },
+ "category": {
+  "condition": "තත්ත්වය",
+  "conditions": {
+   "new": "අලුත්",
+   "used": "පරණ",
+   "reconditioned": "නැවත සකස් කළ"
+  },
+  "price": "මිල"
+ },
+ "checkoutComingSoon": {
+  "title": "සබැඳි ඇණවුම් ළඟදීම එයි",
+  "body": "අපට තවම marketplace එකෙන් සබැඳිව ඇණවුම් ගන්න බැහැ — නමුත් ඔබේ කරත්තය WhatsApp හරහා එවා දැන්ම ඇණවුම් කරගත හැක.",
+  "orderOnWhatsapp": "WhatsApp හරහා ඇණවුම් කරන්න",
+  "whatsappIntro": "හායි! මට Apexora එකෙන් මේවා ඇණවුම් කරගන්න ඕන:",
+  "soldBy": "{{seller}} විසින් විකුණනු ලැබේ",
+  "total": "එකතුව: {{total}}",
+  "backToCart": "← කරත්තයට ආපසු"
+ },
+ "returns": {
+  "returnableWithin": "දින {{days}} ක් ඇතුළත ආපසු දිය හැක",
+  "notReturnable": "ආපසු දිය නොහැක",
+  "warranty": "වගකීම {{value}} {{unit}}",
+  "warrantyUnit": {
+   "days": "දින",
+   "months": "මාස"
+  }
+ }
+}

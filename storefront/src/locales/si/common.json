@@ -1,40 +1,46 @@
 {
-  "_meta": {
-    "status": "draft — needs native speaker review"
-  },
-  "announcementBar": "🚚 දිවයින පුරා බෙදාහැරීම, ගෙදරදී මුදල් ගෙවීම · 100% සැබෑ අමතර කොටස් සහතිකයි",
-  "nav": {
-    "store": "සාප්පුව",
-    "myOrders": "මගේ ඇණවුම්",
-    "contact": "අප අමතන්න",
-    "delivery": "බෙදාහැරීම",
-    "categories": "කාණ්ඩ",
-    "shopByCategory": "කාණ්ඩ අනුව සාප්පු යන්න",
-    "cart": "කරත්තය",
-    "signIn": "ප්‍රවේශ වන්න",
-    "getStarted": "ආරම්භ කරන්න",
-    "signOut": "ඉවත් වන්න",
-    "logout": "ඉවත් වන්න",
-    "register": "ලියාපදිංචි වන්න",
-    "lightMode": "දීප්ත මාදිලිය",
-    "darkMode": "අඳුරු මාදිලිය",
-    "switchToLightMode": "දීප්ත මාදිලියට මාරු වන්න",
-    "switchToDarkMode": "අඳුරු මාදිලියට මාරු වන්න",
-    "backToStore": "← සාප්පුවට ආපසු",
-    "openMenu": "මෙනුව විවෘත කරන්න",
-    "closeMenu": "මෙනුව වසන්න"
-  },
-  "languageBanner": {
-    "message": "සිංහලෙන් බලන්න · தமிழில் பார்க்க",
-    "dismiss": "ඉවත් කරන්න"
-  },
-  "language": {
-    "en": "EN",
-    "si": "සිං",
-    "ta": "தமிழ்",
-    "nameEn": "English",
-    "nameSi": "සිංහල",
-    "nameTa": "தமிழ்",
-    "switchTo": "{{language}} වෙත මාරු වන්න"
-  }
+ "_meta": {
+  "status": "draft — needs native speaker review"
+ },
+ "announcementBar": "🚚 දිවයින පුරා බෙදාහැරීම, ගෙදරදී මුදල් ගෙවීම · 100% සැබෑ අමතර කොටස් සහතිකයි",
+ "nav": {
+  "store": "සාප්පුව",
+  "myOrders": "මගේ ඇණවුම්",
+  "contact": "අප අමතන්න",
+  "delivery": "බෙදාහැරීම",
+  "categories": "කාණ්ඩ",
+  "shopByCategory": "කාණ්ඩ අනුව සාප්පු යන්න",
+  "cart": "කරත්තය",
+  "signIn": "ප්‍රවේශ වන්න",
+  "getStarted": "ආරම්භ කරන්න",
+  "signOut": "ඉවත් වන්න",
+  "logout": "ඉවත් වන්න",
+  "register": "ලියාපදිංචි වන්න",
+  "lightMode": "දීප්ත මාදිලිය",
+  "darkMode": "අඳුරු මාදිලිය",
+  "switchToLightMode": "දීප්ත මාදිලියට මාරු වන්න",
+  "switchToDarkMode": "අඳුරු මාදිලියට මාරු වන්න",
+  "backToStore": "← සාප්පුවට ආපසු",
+  "openMenu": "මෙනුව විවෘත කරන්න",
+  "closeMenu": "මෙනුව වසන්න",
+  "myAccount": "මගේ ගිණුම"
+ },
+ "languageBanner": {
+  "message": "සිංහලෙන් බලන්න · தமிழில் பார்க்க",
+  "dismiss": "ඉවත් කරන්න"
+ },
+ "language": {
+  "en": "EN",
+  "si": "සිං",
+  "ta": "தமிழ்",
+  "nameEn": "English",
+  "nameSi": "සිංහල",
+  "nameTa": "தமிழ்",
+  "switchTo": "{{language}} වෙත මාරු වන්න"
+ },
+ "loading": "පූරණය වෙමින්…",
+ "cancel": "අවලංගු කරන්න",
+ "error": {
+  "generic": "මොකක් හරි වැරැද්දක් වුණා. කරුණාකර නැවත උත්සාහ කරන්න."
+ }
 }

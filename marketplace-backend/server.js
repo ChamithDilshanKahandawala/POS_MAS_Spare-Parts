@@ -18,6 +18,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const sellerRoutes = require('./routes/sellerRoutes');
 const publicRoutes = require('./routes/publicRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const customerRoutes = require('./routes/customerRoutes');
 const { startPosSyncScheduler } = require('./services/posSyncScheduler');
 
 const app = express();
@@ -55,6 +56,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/seller', sellerRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/customer', customerRoutes);
 
 app.use((req, res) => res.status(404).json({ message: 'Route not found' }));
 

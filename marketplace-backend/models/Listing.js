@@ -146,7 +146,27 @@ listingSchema.index(
   { seller: 1, posProductId: 1 },
   { unique: true, partialFilterExpression: { posProductId: { $exists: true } } }
 );
-listingSchema.index({ 'title.en': 'text', 'description.en': 'text', sku: 'text', brand: 'text' });
+// Milestone 5: a single wildcard text index ('$**') so title.si/title.ta
+// and every attribute value (attributes is Schema.Types.Mixed — a
+// wildcard is the only way to text-index an arbitrary, category-defined
+// key set) are searchable, not just title.en/description.en/sku/brand
+// as before. A collection can only ever have ONE text index, and Mongo
+// does not allow mixing '$**' with explicitly named text fields in the
+// same index — so per-field weights are applied separately via the
+// `weights` option instead, which IS compatible with a wildcard text
+// index: title/brand/sku rank well above an incidental match deep in
+// `description` or `attributes`.
+// NOTE: replaces the old title.en/description.en/sku/brand text index —
+// that index must be dropped by name in any database that already has
+// it (Mongo won't auto-drop an index just because the schema changed);
+// a fresh dev/test database only ever creates this one.
+listingSchema.index(
+  { '$**': 'text' },
+  {
+    name: 'listing_search_text',
+    weights: { 'title.en': 10, 'title.si': 10, 'title.ta': 10, brand: 5, sku: 5 },
+  }
+);
 // adminListingsController.js's listReviewQueue: oldest-first, filtered by
 // status (in_review, or published/hidden for a pending revision).
 // There's no separate "submittedAt" field on a listing — updatedAt is

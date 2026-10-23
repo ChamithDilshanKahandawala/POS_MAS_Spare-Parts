@@ -11,10 +11,15 @@ import {
 import { SHOP_INFO, PLATFORM_INFO, PAYMENT_BADGES, formatPhoneDisplay } from '../../config/store';
 import { slugify } from '../../utils/slugify';
 import ApexoraWordmark from './ApexoraWordmark';
+import { CONSOLE_URL, isMarketplace } from '../../api/dataSource';
+import { localizedPick } from '../../api/marketplaceAdapters';
+import useMarketplaceCategories from '../../hooks/useMarketplaceCategories';
 
 export default function Footer() {
-  const { t } = useTranslation('footer');
+  const { t, i18n } = useTranslation('footer');
   const { t: tPlatform } = useTranslation('platform');
+  const { t: tMarket } = useTranslation('marketplace');
+  const marketplaceCategories = useMarketplaceCategories();
   const [email, setEmail]       = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -29,7 +34,18 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   /* ─── data ─────────────────────────────────────────────── */
-  const trustBadges = [
+  // Marketplace mode (follow-up #2): "Secure Payments" and "100% Genuine
+  // Parts" are claims Apexora can't actually back for every third-party
+  // seller — swapped for wording that's true today. pos mode's own badges
+  // (footer.json, untouched) are a single shop's first-party claim about
+  // its own stock, which is a different, legitimate thing to say.
+  const trustBadges = isMarketplace ? [
+    { icon: <ShieldCheck size={18} />, label: tMarket('trust.cashOnDelivery'),   color: '#10b981' },
+    { icon: <Truck size={18} />,       label: t('trust.islandwideDelivery'),     color: '#e67e22' },
+    { icon: <RotateCcw size={18} />,   label: t('trust.easyReturns'),            color: '#f59e0b' },
+    { icon: <Star size={18} />,        label: tMarket('trust.qualityCheckedSellers'), color: '#ec4899' },
+    { icon: <Zap size={18} />,         label: t('trust.fastProcessing'),         color: '#14b8a6' },
+  ] : [
     { icon: <ShieldCheck size={18} />, label: t('trust.securePayments'),      color: '#10b981' },
     { icon: <Truck size={18} />,       label: t('trust.islandwideDelivery'),  color: '#e67e22' },
     { icon: <RotateCcw size={18} />,   label: t('trust.easyReturns'),         color: '#f59e0b' },
@@ -37,16 +53,27 @@ export default function Footer() {
     { icon: <Zap size={18} />,         label: t('trust.fastProcessing'),      color: '#14b8a6' },
   ];
 
-  const quickLinks = [
-    // Previously pointed at /?category=... — StorefrontPage never read that
-    // query param, so these were dead links. Now point at the real category
-    // pages (see CategoryPage.jsx).
-    { label: t('quickShop.threeWheelParts'), to: `/category/${slugify('Three-Wheel')}` },
-    { label: t('quickShop.bikeSpareParts'),  to: `/category/${slugify('Bike')}`        },
-    { label: t('quickShop.carAccessories'),  to: `/category/${slugify('Car')}`         },
-    { label: t('quickShop.vanSuvParts'),     to: `/category/${slugify('SUV')}`         },
-    { label: t('quickShop.trackMyOrder'),    to: '/orders'                            },
-  ];
+  // Marketplace mode (follow-up #5): the pos-mode links below point at a
+  // fixed set of POS category slugs that don't exist under the real,
+  // admin-managed category tree (real ones look like
+  // "vehicle-parts-three-wheel", not "three-wheel") — every one of these
+  // 404'd. Built from real categories instead, and "Track My Order"
+  // dropped entirely: there's no real order to track yet (marketplace
+  // checkout is still the Part A "coming soon" message), so the link had
+  // nowhere real to go, same reasoning as hiding "My Orders" from the
+  // main nav (StoreLayout.jsx).
+  const quickLinks = isMarketplace
+    ? marketplaceCategories.slice(0, 4).map((c) => ({ label: localizedPick(c.name, i18n.language), to: `/category/${c.slug}` }))
+    : [
+      // Previously pointed at /?category=... — StorefrontPage never read that
+      // query param, so these were dead links. Now point at the real category
+      // pages (see CategoryPage.jsx).
+      { label: t('quickShop.threeWheelParts'), to: `/category/${slugify('Three-Wheel')}` },
+      { label: t('quickShop.bikeSpareParts'),  to: `/category/${slugify('Bike')}`        },
+      { label: t('quickShop.carAccessories'),  to: `/category/${slugify('Car')}`         },
+      { label: t('quickShop.vanSuvParts'),     to: `/category/${slugify('SUV')}`         },
+      { label: t('quickShop.trackMyOrder'),    to: '/orders'                            },
+    ];
 
   const supportLinks = [
     { label: t('support.aboutUs'),               to: '/about' },
@@ -57,6 +84,12 @@ export default function Footer() {
     { label: t('support.privacyPolicy'),         to: '/privacy' },
     { label: t('support.termsConditions'),       to: '/terms' },
   ];
+
+  // Milestone 5 Part D.8 — links to the console app's public /apply page,
+  // not anywhere within this app itself. Hidden when VITE_CONSOLE_URL
+  // isn't set (e.g. production until that's deliberately configured),
+  // same "don't render a dead link" rule as WHATSAPP_NUMBER above.
+  const sellOnApexoraHref = CONSOLE_URL ? `${CONSOLE_URL}/apply` : null;
 
   const socials = [
     { icon: <Facebook size={17} />,      label: 'Facebook',  href: '#',                                 color: '#1877f2' },
@@ -142,17 +175,10 @@ export default function Footer() {
               {tPlatform('footerTagline')}
             </p>
 
-            {/* Stars */}
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: '5px',
-              padding: '8px 14px', marginBottom: '22px',
-              background: 'rgba(251,191,36,0.08)', borderRadius: '10px',
-              border: '1px solid rgba(251,191,36,0.2)',
-            }}>
-              {[0,1,2,3,4].map(i => <Star key={i} size={13} fill="#fbbf24" color="#fbbf24" />)}
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#fbbf24', marginLeft: '3px' }}>4.9</span>
-              <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginLeft: '2px' }}>{t('brand.reviews')}</span>
-            </div>
+            {/* A star rating/review count was here — removed (follow-up
+                #2): it was always a hardcoded "4.9 (200+ reviews)", never
+                real review data, and the platform has no reviews yet.
+                Never show a rating that isn't backed by real data. */}
 
             {/* Socials */}
             <div style={{ display: 'flex', gap: '9px' }}>
@@ -194,7 +220,7 @@ export default function Footer() {
 
           {/* ── Quick Shop ── */}
           <div>
-            <h4 style={sectionHeading('#e67e22')}>{t('quickShop.heading')}</h4>
+            <h3 style={sectionHeading('#e67e22')}>{t('quickShop.heading')}</h3>
             {quickLinks.map((l) => (
               <Link
                 key={l.label} to={l.to}
@@ -216,7 +242,7 @@ export default function Footer() {
 
           {/* ── Support ── */}
           <div>
-            <h4 style={sectionHeading('#8b5cf6')}>{t('support.heading')}</h4>
+            <h3 style={sectionHeading('#8b5cf6')}>{t('support.heading')}</h3>
             {supportLinks.map((l) => (
               <Link
                 key={l.label} to={l.to}
@@ -234,11 +260,22 @@ export default function Footer() {
                 {l.label}
               </Link>
             ))}
+            {sellOnApexoraHref && (
+              <a
+                href={sellOnApexoraHref} target="_blank" rel="noopener noreferrer"
+                style={navLink.base}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#8b5cf6'; e.currentTarget.style.paddingLeft = '5px'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.paddingLeft = '0'; }}
+              >
+                <ChevronRight size={13} style={{ color: '#8b5cf6', flexShrink: 0 }} />
+                {t('support.sellOnApexora')}
+              </a>
+            )}
           </div>
 
           {/* ── Contact + Newsletter ── */}
           <div>
-            <h4 style={sectionHeading('#10b981')}>{t('contact.heading')}</h4>
+            <h3 style={sectionHeading('#10b981')}>{t('contact.heading')}</h3>
 
             {/* Contact list */}
             <div style={{ marginBottom: '22px' }}>

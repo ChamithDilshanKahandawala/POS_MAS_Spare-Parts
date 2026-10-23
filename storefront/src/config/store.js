@@ -63,13 +63,15 @@ export const SELLERS = [
   { id: 'mudiyanse-auto', slug: 'mudiyanse-auto-solutions', ...SHOP_INFO },
 ];
 
-// Every product belongs to the single seller above today — there's no
-// per-product seller field in backend/models/Product.js yet. This is the
-// one place that'll need to change (look up the product's real seller)
-// once multi-seller product data exists; nothing that calls it should
-// need to.
-export function getSellerForProduct() {
-  return SELLERS[0];
+// Every POS-mode product belongs to the single seller above — there's no
+// per-product seller field in backend/models/Product.js. Milestone 5's
+// marketplace mode DOES have real multi-seller data: a listing normalized
+// by src/api/marketplaceAdapters.js's normalizeListing() carries its own
+// real seller under `__seller` ({ id, name, slug, district }), which this
+// now prefers whenever it's present — the single hardcoded SELLERS[0] is
+// only ever the fallback for a plain POS-shaped product.
+export function getSellerForProduct(product) {
+  return product?.__seller || SELLERS[0];
 }
 
 export function getSellerBySlug(slug) {

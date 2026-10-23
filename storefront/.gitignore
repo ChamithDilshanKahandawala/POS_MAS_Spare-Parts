@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# Milestone 5 — Playwright (dev-only), run against a throwaway dev
+# server (port 5199), never committed.
+test-results
+tests-e2e/screenshots
+tests-e2e/.seed-output.json
+playwright-report
+
 # Environment variables
 .env
 .env.*

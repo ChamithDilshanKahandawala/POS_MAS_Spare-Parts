@@ -271,7 +271,12 @@ test('a stale listingCount does not block or allow what the real Listing count w
 
 // --- Public endpoint ---
 
-test('the public category endpoint never returns commission or internal rules', async () => {
+// Milestone 5 made returnPolicy/warrantyRule themselves public (the
+// storefront's product detail page shows "Returnable within N days" /
+// minimum warranty straight from this) — see publicCatalogController.js's
+// comment. Every other admin-internal field stays hidden exactly as
+// before.
+test('the public category endpoint returns return/warranty policy but never commission or other internal rules', async () => {
   const res = await request(app).get('/api/public/catalog/categories');
   assert.equal(res.status, 200);
   const flatten = (nodes) => nodes.flatMap((n) => [n, ...flatten(n.children)]);
@@ -281,10 +286,10 @@ test('the public category endpoint never returns commission or internal rules', 
     assert.equal(node.commissionRateBps, undefined);
     assert.equal(node.regulated, undefined);
     assert.equal(node.reviewRequired, undefined);
-    assert.equal(node.returnPolicy, undefined);
     assert.equal(node.prohibitedKeywords, undefined);
     assert.equal(node.attributeSchema, undefined);
     assert.ok('name' in node && 'slug' in node);
+    assert.ok('returnPolicy' in node && 'warrantyRule' in node);
   }
 });
 
