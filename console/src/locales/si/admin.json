@@ -295,6 +295,75 @@
       "4": "බ්‍රහස්පතින්දා",
       "5": "සිකුරාදා",
       "6": "සෙනසුරාදා"
+    },
+    "ordering": {
+      "heading": "ඇණවුම් කිරීම",
+      "enable": "මාර්ගගත ඇණවුම් සක්‍රීයයි",
+      "enableHint": "අක්‍රීයව තිබියදී, marketplace checkout එක සැබෑ ඇණවුම් ලබා ගැනීම වෙනුවට \"ළඟදීම එයි — WhatsApp හරහා ඇණවුම් කරන්න\" තිරය පෙන්වයි.",
+      "autoCancelAfterHours": "තහවුරු නොකළ ඇණවුම් ස්වයංක්‍රීයව අවලංගු කරන්නේ (පැය ගණන) කින්",
+      "courierName": "බෙදාහරින සේවාවේ නම"
+    },
+    "deliveryRates": {
+      "heading": "දිස්ත්‍රික්කය අනුව බෙදාහැරීමේ ගාස්තු",
+      "hint": "රු, එක් විකුණුම්කරු පාර්සලයක් සඳහා. ගාස්තුව = පළමු kg + අමතර kg × (පාර්සල බර kg − 1).",
+      "district": "දිස්ත්‍රික්කය",
+      "firstKg": "පළමු kg (රු)",
+      "additionalKg": "එක් එක් අමතර kg (රු)"
+    }
+  },
+  "orders": {
+    "overview": {
+      "ordersToday": "අද ඇණවුම්",
+      "waitingConfirmation": "තහවුරු කිරීමට රැඳී සිටී",
+      "deliveryFailures": "බෙදාහැරීම් අසාර්ථක වීම්",
+      "refundsNeeded": "ආපසු ගෙවීම් අවශ්‍යයි"
+    },
+    "searchPlaceholder": "ඇණවුම් අංකය මගින් සොයන්න",
+    "allStatuses": "සියලු තත්ත්ව",
+    "allSellers": "සියලු විකුණුම්කරුවන්",
+    "allDistricts": "සියලු දිස්ත්‍රික්ක",
+    "refundNeededFilter": "ආපසු ගෙවීම අවශ්‍යයි",
+    "refundNeededBadge": "ආපසු ගෙවීම අවශ්‍යයි",
+    "dateTo": "සිට",
+    "noResults": "ඔබේ පෙරහන්වලට ගැළපෙන ඇණවුම් නැත",
+    "view": "බලන්න",
+    "pagination": "පිටුව {{page}} න් {{pages}}",
+    "tabs": {
+      "new": "අලුත්",
+      "confirmed": "තහවුරු කරන ලදී",
+      "packed": "පැකට් කරන ලදී",
+      "shipped": "යවන ලදී",
+      "delivered": "භාර දෙන ලදී",
+      "cancelled": "අවලංගු කරන ලදී",
+      "delivery_failed": "බෙදාහැරීම අසාර්ථකයි",
+      "returned": "ආපසු එවන ලදී"
+    },
+    "table": {
+      "orderNumber": "ඇණවුම",
+      "seller": "විකුණුම්කරු",
+      "date": "දිනය",
+      "district": "දිස්ත්‍රික්කය",
+      "codAmount": "COD මුදල",
+      "status": "තත්ත්වය"
+    },
+    "detail": {
+      "back": "ඇණවුම් වෙත ආපසු",
+      "cancelled": "ඇණවුම අවලංගු කරන ලදී",
+      "moved": "ඇණවුම ඉදිරියට ගෙන ගියා",
+      "moveOn": "ඉදිරියට ගෙන යන්න",
+      "deliveryAddress": "පාරිභෝගිකයා සහ බෙදාහැරීම",
+      "items": "අයිතම",
+      "deliveryFee": "බෙදාහැරීමේ ගාස්තුව",
+      "codAmount": "COD මුදල",
+      "timeline": "කාල රේඛාව",
+      "internalNotes": "අභ්‍යන්තර සටහන්",
+      "noNotes": "තවම සටහන් නැත",
+      "addNotePlaceholder": "අභ්‍යන්තර සටහනක් එක් කරන්න",
+      "addNote": "එක් කරන්න",
+      "actions": { "cancel": "ඇණවුම අවලංගු කරන්න" },
+      "reasonPlaceholder": "හේතුව (අවශ්‍යයි)",
+      "refundNeededBanner": "මෙම ඇණවුම කලින් ගෙවන ලද අතර පසුව අවලංගු කරන ලදී හෝ ආපසු එවන ලදී. පාරිභෝගිකයාට ආපසු ගෙවීමක් ලැබිය යුතුව ඇත.",
+      "refusedParcelCost": "ප්‍රතික්ෂේප කළ පාර්සලයේ බෙදාහැරීම් සේවා ගාස්තුව"
     }
   },
   "catalog": {

@@ -7,11 +7,15 @@ const {
   listAddresses, createAddress, updateAddress, deleteAddress,
   listVehicles, createVehicle, deleteVehicle,
 } = require('../controllers/customerController');
+const { preview: previewCheckout, create: createOrder } = require('../controllers/checkoutController');
+const { listMyOrders, getMyOrder, cancelMyOrder } = require('../controllers/customerOrdersController');
 const { requireAuth } = require('../middleware/authMiddleware');
 const { writeLimiter } = require('../middleware/rateLimiter');
 const { validate, requireValidObjectId } = require('../middleware/validate');
 const asyncHandler = require('../middleware/asyncHandler');
 const { SRI_LANKA_DISTRICTS } = require('../utils/sriLankaDistricts');
+
+const OBJECT_ID_RE = /^[0-9a-fA-F]{24}$/;
 
 // Any authenticated User — there is no platform/seller gate here, same
 // reasoning as GET /api/auth/me: this is account self-service, scoped
@@ -58,5 +62,41 @@ router.delete('/addresses/:addressId', requireValidObjectId('addressId'), asyncH
 router.get('/vehicles', asyncHandler(listVehicles));
 router.post('/vehicles', validate({ body: vehicleBodySchema }), asyncHandler(createVehicle));
 router.delete('/vehicles/:vehicleId', requireValidObjectId('vehicleId'), asyncHandler(deleteVehicle));
+
+// --- Checkout & orders (Milestone 6 Part C) ---
+const checkoutItemSchema = z.object({
+  listingId: z.string().regex(OBJECT_ID_RE),
+  qty: z.number().int().min(1).max(99),
+  expectedPriceCents: z.number().int().min(0).optional(),
+}).strict();
+
+const previewBodySchema = z.object({
+  addressId: z.string().regex(OBJECT_ID_RE),
+  items: z.array(checkoutItemSchema).min(1).max(50),
+}).strict();
+
+const createOrderBodySchema = z.object({
+  addressId: z.string().regex(OBJECT_ID_RE),
+  items: z.array(checkoutItemSchema).min(1).max(50),
+  customerNote: z.string().trim().max(500).optional(),
+  // A client-generated UUID — see models/Order.js's idempotencyKey.
+  idempotencyKey: z.string().trim().min(8).max(100),
+}).strict();
+
+const cancelOrderBodySchema = z.object({
+  reason: z.string().trim().max(300).optional(),
+}).strict();
+
+const orderNumberParamsSchema = z.object({ orderNumber: z.string().trim().min(1) }).strict();
+
+router.post('/checkout/preview', validate({ body: previewBodySchema }), asyncHandler(previewCheckout));
+router.post('/orders', validate({ body: createOrderBodySchema }), asyncHandler(createOrder));
+router.get('/orders', asyncHandler(listMyOrders));
+router.get('/orders/:orderNumber', validate({ params: orderNumberParamsSchema }), asyncHandler(getMyOrder));
+router.post(
+  '/orders/:orderNumber/cancel',
+  validate({ params: orderNumberParamsSchema, body: cancelOrderBodySchema }),
+  asyncHandler(cancelMyOrder)
+);
 
 module.exports = router;

@@ -41,7 +41,7 @@ export default defineConfig({
         // as the platform, same as any marketplace app would be.
         name: 'Apexora',
         short_name: 'Apexora',
-        description: "Sri Lanka's marketplace for genuine vehicle parts and more, delivered island-wide.",
+        description: "Sri Lanka's marketplace for quality vehicle parts and more, delivered island-wide.",
         theme_color: '#e67e22',
         background_color: '#faf9f7',
         display: 'standalone',

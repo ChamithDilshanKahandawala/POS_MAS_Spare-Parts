@@ -35,7 +35,15 @@ async function visibilityFilter() {
     Category.find({ active: true }).select('_id').lean().then((rows) => rows.map((r) => r._id)),
     Seller.find({ status: 'active' }).select('_id').lean().then((rows) => rows.map((r) => r._id)),
   ]);
-  return { status: 'published', stock: { $gt: 0 }, categoryId: { $in: activeCategoryIds }, seller: { $in: activeSellerIds } };
+  // Milestone 6: "in stock" means real AVAILABLE stock (stock minus any
+  // active order reservations), not just a positive `stock` field — see
+  // the identical reasoning in services/listingPublicView.js's inStock.
+  return {
+    status: 'published',
+    $expr: { $gt: [{ $subtract: ['$stock', '$reservedQty'] }, 0] },
+    categoryId: { $in: activeCategoryIds },
+    seller: { $in: activeSellerIds },
+  };
 }
 
 // Builds the Mongo filter from query params on top of visibilityFilter().

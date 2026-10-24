@@ -292,6 +292,75 @@
       "4": "Thursday",
       "5": "Friday",
       "6": "Saturday"
+    },
+    "ordering": {
+      "heading": "Ordering",
+      "enable": "Online ordering enabled",
+      "enableHint": "While off, marketplace checkout shows the \"coming soon — order on WhatsApp\" screen instead of taking real orders.",
+      "autoCancelAfterHours": "Auto-cancel unconfirmed orders after (hours)",
+      "courierName": "Courier name"
+    },
+    "deliveryRates": {
+      "heading": "Delivery rates by district",
+      "hint": "Rs, per seller parcel. Fee = first kg + additional kg × (parcel weight in kg − 1).",
+      "district": "District",
+      "firstKg": "First kg (Rs)",
+      "additionalKg": "Each additional kg (Rs)"
+    }
+  },
+  "orders": {
+    "overview": {
+      "ordersToday": "Orders today",
+      "waitingConfirmation": "Waiting for confirmation",
+      "deliveryFailures": "Delivery failures",
+      "refundsNeeded": "Refunds needed"
+    },
+    "searchPlaceholder": "Search by order number",
+    "allStatuses": "All statuses",
+    "allSellers": "All sellers",
+    "allDistricts": "All districts",
+    "refundNeededFilter": "Refund needed",
+    "refundNeededBadge": "Refund needed",
+    "dateTo": "to",
+    "noResults": "No orders match your filters",
+    "view": "View",
+    "pagination": "Page {{page}} of {{pages}}",
+    "tabs": {
+      "new": "New",
+      "confirmed": "Confirmed",
+      "packed": "Packed",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "delivery_failed": "Delivery failed",
+      "returned": "Returned"
+    },
+    "table": {
+      "orderNumber": "Order",
+      "seller": "Seller",
+      "date": "Date",
+      "district": "District",
+      "codAmount": "COD amount",
+      "status": "Status"
+    },
+    "detail": {
+      "back": "Back to orders",
+      "cancelled": "Order cancelled",
+      "moved": "Order moved on",
+      "moveOn": "Move on",
+      "deliveryAddress": "Customer & delivery",
+      "items": "Items",
+      "deliveryFee": "Delivery fee",
+      "codAmount": "COD amount",
+      "timeline": "Timeline",
+      "internalNotes": "Internal notes",
+      "noNotes": "No notes yet",
+      "addNotePlaceholder": "Add an internal note",
+      "addNote": "Add",
+      "actions": { "cancel": "Cancel order" },
+      "reasonPlaceholder": "Reason (required)",
+      "refundNeededBanner": "This order was prepaid and later cancelled or returned. A refund is owed to the customer.",
+      "refusedParcelCost": "Refused parcel courier cost"
     }
   },
   "catalog": {

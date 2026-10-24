@@ -1,6 +1,25 @@
 {
   "headline": "Thank you! Your order is placed",
   "subheadline": "We've received your order and will get it ready for delivery.",
+  "marketplaceSubheadline": "We've received your order — {{count}} seller(s) are getting it ready.",
+  "marketplaceStatus": {
+    "new": "Placed",
+    "confirmed": "Confirmed",
+    "packed": "Packed",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled",
+    "delivery_failed": "Delivery failed"
+  },
+  "marketplaceItems": {
+    "delivery": "Delivery",
+    "codAmount": "Cash on delivery",
+    "parcelsHeading": "{{count}} parcel(s)",
+    "cancelled": "Order cancelled",
+    "cancelFailed": "Could not cancel this order",
+    "cancelling": "Cancelling…",
+    "cancelOrder": "Cancel order"
+  },
   "invoice": { "label": "Order number", "copy": "Copy", "copied": "Copied!", "copyFailed": "Could not copy — select it manually" },
   "timeline": {
     "placed": "Placed",
@@ -19,7 +38,7 @@
     "qtyLine": "Qty: {{count}} × {{price}}"
   },
   "payment": { "cod": "Cash on Delivery — please keep {{amount}} ready" },
-  "whatsapp": { "cta": "Confirm on WhatsApp", "message": "Hi! I'd like to confirm my Apexora order {{invoiceNumber}} from {{seller}}, total {{total}}. Thank you!" },
+  "whatsapp": { "cta": "Confirm on WhatsApp", "message": "Hi! I'd like to confirm my Apexora order {{invoiceNumber}} from {{seller}}, total {{total}}. Thank you!", "marketplaceMessage": "Hi! I'd like to ask about my Apexora order {{orderNumber}}. Thank you!" },
   "actions": { "continueShopping": "Continue shopping", "viewOrders": "View my orders", "backToShop": "Back to shop", "tryAgain": "Try again" },
   "notFound": { "title": "Order not found", "subtitle": "We couldn't find this order, or it doesn't belong to this account." },
   "error": { "title": "Something went wrong", "subtitle": "We couldn't load this order. Check your connection and try again." },

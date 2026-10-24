@@ -171,8 +171,11 @@ export default function Footer() {
               <ApexoraWordmark size={24} />
             </div>
 
+            {/* Milestone 6 — "quality vehicle parts" in marketplace mode,
+                softer than pos mode's "genuine vehicle parts" (a single
+                shop's own first-party claim, left unchanged). */}
             <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: 1.75, marginBottom: '20px', maxWidth: '290px' }}>
-              {tPlatform('footerTagline')}
+              {isMarketplace ? tMarket('footerTagline') : tPlatform('footerTagline')}
             </p>
 
             {/* A star rating/review count was here — removed (follow-up

@@ -20,7 +20,11 @@ function toPublicListing(listing) {
     images,
     priceCents: listing.priceCents,
     wasPriceCents: listing.wasPriceCents,
-    inStock: listing.stock > 0,
+    // Milestone 6: `stock` alone is no longer "real availability" once
+    // orders can reserve units against it (services/stockReservation.js)
+    // — a listing with 1 unit of stock and 1 active reservation is sold
+    // out to everyone else, even though `stock` itself still reads 1.
+    inStock: Math.max(0, (listing.stock || 0) - (listing.reservedQty || 0)) > 0,
     weightGrams: listing.weightGrams,
     dimensions: listing.dimensions,
     warranty: listing.warranty,

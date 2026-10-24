@@ -31,7 +31,11 @@ import CategoriesFeesPage from './pages/seller/CategoriesFeesPage';
 import ProductsPage from './pages/seller/ProductsPage';
 import ImportFromPosPage from './pages/seller/ImportFromPosPage';
 import ListingWizardPage from './pages/seller/wizard/ListingWizardPage';
+import OrdersPage from './pages/seller/OrdersPage';
+import OrderDetailPage from './pages/seller/OrderDetailPage';
 import ComingSoonSellerPage from './pages/seller/ComingSoonSellerPage';
+import AdminOrdersPage from './pages/admin/OrdersPage';
+import AdminOrderDetailPage from './pages/admin/OrderDetailPage';
 
 // Remounts the wrapped seller page fresh whenever the switcher changes
 // which store is active (same pattern as the storefront's
@@ -55,6 +59,8 @@ const CategoriesFeesRoute = sellerRoute(CategoriesFeesPage);
 const ProductsRoute = sellerRoute(ProductsPage);
 const ImportFromPosRoute = sellerRoute(ImportFromPosPage);
 const ListingWizardRoute = sellerRoute(ListingWizardPage);
+const OrdersRoute = sellerRoute(OrdersPage);
+const OrderDetailRoute = sellerRoute(OrderDetailPage);
 
 export default function App() {
   return (
@@ -80,7 +86,8 @@ export default function App() {
                   <Route path="/admin/listing-review/:id" element={<ListingReviewDetailPage />} />
                   <Route path="/admin/catalog" element={<CatalogPage />} />
                   <Route path="/admin/catalog/vehicles" element={<VehiclesPage />} />
-                  <Route path="/admin/orders" element={<ComingSoonPage navKey="orders" milestone={3} />} />
+                  <Route path="/admin/orders" element={<AdminOrdersPage />} />
+                  <Route path="/admin/orders/:id" element={<AdminOrderDetailPage />} />
                   <Route path="/admin/returns-disputes" element={<ComingSoonPage navKey="returnsDisputes" milestone={3} />} />
                   <Route path="/admin/finance" element={<ComingSoonPage navKey="finance" milestone={4} />} />
                   <Route path="/admin/customers" element={<ComingSoonPage navKey="customers" milestone={4} />} />
@@ -98,7 +105,8 @@ export default function App() {
                   <Route path="/seller/products/import-pos" element={<ImportFromPosRoute />} />
                   <Route path="/seller/products/new" element={<ListingWizardRoute />} />
                   <Route path="/seller/products/:id/edit" element={<ListingWizardRoute />} />
-                  <Route path="/seller/orders" element={<ComingSoonSellerPage navKey="orders" milestone={6} />} />
+                  <Route path="/seller/orders" element={<OrdersRoute />} />
+                  <Route path="/seller/orders/:id" element={<OrderDetailRoute />} />
                   <Route path="/seller/returns" element={<ComingSoonSellerPage navKey="returns" milestone={8} />} />
                   <Route path="/seller/finance" element={<ComingSoonSellerPage navKey="finance" milestone={7} />} />
                   <Route path="/seller/performance" element={<ComingSoonSellerPage navKey="performance" milestone={4} />} />

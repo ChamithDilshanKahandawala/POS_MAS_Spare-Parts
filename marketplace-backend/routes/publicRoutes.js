@@ -3,7 +3,7 @@ const { z } = require('zod');
 const rateLimit = require('express-rate-limit');
 const router = express.Router();
 
-const { submitApplication, getInvite, acceptInvite } = require('../controllers/publicController');
+const { submitApplication, getInvite, acceptInvite, getPublicSettings } = require('../controllers/publicController');
 const { getPublicCategoryTree, getPublicVehicles } = require('../controllers/publicCatalogController');
 const { listPublicListings, getPublicListingDetail, getRelatedListings } = require('../controllers/publicListingsController');
 const { getStorePage, getStoreLogo, getStoreBanner } = require('../controllers/publicStoreController');
@@ -77,6 +77,9 @@ router.post(
   validate({ params: acceptInviteParamsSchema, body: acceptInviteBodySchema }),
   asyncHandler(acceptInvite)
 );
+
+// --- Settings (Milestone 6 Part A) ---
+router.get('/settings', asyncHandler(getPublicSettings));
 
 // --- Catalog (Milestone 2, public) ---
 router.get('/catalog/categories', asyncHandler(getPublicCategoryTree));

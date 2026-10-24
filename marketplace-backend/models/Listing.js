@@ -75,6 +75,15 @@ const listingSchema = new mongoose.Schema(
     }],
 
     stock: { type: Number, default: 0 },
+    // Milestone 6 Part D: units held by active (unshipped/not-yet-
+    // POS-recorded) order reservations — see services/stockReservation.js,
+    // the only thing that ever changes this. `available = stock -
+    // reservedQty` (clamped to 0) everywhere stock is shown or checked;
+    // `stock` itself keeps meaning exactly what it always has (the
+    // seller's own count, or the POS sync's number for a POS-linked
+    // seller) and is never decremented by a reservation alone, only once
+    // it's actually consumed (a non-POS seller's "mark shipped").
+    reservedQty: { type: Number, default: 0 },
     lowStockAlert: { type: Number, default: null },
     weightGrams: { type: Number, default: 0 },
     // Weight feeds delivery-fee calculation, so every change is logged —

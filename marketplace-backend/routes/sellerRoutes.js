@@ -16,6 +16,7 @@ const {
 } = require('../controllers/sellerListingsController');
 const { uploadListingMedia, deleteListingMedia, getSellerMediaVariant } = require('../controllers/mediaController');
 const { listProducts: listPosProducts, importSelected: importPosProducts, syncNow: syncPosNow, getStatus: getPosStatus } = require('../controllers/sellerPosController');
+const { listOrders: listSellerOrders, getOrderDetail: getSellerOrderDetail, transitionOrder, markPosRecorded, markReturnPosRecorded } = require('../controllers/sellerOrdersController');
 const { requireAuth, requireSellerMember } = require('../middleware/authMiddleware');
 const requireActiveStore = require('../middleware/requireActiveStore');
 const requireFreshStepUp = require('../middleware/requireFreshStepUp');
@@ -366,5 +367,61 @@ router.post(
   asyncHandler(syncPosNow)
 );
 router.get('/pos/status', requireAuth, requireSellerMember(ANY_MEMBER), asyncHandler(getPosStatus));
+
+// --- Orders (Milestone 6 Part E) ---
+const ordersQuerySchema = z.object({
+  status: z.enum(['new', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled']).optional(),
+  search: z.string().trim().max(120).optional(),
+  from: z.string().optional(),
+  to: z.string().optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).optional(),
+  // Follow-up — "Not yet recorded in POS": cross-cuts the Shipped/
+  // Delivered tabs rather than being its own status value.
+  notRecordedInPos: z.enum(['true', 'false']).optional(),
+}).strict();
+
+const transitionBodySchema = z.object({
+  action: z.enum(['confirm', 'pack', 'ship', 'deliver', 'fail', 'cancel', 'return']),
+  reason: z.string().trim().max(300).optional(),
+  courier: z.string().trim().max(80).optional(),
+  trackingNumber: z.string().trim().max(80).optional(),
+}).strict().refine(
+  (data) => (data.action !== 'ship' || (data.courier && data.trackingNumber)),
+  { message: 'courier and trackingNumber are required to mark an order shipped' }
+).refine(
+  (data) => (!['cancel', 'fail'].includes(data.action) || !!data.reason),
+  { message: 'A reason is required for this action' }
+);
+
+router.get('/orders', requireAuth, requireSellerMember(ANY_MEMBER), validate({ query: ordersQuerySchema }), asyncHandler(listSellerOrders));
+router.get('/orders/:id', requireAuth, requireSellerMember(ANY_MEMBER), requireValidObjectId('id'), asyncHandler(getSellerOrderDetail));
+router.post(
+  '/orders/:id/transition',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  requireActiveStore,
+  requireValidObjectId('id'),
+  validate({ body: transitionBodySchema }),
+  asyncHandler(transitionOrder)
+);
+router.post(
+  '/orders/:id/pos-recorded',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  requireActiveStore,
+  requireValidObjectId('id'),
+  validate({ body: z.object({}).strict() }),
+  asyncHandler(markPosRecorded)
+);
+router.post(
+  '/orders/:id/return-pos-recorded',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  requireActiveStore,
+  requireValidObjectId('id'),
+  validate({ body: z.object({}).strict() }),
+  asyncHandler(markReturnPosRecorded)
+);
 
 module.exports = router;

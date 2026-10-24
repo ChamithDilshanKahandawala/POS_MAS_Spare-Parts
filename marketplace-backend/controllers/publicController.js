@@ -7,6 +7,7 @@ const { detectFileType } = require('../utils/fileType');
 const { saveFile } = require('../services/storage');
 const { findInviteByToken } = require('../services/invites');
 const { notify } = require('../services/notifications');
+const { getPlatformSettings } = require('../services/platformSettings');
 
 const REQUIRED_DOC_FIELDS = ['brCertificate', 'nicFront', 'nicBack'];
 const DOC_FIELD_TO_TYPE = { brCertificate: 'br_certificate', nicFront: 'nic_front', nicBack: 'nic_back' };
@@ -151,4 +152,20 @@ const acceptInvite = async (req, res) => {
   res.json({ message: 'Invite accepted', role: invite.role, sellerId: invite.seller });
 };
 
-module.exports = { submitApplication, getInvite, acceptInvite };
+// GET /api/public/settings — Milestone 6 Part A. The storefront's ONLY
+// way to know whether to render real checkout or the Milestone 5
+// "coming soon" screen; deliberately returns nothing else from
+// PlatformSettings (support contact details, payout/review internals,
+// delivery rate numbers) — none of that is this route's business, and
+// the real order-placement route re-checks onlineOrderingEnabled itself
+// regardless of what this says, so this is purely a UI hint, never the
+// actual gate.
+const getPublicSettings = async (req, res) => {
+  const settings = await getPlatformSettings();
+  res.json({
+    onlineOrderingEnabled: settings.onlineOrderingEnabled || false,
+    courierName: settings.courierName || 'Transexpress',
+  });
+};
+
+module.exports = { submitApplication, getInvite, acceptInvite, getPublicSettings };

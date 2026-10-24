@@ -41,6 +41,10 @@ const {
 } = require('../controllers/adminListingsController');
 const { getAdminMediaVariant } = require('../controllers/mediaController');
 const { getPosStatus, updatePosConnection } = require('../controllers/adminPosController');
+const {
+  listOrders: listAdminOrders, getOrderDetail: getAdminOrderDetail, getOrdersOverview,
+  cancelOrder: cancelAdminOrder, moveOrderOn, addInternalNote,
+} = require('../controllers/adminOrdersController');
 const { requireAuth, requirePlatform } = require('../middleware/authMiddleware');
 const { validate, requireValidObjectId } = require('../middleware/validate');
 const restrictFieldsToOwner = require('../middleware/restrictFieldsToOwner');
@@ -49,6 +53,8 @@ const { writeLimiter } = require('../middleware/rateLimiter');
 const { FIELD_TYPES } = require('../models/Category');
 const { VEHICLE_TYPES } = require('../models/VehicleMake');
 const { REJECTION_REASONS } = require('../models/Listing');
+const { SRI_LANKA_DISTRICTS } = require('../utils/sriLankaDistricts');
+const { STATUSES: SELLER_ORDER_STATUSES } = require('../models/SellerOrder');
 
 const PLATFORM_ROLES = ['platform_owner', 'platform_staff'];
 const OWNER_ONLY = ['platform_owner'];
@@ -139,6 +145,15 @@ const auditLogQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).optional(),
 }).strict();
 
+// Milestone 6: one district's delivery rate — updateSettingsBodySchema's
+// deliveryRates is a PARTIAL map (only the districts actually being
+// changed); settingsController.js merges it key-by-key onto the existing
+// map rather than replacing the whole thing.
+const deliveryRateZod = z.object({
+  firstKgCents: z.number().int().min(0),
+  additionalKgCents: z.number().int().min(0),
+}).strict();
+
 const updateSettingsBodySchema = z.object({
   defaultReturnWindowDays: z.number().int().min(0).optional(),
   payoutDayOfWeek: z.number().int().min(0).max(6).optional(),
@@ -148,6 +163,11 @@ const updateSettingsBodySchema = z.object({
   supportEmail: z.string().optional(),
   supportWhatsapp: z.string().optional(),
   prohibitedKeywords: z.array(z.string().trim().min(1)).optional(),
+  // --- Milestone 6 ---
+  onlineOrderingEnabled: z.boolean().optional(),
+  deliveryRates: z.record(z.enum(SRI_LANKA_DISTRICTS), deliveryRateZod).optional(),
+  courierName: z.string().trim().min(1).max(80).optional(),
+  autoCancelAfterHours: z.number().int().min(1).max(720).optional(),
 }).strict();
 
 // --- Catalog: categories ---
@@ -603,6 +623,52 @@ router.patch(
   requireValidObjectId('id'),
   validate({ body: updateMakeBodySchema }),
   asyncHandler(updateMake)
+);
+
+// --- Orders (Milestone 6 Part F) ---
+const OBJECT_ID_RE_ORDERS = /^[0-9a-fA-F]{24}$/;
+
+const adminOrdersQuerySchema = z.object({
+  seller: z.string().regex(OBJECT_ID_RE_ORDERS).optional(),
+  status: z.enum(SELLER_ORDER_STATUSES).optional(),
+  from: z.string().optional(),
+  to: z.string().optional(),
+  district: z.enum(SRI_LANKA_DISTRICTS).optional(),
+  search: z.string().trim().max(120).optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).optional(),
+  // Follow-up #2 — "Refund needed" (always empty today, every order is
+  // COD; the guard for Milestone 7's prepaid orders).
+  refundNeeded: z.enum(['true', 'false']).optional(),
+}).strict();
+
+const adminCancelOrderBodySchema = z.object({ reason: z.string().trim().min(1).max(300) }).strict();
+const moveOrderOnBodySchema = z.object({
+  toStatus: z.enum(['confirmed', 'packed', 'shipped', 'delivered']),
+  reason: z.string().trim().min(1).max(300),
+}).strict();
+const addNoteBodySchema = z.object({ text: z.string().trim().min(1).max(1000) }).strict();
+
+router.get('/orders-overview', requireAuth, requirePlatform(PLATFORM_ROLES), asyncHandler(getOrdersOverview));
+router.get('/orders', requireAuth, requirePlatform(PLATFORM_ROLES), validate({ query: adminOrdersQuerySchema }), asyncHandler(listAdminOrders));
+router.get('/orders/:id', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), asyncHandler(getAdminOrderDetail));
+router.post(
+  '/orders/:id/cancel',
+  requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'),
+  validate({ body: adminCancelOrderBodySchema }),
+  asyncHandler(cancelAdminOrder)
+);
+router.post(
+  '/orders/:id/move-on',
+  requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'),
+  validate({ body: moveOrderOnBodySchema }),
+  asyncHandler(moveOrderOn)
+);
+router.post(
+  '/orders/:id/notes',
+  requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'),
+  validate({ body: addNoteBodySchema }),
+  asyncHandler(addInternalNote)
 );
 
 module.exports = router;

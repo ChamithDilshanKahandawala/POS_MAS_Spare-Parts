@@ -1,5 +1,15 @@
 {
  "announcementBar": "🚚 Island-wide Delivery, Cash on Delivery · Quality-Checked Sellers",
+ "homeMetaDescription": "Shop quality-checked vehicle parts on Apexora, Sri Lanka's marketplace for trusted sellers. Island-wide delivery, Cash on Delivery.",
+ "footerTagline": "Sri Lanka's marketplace for quality vehicle parts — starting with Mudiyanse Auto Solutions, with more sellers on the way.",
+ "about": {
+  "subtitle": "Sri Lanka's marketplace for quality parts, starting with vehicles.",
+  "body": "Apexora is a Sri Lankan online marketplace. We're starting with quality-checked vehicle spare parts — with more categories and sellers joining soon.",
+  "intro": "Quality-checked spare parts across these categories:"
+ },
+ "register": {
+  "subtitle": "Join us to buy quality spare parts"
+ },
  "trust": {
   "cashOnDelivery": "Cash on Delivery",
   "qualityCheckedSellers": "Quality-Checked Sellers"
@@ -52,6 +62,29 @@
    "reconditioned": "Reconditioned"
   },
   "price": "Price"
+ },
+ "checkout": {
+  "stepAddress": "Address",
+  "stepReview": "Review & Pay",
+  "deliverTo": "Deliver to",
+  "selectAddressFirst": "Please select a delivery address first",
+  "continueToReview": "Continue to review",
+  "deliveryFee": "Delivery fee",
+  "codForThisSeller": "Cash on delivery for this seller",
+  "codAmountNote": "You'll pay {{total}} in cash when your order arrives",
+  "noteToSeller": "Note for the seller (optional)",
+  "backToAddress": "Back",
+  "issues": {
+   "heading": "Some items in your cart changed",
+   "notFound": "\"{{name}}\" is no longer available",
+   "noLongerAvailable": "\"{{name}}\" is no longer available",
+   "insufficientStock": "Only {{count}} left of \"{{name}}\"",
+   "priceChanged": "The price of \"{{name}}\" changed to {{price}}",
+   "temporarilyUnavailable": "\"{{name}}\" is temporarily unavailable — try again soon or order on WhatsApp",
+   "generic": "There was a problem with \"{{name}}\"",
+   "anItem": "an item",
+   "reviewCart": "Review your cart →"
+  }
  },
  "checkoutComingSoon": {
   "title": "Online ordering is coming soon",

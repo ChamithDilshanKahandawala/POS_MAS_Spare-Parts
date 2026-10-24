@@ -6,6 +6,15 @@ import { useAuth } from '../../context/useAuth';
 import TagInput from '../../components/TagInput';
 
 const DAY_KEYS = ['0', '1', '2', '3', '4', '5', '6'];
+// Milestone 6 Part B — same 25-district list as marketplace-backend/
+// utils/sriLankaDistricts.js; every district always has a rate entry
+// (PlatformSettings' schema default backfills this), so this list is
+// just for render order, not for deciding which districts exist.
+const DISTRICTS = [
+  'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota',
+  'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale', 'Matara',
+  'Moneragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya',
+];
 
 export default function SettingsPage() {
   const { t } = useTranslation(['admin', 'common']);
@@ -43,6 +52,10 @@ export default function SettingsPage() {
         supportEmail: form.supportEmail,
         supportWhatsapp: form.supportWhatsapp,
         prohibitedKeywords: form.prohibitedKeywords,
+        onlineOrderingEnabled: !!form.onlineOrderingEnabled,
+        autoCancelAfterHours: Number(form.autoCancelAfterHours),
+        courierName: form.courierName,
+        deliveryRates: form.deliveryRates,
       });
       setForm(data.settings);
       toast.success(t('settings.saved'));
@@ -51,6 +64,18 @@ export default function SettingsPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  // Rupees in the UI, cents on the wire — same convention as every other
+  // money field in this project (priceCents etc).
+  const setDeliveryRate = (district, field, rupeeValue) => {
+    setForm((f) => ({
+      ...f,
+      deliveryRates: {
+        ...f.deliveryRates,
+        [district]: { ...f.deliveryRates[district], [field]: Math.round(Number(rupeeValue) * 100) },
+      },
+    }));
   };
 
   if (loading) return <div>{t('common:loading')}</div>;
@@ -92,6 +117,76 @@ export default function SettingsPage() {
 
         {isPlatformOwner && (
           <button className="btn-primary" disabled={saving} onClick={save} style={{ alignSelf: 'flex-start' }}>
+            {t('settings.save')}
+          </button>
+        )}
+      </div>
+
+      {/* --- Milestone 6: ordering --- */}
+      <div className="glass-card" style={{ padding: '20px', maxWidth: '520px', display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '20px' }}>
+        <h2 style={{ fontSize: '15px', fontWeight: 800 }}>{t('settings.ordering.heading')}</h2>
+
+        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: isPlatformOwner ? 'pointer' : 'default' }}>
+          <input
+            type="checkbox" checked={!!form.onlineOrderingEnabled} disabled={!isPlatformOwner}
+            onChange={(e) => setForm((f) => ({ ...f, onlineOrderingEnabled: e.target.checked }))}
+            style={{ width: '16px', height: '16px', accentColor: 'var(--accent-primary)' }}
+          />
+          <span style={{ fontSize: '13px', fontWeight: 600 }}>{t('settings.ordering.enable')}</span>
+        </label>
+        <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '-8px' }}>{t('settings.ordering.enableHint')}</div>
+
+        <NumberField label={t('settings.ordering.autoCancelAfterHours')} value={form.autoCancelAfterHours} onChange={field('autoCancelAfterHours')} disabled={!isPlatformOwner} />
+        <TextField label={t('settings.ordering.courierName')} value={form.courierName} onChange={field('courierName')} disabled={!isPlatformOwner} />
+
+        {isPlatformOwner && (
+          <button className="btn-primary" disabled={saving} onClick={save} style={{ alignSelf: 'flex-start' }}>
+            {t('settings.save')}
+          </button>
+        )}
+      </div>
+
+      {/* --- Milestone 6: delivery rates per district --- */}
+      <div className="glass-card" style={{ padding: '20px', maxWidth: '640px', marginTop: '20px' }}>
+        <h2 style={{ fontSize: '15px', fontWeight: 800, marginBottom: '4px' }}>{t('settings.deliveryRates.heading')}</h2>
+        <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginBottom: '14px' }}>{t('settings.deliveryRates.hint')}</div>
+        <div style={{ maxHeight: '420px', overflowY: 'auto' }}>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>{t('settings.deliveryRates.district')}</th>
+                <th>{t('settings.deliveryRates.firstKg')}</th>
+                <th>{t('settings.deliveryRates.additionalKg')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {DISTRICTS.map((d) => {
+                const rate = form.deliveryRates?.[d] || { firstKgCents: 0, additionalKgCents: 0 };
+                return (
+                  <tr key={d}>
+                    <td style={{ fontSize: '12.5px' }}>{d}</td>
+                    <td>
+                      <input
+                        type="number" min="0" className="input-field" style={{ width: '100px' }}
+                        value={rate.firstKgCents / 100} disabled={!isPlatformOwner}
+                        onChange={(e) => setDeliveryRate(d, 'firstKgCents', e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number" min="0" className="input-field" style={{ width: '100px' }}
+                        value={rate.additionalKgCents / 100} disabled={!isPlatformOwner}
+                        onChange={(e) => setDeliveryRate(d, 'additionalKgCents', e.target.value)}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        {isPlatformOwner && (
+          <button className="btn-primary" disabled={saving} onClick={save} style={{ marginTop: '16px' }}>
             {t('settings.save')}
           </button>
         )}

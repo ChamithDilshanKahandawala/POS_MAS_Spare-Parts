@@ -148,6 +148,21 @@ export const suspendListing = (id, reason) => api.post(`/admin/listings/${id}/su
 export const reinstateListing = (id, to) => api.post(`/admin/listings/${id}/reinstate`, { to });
 export const getAdminMediaBlob = (id, size = 'medium', format = 'jpg') => api.get(`/admin/listings/media/${id}/${size}/${format}`, { responseType: 'blob' });
 
+// --- Seller: orders (Milestone 6 Part E) ---
+export const getMyOrders = (params) => api.get('/seller/orders', { params });
+export const getMyOrderDetail = (id) => api.get(`/seller/orders/${id}`);
+export const transitionMyOrder = (id, body) => api.post(`/seller/orders/${id}/transition`, body);
+export const markOrderPosRecorded = (id) => api.post(`/seller/orders/${id}/pos-recorded`, {});
+export const markOrderReturnPosRecorded = (id) => api.post(`/seller/orders/${id}/return-pos-recorded`, {});
+
+// --- Admin: orders (Milestone 6 Part F) ---
+export const getAdminOrders = (params) => api.get('/admin/orders', { params });
+export const getAdminOrderDetail = (id) => api.get(`/admin/orders/${id}`);
+export const getAdminOrdersOverview = () => api.get('/admin/orders-overview');
+export const cancelAdminOrder = (id, reason) => api.post(`/admin/orders/${id}/cancel`, { reason });
+export const moveAdminOrderOn = (id, toStatus, reason) => api.post(`/admin/orders/${id}/move-on`, { toStatus, reason });
+export const addAdminOrderNote = (id, text) => api.post(`/admin/orders/${id}/notes`, { text });
+
 // --- Notifications (shared across admin + seller) ---
 export const getNotifications = (params) => api.get('/notifications', { params });
 export const markNotificationRead = (id) => api.patch(`/notifications/${id}/read`);

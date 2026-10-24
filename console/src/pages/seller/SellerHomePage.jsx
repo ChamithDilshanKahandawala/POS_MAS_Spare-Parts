@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { CheckCircle, Circle, Lock, ShoppingCart, Wallet } from 'lucide-react';
+import { CheckCircle, Circle, Lock, ShoppingCart, Wallet, AlertCircle } from 'lucide-react';
 import { getMyStoreHome } from '../../api/services';
 
 export default function SellerHomePage() {
@@ -36,6 +37,18 @@ export default function SellerHomePage() {
         <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
           {t('seller:home.probationUntil', { date: dateFormatter.format(new Date(data.seller.probationUntil)) })}
         </div>
+      )}
+
+      {/* Follow-up — only ever non-zero for a POS-connected seller. */}
+      {data.notRecordedInPosCount > 0 && (
+        <Link
+          to="/seller/orders?notRecordedInPos=true"
+          className="glass-card"
+          style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 18px', borderRadius: '12px', marginBottom: '20px', border: '1px solid #f59e0b', textDecoration: 'none', color: 'inherit', fontSize: '13px' }}
+        >
+          <AlertCircle size={16} color="#f59e0b" />
+          {t('seller:home.posNotRecordedReminder', { count: data.notRecordedInPosCount })}
+        </Link>
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px', marginBottom: '24px' }}>

@@ -2,13 +2,25 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Truck, Banknote, MessageCircle, ChevronRight } from 'lucide-react';
 import { SHOP_INFO, PLATFORM_INFO, CATEGORIES, getSellerForProduct } from '../config/store';
+import { isMarketplace } from '../api/dataSource';
 import useDocumentMeta from '../hooks/useDocumentMeta';
 
 const WHY_US_ICONS = [ShieldCheck, Truck, Banknote, MessageCircle];
 
+// Follow-up — "genuine parts"/"genuine vehicle spare parts" in platform:
+// aboutApexoraSubtitle/Body are the same unverifiable-guarantee pattern
+// already softened in footer.jsx's footerTagline; marketplace:about.*
+// below replaces them in marketplace mode only. pos mode's AboutPage
+// still reads the originals unchanged.
 export default function AboutPage() {
-  const { t } = useTranslation(['about', 'platform']);
-  useDocumentMeta(`${t('platform:aboutApexoraHeading')} | ${PLATFORM_INFO.name}`, t('platform:aboutApexoraBody'));
+  const { t } = useTranslation(['about', 'platform', 'marketplace']);
+  const aboutSubtitle = isMarketplace ? t('marketplace:about.subtitle') : t('platform:aboutApexoraSubtitle');
+  const aboutBody = isMarketplace ? t('marketplace:about.body') : t('platform:aboutApexoraBody');
+  // Follow-up #2 — about:whatWeSell.intro ("Genuine, quality-checked spare
+  // parts...") is the same unverifiable-guarantee pattern fixed above;
+  // marketplace:about.intro replaces it in marketplace mode only.
+  const whatWeSellIntro = isMarketplace ? t('marketplace:about.intro') : t('whatWeSell.intro');
+  useDocumentMeta(`${t('platform:aboutApexoraHeading')} | ${PLATFORM_INFO.name}`, aboutBody);
 
   const seller = getSellerForProduct();
   const storyParagraphs = t('story.paragraphs', { returnObjects: true });
@@ -19,11 +31,11 @@ export default function AboutPage() {
       {/* ── About Apexora (the platform) ── */}
       <div style={{ textAlign: 'center', marginBottom: '24px' }}>
         <h1 className="page-title">{t('platform:aboutApexoraHeading')}</h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '15px', marginTop: '8px' }}>{t('platform:aboutApexoraSubtitle')}</p>
+        <p style={{ color: 'var(--text-muted)', fontSize: '15px', marginTop: '8px' }}>{aboutSubtitle}</p>
       </div>
       <div className="glass-card" style={{ padding: '28px', borderRadius: '20px', marginBottom: '40px' }}>
         <p style={{ fontSize: '14px', lineHeight: 1.75, color: 'var(--text-secondary)' }}>
-          {t('platform:aboutApexoraBody')}
+          {aboutBody}
         </p>
       </div>
 
@@ -63,7 +75,7 @@ export default function AboutPage() {
 
       <div className="glass-card" style={{ padding: '28px', borderRadius: '20px', marginBottom: '24px' }}>
         <h2 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>{t('whatWeSell.heading')}</h2>
-        <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', marginBottom: '16px' }}>{t('whatWeSell.intro')}</p>
+        <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', marginBottom: '16px' }}>{whatWeSellIntro}</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           {CATEGORIES.map((c) => (
             <span key={c} style={{

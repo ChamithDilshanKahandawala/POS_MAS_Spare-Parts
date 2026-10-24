@@ -27,6 +27,15 @@ const notificationSchema = new mongoose.Schema(
         'listing.needs_update',
         'pos.sync_failing',
         'pos.product_removed',
+        // --- Milestone 6 (Part G) ---
+        'order.new', // seller: a new order just landed
+        'order.autocancel_warning', // seller: this order auto-cancels in ~12h if not confirmed
+        'order.confirmed', // customer
+        'order.shipped', // customer
+        'order.delivered', // customer
+        'order.cancelled', // customer (and seller, for an admin-initiated cancel)
+        'order.returned', // customer — a failed/refused delivery was marked returned to the seller
+        'pos.order_not_recorded', // seller — a shipped/delivered order isn't marked "Recorded in POS" 24h+ later
       ],
     },
     title: { type: String, required: true },

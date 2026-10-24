@@ -2,6 +2,25 @@
   "_meta": { "status": "draft — needs native speaker review" },
   "headline": "ස්තූතියි! ඔබගේ ඇණවුම තබන ලදී",
   "subheadline": "අපි ඔබගේ ඇණවුම ලැබී ඇති අතර බෙදාහැරීම සඳහා සූදානම් කරමු.",
+  "marketplaceSubheadline": "අපි ඔබේ ඇණවුම ලැබී ඇත — විකුණුම්කරුවන් {{count}} ක් එය සූදානම් කරමින් සිටී.",
+  "marketplaceStatus": {
+    "new": "ඇණවුම් කරන ලදී",
+    "confirmed": "තහවුරු කරන ලදී",
+    "packed": "පැකට් කරන ලදී",
+    "shipped": "යවන ලදී",
+    "delivered": "භාර දෙන ලදී",
+    "cancelled": "අවලංගු කරන ලදී",
+    "delivery_failed": "බෙදාහැරීම අසාර්ථකයි"
+  },
+  "marketplaceItems": {
+    "delivery": "බෙදාහැරීම",
+    "codAmount": "ගෙදරටම ගෙවීම",
+    "parcelsHeading": "පාර්සල් {{count}} ක්",
+    "cancelled": "ඇණවුම අවලංගු කරන ලදී",
+    "cancelFailed": "මෙම ඇණවුම අවලංගු කළ නොහැකි විය",
+    "cancelling": "අවලංගු කරමින්…",
+    "cancelOrder": "ඇණවුම අවලංගු කරන්න"
+  },
   "invoice": { "label": "ඇණවුම් අංකය", "copy": "පිටපත් කරන්න", "copied": "පිටපත් කරන ලදී!", "copyFailed": "පිටපත් කළ නොහැකි විය — අතින් තෝරන්න" },
   "timeline": {
     "placed": "තබන ලදී",
@@ -20,7 +39,7 @@
     "qtyLine": "ප්‍රමාණය: {{count}} × {{price}}"
   },
   "payment": { "cod": "ගෙදරදී මුදල් ගෙවීම — කරුණාකර {{amount}} සූදානම් කර තබාගන්න" },
-  "whatsapp": { "cta": "WhatsApp හරහා තහවුරු කරන්න", "message": "ආයුබෝවන්! මගේ Apexora ඇණවුම {{invoiceNumber}} ({{seller}} වෙතින්), එකතුව {{total}} තහවුරු කිරීමට කැමතියි. ස්තූතියි!" },
+  "whatsapp": { "cta": "WhatsApp හරහා තහවුරු කරන්න", "message": "ආයුබෝවන්! මගේ Apexora ඇණවුම {{invoiceNumber}} ({{seller}} වෙතින්), එකතුව {{total}} තහවුරු කිරීමට කැමතියි. ස්තූතියි!", "marketplaceMessage": "හායි! මගේ Apexora ඇණවුම {{orderNumber}} ගැන විමසීමට කැමතියි. ස්තූතියි!" },
   "actions": { "continueShopping": "සාප්පු සවාරිය දිගටම කරගෙන යන්න", "viewOrders": "මගේ ඇණවුම් බලන්න", "backToShop": "සාප්පුවට ආපසු", "tryAgain": "නැවත උත්සාහ කරන්න" },
   "notFound": { "title": "ඇණවුම හමු නොවීය", "subtitle": "අපට මෙම ඇණවුම සොයාගත නොහැකි විය, හෝ එය මෙම ගිණුමට අයත් නොවේ." },
   "error": { "title": "යමක් වැරදී ගියේය", "subtitle": "මෙම ඇණවුම ලබා ගත නොහැකි විය. ඔබගේ සම්බන්ධතාවය පරීක්ෂා කර නැවත උත්සාහ කරන්න." },

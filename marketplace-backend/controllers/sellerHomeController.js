@@ -1,5 +1,6 @@
 const Seller = require('../models/Seller');
 const Listing = require('../models/Listing');
+const SellerOrder = require('../models/SellerOrder');
 
 // "Get your store ready" checklist — every item is computed from real
 // data; `available: false` would mean "no milestone to check this yet",
@@ -32,6 +33,15 @@ const getHome = async (req, res) => {
   // started a draft.
   const hasAnyListing = await Listing.exists({ seller: req.sellerId, status: { $ne: 'draft' } });
 
+  // Follow-up — only ever non-zero for a POS-connected seller (see
+  // services/posRecordedReminder.js, the job this count mirrors); 0 for
+  // everyone else, not null, since "not recorded in POS" is a real,
+  // always-answerable question once Milestone 6 exists, unlike
+  // ordersToday/pendingPayout below.
+  const notRecordedInPosCount = seller.posConnection?.enabled
+    ? await SellerOrder.countDocuments({ seller: req.sellerId, status: { $in: ['shipped', 'delivered'] }, posRecorded: false })
+    : 0;
+
   res.json({
     seller: {
       id: seller._id,
@@ -44,6 +54,7 @@ const getHome = async (req, res) => {
     checklist: buildChecklist(seller, !!hasAnyListing),
     ordersToday: null,
     pendingPayout: null,
+    notRecordedInPosCount,
   });
 };
 

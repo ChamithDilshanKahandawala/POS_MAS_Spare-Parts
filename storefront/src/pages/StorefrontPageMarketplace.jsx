@@ -19,7 +19,11 @@ import InstallCard from '../components/InstallCard';
 // approximation rather than inventing fake curation).
 export default function StorefrontPageMarketplace() {
   const { t, i18n } = useTranslation(['product', 'common', 'platform', 'marketplace']);
-  useDocumentMeta(t('platform:homeMetaTitle'), t('platform:homeMetaDescription'));
+  // Follow-up #2 — platform:homeMetaDescription ("...genuine vehicle
+  // parts...") is the same unverifiable-guarantee pattern already fixed
+  // elsewhere on this page; marketplace:homeMetaDescription replaces it
+  // here only. pos mode's StorefrontPagePos.jsx keeps reading the original.
+  useDocumentMeta(t('platform:homeMetaTitle'), t('marketplace:homeMetaDescription'));
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { vehicle } = useSelectedVehicle();

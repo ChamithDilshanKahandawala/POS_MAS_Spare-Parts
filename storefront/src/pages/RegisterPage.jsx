@@ -10,7 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { isMarketplace } from '../api/dataSource';
 
 export default function RegisterPage() {
-  const { t } = useTranslation(['auth', 'common']);
+  const { t } = useTranslation(['auth', 'common', 'marketplace']);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '', role: 'customer' });
   const [loading, setLoading] = useState(false);
   // Marketplace-only OTP step — same pattern as LoginPage.
@@ -95,7 +95,11 @@ export default function RegisterPage() {
             <ApexoraWordmark size={30} />
           </div>
           <h1 style={{ fontSize: '24px', fontWeight: 900, color: 'var(--text-primary)' }}>{t('register.title')}</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>{t('register.subtitle')}</p>
+          {/* Follow-up #2 — auth:register.subtitle ("...buy genuine spare
+              parts") is the same unverifiable-guarantee pattern fixed
+              elsewhere; marketplace:register.subtitle replaces it in
+              marketplace mode only. pos mode keeps reading the original. */}
+          <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>{isMarketplace ? t('marketplace:register.subtitle') : t('register.subtitle')}</p>
         </div>
 
         <div className="glass-card" style={{ padding: '32px', borderRadius: '20px' }}>

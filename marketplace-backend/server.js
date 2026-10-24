@@ -20,6 +20,19 @@ const publicRoutes = require('./routes/publicRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const customerRoutes = require('./routes/customerRoutes');
 const { startPosSyncScheduler } = require('./services/posSyncScheduler');
+const { startOrderAutoCancelJob } = require('./services/orderAutoCancel');
+const { startPosRecordedReminderJob } = require('./services/posRecordedReminder');
+
+// Discovered while running the Playwright suite against this server:
+// a transient MongoDB Atlas network blip (PoolClearedOnNetworkError)
+// rejects whatever in-flight query happened to be mid-flight — including
+// ones not awaited by request handlers, e.g. the background sweep jobs
+// below — and an unhandled rejection crashes the whole process by
+// default in modern Node. Log it instead of going down; the driver
+// reconnects and retries on its own once the network recovers.
+process.on('unhandledRejection', (reason) => {
+  console.error('[unhandledRejection]', reason);
+});
 
 const app = express();
 
@@ -79,6 +92,8 @@ async function start() {
   // Only runs for a real server start, never when server.js is required
   // as `app` by the test suite — see services/posSyncScheduler.js.
   startPosSyncScheduler();
+  startOrderAutoCancelJob();
+  startPosRecordedReminderJob();
 }
 
 if (require.main === module) {

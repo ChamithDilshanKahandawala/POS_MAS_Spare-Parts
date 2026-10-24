@@ -37,7 +37,8 @@
     },
     "ordersToday": "Orders today",
     "pendingPayout": "Pending payout",
-    "noDataYet": "Available after Milestone {{milestone}}"
+    "noDataYet": "Available after Milestone {{milestone}}",
+    "posNotRecordedReminder": "{{count}} order(s) shipped or delivered but not yet recorded in your POS"
   },
   "settings": {
     "title": "Store settings",
@@ -242,6 +243,61 @@
     "invalidOrExpiredHint": "Ask whoever invited you to send a new one.",
     "success": "Invite accepted — logging you in…",
     "goToLogin": "Go to login"
+  },
+  "orders": {
+    "tabs": {
+      "new": "New",
+      "confirmed": "Confirmed",
+      "packed": "Packed",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "delivery_failed": "Delivery failed",
+      "returned": "Returned"
+    },
+    "searchPlaceholder": "Search by order number or phone",
+    "dateTo": "to",
+    "notRecordedInPos": "Not yet recorded in POS",
+    "noResults": "No orders match your filters",
+    "view": "View",
+    "table": {
+      "orderNumber": "Order",
+      "date": "Date",
+      "items": "Items",
+      "codAmount": "COD amount",
+      "status": "Status"
+    },
+    "detail": {
+      "back": "Back to orders",
+      "updated": "Order updated",
+      "printPackingSlip": "Print packing slip",
+      "posReminder": "Record this sale in your POS once you've processed it — your stock stays reserved here until you do.",
+      "posRecordedCheckbox": "Recorded in POS",
+      "posRecordedDone": "Recorded in POS",
+      "deliveryAddress": "Customer & delivery",
+      "items": "Items",
+      "deliveryFee": "Delivery fee",
+      "codAmount": "Cash to collect (COD)",
+      "weightEstimated": "weight estimated — update this listing",
+      "timeline": "Timeline",
+      "actions": {
+        "confirm": "Confirm order",
+        "pack": "Mark packed",
+        "ship": "Mark shipped",
+        "deliver": "Mark delivered",
+        "fail": "Mark delivery failed",
+        "cancel": "Cancel order",
+        "return": "Mark returned"
+      },
+      "reasonPlaceholder": "Reason (required)",
+      "courierLabel": "Courier",
+      "trackingLabel": "Tracking number",
+      "messageCustomer": "Message customer",
+      "whatsappMessage": "Hi! This is about your Apexora order {{orderNumber}}.",
+      "posReturnReminder": "This order was returned — record the return in your POS so your POS stock stays accurate.",
+      "returnPosRecordedCheckbox": "Return recorded in POS",
+      "returnPosRecordedDone": "Return recorded in POS"
+    }
   },
   "products": {
     "addListing": "Add listing",

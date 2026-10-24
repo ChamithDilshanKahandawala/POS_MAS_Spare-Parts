@@ -9,6 +9,10 @@ export const getCategoryTree = () => api.get('/public/catalog/categories');
 export const getVehicleMakes = () => api.get('/public/vehicles');
 export const getStorePage = (slug) => api.get(`/public/stores/${slug}`);
 
+// Milestone 6 Part A — the storefront's only way to know whether real
+// checkout should render instead of the "coming soon" screen.
+export const getPublicSettings = () => api.get('/public/settings');
+
 // Rendered directly as an <img src> — not through the axios instance,
 // since these are plain GETs the browser itself fetches, not something
 // the app reads the body of.
@@ -36,3 +40,10 @@ export const deleteCustomerAddress = (id) => api.delete(`/customer/addresses/${i
 export const getCustomerVehicles = () => api.get('/customer/vehicles');
 export const createCustomerVehicle = (data) => api.post('/customer/vehicles', data);
 export const deleteCustomerVehicle = (id) => api.delete(`/customer/vehicles/${id}`);
+
+// --- Checkout & orders (Milestone 6 Part C) ---
+export const previewCheckout = (data) => api.post('/customer/checkout/preview', data);
+export const placeOrder = (data) => api.post('/customer/orders', data);
+export const getMyMarketplaceOrders = () => api.get('/customer/orders');
+export const getMyMarketplaceOrder = (orderNumber) => api.get(`/customer/orders/${orderNumber}`);
+export const cancelMyMarketplaceOrder = (orderNumber, data) => api.post(`/customer/orders/${orderNumber}/cancel`, data);

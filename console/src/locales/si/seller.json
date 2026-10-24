@@ -40,7 +40,8 @@
     },
     "ordersToday": "අද ඇණවුම්",
     "pendingPayout": "අපේක්ෂිත ගෙවීම",
-    "noDataYet": "සන්ධිස්ථානය {{milestone}} න් පසුව ලබා ගත හැක"
+    "noDataYet": "සන්ධිස්ථානය {{milestone}} න් පසුව ලබා ගත හැක",
+    "posNotRecordedReminder": "ඇණවුම් {{count}} ක් යවන ලද හෝ භාර දුන් නමුත් තවම ඔබේ POS හි සටහන් කර නැත"
   },
   "settings": {
     "title": "සාප්පු සැකසුම්",
@@ -245,6 +246,61 @@
     "invalidOrExpiredHint": "ඔබට ආරාධනා කළ අය නව එකක් යැවීමට ඉල්ලන්න.",
     "success": "ආරාධනය පිළිගන්නා ලදී — ඔබව පුරනය කරමින්…",
     "goToLogin": "පිවිසුම වෙත යන්න"
+  },
+  "orders": {
+    "tabs": {
+      "new": "අලුත්",
+      "confirmed": "තහවුරු කරන ලදී",
+      "packed": "පැකට් කරන ලදී",
+      "shipped": "යවන ලදී",
+      "delivered": "භාර දෙන ලදී",
+      "cancelled": "අවලංගු කරන ලදී",
+      "delivery_failed": "බෙදාහැරීම අසාර්ථකයි",
+      "returned": "ආපසු එවන ලදී"
+    },
+    "searchPlaceholder": "ඇණවුම් අංකය හෝ දුරකථන අංකය සොයන්න",
+    "dateTo": "සිට",
+    "notRecordedInPos": "තවම POS හි සටහන් කර නැත",
+    "noResults": "ඔබේ පෙරහන්වලට ගැළපෙන ඇණවුම් නැත",
+    "view": "බලන්න",
+    "table": {
+      "orderNumber": "ඇණවුම",
+      "date": "දිනය",
+      "items": "අයිතම",
+      "codAmount": "COD මුදල",
+      "status": "තත්ත්වය"
+    },
+    "detail": {
+      "back": "ඇණවුම් වෙත ආපසු",
+      "updated": "ඇණවුම යාවත්කාලීන කරන ලදී",
+      "printPackingSlip": "පැකින් ස්ලිප් මුද්‍රණය කරන්න",
+      "posReminder": "ඔබ එය සැකසූ පසු මෙම විකුණුම POS හි සටහන් කරන්න — ඔබ එසේ කරන තෙක් ඔබේ තොගය මෙහි වෙන් කර තබා ඇත.",
+      "posRecordedCheckbox": "POS හි සටහන් කරන ලදී",
+      "posRecordedDone": "POS හි සටහන් කරන ලදී",
+      "deliveryAddress": "පාරිභෝගිකයා සහ බෙදාහැරීම",
+      "items": "අයිතම",
+      "deliveryFee": "බෙදාහැරීමේ ගාස්තුව",
+      "codAmount": "එකතු කළ යුතු මුදල (COD)",
+      "weightEstimated": "බර ඇස්තමේන්තු කරන ලදී — මෙම නිෂ්පාදනය යාවත්කාලීන කරන්න",
+      "timeline": "කාල රේඛාව",
+      "actions": {
+        "confirm": "ඇණවුම තහවුරු කරන්න",
+        "pack": "පැකට් කළ ලෙස සලකුණු කරන්න",
+        "ship": "යවන ලද ලෙස සලකුණු කරන්න",
+        "deliver": "භාර දුන් ලෙස සලකුණු කරන්න",
+        "fail": "බෙදාහැරීම අසාර්ථක ලෙස සලකුණු කරන්න",
+        "cancel": "ඇණවුම අවලංගු කරන්න",
+        "return": "ආපසු එවන ලද ලෙස සලකුණු කරන්න"
+      },
+      "reasonPlaceholder": "හේතුව (අවශ්‍යයි)",
+      "courierLabel": "බෙදාහරින සේවාව",
+      "trackingLabel": "නිරීක්ෂණ අංකය",
+      "messageCustomer": "පාරිභෝගිකයාට පණිවිඩයක්",
+      "whatsappMessage": "හායි! මෙය ඔබේ Apexora ඇණවුම {{orderNumber}} ගැන වේ.",
+      "posReturnReminder": "මෙම ඇණවුම ආපසු එවන ලදී — ඔබේ POS තොගය නිවැරදිව තබා ගැනීමට POS හි ආපසු එවීම සටහන් කරන්න.",
+      "returnPosRecordedCheckbox": "ආපසු එවීම POS හි සටහන් කරන ලදී",
+      "returnPosRecordedDone": "ආපසු එවීම POS හි සටහන් කරන ලදී"
+    }
   },
   "products": {
     "addListing": "නාමාවලියක් එකතු කරන්න",
