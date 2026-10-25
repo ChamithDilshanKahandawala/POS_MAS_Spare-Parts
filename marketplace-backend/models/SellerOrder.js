@@ -174,6 +174,23 @@ const sellerOrderSchema = new mongoose.Schema(
     // Set once the "12h before auto-cancel" warning notification has been
     // sent, so the sweep never sends it twice for the same parcel.
     autoCancelWarnedAt: { type: Date, default: null },
+
+    // --- Milestone 7 Part A/B ---
+    // Set the moment services/ledger.js's postDeliveryLedgerEntries() has
+    // created this order's sale+commission LedgerEntry pair — the atomic
+    // claim that makes "exactly once" real (a findOneAndUpdate filtered
+    // on this being null), not just the belt-and-suspenders unique index
+    // on LedgerEntry itself. Never cleared once set.
+    ledgerPostedAt: { type: Date, default: null },
+    // Part B.2/B.3 — set once a CodRemittanceRow has matched this order's
+    // tracking number with a COD amount equal to codAmountCents (an
+    // exact 'matched' row only — 'short'/'over' never set this, since
+    // the money received didn't actually equal what's owed). The sale
+    // entry can only become 'payable' once this is true AND availableAt
+    // has passed — see services/ledgerMaturity.js.
+    codMatched: { type: Boolean, default: false },
+    codMatchedAt: { type: Date, default: null },
+    codRemittanceRow: { type: mongoose.Schema.Types.ObjectId, ref: 'CodRemittanceRow', default: null },
   },
   { timestamps: true }
 );
@@ -196,6 +213,17 @@ sellerOrderSchema.index({ status: 1, createdAt: -1 });
 sellerOrderSchema.index({ 'shippingAddress.district': 1, createdAt: -1 });
 // Admin's "Refund needed" filter.
 sellerOrderSchema.index({ refundNeeded: 1, createdAt: -1 });
+// Remittance matching (Part B.2) — find a seller order by tracking
+// number. Not unique: two different sellers' parcels on two different
+// orders could coincidentally reuse a tracking number format, but never
+// the same literal tracking number from the same real courier, so in
+// practice this is effectively unique without needing to declare it as
+// such (declaring it unique would make seed/test fixtures that reuse a
+// placeholder tracking number across runs fail for an unrelated reason).
+sellerOrderSchema.index({ trackingNumber: 1 });
+// Admin Finance's "COD not received" query (Part B.2) and the daily
+// payable sweep's COD-matched check (Part B.3).
+sellerOrderSchema.index({ status: 1, paymentMethod: 1, codMatched: 1, deliveredAt: 1 });
 
 module.exports = mongoose.model('SellerOrder', sellerOrderSchema);
 module.exports.STATUSES = STATUSES;

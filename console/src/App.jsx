@@ -36,6 +36,9 @@ import OrderDetailPage from './pages/seller/OrderDetailPage';
 import ComingSoonSellerPage from './pages/seller/ComingSoonSellerPage';
 import AdminOrdersPage from './pages/admin/OrdersPage';
 import AdminOrderDetailPage from './pages/admin/OrderDetailPage';
+import AdminFinancePage from './pages/admin/FinancePage';
+import PayoutRunDetailPage from './pages/admin/PayoutRunDetailPage';
+import SellerFinancePage from './pages/seller/FinancePage';
 
 // Remounts the wrapped seller page fresh whenever the switcher changes
 // which store is active (same pattern as the storefront's
@@ -60,6 +63,7 @@ const ProductsRoute = sellerRoute(ProductsPage);
 const ImportFromPosRoute = sellerRoute(ImportFromPosPage);
 const ListingWizardRoute = sellerRoute(ListingWizardPage);
 const OrdersRoute = sellerRoute(OrdersPage);
+const FinanceRoute = sellerRoute(SellerFinancePage);
 const OrderDetailRoute = sellerRoute(OrderDetailPage);
 
 export default function App() {
@@ -89,7 +93,8 @@ export default function App() {
                   <Route path="/admin/orders" element={<AdminOrdersPage />} />
                   <Route path="/admin/orders/:id" element={<AdminOrderDetailPage />} />
                   <Route path="/admin/returns-disputes" element={<ComingSoonPage navKey="returnsDisputes" milestone={3} />} />
-                  <Route path="/admin/finance" element={<ComingSoonPage navKey="finance" milestone={4} />} />
+                  <Route path="/admin/finance" element={<AdminFinancePage />} />
+                  <Route path="/admin/finance/payout-runs/:id" element={<PayoutRunDetailPage />} />
                   <Route path="/admin/customers" element={<ComingSoonPage navKey="customers" milestone={4} />} />
                   <Route path="/admin/content" element={<ComingSoonPage navKey="content" milestone={5} />} />
                   <Route path="/admin/audit-log" element={<AuditLogPage />} />
@@ -108,7 +113,6 @@ export default function App() {
                   <Route path="/seller/orders" element={<OrdersRoute />} />
                   <Route path="/seller/orders/:id" element={<OrderDetailRoute />} />
                   <Route path="/seller/returns" element={<ComingSoonSellerPage navKey="returns" milestone={8} />} />
-                  <Route path="/seller/finance" element={<ComingSoonSellerPage navKey="finance" milestone={7} />} />
                   <Route path="/seller/performance" element={<ComingSoonSellerPage navKey="performance" milestone={4} />} />
                   <Route path="/seller/settings" element={<StoreSettingsRoute />} />
                   <Route path="/seller/categories" element={<CategoriesFeesRoute />} />
@@ -116,6 +120,7 @@ export default function App() {
                   <Route path="/seller/notifications" element={<NotificationsRoute />} />
                   <Route element={<RequireSellerOwner />}>
                     <Route path="/seller/staff" element={<StaffRoute />} />
+                    <Route path="/seller/finance" element={<FinanceRoute />} />
                   </Route>
                 </Route>
 

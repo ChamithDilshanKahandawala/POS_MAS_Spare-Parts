@@ -22,6 +22,8 @@ const customerRoutes = require('./routes/customerRoutes');
 const { startPosSyncScheduler } = require('./services/posSyncScheduler');
 const { startOrderAutoCancelJob } = require('./services/orderAutoCancel');
 const { startPosRecordedReminderJob } = require('./services/posRecordedReminder');
+const { startLedgerMaturityJob } = require('./services/ledgerMaturity');
+const { startPayoutRunJob } = require('./services/payoutRuns');
 
 // Discovered while running the Playwright suite against this server:
 // a transient MongoDB Atlas network blip (PoolClearedOnNetworkError)
@@ -94,6 +96,8 @@ async function start() {
   startPosSyncScheduler();
   startOrderAutoCancelJob();
   startPosRecordedReminderJob();
+  startLedgerMaturityJob();
+  startPayoutRunJob();
 }
 
 if (require.main === module) {

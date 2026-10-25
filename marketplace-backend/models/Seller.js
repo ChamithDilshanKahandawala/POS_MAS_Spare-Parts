@@ -50,6 +50,16 @@ const sellerSchema = new mongoose.Schema(
 
     application: { type: mongoose.Schema.Types.ObjectId, ref: 'SellerApplication', default: null },
 
+    // Milestone 7 Part A.5 — 'payout' (default) settles through a real
+    // bank transfer each payout run, same as every other seller.
+    // 'internal' is for a seller the platform operator ALSO runs
+    // themselves (Mudiyanse Auto Solutions — see scripts/seed-dev.js) —
+    // their ledger entries exist and settle the same way, but a payout
+    // run marks them "settled internally" instead of creating a real
+    // bank payout (services/payoutRuns.js). Owner-only to change,
+    // audited — see controllers/adminFinanceController.js.
+    settlementMode: { type: String, enum: ['payout', 'internal'], default: 'payout' },
+
     // --- Milestone 1B: seller-editable storefront profile ---
     displayName: { type: String, default: '', trim: true }, // public-facing name, separate from legalName
     aboutText: {

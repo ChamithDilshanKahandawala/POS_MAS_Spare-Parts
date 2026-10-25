@@ -11,6 +11,9 @@ const Seller = require('../models/Seller');
 const { consume, release, restock } = require('../services/stockReservation');
 const { notify } = require('../services/notifications');
 const { logAction } = require('../services/auditLog');
+const { postDeliveryLedgerEntries } = require('../services/ledger');
+const LedgerEntry = require('../models/LedgerEntry');
+const { getPlatformSettings } = require('../services/platformSettings');
 
 const MASK_AFTER_MS = 30 * 24 * 60 * 60 * 1000; // Part E: 30 days after delivered/cancelled
 
@@ -210,6 +213,13 @@ const transitionOrder = async (req, res) => {
     await notify({ userId: order.customer, type: 'order.shipped', title: `Order ${order.orderNumber} has shipped`, body: trackingNumber ? `Tracking: ${trackingNumber}` : '', link: '/orders' });
   }
   await order.save();
+
+  // Milestone 7 Part A.2 — posts the sale+commission ledger entries
+  // exactly once, atomically claimed inside the service itself (see
+  // services/ledger.js) — safe to call unconditionally here even on a
+  // route that could theoretically be hit twice for the same order.
+  if (transition.to === 'delivered') await postDeliveryLedgerEntries(order._id);
+
   res.json({ order: order.toObject() });
 };
 
@@ -279,6 +289,27 @@ async function handleReturn(req, res, reason) {
     before: { status: 'delivery_failed' }, after: { status: 'returned', reason: reason || '' },
     summary: `Marked order ${finalOrder.orderNumber} returned${reason ? `: ${reason}` : ''}`,
   });
+
+  // Milestone 7 Part A.3 — only when the platform has chosen to pass the
+  // wasted courier trip on to the seller (owner-only setting, default
+  // 'platform' = no seller entry at all). Safe to create unconditionally
+  // here, no further claim needed — this whole function body only ever
+  // runs once per order, for whichever single request won the atomic
+  // claim above. Payable immediately: unlike a sale, there's no COD to
+  // reconcile and no return-window reason to hold it (the parcel never
+  // reached the customer).
+  const settings = await getPlatformSettings();
+  if (settings.refusedParcelChargedTo === 'seller' && finalOrder.refusedParcelCostCents > 0) {
+    await LedgerEntry.create({
+      seller: finalOrder.seller,
+      type: 'refused_parcel_charge',
+      amountCents: -finalOrder.refusedParcelCostCents,
+      sellerOrder: finalOrder._id,
+      status: 'payable',
+      availableAt: new Date(),
+      reason: 'Refused/returned parcel courier cost',
+    });
+  }
 
   await notify({
     userId: finalOrder.customer, type: 'order.returned',

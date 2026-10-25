@@ -277,6 +277,11 @@
     "defaultReturnWindowDays": "පෙරනිමි ආපසු දීමේ කාල සීමාව (දින)",
     "payoutDayOfWeek": "ගෙවීම් සතියේ දිනය",
     "payoutHoldDays": "ගෙවීම් රැඳවුම් (දින)",
+    "payoutHoldDaysDevWarning": "දින 0ක රැඳවුම — සංවර්ධන/පරීක්ෂණ පරිසරවල පමණක් ඉඩ දෙනු ලැබේ, නිෂ්පාදනයේ කිසි විටෙකත් නොවේ.",
+    "minimumPayoutCents": "අවම ගෙවීමේ මුදල (රු.)",
+    "refusedParcelChargedTo": "ප්‍රතික්ෂේප කළ පාර්සලයේ බෙදාහැරීම් ගාස්තුව අයකරනු ලබන්නේ",
+    "refusedParcelChargedToOptions": { "platform": "වේදිකාව", "seller": "විකුණුම්කරු" },
+    "codNotReceivedAfterDays": "COD නොලැබුණු බවට සලකුණු කරන්න (දින)",
     "reviewRequiredForFirstNListings": "පළමු N ලැයිස්තු සඳහා සමාලෝචනය අවශ්‍යයි",
     "supportPhone": "සහාය දුරකථනය",
     "supportEmail": "සහාය ඊමේල්",
@@ -365,6 +370,116 @@
       "refundNeededBanner": "මෙම ඇණවුම කලින් ගෙවන ලද අතර පසුව අවලංගු කරන ලදී හෝ ආපසු එවන ලදී. පාරිභෝගිකයාට ආපසු ගෙවීමක් ලැබිය යුතුව ඇත.",
       "refusedParcelCost": "ප්‍රතික්ෂේප කළ පාර්සලයේ බෙදාහැරීම් සේවා ගාස්තුව"
     }
+  },
+  "finance": {
+    "title": "මූල්‍ය",
+    "tabs": { "overview": "දළ විශ්ලේෂණය", "sellers": "විකුණුම්කරුවන්", "remittances": "COD මුදල් ප්‍රේෂණ", "payoutRuns": "ගෙවීම් ධාවන" },
+    "overview": {
+      "commissionWeek": "මෙම සතියේ කොමිසම",
+      "commissionMonth": "මෙම මාසයේ කොමිසම",
+      "codOutstanding": "COD නොලැබුණි",
+      "payoutsDue": "ගෙවිය යුතු ගෙවීම්",
+      "refundsNeeded": "ආපසු ගෙවීම් අවශ්‍යයි",
+      "byCategoryHeading": "කාණ්ඩය අනුව කොමිසම (මෙම මාසය)",
+      "bySellerHeading": "විකුණුම්කරු අනුව කොමිසම (මෙම මාසය)",
+      "noData": "තවම දත්ත නැත",
+      "uncategorized": "කාණ්ඩගත නොකළ"
+    },
+    "sellers": {
+      "table": {
+        "seller": "විකුණුම්කරු", "onHold": "රඳවා ඇත", "payable": "ගෙවිය හැකි", "inPayout": "ගෙවීමේදී", "paid": "ගෙවන ලදී", "settlementMode": "පියවීම"
+      },
+      "settlementMode": { "payout": "බැංකු ගෙවීම", "internal": "අභ්‍යන්තර" },
+      "toggleSettlement": "පියවීමේ ක්‍රමය මාරු කරන්න",
+      "confirmSettlementChange": "මෙම විකුණුම්කරුගේ පියවීමේ ක්‍රමය \"{{mode}}\" ලෙස වෙනස් කරන්නද?",
+      "settlementChanged": "පියවීමේ ක්‍රමය යාවත්කාලීන කරන ලදී",
+      "addAdjustment": "සකස් කිරීමක් එක් කරන්න",
+      "adjustmentAmount": "මුදල (රු., අඩු කිරීමට සෘණ)",
+      "adjustmentReason": "හේතුව",
+      "saveAdjustment": "සකස් කිරීම සුරකින්න",
+      "adjustmentCreated": "සකස් කිරීම සාදන ලදී",
+      "noSellers": "තවම විකුණුම්කරු ශේෂ නැත"
+    },
+    "remittances": {
+      "mappingHeading": "බෙදාහරින සේවා තීරු සිතියම්ගත කිරීම",
+      "courierName": "බෙදාහරින සේවාවේ නම",
+      "trackingColumn": "නිරීක්ෂණ අංක තීරුව",
+      "amountColumn": "COD මුදල් තීරුව",
+      "dateColumn": "ප්‍රේෂණ දින තීරුව",
+      "referenceColumn": "යොමු තීරුව",
+      "saveMapping": "සිතියම්ගත කිරීම සුරකින්න",
+      "mappingSaved": "තීරු සිතියම්ගත කිරීම සුරකින ලදී",
+      "mappingExists": "මෙම බෙදාහරින සේවාව සඳහා සිතියම්ගත කිරීමක් දැනටමත් සුරැකී ඇත",
+      "uploadHeading": "ප්‍රේෂණ ගොනුවක් උඩුගත කරන්න",
+      "upload": "උඩුගත කරන්න",
+      "uploadDone": "ප්‍රේෂණ ගොනුව සැකසන ලදී",
+      "codNotReceivedHeading": "COD නොලැබුණි (දින {{days}}+ ගෙවීමෙන්)",
+      "rowsHeading": "ප්‍රේෂණ පේළි",
+      "noRows": "තවම ප්‍රේෂණ පේළි නැත",
+      "table": { "tracking": "නිරීක්ෂණය", "amount": "මුදල", "date": "දිනය", "status": "තත්ත්වය", "order": "ඇණවුම" },
+      "matchStatus": {
+        "matched": "ගැළපේ",
+        "short": "අඩුයි",
+        "over": "වැඩියි",
+        "unknown_tracking": "නොදන්නා නිරීක්ෂණය",
+        "duplicate": "අනුපිටපත"
+      }
+    },
+    "payoutRuns": {
+      "generate": "ගෙවීම් ධාවනය සාදන්න",
+      "generated": "ගෙවීම් ධාවනය සාදන ලදී",
+      "noRuns": "තවම ගෙවීම් ධාවන නැත",
+      "review": "සමාලෝචනය",
+      "table": { "week": "සතිය", "period": "කාලය", "status": "තත්ත්වය" },
+      "status": { "draft": "කෙටුම්පත", "approved": "අනුමත කරන ලදී" }
+    },
+    "payoutStatus": {
+      "blocked": "අවහිර කර ඇත",
+      "settled_internally": "අභ්‍යන්තරව පියවන ලදී",
+      "in_payout": "ගෙවීමේදී",
+      "paid": "ගෙවන ලදී",
+      "failed": "අසාර්ථකයි"
+    },
+    "payoutRunDetail": {
+      "back": "ගෙවීම් ධාවන වෙත ආපසු",
+      "approve": "ධාවනය අනුමත කරන්න",
+      "approved": "ගෙවීම් ධාවනය අනුමත කරන ලදී",
+      "exportCsv": "බැංකු ගොනුව නිර්යාත කරන්න",
+      "remove": "ඉවත් කරන්න",
+      "removed": "විකුණුම්කරු ධාවනයෙන් ඉවත් කරන ලදී",
+      "confirmRemove": "මෙම විකුණුම්කරු ධාවනයෙන් ඉවත් කරන්නද? ඔවුන්ගේ වාර්තා නැවත ගෙවිය හැකි බවට පත්වේ.",
+      "markPaid": "ගෙවන ලද බව සලකුණු කරන්න",
+      "markedPaid": "ගෙවීම ගෙවන ලද බව සලකුණු කරන ලදී",
+      "markFailed": "අසාර්ථක බව සලකුණු කරන්න",
+      "markedFailed": "ගෙවීම අසාර්ථක බව සලකුණු කරන ලදී",
+      "bankReference": "බැංකු යොමුව",
+      "failReason": "ගෙවීම අසාර්ථක වීමට හේතුව",
+      "table": {
+        "seller": "විකුණුම්කරු", "gross": "දළ", "commission": "කොමිසම", "charges": "ගාස්තු",
+        "adjustments": "සකස් කිරීම්", "net": "ශුද්ධ", "status": "තත්ත්වය"
+      }
+    },
+    "stepUp": {
+      "title": "ඔබම බව තහවුරු කරන්න",
+      "intro": "මෙය සංවේදී මූල්‍ය ක්‍රියාවකි — දිගටම කරගෙන යාමට ඔබේ මුරපදය සහ තනි-වාර කේතය නැවත ඇතුළත් කරන්න.",
+      "password": "මුරපදය",
+      "sendCode": "කේතය යවන්න",
+      "codeSent": "කේතය යවන ලදී",
+      "codeLabel": "තනි-වාර කේතය",
+      "confirm": "තහවුරු කරන්න"
+    },
+    "noEntries": "තවම ගිණුම් වාර්තා නැත",
+    "ledgerTable": { "date": "දිනය", "type": "වර්ගය", "amount": "මුදල", "status": "තත්ත්වය" },
+    "entryType": {
+      "sale": "විකුණුම",
+      "commission": "කොමිසම",
+      "delivery_fee_seller": "බෙදාහැරීමේ ගාස්තුව",
+      "refused_parcel_charge": "ප්‍රතික්ෂේප කළ පාර්සල ගාස්තුව",
+      "adjustment": "සකස් කිරීම",
+      "payout": "ගෙවීම",
+      "payout_reversal": "ගෙවීම ආපසු හරවන ලදී"
+    },
+    "entryStatus": { "on_hold": "රඳවා ඇත", "payable": "ගෙවිය හැකි", "in_payout": "ගෙවීමේදී", "paid": "ගෙවන ලදී" }
   },
   "catalog": {
     "vehiclesLink": "වාහන",

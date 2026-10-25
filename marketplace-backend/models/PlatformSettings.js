@@ -68,6 +68,22 @@ const platformSettingsSchema = new mongoose.Schema(
     // before services/orderAutoCancel.js cancels it and releases its
     // stock reservation.
     autoCancelAfterHours: { type: Number, default: 72, min: 1 },
+
+    // --- Milestone 7: money ---
+    // Part A.2 — days after delivery before a sale/commission entry can
+    // become payable (the return window — payoutHoldDays above already
+    // existed from Milestone 6 planning and is reused here rather than
+    // adding a second, redundant "hold days" setting).
+    // Part A.3 — who eats the courier cost of a refused/returned parcel.
+    // Owner-only to change, audited — see controllers/adminFinanceController.js.
+    refusedParcelChargedTo: { type: String, enum: ['platform', 'seller'], default: 'platform' },
+    // Part C.2 — a seller's payable balance must reach at least this
+    // much before a payout run includes them; below it, their balance
+    // just rolls into the next run.
+    minimumPayoutCents: { type: Number, default: 100000, min: 0 }, // Rs. 1,000
+    // Part B.2 — a delivered COD order with no matching remittance row
+    // after this many days surfaces in Admin Finance as "COD not received".
+    codNotReceivedAfterDays: { type: Number, default: 14, min: 1 },
   },
   { timestamps: true }
 );

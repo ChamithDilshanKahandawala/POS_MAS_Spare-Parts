@@ -32,6 +32,11 @@ const PosSyncRun = require('../models/PosSyncRun');
 const Order = require('../models/Order');
 const SellerOrder = require('../models/SellerOrder');
 const Counter = require('../models/Counter');
+const LedgerEntry = require('../models/LedgerEntry');
+const PayoutRun = require('../models/PayoutRun');
+const Payout = require('../models/Payout');
+const CourierColumnMapping = require('../models/CourierColumnMapping');
+const CodRemittanceRow = require('../models/CodRemittanceRow');
 
 // Deliberately not config/db.js's connectDB() — that guard requires the
 // database to be exactly apexora_dev (it's built for the main app) and
@@ -65,6 +70,11 @@ async function wipeDatabase() {
     Order.deleteMany({}),
     SellerOrder.deleteMany({}),
     Counter.deleteMany({}),
+    LedgerEntry.deleteMany({}),
+    PayoutRun.deleteMany({}),
+    Payout.deleteMany({}),
+    CourierColumnMapping.deleteMany({}),
+    CodRemittanceRow.deleteMany({}),
   ]);
 }
 
@@ -118,5 +128,10 @@ module.exports = {
   Order,
   SellerOrder,
   Counter,
+  LedgerEntry,
+  PayoutRun,
+  Payout,
+  CourierColumnMapping,
+  CodRemittanceRow,
   mongoose,
 };

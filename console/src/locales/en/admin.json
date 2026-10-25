@@ -274,6 +274,11 @@
     "defaultReturnWindowDays": "Default return window (days)",
     "payoutDayOfWeek": "Payout day of week",
     "payoutHoldDays": "Payout hold (days)",
+    "payoutHoldDaysDevWarning": "0-day hold — allowed in development/test only, never in production.",
+    "minimumPayoutCents": "Minimum payout amount (Rs.)",
+    "refusedParcelChargedTo": "Refused parcel courier cost charged to",
+    "refusedParcelChargedToOptions": { "platform": "Platform", "seller": "Seller" },
+    "codNotReceivedAfterDays": "Flag COD as not received after (days)",
     "reviewRequiredForFirstNListings": "Review required for first N listings",
     "supportPhone": "Support phone",
     "supportEmail": "Support email",
@@ -362,6 +367,116 @@
       "refundNeededBanner": "This order was prepaid and later cancelled or returned. A refund is owed to the customer.",
       "refusedParcelCost": "Refused parcel courier cost"
     }
+  },
+  "finance": {
+    "title": "Finance",
+    "tabs": { "overview": "Overview", "sellers": "Sellers", "remittances": "COD remittances", "payoutRuns": "Payout runs" },
+    "overview": {
+      "commissionWeek": "Commission this week",
+      "commissionMonth": "Commission this month",
+      "codOutstanding": "COD not received",
+      "payoutsDue": "Payouts due",
+      "refundsNeeded": "Refunds needed",
+      "byCategoryHeading": "Commission by category (this month)",
+      "bySellerHeading": "Commission by seller (this month)",
+      "noData": "No data yet",
+      "uncategorized": "Uncategorized"
+    },
+    "sellers": {
+      "table": {
+        "seller": "Seller", "onHold": "On hold", "payable": "Payable", "inPayout": "In payout", "paid": "Paid", "settlementMode": "Settlement"
+      },
+      "settlementMode": { "payout": "Bank payout", "internal": "Internal" },
+      "toggleSettlement": "Toggle settlement mode",
+      "confirmSettlementChange": "Change this seller's settlement mode to \"{{mode}}\"?",
+      "settlementChanged": "Settlement mode updated",
+      "addAdjustment": "Add adjustment",
+      "adjustmentAmount": "Amount (Rs., negative to deduct)",
+      "adjustmentReason": "Reason",
+      "saveAdjustment": "Save adjustment",
+      "adjustmentCreated": "Adjustment created",
+      "noSellers": "No seller balances yet"
+    },
+    "remittances": {
+      "mappingHeading": "Courier column mapping",
+      "courierName": "Courier name",
+      "trackingColumn": "Tracking number column",
+      "amountColumn": "COD amount column",
+      "dateColumn": "Remittance date column",
+      "referenceColumn": "Reference column",
+      "saveMapping": "Save mapping",
+      "mappingSaved": "Column mapping saved",
+      "mappingExists": "A mapping is already saved for this courier",
+      "uploadHeading": "Upload a remittance file",
+      "upload": "Upload",
+      "uploadDone": "Remittance file processed",
+      "codNotReceivedHeading": "COD not received (delivered {{days}}+ days ago)",
+      "rowsHeading": "Remittance rows",
+      "noRows": "No remittance rows yet",
+      "table": { "tracking": "Tracking", "amount": "Amount", "date": "Date", "status": "Status", "order": "Order" },
+      "matchStatus": {
+        "matched": "Matched",
+        "short": "Short",
+        "over": "Over",
+        "unknown_tracking": "Unknown tracking",
+        "duplicate": "Duplicate"
+      }
+    },
+    "payoutRuns": {
+      "generate": "Generate payout run",
+      "generated": "Payout run generated",
+      "noRuns": "No payout runs yet",
+      "review": "Review",
+      "table": { "week": "Week", "period": "Period", "status": "Status" },
+      "status": { "draft": "Draft", "approved": "Approved" }
+    },
+    "payoutStatus": {
+      "blocked": "Blocked",
+      "settled_internally": "Settled internally",
+      "in_payout": "In payout",
+      "paid": "Paid",
+      "failed": "Failed"
+    },
+    "payoutRunDetail": {
+      "back": "Back to payout runs",
+      "approve": "Approve run",
+      "approved": "Payout run approved",
+      "exportCsv": "Export bank file",
+      "remove": "Remove",
+      "removed": "Seller removed from the run",
+      "confirmRemove": "Remove this seller from the run? Their entries go back to payable.",
+      "markPaid": "Mark paid",
+      "markedPaid": "Payout marked paid",
+      "markFailed": "Mark failed",
+      "markedFailed": "Payout marked failed",
+      "bankReference": "Bank reference",
+      "failReason": "Reason the payout failed",
+      "table": {
+        "seller": "Seller", "gross": "Gross", "commission": "Commission", "charges": "Charges",
+        "adjustments": "Adjustments", "net": "Net", "status": "Status"
+      }
+    },
+    "stepUp": {
+      "title": "Confirm it's you",
+      "intro": "This is a sensitive finance action — re-enter your password and the one-time code to continue.",
+      "password": "Password",
+      "sendCode": "Send code",
+      "codeSent": "Code sent",
+      "codeLabel": "One-time code",
+      "confirm": "Confirm"
+    },
+    "noEntries": "No ledger entries yet",
+    "ledgerTable": { "date": "Date", "type": "Type", "amount": "Amount", "status": "Status" },
+    "entryType": {
+      "sale": "Sale",
+      "commission": "Commission",
+      "delivery_fee_seller": "Delivery fee",
+      "refused_parcel_charge": "Refused parcel charge",
+      "adjustment": "Adjustment",
+      "payout": "Payout",
+      "payout_reversal": "Payout reversed"
+    },
+    "entryStatus": { "on_hold": "On hold", "payable": "Payable", "in_payout": "In payout", "paid": "Paid" }
   },
   "catalog": {
     "vehiclesLink": "Vehicles",

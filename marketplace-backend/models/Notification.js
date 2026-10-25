@@ -36,6 +36,9 @@ const notificationSchema = new mongoose.Schema(
         'order.cancelled', // customer (and seller, for an admin-initiated cancel)
         'order.returned', // customer — a failed/refused delivery was marked returned to the seller
         'pos.order_not_recorded', // seller — a shipped/delivered order isn't marked "Recorded in POS" 24h+ later
+        // --- Milestone 7 ---
+        'payout.paid', // seller owner — a payout was sent
+        'payout.failed', // seller owner — a payout attempt failed
       ],
     },
     title: { type: String, required: true },

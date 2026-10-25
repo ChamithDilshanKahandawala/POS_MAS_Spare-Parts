@@ -167,3 +167,40 @@ export const addAdminOrderNote = (id, text) => api.post(`/admin/orders/${id}/not
 export const getNotifications = (params) => api.get('/notifications', { params });
 export const markNotificationRead = (id) => api.patch(`/notifications/${id}/read`);
 export const markAllNotificationsRead = () => api.patch('/notifications/read-all');
+
+// --- Seller: Finance (Milestone 7 Part D) ---
+export const getMyFinanceBalances = () => api.get('/seller/finance/balances');
+export const getMyFinanceLedger = (params) => api.get('/seller/finance/ledger', { params });
+export const getMyFinanceOrderBreakdown = (id) => api.get(`/seller/finance/orders/${id}`);
+export const getMyFinanceStatements = () => api.get('/seller/finance/statements');
+export const getMyFinanceStatementCsvBlob = (payoutId) => api.get(`/seller/finance/statements/${payoutId}/export.csv`, { responseType: 'blob' });
+export const getMyFinancePayouts = () => api.get('/seller/finance/payouts');
+
+// --- Admin: Finance (Milestone 7) ---
+export const adminStepUpStart = (password) => api.post('/admin/step-up', { password });
+export const adminStepUpVerify = (code) => api.post('/admin/step-up/verify', { code });
+export const getFinanceOverview = () => api.get('/admin/finance/overview');
+export const getFinanceSellerBalances = () => api.get('/admin/finance/sellers');
+export const getFinanceCodNotReceived = () => api.get('/admin/finance/cod-not-received');
+export const getFinanceSellerLedger = (id, params) => api.get(`/admin/finance/sellers/${id}/ledger`, { params });
+export const createFinanceAdjustment = (id, body) => api.post(`/admin/finance/sellers/${id}/adjustments`, body);
+export const updateSellerSettlementMode = (id, settlementMode) => api.patch(`/admin/finance/sellers/${id}/settlement-mode`, { settlementMode });
+
+export const getRemittanceMapping = (courier) => api.get(`/admin/finance/remittances/mapping/${encodeURIComponent(courier)}`);
+export const saveRemittanceMapping = (courier, body) => api.put(`/admin/finance/remittances/mapping/${encodeURIComponent(courier)}`, body);
+export const listRemittances = (params) => api.get('/admin/finance/remittances', { params });
+export const uploadRemittanceFile = (courierName, file) => {
+  const form = new FormData();
+  form.append('courierName', courierName);
+  form.append('file', file);
+  return api.post('/admin/finance/remittances/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+};
+
+export const getPayoutRuns = () => api.get('/admin/finance/payout-runs');
+export const createPayoutRun = () => api.post('/admin/finance/payout-runs', {});
+export const getPayoutRun = (id) => api.get(`/admin/finance/payout-runs/${id}`);
+export const removeSellerFromPayoutRun = (runId, sellerId) => api.delete(`/admin/finance/payout-runs/${runId}/sellers/${sellerId}`);
+export const approvePayoutRun = (id) => api.post(`/admin/finance/payout-runs/${id}/approve`, {});
+export const getPayoutRunExportCsvBlob = (id) => api.get(`/admin/finance/payout-runs/${id}/export.csv`, { responseType: 'blob' });
+export const markPayoutPaid = (id, bankReference) => api.post(`/admin/finance/payouts/${id}/mark-paid`, { bankReference });
+export const markPayoutFailed = (id, reason) => api.post(`/admin/finance/payouts/${id}/mark-failed`, { reason });

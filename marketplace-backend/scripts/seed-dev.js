@@ -80,6 +80,11 @@ async function seed() {
     // Milestone 3: exempt from listing review regardless of probation or
     // category rules — per the milestone's own seed instruction.
     reviewExempt: true,
+    // Milestone 7 Part A.5: the platform operator also runs this seller
+    // themselves — per the milestone's own seed instruction, payout runs
+    // settle their ledger internally rather than creating a real bank
+    // payout.
+    settlementMode: 'internal',
     displayName: 'Mudiyanse Auto Solutions',
     aboutText: { en: 'Genuine and quality spare parts for all vehicle types, serving Gampaha since 2015.', si: '', ta: '' },
     phones: ['0332222222', '0771234567'],

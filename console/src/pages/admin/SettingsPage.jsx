@@ -39,6 +39,8 @@ export default function SettingsPage() {
   useEffect(() => { load(); }, [load]);
 
   const field = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  // Rupees in the UI, cents on the wire — same conversion as deliveryRates below.
+  const fieldRupeesToCents = (key) => (e) => setForm((f) => ({ ...f, [key]: Math.round(Number(e.target.value) * 100) }));
 
   const save = async () => {
     setSaving(true);
@@ -56,6 +58,9 @@ export default function SettingsPage() {
         autoCancelAfterHours: Number(form.autoCancelAfterHours),
         courierName: form.courierName,
         deliveryRates: form.deliveryRates,
+        refusedParcelChargedTo: form.refusedParcelChargedTo,
+        minimumPayoutCents: Number(form.minimumPayoutCents),
+        codNotReceivedAfterDays: Number(form.codNotReceivedAfterDays),
       });
       setForm(data.settings);
       toast.success(t('settings.saved'));
@@ -97,7 +102,30 @@ export default function SettingsPage() {
           </select>
         </div>
 
-        <NumberField label={t('settings.payoutHoldDays')} value={form.payoutHoldDays} onChange={field('payoutHoldDays')} disabled={!isPlatformOwner} />
+        <div>
+          <NumberField label={t('settings.payoutHoldDays')} value={form.payoutHoldDays} onChange={field('payoutHoldDays')} disabled={!isPlatformOwner} />
+          {/* Follow-up — the backend only ever ACCEPTS a saved 0 when
+              NODE_ENV is development/test (controllers/settingsController.js),
+              so a currently-loaded 0 is proof we're already in one of
+              those environments; no separate "what environment is this"
+              call needed to decide whether to show the warning. */}
+          {Number(form.payoutHoldDays) === 0 && (
+            <div style={{ fontSize: '11px', color: 'var(--badge-red-text, #ef4444)', marginTop: '4px', fontWeight: 600 }}>
+              {t('settings.payoutHoldDaysDevWarning')}
+            </div>
+          )}
+        </div>
+        <NumberField label={t('settings.minimumPayoutCents')} value={(form.minimumPayoutCents || 0) / 100} onChange={fieldRupeesToCents('minimumPayoutCents')} disabled={!isPlatformOwner} />
+
+        <div>
+          <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('settings.refusedParcelChargedTo')}</label>
+          <select className="select-field" style={{ width: '100%', marginTop: '6px' }} value={form.refusedParcelChargedTo} onChange={field('refusedParcelChargedTo')} disabled={!isPlatformOwner}>
+            <option value="platform">{t('settings.refusedParcelChargedToOptions.platform')}</option>
+            <option value="seller">{t('settings.refusedParcelChargedToOptions.seller')}</option>
+          </select>
+        </div>
+
+        <NumberField label={t('settings.codNotReceivedAfterDays')} value={form.codNotReceivedAfterDays} onChange={field('codNotReceivedAfterDays')} disabled={!isPlatformOwner} />
         <NumberField label={t('settings.reviewRequiredForFirstNListings')} value={form.reviewRequiredForFirstNListings} onChange={field('reviewRequiredForFirstNListings')} disabled={!isPlatformOwner} />
 
         <TextField label={t('settings.supportPhone')} value={form.supportPhone} onChange={field('supportPhone')} disabled={!isPlatformOwner} />

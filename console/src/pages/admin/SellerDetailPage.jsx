@@ -7,10 +7,12 @@ import { Link } from 'react-router-dom';
 import {
   getSeller, updateSellerStatus, updateSellerOverrides, viewAsSeller,
   getSellerBankFull, verifySellerBank, rejectSellerBank, getListingQueue,
-  getSellerPosStatus, updateSellerPosConnection,
+  getSellerPosStatus, updateSellerPosConnection, getFinanceSellerLedger,
 } from '../../api/services';
 import { useAuth } from '../../context/useAuth';
 import EmptyState from '../../components/EmptyState';
+import { formatLKR } from '../../utils/formatLKR';
+import { formatDateTime } from '../../utils/formatDateTime';
 
 const STATUS_BADGE = { in_review: 'badge-yellow', active: 'badge-green', suspended: 'badge-orange', closed: 'badge-red' };
 
@@ -578,7 +580,48 @@ export default function SellerDetailPage() {
         </div>
       )}
       {tab === 'orders' && <EmptyState icon={ShoppingCart} title={t('sellerDetail.comingSoonTab')} />}
-      {tab === 'finance' && <EmptyState icon={Wallet} title={t('sellerDetail.comingSoonTab')} />}
+      {tab === 'finance' && <SellerFinanceTab sellerId={id} />}
+    </div>
+  );
+}
+
+// Milestone 7 — the admin's own per-seller ledger drill-down, replacing
+// the empty state. Read-only (adjustments/settlement mode live on the
+// Admin → Finance → Sellers table, not duplicated here).
+function SellerFinanceTab({ sellerId }) {
+  const { t } = useTranslation(['admin', 'common']);
+  const [entries, setEntries] = useState(null);
+
+   
+  useEffect(() => {
+    getFinanceSellerLedger(sellerId, { limit: 50 }).then(({ data }) => setEntries(data.entries)).catch(() => toast.error(t('common:error.generic')));
+  }, [sellerId, t]);
+
+  if (!entries) return <div>{t('common:loading')}</div>;
+  if (entries.length === 0) return <EmptyState icon={Wallet} title={t('finance.noEntries')} />;
+
+  return (
+    <div className="glass-card" style={{ padding: '20px', overflowX: 'auto' }}>
+      <table className="data-table">
+        <thead>
+          <tr>
+            <th>{t('finance.ledgerTable.date')}</th>
+            <th>{t('finance.ledgerTable.type')}</th>
+            <th>{t('finance.ledgerTable.amount')}</th>
+            <th>{t('finance.ledgerTable.status')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {entries.map((e) => (
+            <tr key={e._id}>
+              <td style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{formatDateTime(e.createdAt)}</td>
+              <td style={{ fontSize: '13px' }}>{t(`finance.entryType.${e.type}`)}</td>
+              <td style={{ fontWeight: 700 }}>{e.amountCents >= 0 ? '+' : ''}{formatLKR(e.amountCents)}</td>
+              <td><span className="badge badge-blue">{t(`finance.entryStatus.${e.status}`)}</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

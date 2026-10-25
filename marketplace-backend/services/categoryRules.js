@@ -126,6 +126,48 @@ async function getDescendantAndSelfIds(categoryId) {
   return [...ids];
 }
 
+// Milestone 7 follow-up — PlatformSettings.payoutHoldDays must never be
+// shorter than the longest EFFECTIVE return window any active category
+// can actually produce an order under (controllers/settingsController.js
+// rejects a save that violates this). "Active" is about whether the
+// category is currently sellable, not about where returnPolicy.windowDays
+// was actually SET — an active leaf category inheriting its window from
+// an ancestor still counts, same resolution as getEffectiveCategory
+// above, just resolved for every category in one pass (fetched once)
+// instead of one DB round trip per category.
+async function getLongestActiveReturnWindowDays() {
+  const all = await Category.find({}).select('_id name parentId active returnPolicy').lean();
+  const byId = new Map(all.map((c) => [String(c._id), c]));
+
+  function effectiveReturnPolicy(cat) {
+    const chain = [];
+    let current = cat;
+    while (current) {
+      chain.unshift(current);
+      current = current.parentId ? byId.get(String(current.parentId)) : null;
+    }
+    let returnable = false;
+    let windowDays = 0;
+    for (const c of chain) {
+      if (c.returnPolicy?.returnable !== null && c.returnPolicy?.returnable !== undefined) returnable = c.returnPolicy.returnable;
+      if (c.returnPolicy?.windowDays !== null && c.returnPolicy?.windowDays !== undefined) windowDays = c.returnPolicy.windowDays;
+    }
+    return { returnable, windowDays };
+  }
+
+  let maxWindowDays = 0;
+  let category = null;
+  for (const cat of all) {
+    if (!cat.active) continue;
+    const { returnable, windowDays } = effectiveReturnPolicy(cat);
+    if (returnable && windowDays > maxWindowDays) {
+      maxWindowDays = windowDays;
+      category = cat;
+    }
+  }
+  return { maxWindowDays, category };
+}
+
 module.exports = {
   getAncestorChain,
   mergeEffectiveRules,
@@ -133,5 +175,6 @@ module.exports = {
   getEffectiveCommissionBps,
   buildTree,
   getDescendantAndSelfIds,
+  getLongestActiveReturnWindowDays,
   MAX_DEPTH: require('../models/Category').MAX_DEPTH,
 };

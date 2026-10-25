@@ -1,5 +1,6 @@
 const express = require('express');
 const { z } = require('zod');
+const rateLimit = require('express-rate-limit');
 const router = express.Router();
 
 const {
@@ -45,16 +46,28 @@ const {
   listOrders: listAdminOrders, getOrderDetail: getAdminOrderDetail, getOrdersOverview,
   cancelOrder: cancelAdminOrder, moveOrderOn, addInternalNote,
 } = require('../controllers/adminOrdersController');
+const { stepUpStart: adminStepUpStart, stepUpVerify: adminStepUpVerify } = require('../controllers/adminStepUpController');
+const {
+  getOverview: getFinanceOverview, listSellerBalances, getCodNotReceived, createAdjustment, updateSettlementMode, getSellerLedger,
+} = require('../controllers/adminFinanceController');
+const { getMapping, saveMapping, uploadRemittance, listRemittances } = require('../controllers/adminRemittanceController');
+const {
+  listRuns, createRun, getRun, removeSeller, approve: approvePayoutRun, exportBankCsv, markPaidRoute, markFailedRoute,
+} = require('../controllers/adminPayoutController');
 const { requireAuth, requirePlatform } = require('../middleware/authMiddleware');
 const { validate, requireValidObjectId } = require('../middleware/validate');
 const restrictFieldsToOwner = require('../middleware/restrictFieldsToOwner');
 const asyncHandler = require('../middleware/asyncHandler');
-const { writeLimiter } = require('../middleware/rateLimiter');
+const { writeLimiter, uploadLimiter } = require('../middleware/rateLimiter');
+const requireFreshStepUp = require('../middleware/requireFreshStepUp');
+const { upload, handleUploadErrors } = require('../middleware/upload');
 const { FIELD_TYPES } = require('../models/Category');
 const { VEHICLE_TYPES } = require('../models/VehicleMake');
 const { REJECTION_REASONS } = require('../models/Listing');
 const { SRI_LANKA_DISTRICTS } = require('../utils/sriLankaDistricts');
 const { STATUSES: SELLER_ORDER_STATUSES } = require('../models/SellerOrder');
+const { TYPES: LEDGER_TYPES, STATUSES: LEDGER_STATUSES } = require('../models/LedgerEntry');
+const { MATCH_STATUSES: REMITTANCE_MATCH_STATUSES } = require('../models/CodRemittanceRow');
 
 const PLATFORM_ROLES = ['platform_owner', 'platform_staff'];
 const OWNER_ONLY = ['platform_owner'];
@@ -168,6 +181,10 @@ const updateSettingsBodySchema = z.object({
   deliveryRates: z.record(z.enum(SRI_LANKA_DISTRICTS), deliveryRateZod).optional(),
   courierName: z.string().trim().min(1).max(80).optional(),
   autoCancelAfterHours: z.number().int().min(1).max(720).optional(),
+  // --- Milestone 7 ---
+  refusedParcelChargedTo: z.enum(['platform', 'seller']).optional(),
+  minimumPayoutCents: z.number().int().min(0).optional(),
+  codNotReceivedAfterDays: z.number().int().min(1).max(365).optional(),
 }).strict();
 
 // --- Catalog: categories ---
@@ -669,6 +686,133 @@ router.post(
   requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'),
   validate({ body: addNoteBodySchema }),
   asyncHandler(addInternalNote)
+);
+
+// --- Finance (Milestone 7) ---
+
+// Step-up shares the seller side's brute-force concerns — same limiter
+// shape as sellerRoutes.js's stepUpLimiter.
+const stepUpLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: process.env.NODE_ENV === 'test' ? 1000 : 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many attempts. Please wait a few minutes and try again.' },
+});
+const stepUpStartSchema = z.object({ password: z.string().min(1) }).strict();
+const stepUpVerifySchema = z.object({ code: z.string().regex(/^\d{6}$/, 'Code must be 6 digits') }).strict();
+router.post('/step-up', requireAuth, requirePlatform(OWNER_ONLY), stepUpLimiter, validate({ body: stepUpStartSchema }), asyncHandler(adminStepUpStart));
+router.post('/step-up/verify', requireAuth, requirePlatform(OWNER_ONLY), stepUpLimiter, validate({ body: stepUpVerifySchema }), asyncHandler(adminStepUpVerify));
+
+router.get('/finance/overview', requireAuth, requirePlatform(PLATFORM_ROLES), asyncHandler(getFinanceOverview));
+router.get('/finance/sellers', requireAuth, requirePlatform(PLATFORM_ROLES), asyncHandler(listSellerBalances));
+router.get('/finance/cod-not-received', requireAuth, requirePlatform(PLATFORM_ROLES), asyncHandler(getCodNotReceived));
+
+const sellerLedgerQuerySchema = z.object({
+  type: z.enum(LEDGER_TYPES).optional(),
+  status: z.enum(LEDGER_STATUSES).optional(),
+  from: z.string().optional(),
+  to: z.string().optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).optional(),
+}).strict();
+router.get(
+  '/finance/sellers/:id/ledger',
+  requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'),
+  validate({ query: sellerLedgerQuerySchema }),
+  asyncHandler(getSellerLedger)
+);
+
+const adjustmentBodySchema = z.object({
+  amountCents: z.number().int().refine((n) => n !== 0, 'Amount cannot be zero'),
+  reason: z.string().trim().min(1, 'Reason is required').max(500),
+}).strict();
+router.post(
+  '/finance/sellers/:id/adjustments',
+  requireAuth, requirePlatform(OWNER_ONLY), requireValidObjectId('id'), requireFreshStepUp,
+  validate({ body: adjustmentBodySchema }),
+  asyncHandler(createAdjustment)
+);
+
+const settlementModeBodySchema = z.object({ settlementMode: z.enum(['payout', 'internal']) }).strict();
+router.patch(
+  '/finance/sellers/:id/settlement-mode',
+  requireAuth, requirePlatform(OWNER_ONLY), requireValidObjectId('id'),
+  validate({ body: settlementModeBodySchema }),
+  asyncHandler(updateSettlementMode)
+);
+
+// --- COD remittances (Part B) ---
+const mappingBodySchema = z.object({
+  trackingNumberColumn: z.string().trim().min(1),
+  codAmountColumn: z.string().trim().min(1),
+  remittanceDateColumn: z.string().trim().min(1),
+  referenceColumn: z.string().trim().min(1),
+}).strict();
+router.get('/finance/remittances/mapping/:courier', requireAuth, requirePlatform(PLATFORM_ROLES), asyncHandler(getMapping));
+router.put(
+  '/finance/remittances/mapping/:courier',
+  requireAuth, requirePlatform(OWNER_ONLY),
+  validate({ body: mappingBodySchema }),
+  asyncHandler(saveMapping)
+);
+
+const remittancesQuerySchema = z.object({
+  courierName: z.string().trim().optional(),
+  matchStatus: z.enum(REMITTANCE_MATCH_STATUSES).optional(),
+  from: z.string().optional(),
+  to: z.string().optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).optional(),
+}).strict();
+router.get('/finance/remittances', requireAuth, requirePlatform(PLATFORM_ROLES), validate({ query: remittancesQuerySchema }), asyncHandler(listRemittances));
+
+const uploadRemittanceBodySchema = z.object({ courierName: z.string().trim().min(1) }).strict();
+router.post(
+  '/finance/remittances/upload',
+  requireAuth, requirePlatform(PLATFORM_ROLES),
+  uploadLimiter,
+  handleUploadErrors(upload.single('file')),
+  validate({ body: uploadRemittanceBodySchema }),
+  asyncHandler(uploadRemittance)
+);
+
+// --- Payout runs (Part C) ---
+router.get('/finance/payout-runs', requireAuth, requirePlatform(PLATFORM_ROLES), asyncHandler(listRuns));
+router.post('/finance/payout-runs', requireAuth, requirePlatform(PLATFORM_ROLES), asyncHandler(createRun));
+router.get('/finance/payout-runs/:id', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), asyncHandler(getRun));
+router.delete(
+  '/finance/payout-runs/:id/sellers/:sellerId',
+  requireAuth, requirePlatform(OWNER_ONLY), requireValidObjectId('id'), requireValidObjectId('sellerId'),
+  asyncHandler(removeSeller)
+);
+router.post(
+  '/finance/payout-runs/:id/approve',
+  requireAuth, requirePlatform(OWNER_ONLY), requireValidObjectId('id'), requireFreshStepUp,
+  asyncHandler(approvePayoutRun)
+);
+router.get(
+  '/finance/payout-runs/:id/export.csv',
+  requireAuth, requirePlatform(OWNER_ONLY), requireValidObjectId('id'), requireFreshStepUp,
+  asyncHandler(exportBankCsv)
+);
+
+const markPaidBodySchema = z.object({
+  bankReference: z.string().trim().min(1, 'Bank reference is required'),
+  paidDate: z.string().datetime().optional(),
+}).strict();
+router.post(
+  '/finance/payouts/:id/mark-paid',
+  requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'),
+  validate({ body: markPaidBodySchema }),
+  asyncHandler(markPaidRoute)
+);
+const markFailedBodySchema = z.object({ reason: z.string().trim().min(1, 'Reason is required').max(500) }).strict();
+router.post(
+  '/finance/payouts/:id/mark-failed',
+  requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'),
+  validate({ body: markFailedBodySchema }),
+  asyncHandler(markFailedRoute)
 );
 
 module.exports = router;

@@ -17,6 +17,9 @@ const {
 const { uploadListingMedia, deleteListingMedia, getSellerMediaVariant } = require('../controllers/mediaController');
 const { listProducts: listPosProducts, importSelected: importPosProducts, syncNow: syncPosNow, getStatus: getPosStatus } = require('../controllers/sellerPosController');
 const { listOrders: listSellerOrders, getOrderDetail: getSellerOrderDetail, transitionOrder, markPosRecorded, markReturnPosRecorded } = require('../controllers/sellerOrdersController');
+const {
+  getBalances, getLedger, getOrderBreakdown, getStatements, exportStatementCsv, getPayoutHistory,
+} = require('../controllers/sellerFinanceController');
 const { requireAuth, requireSellerMember } = require('../middleware/authMiddleware');
 const requireActiveStore = require('../middleware/requireActiveStore');
 const requireFreshStepUp = require('../middleware/requireFreshStepUp');
@@ -27,6 +30,7 @@ const asyncHandler = require('../middleware/asyncHandler');
 const { writeLimiter, uploadLimiter, autosaveLimiter } = require('../middleware/rateLimiter');
 const Seller = require('../models/Seller');
 const { CONDITIONS, WARRANTY_TYPES } = require('../models/Listing');
+const { TYPES: LEDGER_TYPES, STATUSES: LEDGER_STATUSES } = require('../models/LedgerEntry');
 
 const OWNER = ['seller_owner'];
 const ANY_MEMBER = ['seller_owner', 'seller_staff'];
@@ -423,5 +427,25 @@ router.post(
   validate({ body: z.object({}).strict() }),
   asyncHandler(markReturnPosRecorded)
 );
+
+// --- Finance (Milestone 7 Part D) — owner only, read-only. Staff get a
+// flat 403 on every route below (never even a 404-shaped "not found" —
+// this is a role gate, not an existence check), per the spec's explicit
+// "Seller staff: no access to Finance".
+const financeQuerySchema = z.object({
+  type: z.enum(LEDGER_TYPES).optional(),
+  status: z.enum(LEDGER_STATUSES).optional(),
+  from: z.string().optional(),
+  to: z.string().optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).optional(),
+}).strict();
+
+router.get('/finance/balances', requireAuth, requireSellerMember(OWNER), asyncHandler(getBalances));
+router.get('/finance/ledger', requireAuth, requireSellerMember(OWNER), validate({ query: financeQuerySchema }), asyncHandler(getLedger));
+router.get('/finance/orders/:id', requireAuth, requireSellerMember(OWNER), requireValidObjectId('id'), asyncHandler(getOrderBreakdown));
+router.get('/finance/statements', requireAuth, requireSellerMember(OWNER), asyncHandler(getStatements));
+router.get('/finance/statements/:payoutId/export.csv', requireAuth, requireSellerMember(OWNER), requireValidObjectId('payoutId'), asyncHandler(exportStatementCsv));
+router.get('/finance/payouts', requireAuth, requireSellerMember(OWNER), asyncHandler(getPayoutHistory));
 
 module.exports = router;

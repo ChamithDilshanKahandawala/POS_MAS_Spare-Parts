@@ -302,6 +302,39 @@
       "returnPosRecordedDone": "திரும்பப்பெறுதல் POS இல் பதிவு செய்யப்பட்டது"
     }
   },
+  "finance": {
+    "title": "நிதி",
+    "balances": {
+      "onHold": "நிலுவையில்",
+      "payable": "செலுத்தத்தக்கது",
+      "inNextPayout": "அடுத்த கொடுப்பனவில்",
+      "paidThisMonth": "இந்த மாதம் செலுத்தப்பட்டது"
+    },
+    "tabs": { "ledger": "கணக்கேடு", "statements": "அறிக்கைகள்", "payouts": "கொடுப்பனவு வரலாறு" },
+    "noEntries": "இன்னும் கணக்கேடு உள்ளீடுகள் இல்லை",
+    "noStatements": "இன்னும் அறிக்கைகள் இல்லை",
+    "noPayouts": "இன்னும் கொடுப்பனவுகள் இல்லை",
+    "ledgerTable": { "date": "தேதி", "type": "வகை", "order": "ஆர்டர்", "amount": "தொகை", "status": "நிலை" },
+    "entryType": {
+      "sale": "விற்பனை",
+      "commission": "கமிஷன்",
+      "delivery_fee_seller": "டெலிவரி கட்டணம்",
+      "refused_parcel_charge": "நிராகரிக்கப்பட்ட பார்சல் கட்டணம்",
+      "adjustment": "சரிசெய்தல்",
+      "payout": "கொடுப்பனவு",
+      "payout_reversal": "கொடுப்பனவு மீட்டெடுக்கப்பட்டது"
+    },
+    "entryStatus": { "on_hold": "நிலுவையில்", "payable": "செலுத்தத்தக்கது", "in_payout": "கொடுப்பனவில்", "paid": "செலுத்தப்பட்டது" },
+    "statementsTable": { "period": "காலம்", "gross": "மொத்தம்", "commission": "கமிஷன்", "net": "நிகரம்", "status": "நிலை", "csv": "CSV" },
+    "payoutsTable": { "period": "காலம்", "net": "நிகரம்", "status": "நிலை", "reference": "குறிப்பு", "date": "தேதி" },
+    "payoutStatus": {
+      "blocked": "தடுக்கப்பட்டது",
+      "settled_internally": "உள்நாட்டில் தீர்க்கப்பட்டது",
+      "in_payout": "கொடுப்பனவில்",
+      "paid": "செலுத்தப்பட்டது",
+      "failed": "தோல்வியடைந்தது"
+    }
+  },
   "products": {
     "addListing": "பட்டியலைச் சேர்",
     "tabs": {

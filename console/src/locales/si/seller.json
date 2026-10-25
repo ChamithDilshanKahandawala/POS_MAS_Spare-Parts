@@ -302,6 +302,39 @@
       "returnPosRecordedDone": "ආපසු එවීම POS හි සටහන් කරන ලදී"
     }
   },
+  "finance": {
+    "title": "මූල්‍ය",
+    "balances": {
+      "onHold": "රඳවා ඇත",
+      "payable": "ගෙවිය හැකි",
+      "inNextPayout": "ඊළඟ ගෙවීමේදී",
+      "paidThisMonth": "මෙම මාසයේ ගෙවන ලදී"
+    },
+    "tabs": { "ledger": "ගිණුම් වාර්තාව", "statements": "ප්‍රකාශන", "payouts": "ගෙවීම් ඉතිහාසය" },
+    "noEntries": "තවම ගිණුම් වාර්තා නැත",
+    "noStatements": "තවම ප්‍රකාශන නැත",
+    "noPayouts": "තවම ගෙවීම් නැත",
+    "ledgerTable": { "date": "දිනය", "type": "වර්ගය", "order": "ඇණවුම", "amount": "මුදල", "status": "තත්ත්වය" },
+    "entryType": {
+      "sale": "විකුණුම",
+      "commission": "කොමිසම",
+      "delivery_fee_seller": "බෙදාහැරීමේ ගාස්තුව",
+      "refused_parcel_charge": "ප්‍රතික්ෂේප කළ පාර්සල ගාස්තුව",
+      "adjustment": "සකස් කිරීම",
+      "payout": "ගෙවීම",
+      "payout_reversal": "ගෙවීම ආපසු හරවන ලදී"
+    },
+    "entryStatus": { "on_hold": "රඳවා ඇත", "payable": "ගෙවිය හැකි", "in_payout": "ගෙවීමේදී", "paid": "ගෙවන ලදී" },
+    "statementsTable": { "period": "කාලය", "gross": "දළ", "commission": "කොමිසම", "net": "ශුද්ධ", "status": "තත්ත්වය", "csv": "CSV" },
+    "payoutsTable": { "period": "කාලය", "net": "ශුද්ධ", "status": "තත්ත්වය", "reference": "යොමුව", "date": "දිනය" },
+    "payoutStatus": {
+      "blocked": "අවහිර කර ඇත",
+      "settled_internally": "අභ්‍යන්තරව පියවන ලදී",
+      "in_payout": "ගෙවීමේදී",
+      "paid": "ගෙවන ලදී",
+      "failed": "අසාර්ථකයි"
+    }
+  },
   "products": {
     "addListing": "නාමාවලියක් එකතු කරන්න",
     "tabs": {

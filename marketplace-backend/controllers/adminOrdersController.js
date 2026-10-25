@@ -10,6 +10,7 @@ const { release } = require('../services/stockReservation');
 const { notify } = require('../services/notifications');
 const { logAction } = require('../services/auditLog');
 const SellerMember = require('../models/SellerMember');
+const { postDeliveryLedgerEntries } = require('../services/ledger');
 
 // GET /api/admin/orders — filters: seller, status, date range, district,
 // search by order number, refundNeeded (follow-up #2).
@@ -128,6 +129,12 @@ const moveOrderOn = async (req, res) => {
   if (toStatus === 'shipped') order.shippedAt = new Date();
   if (toStatus === 'delivered') order.deliveredAt = new Date();
   await order.save();
+
+  // Milestone 7 Part A.2 — same hook as the seller-driven 'deliver'
+  // transition (controllers/sellerOrdersController.js) — an admin
+  // force-moving a stuck parcel to 'delivered' must post the ledger
+  // entries too, not just the normal seller flow.
+  if (toStatus === 'delivered') await postDeliveryLedgerEntries(order._id);
 
   await logAction({
     actor: req.user, actorRole: req.user.platformRole, action: 'order.move_on',
