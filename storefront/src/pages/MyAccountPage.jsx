@@ -265,11 +265,21 @@ export default function MyAccountPage() {
         <User size={22} /> {t('title')}
       </h1>
 
-      <div style={{ display: 'flex', gap: '6px', marginBottom: '24px', borderBottom: '1px solid var(--border-light)', paddingBottom: '2px' }}>
+      {/* Design refresh — the new uppercase+tracked button style (this
+          file's own inline padding/font-size override whatever
+          index.css would otherwise shrink at narrow widths, same as
+          every other per-button inline style here) made these 3 tabs
+          wide enough to overflow a 360px viewport. overflowX:'auto'
+          turns the row into its own small horizontally-scrollable
+          strip instead — a standard mobile tab pattern, and it
+          contains the overflow to this one row rather than the whole
+          page needing it (caught by Playwright's no-horizontal-
+          overflow check on /account). */}
+      <div style={{ display: 'flex', gap: '6px', marginBottom: '24px', borderBottom: '1px solid var(--border-light)', paddingBottom: '2px', overflowX: 'auto' }}>
         {TABS.map((key) => (
           <button
             key={key} className={tab === key ? 'btn-primary' : 'btn-secondary'}
-            style={{ padding: '8px 16px', fontSize: '13px' }} onClick={() => setTab(key)}
+            style={{ padding: '8px 16px', fontSize: '13px', whiteSpace: 'nowrap', flexShrink: 0 }} onClick={() => setTab(key)}
           >
             {key === 'addresses' && <MapPin size={14} />} {key === 'vehicles' && <Car size={14} />}
             {t(`tabs.${key}`)}

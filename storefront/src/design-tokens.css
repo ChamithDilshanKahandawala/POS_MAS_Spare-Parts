@@ -1,0 +1,149 @@
+/* ═══════════════════════════════════════════════════════════════
+   APEXORA DESIGN TOKENS — single source of truth
+   Direction: "Obsidian & Champagne" — near-black/charcoal, warm
+   ivory, a restrained champagne-gold accent. Premium, not flashy.
+
+   DO NOT EDIT THE COPIES. This file is copied verbatim into
+   storefront/src/design-tokens.css and console/src/design-tokens.css
+   by `npm run sync:tokens` (see sync-tokens.mjs in this folder) —
+   edit only this one, then re-run the sync. Each app's own
+   src/index.css imports the synced copy and aliases its pre-existing
+   variable names onto these semantic ones, so every existing
+   component (hundreds of them, across both apps) picks up a token
+   change with zero per-component edits — see the long comment at the
+   top of each index.css for exactly how.
+
+   Every text/background pair below meets WCAG AA (4.5:1 body text,
+   3:1 large text/icons/UI) in BOTH themes — verified against every
+   surface it's actually used on, not just one. See the contrast
+   table in this task's report for the full numbers.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* --- Surfaces --- */
+  --surface: #FAF8F5;              /* page background */
+  --surface-sunken: #F3F0EB;       /* inputs, table zebra, anything recessed */
+  --surface-raised: #FFFFFF;       /* cards, modals, the topbar/sidebar */
+  --surface-raised-hover: #FBF3E6; /* hover tint for a raised surface */
+
+  /* --- Text --- */
+  --text: #1A1816;
+  --text-secondary: #4A453F;
+  --text-muted: #6B6560;
+
+  /* --- Accent (champagne gold) ---
+     --accent: decorative uses only (icons, dividers, hover glow,
+       badge borders) — NOT text-safe at small sizes (3.1:1 as text).
+     --accent-text: the same hue, darkened until it clears 4.5:1 as
+       TEXT on --surface/--surface-raised.
+     --accent-strong: the same darkened shade, used as a SOLID FILL
+       (primary buttons) so --accent-contrast text on top of it stays
+       readable — in light mode this has to be darker than --accent
+       itself (a plain #B08D57 fill only gives white text 3.1:1);
+       in dark mode --accent already clears it, so --accent-strong is
+       just the same value again, kept as its own token so a
+       component never has to know which theme it's in to decide
+       which one to use for a button fill. */
+  --accent: #B08D57;
+  --accent-text: #8A6B3D;
+  --accent-strong: #8A6B3D;
+  --accent-contrast: #FFFFFF;      /* text/icon color ON TOP of --accent-strong */
+  --accent-soft: #F3E9D8;          /* tinted background (pills, selected rows) */
+  --accent-glow: rgba(176, 141, 87, 0.18);
+
+  /* --- Borders --- */
+  --border: rgba(26, 24, 22, 0.12);
+  --border-soft: rgba(26, 24, 22, 0.08);
+
+  /* --- Status --- */
+  --success: #2F6F4F;
+  --danger: #A23B3B;
+  --warning: #8A6319;
+  --info: #2C5F8A;
+
+  /* --- Elevation --- */
+  --shadow: 0 1px 2px rgba(20, 16, 10, 0.04), 0 8px 24px rgba(20, 16, 10, 0.06);
+  --shadow-hover: 0 4px 10px rgba(20, 16, 10, 0.06), 0 16px 40px rgba(20, 16, 10, 0.10);
+
+  /* --- Hero band — deliberately dark in BOTH themes (a classic
+     "dark hero on a light page" premium pattern); the storefront
+     hero's own text is already hardcoded white, so this needs no
+     component change either. --- */
+  --hero-gradient: linear-gradient(135deg, #1A1816 0%, #2E2822 55%, #4A3D2E 100%);
+
+  /* --- Shape --- */
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  /* --- Typography ---
+     Latin: Playfair Display (headings) + Inter (body, unchanged).
+     Sinhala/Tamil: Noto Serif (headings, matching the serif
+     direction) + Noto Sans (body, unchanged) — both still loaded
+     on demand only when that language is active, same as today. */
+  --font-heading: 'Playfair Display', 'Noto Serif Sinhala', 'Noto Serif Tamil', serif;
+  --font-body: 'Inter', 'Noto Sans Sinhala', 'Noto Sans Tamil', sans-serif;
+
+  /* --- Motion --- */
+  --motion-fast: 150ms;
+  --motion-base: 220ms;
+  --motion-slow: 300ms;
+  --motion-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme='dark'] {
+  --surface: #121212;
+  --surface-sunken: #18181B;
+  --surface-raised: #1C1C1F;
+  --surface-raised-hover: #242428;
+
+  --text: #F2EFEA;
+  --text-secondary: #C7C2BA;
+  --text-muted: #A8A29B;
+
+  --accent: #CBAA72;
+  --accent-text: #CBAA72;
+  --accent-strong: #CBAA72;
+  --accent-contrast: #1A1816;
+  --accent-soft: rgba(203, 170, 114, 0.14);
+  --accent-glow: rgba(203, 170, 114, 0.22);
+
+  --border: rgba(242, 239, 234, 0.14);
+  --border-soft: rgba(242, 239, 234, 0.08);
+
+  --success: #5FAF84;
+  --danger: #E08585;
+  --warning: #D9AE5C;
+  --info: #7FB3E0;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.35), 0 18px 44px rgba(0, 0, 0, 0.5);
+
+  --hero-gradient: linear-gradient(135deg, #1C1C1F 0%, #2A241C 60%, #3D3222 100%);
+}
+
+/* Admin console only — gives the admin topbar a cooler, more muted
+   accent than the seller/storefront's warm champagne, so it's
+   immediately obvious which hat is on at a glance. Scoped by
+   console/src/components/layout/ConsoleLayout.jsx's .area-admin
+   class (console/src/design-tokens.css duplicates this block after
+   sync — see sync-tokens.mjs). */
+.area-admin {
+  --accent-text: #6E5329;
+}
+[data-theme='dark'] .area-admin {
+  --accent-text: #B99456;
+}
+
+/* Respect the OS/browser-level reduced-motion preference everywhere
+   these tokens are used — collapses every transition/animation this
+   refresh relies on to near-instant rather than removing motion
+   piecemeal per component. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0.01ms;
+    --motion-base: 0.01ms;
+    --motion-slow: 0.01ms;
+  }
+}

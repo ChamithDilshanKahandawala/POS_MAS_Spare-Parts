@@ -1,82 +1,47 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
-
+/* Inter + Playfair Display are now loaded via a real <link> in
+   index.html, not a CSS @import here — see that file's comment for
+   why (LCP). */
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════
-   MUDIYANSE AUTO SOLUTIONS — ORANGE + WHITE THEME
-   ═══════════════════════════════════════════════════ */
+   APEXORA — "Obsidian & Champagne" design refresh
+   ═══════════════════════════════════════════════════
+   The actual color/font/shape/motion VALUES all live in one place:
+   design-tokens/tokens.css (repo root), copied into
+   ./design-tokens.css by `npm run sync:tokens` — see that folder's
+   README. This file never hardcodes a color; every block below is a
+   thin ALIAS from this app's pre-existing variable names (used by
+   literally every component — buttons, cards, badges, tables, the
+   whole app) onto the new semantic tokens, so the refresh reaches
+   every page without editing each component individually. Re-run
+   `npm run sync:tokens` after any edit to the root tokens.css, then
+   these aliases below pick the new values up automatically. */
+@import "./design-tokens.css";
 
-/* LIGHT MODE (Default) */
 :root {
-  --bg-primary: #faf9f7;
-  --bg-secondary: #f5f3ef;
-  --bg-card: #ffffff;
-  --bg-card-hover: #fef7f0;
-  --accent-primary: #e67e22;
-  --accent-secondary: #d35400;
-  --accent-light: #fdebd0;
-  --accent-glow: rgba(230, 126, 34, 0.15);
-  --accent-green: #27ae60;
-  --accent-red: #e74c3c;
-  --accent-yellow: #f39c12;
-  --accent-blue: #2980b9;
-  /* --accent-primary itself is only 2.85:1 on white — fine for a button
-     background (it's the white text on top that matters there) or an icon,
-     but fails WCAG AA where the raw orange is the text color (category
-     chip labels, price text, etc.). Darkened just enough to clear 4.5:1 on
-     this theme's light backgrounds; dark mode's --accent-primary already
-     clears 6:1+ as text, so it's reused unchanged there (see below). */
-  --accent-primary-text: #ab550d;
-  /* Same reasoning as --accent-primary-text: .badge-red/.badge-blue (see
-     below) sit over both a plain white card and a translucent-tinted
-     overlay (the ProductCard stock badge sits on the product image, not
-     the card background) — no single flat color clears 4.5:1 against both
-     a light and a near-black blended background, so these need their own
-     per-theme pair the same as the accent color does. */
-  --badge-red-text: #c0392b;
-  --badge-blue-text: #1f6690;
-  --text-primary: #1a1a2e;
-  --text-secondary: #4a4a5a;
-  --text-muted: #8a8a9a;
-  --border: #e8e5df;
-  --border-light: #f0ede8;
-  --hero-gradient: linear-gradient(135deg, #e67e22 0%, #f39c12 50%, #d35400 100%);
-  --card-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  --card-shadow-hover: 0 8px 30px rgba(230, 126, 34, 0.12);
-}
-
-/* DARK MODE */
-[data-theme='dark'] {
-  --bg-primary: #0d0d14;
-  --bg-secondary: #14141f;
-  --bg-card: #1a1a28;
-  --bg-card-hover: #222234;
-  --accent-primary: #e67e22;
-  --accent-secondary: #f39c12;
-  --accent-light: rgba(230, 126, 34, 0.12);
-  --accent-glow: rgba(230, 126, 34, 0.2);
-  --accent-green: #27ae60;
-  --accent-red: #e74c3c;
-  --accent-yellow: #f39c12;
-  --accent-blue: #3498db;
-  /* Unlike light mode, the plain accent color already clears 6:1+ as text
-     against this theme's dark backgrounds — no separate value needed. */
-  --accent-primary-text: #e67e22;
-  --badge-red-text: #f2685a;
-  --badge-blue-text: #4aa3e0;
-  --text-primary: #f0ede8;
-  --text-secondary: #a0a0b0;
-  /* #606070 only cleared ~2.8-3.1:1 against this theme's card/secondary
-     backgrounds — WCAG AA needs 4.5:1 for normal text. Lightened until it
-     clears 4.5:1 against every dark-mode background token (see the i18n/
-     PWA task's Step 0 Lighthouse run, which found this as a systemic
-     accessibility failure, not a one-off). */
-  --text-muted: #8f8fa5;
-  --border: #252535;
-  --border-light: #2a2a3a;
-  --hero-gradient: linear-gradient(135deg, #d35400 0%, #e67e22 50%, #f39c12 100%);
-  --card-shadow: 0 2px 12px rgba(0,0,0,0.2);
-  --card-shadow-hover: 0 8px 30px rgba(230, 126, 34, 0.15);
+  --bg-primary: var(--surface);
+  --bg-secondary: var(--surface-sunken);
+  --bg-card: var(--surface-raised);
+  --bg-card-hover: var(--surface-raised-hover);
+  --accent-primary: var(--accent);
+  --accent-secondary: var(--accent-strong);
+  --accent-light: var(--accent-soft);
+  /* --accent-glow already matches by name — no alias needed. */
+  --accent-green: var(--success);
+  --accent-red: var(--danger);
+  --accent-yellow: var(--warning);
+  --accent-blue: var(--info);
+  --accent-primary-text: var(--accent-text);
+  --badge-red-text: var(--danger);
+  --badge-blue-text: var(--info);
+  --text-primary: var(--text);
+  --text-secondary: var(--text-secondary);
+  /* --text-muted already matches by name. */
+  --border: var(--border);
+  --border-light: var(--border-soft);
+  /* --hero-gradient already matches by name. */
+  --card-shadow: var(--shadow);
+  --card-shadow-hover: var(--shadow-hover);
 }
 
 * {
@@ -89,10 +54,42 @@ html,
 body,
 #root {
   height: 100%;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-body);
   background-color: var(--bg-primary);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Headings — Playfair Display (Latin) / Noto Serif Sinhala &
+   Tamil (si/ta), matching the chosen direction's serif heading
+   style. Catches every real <h1>-<h6> and .page-title site-wide —
+   the overwhelming majority of actual display headings (hero
+   titles, PDP titles, page titles, card/section headers) already
+   use one of these, so this one rule reaches them without touching
+   each component. Small all-caps "eyebrow" labels are inline-styled
+   per component, not part of this — they stay on the body font,
+   which already reads correctly at that size/weight. ───────────── */
+/* Deliberately no `color` here — plenty of real headings (the
+   storefront hero's h1, for one) inherit white from a dark parent
+   wrapper on purpose; a direct color declaration on the h1 itself
+   would win over that inherited value regardless of the parent's
+   specificity and silently make the text unreadable. Font treatment
+   only; color stays whatever each component already gives it. */
+h1, h2, h3, h4, h5, h6, .page-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* .page-title specifically: solid color, not the old gradient-text-clip
+   — Step 0's own rule ("no glitter/gradients-everywhere") applies to
+   page titles too, and every .page-title call site already expects an
+   explicit, theme-aware color here (it previously got one from the
+   gradient fill), unlike a bare h1 which may deliberately inherit. */
+.page-title {
+  color: var(--text-primary);
+  background: none;
+  -webkit-text-fill-color: unset;
 }
 
 /* ─── Sinhala / Tamil typography ───────────────────────
@@ -108,6 +105,35 @@ body,
 html[lang="si"] body { font-family: "Noto Sans Sinhala", "Inter", sans-serif; }
 html[lang="ta"] body { font-family: "Noto Sans Tamil", "Inter", sans-serif; }
 html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
+html[lang="si"] h1, html[lang="si"] h2, html[lang="si"] h3, html[lang="si"] h4, html[lang="si"] h5, html[lang="si"] h6, html[lang="si"] .page-title {
+  font-family: "Noto Serif Sinhala", serif;
+}
+html[lang="ta"] h1, html[lang="ta"] h2, html[lang="ta"] h3, html[lang="ta"] h4, html[lang="ta"] h5, html[lang="ta"] h6, html[lang="ta"] .page-title {
+  font-family: "Noto Serif Tamil", serif;
+}
+
+/* Design refresh adjustment — the uppercase+letter-spacing treatment
+   below (buttons, table headers, badges) is a Latin typographic
+   convention that doesn't read well in Sinhala/Tamil scripts
+   (tracked-out, all-caps-equivalent rendering hurts legibility there
+   more than it helps the "premium" feeling it's going for in Latin).
+   Neutralized for si/ta wherever this file applies it, with a
+   slightly taller line-height so the script has room to breathe —
+   same reasoning as the body line-height bump above. */
+html[lang="si"] .btn-primary, html[lang="si"] .btn-secondary, html[lang="si"] .btn-danger, html[lang="si"] .btn-success,
+html[lang="si"] .data-table th, html[lang="si"] .badge,
+html[lang="ta"] .btn-primary, html[lang="ta"] .btn-secondary, html[lang="ta"] .btn-danger, html[lang="ta"] .btn-success,
+html[lang="ta"] .data-table th, html[lang="ta"] .badge {
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.5;
+}
+
+/* Tabular figures for prices/amounts wherever they appear — a plain
+   utility class, applied per call site (same pattern as every other
+   shared class here), not a blanket rule, since not all numbers on
+   the page are prices (order numbers, dates, etc. don't need it). */
+.tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -119,10 +145,10 @@ html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
 .glass-card {
   background: var(--bg-card);
   border: 1px solid var(--border-light);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   backdrop-filter: blur(10px);
   box-shadow: var(--card-shadow);
-  transition: all 0.3s ease;
+  transition: all var(--motion-base) var(--motion-easing);
 }
 
 .glass-card:hover {
@@ -130,17 +156,26 @@ html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
   box-shadow: var(--card-shadow-hover);
 }
 
-/* ─── Primary Button (Orange gradient) ────────────── */
+/* ─── Primary Button ──────────────────────────────── */
+/* Solid fill, not the old two-stop gradient — both the "no
+   gradients-everywhere" rule and the AA fix below want this: a
+   gradient's lighter end (the old --accent-primary, #B08D57) only
+   gives white-on-top 3.1:1, which fails 4.5:1. --accent-strong is
+   the token specifically darkened so --accent-contrast text on a
+   SOLID fill of it clears AA — see design-tokens/tokens.css's own
+   comment on those two tokens. */
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  color: white;
+  background: var(--accent-secondary);
+  color: var(--accent-contrast);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 10px 20px;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all var(--motion-base) var(--motion-easing);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -148,7 +183,7 @@ html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
 .btn-primary:hover {
   opacity: 0.92;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(230, 126, 34, 0.35);
+  box-shadow: var(--card-shadow-hover);
 }
 .btn-primary:active { transform: translateY(0); }
 
@@ -157,71 +192,77 @@ html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
   background: var(--bg-card);
   color: var(--text-primary);
   border: 1px solid var(--border-light);
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 10px 20px;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all var(--motion-base) var(--motion-easing);
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
 .btn-secondary:hover {
   border-color: var(--accent-primary);
-  color: var(--accent-primary);
+  color: var(--accent-primary-text);
   box-shadow: 0 2px 12px var(--accent-glow);
 }
 
 /* ─── Danger Button ───────────────────────────────── */
 .btn-danger {
-  background: rgba(231, 76, 60, 0.08);
+  background: var(--accent-soft);
   color: var(--accent-red);
-  border: 1px solid rgba(231, 76, 60, 0.25);
-  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
   padding: 10px 20px;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--motion-fast) var(--motion-easing);
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
-.btn-danger:hover { background: rgba(231, 76, 60, 0.15); }
+.btn-danger:hover { box-shadow: 0 2px 12px var(--accent-glow); }
 
 /* ─── Success Button ──────────────────────────────── */
 .btn-success {
-  background: linear-gradient(135deg, #27ae60, #1e8449);
-  color: white;
+  background: var(--accent-green);
+  color: var(--accent-contrast);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 10px 20px;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--motion-fast) var(--motion-easing);
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
 .btn-success:hover {
-  opacity: 0.9;
+  opacity: 0.92;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.35);
+  box-shadow: var(--card-shadow-hover);
 }
 
 /* ─── Input ───────────────────────────────────────── */
 .input-field {
   background: var(--bg-secondary);
   border: 1.5px solid var(--border-light);
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 11px 14px;
   color: var(--text-primary);
   font-size: 14px;
   width: 100%;
   outline: none;
-  transition: border-color 0.25s, box-shadow 0.25s;
+  transition: border-color var(--motion-base), box-shadow var(--motion-base);
 }
 .input-field:focus {
   border-color: var(--accent-primary);
@@ -233,19 +274,22 @@ html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
 .select-field {
   background: var(--bg-secondary);
   border: 1.5px solid var(--border-light);
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 10px 14px;
   color: var(--text-primary);
   font-size: 14px;
   width: 100%;
   outline: none;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color var(--motion-base);
 }
 .select-field:focus { border-color: var(--accent-primary); }
 .select-field option { background: var(--bg-secondary); }
 
-/* ─── Badges ──────────────────────────────────────── */
+/* ─── Badges — colour + text label always together, never colour
+   alone (the label text itself is each call site's job; this just
+   makes sure the colour pairing is always AA-safe on both a plain
+   card and this app's --bg-secondary). ──────────────────────── */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -254,26 +298,28 @@ html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
   border-radius: 999px;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
-.badge-green { background: rgba(39, 174, 96, 0.12); color: #27ae60; border: 1px solid rgba(39,174,96,0.25); }
-.badge-red { background: rgba(231, 76, 60, 0.12); color: var(--badge-red-text); border: 1px solid rgba(231,76,60,0.25); }
-.badge-yellow { background: rgba(243, 156, 18, 0.12); color: #f39c12; border: 1px solid rgba(243,156,18,0.25); }
-.badge-purple { background: rgba(230, 126, 34, 0.12); color: var(--accent-primary-text); border: 1px solid rgba(230,126,34,0.25); }
-.badge-blue { background: rgba(41, 128, 185, 0.12); color: var(--badge-blue-text); border: 1px solid rgba(41,128,185,0.25); }
-.badge-orange { background: rgba(230, 126, 34, 0.12); color: var(--accent-primary-text); border: 1px solid rgba(230,126,34,0.25); }
+.badge-green { background: color-mix(in srgb, var(--accent-green) 14%, transparent); color: var(--accent-green); border: 1px solid color-mix(in srgb, var(--accent-green) 30%, transparent); }
+.badge-red { background: color-mix(in srgb, var(--accent-red) 14%, transparent); color: var(--badge-red-text); border: 1px solid color-mix(in srgb, var(--accent-red) 30%, transparent); }
+.badge-yellow { background: color-mix(in srgb, var(--accent-yellow) 16%, transparent); color: var(--accent-yellow); border: 1px solid color-mix(in srgb, var(--accent-yellow) 32%, transparent); }
+.badge-purple { background: var(--accent-light); color: var(--accent-primary-text); border: 1px solid color-mix(in srgb, var(--accent-primary) 30%, transparent); }
+.badge-blue { background: color-mix(in srgb, var(--accent-blue) 14%, transparent); color: var(--badge-blue-text); border: 1px solid color-mix(in srgb, var(--accent-blue) 30%, transparent); }
+.badge-orange { background: var(--accent-light); color: var(--accent-primary-text); border: 1px solid color-mix(in srgb, var(--accent-primary) 30%, transparent); }
 
 /* ─── Data Table ──────────────────────────────────── */
 .data-table { width: 100%; border-collapse: collapse; }
 .data-table th {
   padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600;
-  color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase;
+  color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase;
   border-bottom: 1px solid var(--border-light);
 }
 .data-table td {
   padding: 14px 16px; font-size: 14px; color: var(--text-primary);
   border-bottom: 1px solid var(--border);
 }
+.data-table tr:nth-child(even) td { background: color-mix(in srgb, var(--border-light) 45%, transparent); }
 .data-table tr:hover td { background: var(--accent-glow); }
 .data-table tr:last-child td { border-bottom: none; }
 
@@ -281,21 +327,22 @@ html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
 .stat-card {
   background: var(--bg-card);
   border: 1px solid var(--border-light);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   padding: 20px 24px;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all var(--motion-base) var(--motion-easing);
   box-shadow: var(--card-shadow);
 }
 .stat-card::before {
   content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--accent-primary);
 }
-.stat-card.green::before { background: linear-gradient(90deg, #27ae60, #1e8449); }
-.stat-card.purple::before { background: linear-gradient(90deg, #e67e22, #d35400); }
-.stat-card.orange::before { background: linear-gradient(90deg, #e67e22, #f39c12); }
-.stat-card.yellow::before { background: linear-gradient(90deg, #f39c12, #d68910); }
-.stat-card.blue::before { background: linear-gradient(90deg, #2980b9, #2471a3); }
+.stat-card.green::before { background: var(--accent-green); }
+.stat-card.purple::before { background: var(--accent-primary); }
+.stat-card.orange::before { background: var(--accent-primary); }
+.stat-card.yellow::before { background: var(--accent-yellow); }
+.stat-card.blue::before { background: var(--accent-blue); }
 .stat-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--card-shadow-hover);
@@ -311,8 +358,8 @@ html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
   to { opacity: 1; transform: none; }
 }
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 10px rgba(230, 126, 34, 0.3); }
-  50% { box-shadow: 0 0 30px rgba(230, 126, 34, 0.6); }
+  0%, 100% { box-shadow: 0 0 10px var(--accent-glow); }
+  50% { box-shadow: 0 0 26px var(--accent-glow); }
 }
 @keyframes shimmer {
   0% { background-position: -200% 0; }
@@ -340,44 +387,40 @@ html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
    block for position:fixed descendants, silently breaking them. Verified
    empirically: removing `forwards` here was required, not just changing the
    keyframe's end value to `transform: none`. */
-.animate-fade { animation: fadeIn 0.4s ease; }
-.animate-slide { animation: slideIn 0.4s ease; }
+.animate-fade { animation: fadeIn var(--motion-slow) ease; }
+.animate-slide { animation: slideIn var(--motion-slow) ease; }
 
 /* ─── Modal ───────────────────────────────────────── */
 .modal-overlay {
   position: fixed; inset: 0;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(10, 9, 8, 0.6);
   backdrop-filter: blur(6px);
   display: flex; align-items: center; justify-content: center;
   z-index: 1000;
-  animation: fadeIn 0.2s ease;
+  animation: fadeIn var(--motion-fast) ease;
 }
 .modal-box {
   background: var(--bg-card);
   border: 1px solid var(--border-light);
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   padding: 32px;
   width: 90%; max-width: 600px; max-height: 90vh;
   overflow-y: auto;
-  animation: fadeIn 0.3s ease;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+  animation: fadeIn var(--motion-base) ease;
+  box-shadow: var(--card-shadow-hover);
 }
 
 /* ─── Low stock pulse ─────────────────────────────── */
 .low-stock-pulse {
   animation: pulse-glow 2s infinite;
-  border-color: rgba(243, 156, 18, 0.5) !important;
+  border-color: var(--accent-yellow) !important;
 }
 
 /* ─── Page title ──────────────────────────────────── */
+/* font/weight/color now come from the shared h1-h6/.page-title rule
+   above — this just keeps the larger size page titles have always had. */
 .page-title {
   font-size: 24px;
-  font-weight: 800;
-  color: var(--text-primary);
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 /* ─── Product Card entrance stagger ───────────────── */
@@ -390,7 +433,29 @@ html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
    under animation control, which is what let `forwards` create an
    accidental containing block for position:fixed descendants. */
 .product-card-enter {
-  animation: fadeIn 0.4s ease backwards;
+  animation: fadeIn var(--motion-slow) ease backwards;
+}
+
+/* Elegant neutral placeholder for a product with no photo — a soft
+   diagonal sheen on --bg-secondary, no cartoon icon. Used by
+   ProductCard/gallery components as a plain class on the placeholder
+   element (replaces whatever ad-hoc inline placeholder style existed
+   before — see each component for the exact swap). */
+.image-placeholder {
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--border-light) 50%, var(--bg-secondary) 100%);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted);
+}
+
+/* Skeleton loading blocks — same soft sheen, animated. */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--border-light) 50%, var(--bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
 }
 
 /* ─── THERMAL RECEIPT PRINT STYLES (80mm printer) ── */
@@ -421,5 +486,38 @@ html[lang="si"] body, html[lang="ta"] body { line-height: 1.65; }
 
 /* ─── Responsive ──────────────────────────────────── */
 @media (max-width: 768px) {
-  .modal-box { padding: 20px; border-radius: 16px; }
+  .modal-box { padding: 20px; border-radius: var(--radius-lg); }
+}
+
+/* Found via Playwright's no-horizontal-overflow check (My Account's
+   Profile/Addresses/My Vehicles tab row, 360px): the new uppercase +
+   tracked-letter-spacing button style (direction 1's own stated
+   convention) adds real width, and a row of several .btn-* elements
+   that fit at normal tracking can overflow a narrow phone once that
+   extra width is added to each one. Dialling padding/letter-spacing/
+   font-size back a notch below 480px keeps the same uppercase-tracked
+   look (never removes the treatment) while giving a multi-button row
+   enough room — same fix for every page that has one of these, not
+   just the one this specific test happened to catch. */
+@media (max-width: 480px) {
+  .btn-primary, .btn-secondary, .btn-danger, .btn-success {
+    padding: 9px 14px;
+    font-size: 12.5px;
+    letter-spacing: 0.03em;
+    gap: 6px;
+  }
+}
+
+/* Global reduced-motion fallback for anything not already covered by
+   a --motion-* variable (e.g. the keyframe-driven ones above still
+   run at ~0 duration since --motion-* collapses in
+   design-tokens.css, but a couple of hardcoded 0.2s/0.3s durations
+   on individual elements predate this refresh and aren't worth
+   hunting down one by one — this catches them generically). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

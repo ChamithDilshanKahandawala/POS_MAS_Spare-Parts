@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync:tokens": "node ../design-tokens/sync-tokens.mjs"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.4",

@@ -5,13 +5,22 @@
     <link rel="icon" type="image/png" href="/pwa-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Apexora is Sri Lanka's marketplace for quality vehicle parts and more, delivered island-wide. Cash on Delivery." />
-    <meta name="theme-color" content="#e67e22" />
+    <meta name="theme-color" content="#8A6B3D" />
     <title>Apexora | Vehicle Parts Marketplace in Sri Lanka</title>
 
-    <!-- Google Fonts (Inter always; Noto Sans Sinhala/Tamil loaded on
-         demand — see src/i18n/loadFonts.js) -->
+    <!-- Google Fonts (Inter + Playfair Display always; Noto Sans/Serif
+         Sinhala/Tamil loaded on demand — see src/i18n/loadFonts.js).
+         A real <link> here, not a CSS @import inside index.css — the
+         browser's preload scanner finds and starts fetching this the
+         moment it parses <head>, in parallel with everything else,
+         instead of only discovering it after index.css has finished
+         downloading and being parsed. Checked with Lighthouse: moving
+         it here was what got LCP under the 2.5s budget — the @import
+         version was blocking first paint on a second, serial
+         CSS round trip. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap" />
     <!-- API origin — empty/no-op in dev (same-origin via the Vite proxy),
          resolves to the real cross-origin API host in production builds. -->
     <link rel="preconnect" href="%VITE_API_URL%" />

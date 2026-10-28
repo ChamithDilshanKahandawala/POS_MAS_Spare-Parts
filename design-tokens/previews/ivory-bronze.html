@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ivory & Bronze — Apexora design preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Sinhala:wght@600;700&family=Noto+Sans+Sinhala:wght@400;500;600&family=Noto+Serif+Tamil:wght@600;700&family=Noto+Sans+Tamil:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --surface: #FBF7F0;
+    --surface-raised: #FFFFFF;
+    --text: #2B2420;
+    --text-muted: #8A7F72;
+    --accent: #A9682F;
+    --accent-text: #7A4A1F;
+    --accent-contrast: #FFFFFF;
+    --border: rgba(43,36,32,0.10);
+    --success: #3F7D4A;
+    --danger: #B14B3C;
+    --warning: #8C5F17;
+    --shadow: 0 1px 3px rgba(60,40,20,0.06), 0 10px 28px rgba(60,40,20,0.08);
+    --radius: 10px;
+    --radius-lg: 16px;
+    --font-heading: 'Fraunces', 'Noto Serif Sinhala', 'Noto Serif Tamil', serif;
+    --font-body: 'Inter', 'Noto Sans Sinhala', 'Noto Sans Tamil', sans-serif;
+  }
+  html[data-theme="dark"] {
+    --surface: #1E1A16;
+    --surface-raised: #2A241E;
+    --text: #F0E9DF;
+    --text-muted: #B5A99A;
+    --accent: #D69B5C;
+    --accent-text: #D69B5C;
+    --accent-contrast: #1E1A16;
+    --border: rgba(240,233,223,0.12);
+    --success: #6DB97A;
+    --danger: #E29383;
+    --warning: #E0B36E;
+    --shadow: 0 1px 3px rgba(0,0,0,0.35), 0 14px 32px rgba(0,0,0,0.45);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--surface); color: var(--text);
+    font-family: var(--font-body); -webkit-font-smoothing: antialiased;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  h1, h2, h3, .heading { font-family: var(--font-heading); font-weight: 700; letter-spacing: -0.01em; margin: 0; }
+  .tabular { font-variant-numeric: tabular-nums; }
+  a { color: inherit; }
+
+  .theme-toggle {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    background: var(--surface-raised); border: 1px solid var(--border); border-radius: 999px;
+    padding: 8px 16px; font-family: var(--font-body); font-size: 12px; font-weight: 600; color: var(--text);
+    cursor: pointer; box-shadow: var(--shadow);
+  }
+
+  /* ---- Storefront nav ---- */
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 28px; border-bottom: 1px solid var(--border);
+  }
+  .wordmark { font-family: var(--font-heading); font-size: 22px; font-weight: 700; letter-spacing: 0.01em; }
+  .wordmark span { color: var(--accent-text); }
+  .nav-links { display: flex; gap: 28px; font-size: 13px; color: var(--text-muted); font-weight: 500; }
+
+  /* ---- Hero ---- */
+  .hero {
+    padding: 72px 28px; display: flex; flex-direction: column; align-items: flex-start; gap: 18px;
+    max-width: 640px;
+  }
+  .eyebrow { font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-text); font-weight: 700; }
+  .hero h1 { font-size: 42px; line-height: 1.12; }
+  .hero p { font-size: 15.5px; color: var(--text-muted); line-height: 1.65; max-width: 480px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer;
+    border-radius: var(--radius); font-family: var(--font-body); font-weight:600; font-size:14px; padding:13px 28px;
+  }
+  .btn-primary { background: var(--accent); color: var(--accent-contrast); }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+
+  /* ---- Product cards ---- */
+  .section { padding: 8px 28px 56px; }
+  .section-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); font-weight: 700; margin-bottom: 18px; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; max-width: 900px; }
+  .product-card {
+    background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; box-shadow: var(--shadow);
+  }
+  .product-image {
+    aspect-ratio: 4/3; background: linear-gradient(135deg, var(--border), transparent), var(--surface);
+    display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 11px;
+    border-bottom: 1px solid var(--border);
+  }
+  .product-body { padding: 16px 18px 18px; }
+  .product-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .product-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+  .product-price { font-size: 17px; font-weight: 700; }
+  .product-price .was { font-size: 12px; color: var(--text-muted); text-decoration: line-through; font-weight: 500; margin-left: 6px; }
+
+  /* ---- Product detail ---- */
+  .pdp { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; max-width: 960px; padding: 8px 28px 60px; }
+  .gallery-main {
+    aspect-ratio: 1/1; background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 12px; box-shadow: var(--shadow);
+  }
+  .gallery-thumbs { display: flex; gap: 10px; margin-top: 10px; }
+  .thumb { width: 56px; height: 56px; border-radius: var(--radius); background: var(--surface-raised); border: 1px solid var(--border); }
+  .pdp-title { font-size: 26px; margin-bottom: 8px; }
+  .pdp-price { font-size: 24px; font-weight: 700; margin: 14px 0; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600;
+    padding: 5px 11px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-muted);
+  }
+  .badge-success { color: var(--success); border-color: var(--success); background: color-mix(in srgb, var(--success) 10%, transparent); }
+  .seller-card {
+    display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--border);
+    border-radius: var(--radius-lg); margin: 18px 0; background: var(--surface-raised);
+  }
+  .seller-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .specs { list-style: none; padding: 0; margin: 18px 0; font-size: 13.5px; }
+  .specs li { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); color: var(--text-muted); }
+  .specs li b { color: var(--text); font-weight: 600; }
+
+  /* ---- Divider ---- */
+  .divider { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
+  .divider hr { border: none; border-top: 1px solid var(--border); margin: 10px 0 46px; }
+  .app-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); font-weight: 700; padding: 0 28px 20px; }
+
+  /* ---- Seller dashboard ---- */
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; max-width: 1100px; padding: 0 28px 36px; }
+  .stat-card {
+    background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 18px 20px; box-shadow: var(--shadow);
+  }
+  .stat-icon {
+    width: 30px; height: 30px; border-radius: var(--radius); background: color-mix(in srgb, var(--accent) 16%, transparent);
+    margin-bottom: 14px;
+  }
+  .stat-value { font-size: 26px; font-weight: 700; }
+  .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ---- Orders table ---- */
+  .table-wrap { max-width: 1100px; margin: 0 28px 70px; background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead th {
+    text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);
+    padding: 14px 18px; border-bottom: 1px solid var(--border); font-weight: 700;
+  }
+  tbody td { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:nth-child(even) { background: color-mix(in srgb, var(--border) 35%, transparent); }
+  .status-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
+  .status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .status-delivered { color: var(--success); background: color-mix(in srgb, var(--success) 12%, transparent); }
+  .status-shipped { color: var(--accent-text); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+  .status-pending { color: var(--warning); background: color-mix(in srgb, var(--warning) 14%, transparent); }
+
+  /* ---- Lang demo ---- */
+  .lang-demo { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1100px; padding: 0 28px 56px; }
+  .lang-card { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 22px; background: var(--surface-raised); }
+  .lang-card h3 { font-size: 18px; margin-bottom: 8px; }
+  .lang-card p { font-size: 13.5px; color: var(--text-muted); line-height: 1.7; margin: 0; }
+
+  /* ---- Palette strip ---- */
+  .palette { display: flex; flex-wrap: wrap; gap: 0; max-width: 1100px; margin: 0 28px 70px; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .swatch { flex: 1; min-width: 130px; padding: 46px 14px 14px; position: relative; }
+  .swatch-label { font-size: 11px; font-weight: 700; }
+  .swatch-hex { font-size: 11px; opacity: 0.85; font-family: monospace; }
+
+  .meta-footer { max-width: 1100px; margin: 0 28px 60px; font-size: 12.5px; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 18px; }
+
+  @media (max-width: 480px) {
+    .pdp { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 30px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')">☀️ / 🌙 Toggle theme</button>
+
+  <div class="app-label" style="padding-top:20px;">Storefront</div>
+  <div class="nav">
+    <div class="wordmark">Apex<span>ora</span></div>
+    <div class="nav-links"><span>Shop by Vehicle</span><span>Categories</span><span>Track Order</span><span>Account</span></div>
+  </div>
+
+  <div class="hero">
+    <div class="eyebrow">Island-wide delivery · Cash on Delivery</div>
+    <h1>Quality parts, delivered with care.</h1>
+    <p>Apexora connects you with quality-checked sellers for three-wheeler &amp; bike parts across Sri Lanka.</p>
+    <div style="display:flex; gap:12px; margin-top:8px;">
+      <button class="btn btn-primary">Shop Now</button>
+      <button class="btn btn-secondary">Shop by Vehicle</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Latest Listings</div>
+    <div class="card-grid">
+      <div class="product-card">
+        <div class="product-image">Product photo</div>
+        <div class="product-body">
+          <div class="product-title">Bajaj RE Brake Shoe Set</div>
+          <div class="product-meta">Mudiyanse Auto Solutions · New</div>
+          <div class="product-price tabular">Rs. 1,850.00</div>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">Product photo</div>
+        <div class="product-body">
+          <div class="product-title">Universal Spark Plug</div>
+          <div class="product-meta">Partner Store · New</div>
+          <div class="product-price tabular">Rs. 420.00 <span class="was tabular">Rs. 550.00</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pdp">
+    <div>
+      <div class="gallery-main">Main product photo</div>
+      <div class="gallery-thumbs"><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div></div>
+    </div>
+    <div>
+      <span class="badge badge-success">✓ Quality-checked</span>
+      <h2 class="pdp-title" style="margin-top:14px;">Bajaj RE Brake Shoe Set</h2>
+      <div class="pdp-price tabular">Rs. 1,850.00</div>
+      <div class="seller-card">
+        <div class="seller-avatar"></div>
+        <div>
+          <div style="font-size:13.5px; font-weight:600;">Mudiyanse Auto Solutions</div>
+          <div style="font-size:12px; color:var(--text-muted);">Gampaha · Verified seller</div>
+        </div>
+      </div>
+      <ul class="specs">
+        <li>Brand <b>Bajaj</b></li>
+        <li>Condition <b>New</b></li>
+        <li>Warranty <b>3 months</b></li>
+        <li>Fits <b>Bajaj RE · 2012–2020</b></li>
+      </ul>
+      <button class="btn btn-primary" style="width:100%; justify-content:center;">Add to Cart</button>
+    </div>
+  </div>
+
+  <div class="lang-demo">
+    <div class="lang-card">
+      <h3>සිංහල</h3>
+      <p>අපෙක්සොරා සියලු ලංකාවේ ජාල බැසීම වාහන අමතර කොටස් වෙලඟපොළ.</p>
+    </div>
+    <div class="lang-card">
+      <h3>தமிழ்</h3>
+      <p>Apexora இலங்கையின் தரமான வாகன உதிரி பாகங்களுக்கான சந்தை.</p>
+    </div>
+  </div>
+
+  <div class="divider"><hr /></div>
+  <div class="app-label">Seller Center · Dashboard</div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-icon"></div><div class="stat-value tabular">12</div><div class="stat-label">Orders today</div></div>
+    <div class="stat-card"><div class="stat-icon"></div><div class="stat-value tabular">Rs. 84,500</div><div class="stat-label">Revenue this week</div></div>
+    <div class="stat-card"><div class="stat-icon"></div><div class="stat-value tabular">3</div><div class="stat-label">Pending confirmation</div></div>
+    <div class="stat-card"><div class="stat-icon"></div><div class="stat-value tabular">2</div><div class="stat-label">Low stock items</div></div>
+  </div>
+
+  <div class="app-label">Seller Center · Orders</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>APX-2610-00042-1</td><td>R. Perera</td><td>Oct 24</td><td class="tabular">Rs. 1,850.00</td><td><span class="status-pill status-delivered">Delivered</span></td></tr>
+        <tr><td>APX-2610-00041-1</td><td>N. Fernando</td><td>Oct 24</td><td class="tabular">Rs. 4,200.00</td><td><span class="status-pill status-shipped">Shipped</span></td></tr>
+        <tr><td>APX-2610-00039-2</td><td>S. Jayasuriya</td><td>Oct 23</td><td class="tabular">Rs. 999.50</td><td><span class="status-pill status-pending">New</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="palette">
+    <div class="swatch" style="background:#FBF7F0; color:#2B2420;"><div class="swatch-label">--surface</div><div class="swatch-hex">#FBF7F0</div></div><div class="swatch" style="background:#FFFFFF; color:#2B2420;"><div class="swatch-label">--surface-raised</div><div class="swatch-hex">#FFFFFF</div></div><div class="swatch" style="background:#2B2420; color:#FFFFFF;"><div class="swatch-label">--text</div><div class="swatch-hex">#2B2420</div></div><div class="swatch" style="background:#8A7F72; color:#FFFFFF;"><div class="swatch-label">--text-muted</div><div class="swatch-hex">#8A7F72</div></div><div class="swatch" style="background:#A9682F; color:#2B2420;"><div class="swatch-label">--accent</div><div class="swatch-hex">#A9682F</div></div><div class="swatch" style="background:#7A4A1F; color:#2B2420;"><div class="swatch-label">--accent-text</div><div class="swatch-hex">#7A4A1F</div></div><div class="swatch" style="background:#FFFFFF; color:#2B2420;"><div class="swatch-label">--border</div><div class="swatch-hex">rgba(43,36,32,0.10)</div></div><div class="swatch" style="background:#3F7D4A; color:#2B2420;"><div class="swatch-label">--success</div><div class="swatch-hex">#3F7D4A</div></div><div class="swatch" style="background:#B14B3C; color:#2B2420;"><div class="swatch-label">--danger</div><div class="swatch-hex">#B14B3C</div></div><div class="swatch" style="background:#8C5F17; color:#2B2420;"><div class="swatch-label">--warning</div><div class="swatch-hex">#8C5F17</div></div>
+  </div>
+
+  <div class="meta-footer">
+    <b>Ivory & Bronze</b> — A sunlit atelier — warm, tactile, unhurried craftsmanship.<br/>
+    Heading: 'Fraunces' · Body: 'Inter' · Radius 10px/16px · Preview id: ivory-bronze
+  </div>
+</body>
+</html>

@@ -42,8 +42,12 @@ export default defineConfig({
         name: 'Apexora',
         short_name: 'Apexora',
         description: "Sri Lanka's marketplace for quality vehicle parts and more, delivered island-wide.",
-        theme_color: '#e67e22',
-        background_color: '#faf9f7',
+        // Design refresh — Obsidian & Champagne: the browser chrome
+        // (Android's address bar tint, the PWA splash screen) now
+        // matches design-tokens/tokens.css's --accent-text (light) /
+        // --surface (light) values instead of the old orange theme.
+        theme_color: '#8A6B3D',
+        background_color: '#FAF8F5',
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',

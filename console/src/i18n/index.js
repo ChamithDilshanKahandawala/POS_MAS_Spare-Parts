@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { ensureFontLoaded } from './loadFonts';
 
 import enCommon from '../locales/en/common.json';
 import enAuth from '../locales/en/auth.json';
@@ -48,8 +49,13 @@ export function setLanguage(lng) {
   i18next.changeLanguage(lng);
   try { localStorage.setItem(STORAGE_KEY, lng); } catch { /* storage unavailable — language choice just won't persist */ }
   document.documentElement.lang = lng;
+  ensureFontLoaded(lng);
 }
 
 document.documentElement.lang = i18next.language;
+// A saved si/ta preference restored on load needs its font requested
+// too, not just a language switch mid-session — same as storefront's
+// own initial-load handling (src/i18n/index.js's syncDocumentToLanguage).
+ensureFontLoaded(i18next.language);
 
 export default i18next;

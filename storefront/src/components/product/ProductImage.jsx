@@ -1,5 +1,3 @@
-import { Package } from 'lucide-react';
-
 // Shared image slot for product cards and the detail page. No product in
 // this database currently has an `image`/`images` field (confirmed against
 // backend/models/Product.js) — this always renders the placeholder today,
@@ -15,9 +13,15 @@ import { Package } from 'lucide-react';
 // against backend/models/Product.js), so there's nothing to generate them
 // from yet, but a caller that does have size variants can hand them in
 // without this component needing to change.
-export default function ProductImage({ product, size, iconSize, style, className, children, priority = false, srcSet, sizes }) {
+//
+// Design refresh — the placeholder dropped the literal "Package" icon
+// (reads as a cartoon on an otherwise premium page) for the shared
+// .image-placeholder class instead: a soft diagonal sheen on the theme's
+// own surface tones, no icon at all. Calmer, and it already matches
+// whatever theme/direction index.css is set to without this component
+// needing to know.
+export default function ProductImage({ product, size, style, className, children, priority = false, srcSet, sizes }) {
   const src = product?.images?.[0] || product?.image;
-  const resolvedIconSize = iconSize || (typeof size === 'number' ? Math.round(size * 0.3) : 48);
   // Intrinsic width/height hint for the browser's layout engine (avoids a
   // reflow once a real image decodes in) — the wrapper's own aspectRatio:
   // '1/1' is what actually reserves the visible space either way.
@@ -25,17 +29,17 @@ export default function ProductImage({ product, size, iconSize, style, className
 
   return (
     <div
-      className={className}
+      className={`${src ? '' : 'image-placeholder'} ${className || ''}`.trim()}
       style={{
         width: typeof size === 'number' ? `${size}px` : '100%',
         aspectRatio: '1 / 1',
-        background: 'var(--bg-secondary)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         position: 'relative', overflow: 'hidden', flexShrink: 0,
+        ...(src ? { background: 'var(--bg-secondary)' } : {}),
         ...style,
       }}
     >
-      {src ? (
+      {src && (
         <img
           src={src} alt={product?.name || ''}
           width={dimension} height={dimension}
@@ -44,8 +48,6 @@ export default function ProductImage({ product, size, iconSize, style, className
           srcSet={srcSet} sizes={sizes}
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
-      ) : (
-        <Package size={resolvedIconSize} color="var(--text-muted)" style={{ opacity: 0.15 }} />
       )}
       {children}
     </div>

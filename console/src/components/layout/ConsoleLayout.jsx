@@ -30,7 +30,12 @@ export default function ConsoleLayout() {
   };
 
   return (
-    <div className="console-shell">
+    // Design refresh — a pure CSS hook, nothing behavioural: lets
+    // index.css give the admin topbar a slightly different accent so it's
+    // always visually obvious which hat is on (console/src/index.css's
+    // .area-admin .console-topbar rule), without a prop threading through
+    // Topbar.jsx or anywhere else.
+    <div className={`console-shell ${inSellerArea ? 'area-seller' : 'area-admin'}`}>
       {showAdminSidebar && (
         <aside className="console-sidebar">
           <div className="console-sidebar-brand page-title">{t('common:appName')}</div>

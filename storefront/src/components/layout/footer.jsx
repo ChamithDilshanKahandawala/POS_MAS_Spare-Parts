@@ -223,7 +223,18 @@ export default function Footer() {
 
           {/* ── Quick Shop ── */}
           <div>
-            <h3 style={sectionHeading('#e67e22')}>{t('quickShop.heading')}</h3>
+            {/* h2, not h3 — on a page whose only other level-2+ heading
+                is inside a closed mobile filter drawer (not in the DOM
+                until opened, e.g. CategoryPage*.jsx's "Filters" h2),
+                the footer's heading was the first one actually present
+                on load, and h3 right after the page's h1 skips a level.
+                Going from a deeper heading (h3) down to h2 is always
+                fine per the heading-order rule — only skipping FORWARD
+                is flagged — so this is safe on every other page too,
+                never just this one. Purely a tag change: sectionHeading()
+                is a fully inline style object, no tag-dependent default
+                styling, so this is visually identical. */}
+            <h2 style={sectionHeading('#e67e22')}>{t('quickShop.heading')}</h2>
             {quickLinks.map((l) => (
               <Link
                 key={l.label} to={l.to}
@@ -245,7 +256,7 @@ export default function Footer() {
 
           {/* ── Support ── */}
           <div>
-            <h3 style={sectionHeading('#8b5cf6')}>{t('support.heading')}</h3>
+            <h2 style={sectionHeading('#8b5cf6')}>{t('support.heading')}</h2>
             {supportLinks.map((l) => (
               <Link
                 key={l.label} to={l.to}
@@ -278,7 +289,7 @@ export default function Footer() {
 
           {/* ── Contact + Newsletter ── */}
           <div>
-            <h3 style={sectionHeading('#10b981')}>{t('contact.heading')}</h3>
+            <h2 style={sectionHeading('#10b981')}>{t('contact.heading')}</h2>
 
             {/* Contact list */}
             <div style={{ marginBottom: '22px' }}>
