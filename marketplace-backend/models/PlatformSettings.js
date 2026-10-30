@@ -84,6 +84,11 @@ const platformSettingsSchema = new mongoose.Schema(
     // Part B.2 — a delivered COD order with no matching remittance row
     // after this many days surfaces in Admin Finance as "COD not received".
     codNotReceivedAfterDays: { type: Number, default: 14, min: 1 },
+
+    // --- Milestone 8: returns ---
+    // Days a seller has to accept or reject a return request before it
+    // auto-escalates to platform staff (services/returnEscalation.js).
+    returnResponseDays: { type: Number, default: 2, min: 1 },
   },
   { timestamps: true }
 );

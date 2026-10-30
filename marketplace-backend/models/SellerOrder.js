@@ -69,6 +69,12 @@ const sellerOrderSchema = new mongoose.Schema(
       // services/stockReservation.js — the only thing that ever changes
       // this.
       reservationStatus: { type: String, enum: ['active', 'released', 'consumed', 'returned'], default: 'active' },
+      // Milestone 8 — the one open ReturnRequest holding this line (one open
+      // request per line). Claimed/released atomically in services/returns.js.
+      openReturnRequest: { type: mongoose.Schema.Types.ObjectId, ref: 'ReturnRequest', default: null },
+      // Milestone 8 — units already refunded back to the customer, so a
+      // second partial return can never exceed what was delivered.
+      refundedQty: { type: Number, default: 0, min: 0 },
     }],
 
     itemsTotalCents: { type: Number, required: true },

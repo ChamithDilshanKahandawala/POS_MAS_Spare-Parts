@@ -20,6 +20,10 @@ const TYPES = [
   'adjustment', // owner-only manual correction, +/-, reason required
   'payout', // − from seller: created the moment a payout is marked paid (services/payoutRuns.js)
   'payout_reversal', // + to seller: created the moment a payout is marked failed, undoing the earmark
+  // --- Milestone 8: returns (services/returns.js markRefunded) ---
+  'return_refund', // − from seller: the returned items' sale value, handed back to the customer
+  'return_commission_reversal', // + to seller: the commission share of that sale value, reversed proportionally
+  'return_shipping', // − from seller: return courier cost when the decision made the seller pay it
 ];
 
 const STATUSES = ['on_hold', 'payable', 'in_payout', 'paid'];

@@ -280,7 +280,10 @@
     "payoutHoldDaysDevWarning": "දින 0ක රැඳවුම — සංවර්ධන/පරීක්ෂණ පරිසරවල පමණක් ඉඩ දෙනු ලැබේ, නිෂ්පාදනයේ කිසි විටෙකත් නොවේ.",
     "minimumPayoutCents": "අවම ගෙවීමේ මුදල (රු.)",
     "refusedParcelChargedTo": "ප්‍රතික්ෂේප කළ පාර්සලයේ බෙදාහැරීම් ගාස්තුව අයකරනු ලබන්නේ",
-    "refusedParcelChargedToOptions": { "platform": "වේදිකාව", "seller": "විකුණුම්කරු" },
+    "refusedParcelChargedToOptions": {
+      "platform": "වේදිකාව",
+      "seller": "විකුණුම්කරු"
+    },
     "codNotReceivedAfterDays": "COD නොලැබුණු බවට සලකුණු කරන්න (දින)",
     "reviewRequiredForFirstNListings": "පළමු N ලැයිස්තු සඳහා සමාලෝචනය අවශ්‍යයි",
     "supportPhone": "සහාය දුරකථනය",
@@ -306,7 +309,8 @@
       "enable": "මාර්ගගත ඇණවුම් සක්‍රීයයි",
       "enableHint": "අක්‍රීයව තිබියදී, marketplace checkout එක සැබෑ ඇණවුම් ලබා ගැනීම වෙනුවට \"ළඟදීම එයි — WhatsApp හරහා ඇණවුම් කරන්න\" තිරය පෙන්වයි.",
       "autoCancelAfterHours": "තහවුරු නොකළ ඇණවුම් ස්වයංක්‍රීයව අවලංගු කරන්නේ (පැය ගණන) කින්",
-      "courierName": "බෙදාහරින සේවාවේ නම"
+      "courierName": "බෙදාහරින සේවාවේ නම",
+      "returnResponseDays": "ආපසු ගෙවීම් ඉල්ලීම්: වේදිකාව තීරණය කිරීමට පෙර සැපයුම්කරුට ඇති දින ගණන"
     },
     "deliveryRates": {
       "heading": "දිස්ත්‍රික්කය අනුව බෙදාහැරීමේ ගාස්තු",
@@ -365,7 +369,9 @@
       "noNotes": "තවම සටහන් නැත",
       "addNotePlaceholder": "අභ්‍යන්තර සටහනක් එක් කරන්න",
       "addNote": "එක් කරන්න",
-      "actions": { "cancel": "ඇණවුම අවලංගු කරන්න" },
+      "actions": {
+        "cancel": "ඇණවුම අවලංගු කරන්න"
+      },
       "reasonPlaceholder": "හේතුව (අවශ්‍යයි)",
       "refundNeededBanner": "මෙම ඇණවුම කලින් ගෙවන ලද අතර පසුව අවලංගු කරන ලදී හෝ ආපසු එවන ලදී. පාරිභෝගිකයාට ආපසු ගෙවීමක් ලැබිය යුතුව ඇත.",
       "refusedParcelCost": "ප්‍රතික්ෂේප කළ පාර්සලයේ බෙදාහැරීම් සේවා ගාස්තුව"
@@ -373,7 +379,12 @@
   },
   "finance": {
     "title": "මූල්‍ය",
-    "tabs": { "overview": "දළ විශ්ලේෂණය", "sellers": "විකුණුම්කරුවන්", "remittances": "COD මුදල් ප්‍රේෂණ", "payoutRuns": "ගෙවීම් ධාවන" },
+    "tabs": {
+      "overview": "දළ විශ්ලේෂණය",
+      "sellers": "විකුණුම්කරුවන්",
+      "remittances": "COD මුදල් ප්‍රේෂණ",
+      "payoutRuns": "ගෙවීම් ධාවන"
+    },
     "overview": {
       "commissionWeek": "මෙම සතියේ කොමිසම",
       "commissionMonth": "මෙම මාසයේ කොමිසම",
@@ -387,9 +398,17 @@
     },
     "sellers": {
       "table": {
-        "seller": "විකුණුම්කරු", "onHold": "රඳවා ඇත", "payable": "ගෙවිය හැකි", "inPayout": "ගෙවීමේදී", "paid": "ගෙවන ලදී", "settlementMode": "පියවීම"
+        "seller": "විකුණුම්කරු",
+        "onHold": "රඳවා ඇත",
+        "payable": "ගෙවිය හැකි",
+        "inPayout": "ගෙවීමේදී",
+        "paid": "ගෙවන ලදී",
+        "settlementMode": "පියවීම"
       },
-      "settlementMode": { "payout": "බැංකු ගෙවීම", "internal": "අභ්‍යන්තර" },
+      "settlementMode": {
+        "payout": "බැංකු ගෙවීම",
+        "internal": "අභ්‍යන්තර"
+      },
       "toggleSettlement": "පියවීමේ ක්‍රමය මාරු කරන්න",
       "confirmSettlementChange": "මෙම විකුණුම්කරුගේ පියවීමේ ක්‍රමය \"{{mode}}\" ලෙස වෙනස් කරන්නද?",
       "settlementChanged": "පියවීමේ ක්‍රමය යාවත්කාලීන කරන ලදී",
@@ -416,7 +435,13 @@
       "codNotReceivedHeading": "COD නොලැබුණි (දින {{days}}+ ගෙවීමෙන්)",
       "rowsHeading": "ප්‍රේෂණ පේළි",
       "noRows": "තවම ප්‍රේෂණ පේළි නැත",
-      "table": { "tracking": "නිරීක්ෂණය", "amount": "මුදල", "date": "දිනය", "status": "තත්ත්වය", "order": "ඇණවුම" },
+      "table": {
+        "tracking": "නිරීක්ෂණය",
+        "amount": "මුදල",
+        "date": "දිනය",
+        "status": "තත්ත්වය",
+        "order": "ඇණවුම"
+      },
       "matchStatus": {
         "matched": "ගැළපේ",
         "short": "අඩුයි",
@@ -430,8 +455,15 @@
       "generated": "ගෙවීම් ධාවනය සාදන ලදී",
       "noRuns": "තවම ගෙවීම් ධාවන නැත",
       "review": "සමාලෝචනය",
-      "table": { "week": "සතිය", "period": "කාලය", "status": "තත්ත්වය" },
-      "status": { "draft": "කෙටුම්පත", "approved": "අනුමත කරන ලදී" }
+      "table": {
+        "week": "සතිය",
+        "period": "කාලය",
+        "status": "තත්ත්වය"
+      },
+      "status": {
+        "draft": "කෙටුම්පත",
+        "approved": "අනුමත කරන ලදී"
+      }
     },
     "payoutStatus": {
       "blocked": "අවහිර කර ඇත",
@@ -455,8 +487,13 @@
       "bankReference": "බැංකු යොමුව",
       "failReason": "ගෙවීම අසාර්ථක වීමට හේතුව",
       "table": {
-        "seller": "විකුණුම්කරු", "gross": "දළ", "commission": "කොමිසම", "charges": "ගාස්තු",
-        "adjustments": "සකස් කිරීම්", "net": "ශුද්ධ", "status": "තත්ත්වය"
+        "seller": "විකුණුම්කරු",
+        "gross": "දළ",
+        "commission": "කොමිසම",
+        "charges": "ගාස්තු",
+        "adjustments": "සකස් කිරීම්",
+        "net": "ශුද්ධ",
+        "status": "තත්ත්වය"
       }
     },
     "stepUp": {
@@ -469,7 +506,12 @@
       "confirm": "තහවුරු කරන්න"
     },
     "noEntries": "තවම ගිණුම් වාර්තා නැත",
-    "ledgerTable": { "date": "දිනය", "type": "වර්ගය", "amount": "මුදල", "status": "තත්ත්වය" },
+    "ledgerTable": {
+      "date": "දිනය",
+      "type": "වර්ගය",
+      "amount": "මුදල",
+      "status": "තත්ත්වය"
+    },
     "entryType": {
       "sale": "විකුණුම",
       "commission": "කොමිසම",
@@ -479,7 +521,12 @@
       "payout": "ගෙවීම",
       "payout_reversal": "ගෙවීම ආපසු හරවන ලදී"
     },
-    "entryStatus": { "on_hold": "රඳවා ඇත", "payable": "ගෙවිය හැකි", "in_payout": "ගෙවීමේදී", "paid": "ගෙවන ලදී" }
+    "entryStatus": {
+      "on_hold": "රඳවා ඇත",
+      "payable": "ගෙවිය හැකි",
+      "in_payout": "ගෙවීමේදී",
+      "paid": "ගෙවන ලදී"
+    }
   },
   "catalog": {
     "vehiclesLink": "වාහන",
@@ -690,6 +737,48 @@
         "contact_in_text": "පෙළෙහි සම්බන්ධතා විස්තර",
         "other": "වෙනත්"
       }
+    }
+  },
+  "returnsPage": {
+    "subtitle": "විවාදාත්මක ආපසු ගෙවීම් සහ මුදල් ආපසු ගෙවීම්. පැරණිම පළමුව.",
+    "queue": "ක්‍රියාමාර්ග අවශ්‍යයි (පෝලිම)",
+    "empty": "දැනට ක්‍රියාමාර්ග අවශ්‍ය දේ නැත",
+    "view": "විවෘත කරන්න",
+    "pagination": "පිටුව {{page}} / {{pages}}",
+    "table": {
+      "request": "ඉල්ලීම",
+      "order": "ඇණවුම",
+      "seller": "සැපයුම්කරු",
+      "reason": "හේතුව",
+      "status": "තත්ත්වය",
+      "date": "විවෘත කළ දිනය"
+    },
+    "detail": {
+      "back": "ආපසු ගෙවීම් වෙත",
+      "notFound": "ආපසු ගෙවීම හමු නොවීය",
+      "sellerNote": "සැපයුම්කරුගේ සටහන",
+      "platformNote": "වේදිකා සටහන",
+      "resolution": "නිරාකරණය",
+      "customerRefund": "පාරිභෝගික ආපසු ගෙවීම",
+      "returnShipping": "ආපසු ගෙන ඒමේ ගාස්තුව",
+      "decideTitle": "විවාදය තීරණය කරන්න",
+      "uphold": "අනුමත කරන්න — පාරිභෝගිකයාට ආපසු ගෙවීම ලැබේ (භාණ්ඩය ආපසු ලැබිය යුතුයි)",
+      "dismiss": "ප්‍රතික්ෂේප කරන්න — ආපසු ගෙවීමක් නැත, ඉල්ලීම වසා දමයි",
+      "notePlaceholder": "මෙම තීරණයේ හේතුව (අනිවාර්‍යයි)",
+      "submitDecision": "තීරණය ඉදිරිපත් කරන්න",
+      "refundTitle": "ආපසු ගෙවීම",
+      "refundValue": "ආපසු ගෙවිය යුතු භාණ්ඩ වටිනාකම",
+      "ownerOnly": "ආපසු ගෙවීම වාර්තා කළ හැක්කේ වේදිකා හිමිකරුට පමණි.",
+      "payer": "ආපසු ගෙන ඒමේ ගාස්තුව ගෙවන්නේ",
+      "shipping": "ආපසු ගෙන ඒමේ ගාස්තුව (රු.)",
+      "method": "ආපසු ගෙවීමේ ක්‍රමය",
+      "reference": "බැංකු මාරු යොමුව හෝ රිසිට් අංකය",
+      "referencePlaceholder": "උදා: TRF-20261029-001",
+      "confirmRefund": "ආපසු ගෙවීම වාර්තා කරන්න"
+    },
+    "toast": {
+      "decided": "තීරණය වාර්තා විය",
+      "refunded": "ආපසු ගෙවීම වාර්තා විය"
     }
   }
 }

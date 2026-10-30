@@ -18,6 +18,10 @@ import PlatformStaffPage from './pages/admin/PlatformStaffPage';
 import AuditLogPage from './pages/admin/AuditLogPage';
 import SettingsPage from './pages/admin/SettingsPage';
 import ComingSoonPage from './pages/admin/ComingSoonPage';
+import AdminReturnsPage from './pages/admin/ReturnsPage';
+import AdminReturnDetailPage from './pages/admin/ReturnDetailPage';
+import SellerReturnsPage from './pages/seller/ReturnsPage';
+import SellerReturnDetailPage from './pages/seller/ReturnDetailPage';
 import CatalogPage from './pages/admin/CatalogPage';
 import VehiclesPage from './pages/admin/VehiclesPage';
 import ListingReviewPage from './pages/admin/ListingReviewPage';
@@ -65,6 +69,8 @@ const ListingWizardRoute = sellerRoute(ListingWizardPage);
 const OrdersRoute = sellerRoute(OrdersPage);
 const FinanceRoute = sellerRoute(SellerFinancePage);
 const OrderDetailRoute = sellerRoute(OrderDetailPage);
+const ReturnsRoute = sellerRoute(SellerReturnsPage);
+const ReturnDetailRoute = sellerRoute(SellerReturnDetailPage);
 
 export default function App() {
   return (
@@ -92,11 +98,12 @@ export default function App() {
                   <Route path="/admin/catalog/vehicles" element={<VehiclesPage />} />
                   <Route path="/admin/orders" element={<AdminOrdersPage />} />
                   <Route path="/admin/orders/:id" element={<AdminOrderDetailPage />} />
-                  <Route path="/admin/returns-disputes" element={<ComingSoonPage navKey="returnsDisputes" milestone={3} />} />
+                  <Route path="/admin/returns-disputes" element={<AdminReturnsPage />} />
+                  <Route path="/admin/returns-disputes/:id" element={<AdminReturnDetailPage />} />
                   <Route path="/admin/finance" element={<AdminFinancePage />} />
                   <Route path="/admin/finance/payout-runs/:id" element={<PayoutRunDetailPage />} />
-                  <Route path="/admin/customers" element={<ComingSoonPage navKey="customers" milestone={4} />} />
-                  <Route path="/admin/content" element={<ComingSoonPage navKey="content" milestone={5} />} />
+                  <Route path="/admin/customers" element={<ComingSoonPage navKey="customers" milestone={10} />} />
+                  <Route path="/admin/content" element={<ComingSoonPage navKey="content" milestone={10} />} />
                   <Route path="/admin/audit-log" element={<AuditLogPage />} />
                   <Route path="/admin/settings" element={<SettingsPage />} />
                   <Route element={<RequirePlatformOwner />}>
@@ -112,8 +119,9 @@ export default function App() {
                   <Route path="/seller/products/:id/edit" element={<ListingWizardRoute />} />
                   <Route path="/seller/orders" element={<OrdersRoute />} />
                   <Route path="/seller/orders/:id" element={<OrderDetailRoute />} />
-                  <Route path="/seller/returns" element={<ComingSoonSellerPage navKey="returns" milestone={8} />} />
-                  <Route path="/seller/performance" element={<ComingSoonSellerPage navKey="performance" milestone={4} />} />
+                  <Route path="/seller/returns" element={<ReturnsRoute />} />
+                  <Route path="/seller/returns/:id" element={<ReturnDetailRoute />} />
+                  <Route path="/seller/performance" element={<ComingSoonSellerPage navKey="performance" milestone={10} />} />
                   <Route path="/seller/settings" element={<StoreSettingsRoute />} />
                   <Route path="/seller/categories" element={<CategoriesFeesRoute />} />
                   <Route path="/seller/activity" element={<ActivityLogRoute />} />

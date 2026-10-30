@@ -277,7 +277,10 @@
     "payoutHoldDaysDevWarning": "0-day hold — allowed in development/test only, never in production.",
     "minimumPayoutCents": "Minimum payout amount (Rs.)",
     "refusedParcelChargedTo": "Refused parcel courier cost charged to",
-    "refusedParcelChargedToOptions": { "platform": "Platform", "seller": "Seller" },
+    "refusedParcelChargedToOptions": {
+      "platform": "Platform",
+      "seller": "Seller"
+    },
     "codNotReceivedAfterDays": "Flag COD as not received after (days)",
     "reviewRequiredForFirstNListings": "Review required for first N listings",
     "supportPhone": "Support phone",
@@ -303,7 +306,8 @@
       "enable": "Online ordering enabled",
       "enableHint": "While off, marketplace checkout shows the \"coming soon — order on WhatsApp\" screen instead of taking real orders.",
       "autoCancelAfterHours": "Auto-cancel unconfirmed orders after (hours)",
-      "courierName": "Courier name"
+      "courierName": "Courier name",
+      "returnResponseDays": "Return responses: seller has (days) before the platform decides"
     },
     "deliveryRates": {
       "heading": "Delivery rates by district",
@@ -362,7 +366,9 @@
       "noNotes": "No notes yet",
       "addNotePlaceholder": "Add an internal note",
       "addNote": "Add",
-      "actions": { "cancel": "Cancel order" },
+      "actions": {
+        "cancel": "Cancel order"
+      },
       "reasonPlaceholder": "Reason (required)",
       "refundNeededBanner": "This order was prepaid and later cancelled or returned. A refund is owed to the customer.",
       "refusedParcelCost": "Refused parcel courier cost"
@@ -370,7 +376,12 @@
   },
   "finance": {
     "title": "Finance",
-    "tabs": { "overview": "Overview", "sellers": "Sellers", "remittances": "COD remittances", "payoutRuns": "Payout runs" },
+    "tabs": {
+      "overview": "Overview",
+      "sellers": "Sellers",
+      "remittances": "COD remittances",
+      "payoutRuns": "Payout runs"
+    },
     "overview": {
       "commissionWeek": "Commission this week",
       "commissionMonth": "Commission this month",
@@ -384,9 +395,17 @@
     },
     "sellers": {
       "table": {
-        "seller": "Seller", "onHold": "On hold", "payable": "Payable", "inPayout": "In payout", "paid": "Paid", "settlementMode": "Settlement"
+        "seller": "Seller",
+        "onHold": "On hold",
+        "payable": "Payable",
+        "inPayout": "In payout",
+        "paid": "Paid",
+        "settlementMode": "Settlement"
       },
-      "settlementMode": { "payout": "Bank payout", "internal": "Internal" },
+      "settlementMode": {
+        "payout": "Bank payout",
+        "internal": "Internal"
+      },
       "toggleSettlement": "Toggle settlement mode",
       "confirmSettlementChange": "Change this seller's settlement mode to \"{{mode}}\"?",
       "settlementChanged": "Settlement mode updated",
@@ -413,7 +432,13 @@
       "codNotReceivedHeading": "COD not received (delivered {{days}}+ days ago)",
       "rowsHeading": "Remittance rows",
       "noRows": "No remittance rows yet",
-      "table": { "tracking": "Tracking", "amount": "Amount", "date": "Date", "status": "Status", "order": "Order" },
+      "table": {
+        "tracking": "Tracking",
+        "amount": "Amount",
+        "date": "Date",
+        "status": "Status",
+        "order": "Order"
+      },
       "matchStatus": {
         "matched": "Matched",
         "short": "Short",
@@ -427,8 +452,15 @@
       "generated": "Payout run generated",
       "noRuns": "No payout runs yet",
       "review": "Review",
-      "table": { "week": "Week", "period": "Period", "status": "Status" },
-      "status": { "draft": "Draft", "approved": "Approved" }
+      "table": {
+        "week": "Week",
+        "period": "Period",
+        "status": "Status"
+      },
+      "status": {
+        "draft": "Draft",
+        "approved": "Approved"
+      }
     },
     "payoutStatus": {
       "blocked": "Blocked",
@@ -452,8 +484,13 @@
       "bankReference": "Bank reference",
       "failReason": "Reason the payout failed",
       "table": {
-        "seller": "Seller", "gross": "Gross", "commission": "Commission", "charges": "Charges",
-        "adjustments": "Adjustments", "net": "Net", "status": "Status"
+        "seller": "Seller",
+        "gross": "Gross",
+        "commission": "Commission",
+        "charges": "Charges",
+        "adjustments": "Adjustments",
+        "net": "Net",
+        "status": "Status"
       }
     },
     "stepUp": {
@@ -466,7 +503,12 @@
       "confirm": "Confirm"
     },
     "noEntries": "No ledger entries yet",
-    "ledgerTable": { "date": "Date", "type": "Type", "amount": "Amount", "status": "Status" },
+    "ledgerTable": {
+      "date": "Date",
+      "type": "Type",
+      "amount": "Amount",
+      "status": "Status"
+    },
     "entryType": {
       "sale": "Sale",
       "commission": "Commission",
@@ -476,7 +518,12 @@
       "payout": "Payout",
       "payout_reversal": "Payout reversed"
     },
-    "entryStatus": { "on_hold": "On hold", "payable": "Payable", "in_payout": "In payout", "paid": "Paid" }
+    "entryStatus": {
+      "on_hold": "On hold",
+      "payable": "Payable",
+      "in_payout": "In payout",
+      "paid": "Paid"
+    }
   },
   "catalog": {
     "vehiclesLink": "Vehicles",
@@ -687,6 +734,48 @@
         "contact_in_text": "Contact details in text",
         "other": "Other"
       }
+    }
+  },
+  "returnsPage": {
+    "subtitle": "Disputed returns and refunds. Oldest first.",
+    "queue": "Needs action (queue)",
+    "empty": "Nothing needs action right now",
+    "view": "Open",
+    "pagination": "Page {{page}} of {{pages}}",
+    "table": {
+      "request": "Request",
+      "order": "Order",
+      "seller": "Seller",
+      "reason": "Reason",
+      "status": "Status",
+      "date": "Opened"
+    },
+    "detail": {
+      "back": "Back to returns",
+      "notFound": "Return not found",
+      "sellerNote": "Seller note",
+      "platformNote": "Platform note",
+      "resolution": "Resolution",
+      "customerRefund": "Customer refund",
+      "returnShipping": "Return shipping",
+      "decideTitle": "Decide dispute",
+      "uphold": "Uphold — customer gets a refund (item must come back)",
+      "dismiss": "Dismiss — return closed, no refund",
+      "notePlaceholder": "Reason for this decision (required)",
+      "submitDecision": "Submit decision",
+      "refundTitle": "Refund",
+      "refundValue": "Items value to refund",
+      "ownerOnly": "Only the platform owner can record a refund.",
+      "payer": "Return shipping paid by",
+      "shipping": "Return shipping cost (Rs.)",
+      "method": "Refund method",
+      "reference": "Bank transfer reference or receipt number",
+      "referencePlaceholder": "e.g. TRF-20261029-001",
+      "confirmRefund": "Record refund"
+    },
+    "toast": {
+      "decided": "Decision recorded",
+      "refunded": "Refund recorded"
     }
   }
 }

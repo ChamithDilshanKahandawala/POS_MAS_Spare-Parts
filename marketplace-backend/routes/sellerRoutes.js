@@ -18,6 +18,15 @@ const { uploadListingMedia, deleteListingMedia, getSellerMediaVariant } = requir
 const { listProducts: listPosProducts, importSelected: importPosProducts, syncNow: syncPosNow, getStatus: getPosStatus } = require('../controllers/sellerPosController');
 const { listOrders: listSellerOrders, getOrderDetail: getSellerOrderDetail, transitionOrder, markPosRecorded, markReturnPosRecorded } = require('../controllers/sellerOrdersController');
 const {
+  listReturns: listSellerReturns,
+  getReturn: getSellerReturn,
+  respond: respondToReturn,
+  received: markReturnReceived,
+  getReturnPhoto: getSellerReturnPhoto,
+} = require('../controllers/sellerReturnsController');
+const { withReturnErrors } = require('../controllers/returnsHttp');
+const { STATUSES: RETURN_STATUSES } = require('../models/ReturnRequest');
+const {
   getBalances, getLedger, getOrderBreakdown, getStatements, exportStatementCsv, getPayoutHistory,
 } = require('../controllers/sellerFinanceController');
 const { requireAuth, requireSellerMember } = require('../middleware/authMiddleware');
@@ -426,6 +435,39 @@ router.post(
   requireValidObjectId('id'),
   validate({ body: z.object({}).strict() }),
   asyncHandler(markReturnPosRecorded)
+);
+
+// --- Returns (Milestone 8) — staff can work returns the same way they work orders.
+const returnRespondBodySchema = z.object({
+  accept: z.boolean(),
+  note: z.string().trim().max(1000).optional().default(''),
+}).strict().refine((v) => v.accept || v.note.length > 0, { message: 'Give a reason when rejecting a return', path: ['note'] });
+const sellerReturnsQuerySchema = z.object({
+  status: z.enum(RETURN_STATUSES).optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+}).strict();
+
+router.get('/returns', requireAuth, requireSellerMember(ANY_MEMBER), validate({ query: sellerReturnsQuerySchema }), asyncHandler(listSellerReturns));
+router.get('/returns/:id', requireAuth, requireSellerMember(ANY_MEMBER), requireValidObjectId('id'), asyncHandler(getSellerReturn));
+router.get('/returns/:id/photos/:index', requireAuth, requireSellerMember(ANY_MEMBER), requireValidObjectId('id'), asyncHandler(getSellerReturnPhoto));
+router.post(
+  '/returns/:id/respond',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  requireActiveStore,
+  requireValidObjectId('id'),
+  validate({ body: returnRespondBodySchema }),
+  asyncHandler(withReturnErrors(respondToReturn))
+);
+router.post(
+  '/returns/:id/received',
+  requireAuth,
+  requireSellerMember(ANY_MEMBER),
+  requireActiveStore,
+  requireValidObjectId('id'),
+  validate({ body: z.object({}).strict() }),
+  asyncHandler(withReturnErrors(markReturnReceived))
 );
 
 // --- Finance (Milestone 7 Part D) — owner only, read-only. Staff get a

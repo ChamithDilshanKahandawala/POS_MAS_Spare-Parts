@@ -21,6 +21,7 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const customerRoutes = require('./routes/customerRoutes');
 const { startPosSyncScheduler } = require('./services/posSyncScheduler');
 const { startOrderAutoCancelJob } = require('./services/orderAutoCancel');
+const { startReturnEscalationJob } = require('./services/returnEscalation');
 const { startPosRecordedReminderJob } = require('./services/posRecordedReminder');
 const { startLedgerMaturityJob } = require('./services/ledgerMaturity');
 const { startPayoutRunJob } = require('./services/payoutRuns');
@@ -95,6 +96,7 @@ async function start() {
   // as `app` by the test suite — see services/posSyncScheduler.js.
   startPosSyncScheduler();
   startOrderAutoCancelJob();
+  startReturnEscalationJob();
   startPosRecordedReminderJob();
   startLedgerMaturityJob();
   startPayoutRunJob();

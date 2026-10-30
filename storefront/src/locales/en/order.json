@@ -20,7 +20,12 @@
     "cancelling": "Cancelling…",
     "cancelOrder": "Cancel order"
   },
-  "invoice": { "label": "Order number", "copy": "Copy", "copied": "Copied!", "copyFailed": "Could not copy — select it manually" },
+  "invoice": {
+    "label": "Order number",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "copyFailed": "Could not copy — select it manually"
+  },
   "timeline": {
     "placed": "Placed",
     "confirmed": "Confirmed",
@@ -29,7 +34,10 @@
     "cancelled": "This order was cancelled",
     "returned": "This order was returned"
   },
-  "delivery": { "title": "Delivery details", "estimate": "Estimated delivery: {{range}} (estimate only)" },
+  "delivery": {
+    "title": "Delivery details",
+    "estimate": "Estimated delivery: {{range}} (estimate only)"
+  },
   "items": {
     "title": "Order summary",
     "subtotal": "Subtotal",
@@ -37,11 +45,28 @@
     "total": "Total",
     "qtyLine": "Qty: {{count}} × {{price}}"
   },
-  "payment": { "cod": "Cash on Delivery — please keep {{amount}} ready" },
-  "whatsapp": { "cta": "Confirm on WhatsApp", "message": "Hi! I'd like to confirm my Apexora order {{invoiceNumber}} from {{seller}}, total {{total}}. Thank you!", "marketplaceMessage": "Hi! I'd like to ask about my Apexora order {{orderNumber}}. Thank you!" },
-  "actions": { "continueShopping": "Continue shopping", "viewOrders": "View my orders", "backToShop": "Back to shop", "tryAgain": "Try again" },
-  "notFound": { "title": "Order not found", "subtitle": "We couldn't find this order, or it doesn't belong to this account." },
-  "error": { "title": "Something went wrong", "subtitle": "We couldn't load this order. Check your connection and try again." },
+  "payment": {
+    "cod": "Cash on Delivery — please keep {{amount}} ready"
+  },
+  "whatsapp": {
+    "cta": "Confirm on WhatsApp",
+    "message": "Hi! I'd like to confirm my Apexora order {{invoiceNumber}} from {{seller}}, total {{total}}. Thank you!",
+    "marketplaceMessage": "Hi! I'd like to ask about my Apexora order {{orderNumber}}. Thank you!"
+  },
+  "actions": {
+    "continueShopping": "Continue shopping",
+    "viewOrders": "View my orders",
+    "backToShop": "Back to shop",
+    "tryAgain": "Try again"
+  },
+  "notFound": {
+    "title": "Order not found",
+    "subtitle": "We couldn't find this order, or it doesn't belong to this account."
+  },
+  "error": {
+    "title": "Something went wrong",
+    "subtitle": "We couldn't load this order. Check your connection and try again."
+  },
   "list": {
     "title": "My Orders",
     "loading": "Loading your orders...",
@@ -64,5 +89,51 @@
     "Delivered": "Delivered",
     "Cancelled": "Cancelled",
     "Returned": "Returned"
+  },
+  "myReturns": {
+    "report": "Report a problem",
+    "returnStatus": "Return: {{status}}",
+    "modalTitle": "Report a problem",
+    "modalIntro": "Choose the items to return and tell us why. The seller responds within 2 days; if they decline, our team reviews it.",
+    "itemsHeading": "Items to return",
+    "qty": "Qty",
+    "windowEnds": "Return by {{date}}",
+    "loading": "Loading your order…",
+    "loadFailed": "We couldn't load this parcel. Please try again.",
+    "reasonLabel": "Reason",
+    "reason": {
+      "wrong_item": "Wrong item",
+      "damaged": "Damaged",
+      "not_as_described": "Not as described",
+      "missing_part": "Missing part",
+      "other": "Other"
+    },
+    "noteLabel": "Describe the problem",
+    "notePlaceholder": "Optional",
+    "photosLabel": "Photos (up to 5)",
+    "photosHint": "Clear photos of the item and its packaging help us decide quickly.",
+    "photosChosen": "{{count}} photo(s) selected",
+    "submit": "Send request",
+    "submitting": "Sending…",
+    "submitted": "Return request sent",
+    "submitFailed": "We couldn't send the request. Please try again.",
+    "close": "Close",
+    "status": {
+      "requested": "Waiting for seller",
+      "seller_accepted": "Accepted — send the item back",
+      "seller_rejected": "Declined by seller — under review",
+      "escalated": "Under review by our team",
+      "admin_decided": "Approved — send the item back",
+      "item_returned": "Item received — refund pending",
+      "refunded": "Refunded",
+      "closed": "Closed"
+    },
+    "blocked": {
+      "not_delivered": "Available once delivered",
+      "open_request": "A return is already open for this item",
+      "already_returned": "Already returned",
+      "not_returnable": "This item can't be returned",
+      "window_closed": "Return window has closed"
+    }
   }
 }

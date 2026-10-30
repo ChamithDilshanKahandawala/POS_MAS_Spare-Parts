@@ -42,5 +42,56 @@
     "notificationsEmpty": "No new notifications",
     "viewAllNotifications": "View all notifications"
   },
-  "more": "More"
+  "more": "More",
+  "returns": {
+    "status": {
+      "requested": "Awaiting seller response",
+      "seller_accepted": "Accepted — awaiting item",
+      "seller_rejected": "Rejected by seller",
+      "escalated": "With platform team",
+      "admin_decided": "Approved — awaiting item",
+      "item_returned": "Item received — refund due",
+      "refunded": "Refunded",
+      "closed": "Closed"
+    },
+    "reason": {
+      "wrong_item": "Wrong item",
+      "damaged": "Damaged",
+      "not_as_described": "Not as described",
+      "missing_part": "Missing part",
+      "other": "Other"
+    },
+    "lines": {
+      "item": "Item",
+      "qty": "Qty",
+      "unitPrice": "Unit price",
+      "total": "Total",
+      "refundValue": "Refund value (items)"
+    },
+    "photos": {
+      "title": "Photos",
+      "none": "No photos attached"
+    },
+    "timeline": {
+      "title": "Timeline",
+      "byCustomer": "Customer",
+      "bySeller": "Seller",
+      "byPlatform": "Platform team",
+      "bySystem": "System"
+    },
+    "fields": {
+      "order": "Order",
+      "reason": "Reason",
+      "note": "Customer note"
+    },
+    "payer": {
+      "platform": "Platform",
+      "seller": "Seller",
+      "customer": "Customer"
+    },
+    "method": {
+      "bank_transfer": "Bank transfer",
+      "cash": "Cash"
+    }
+  }
 }

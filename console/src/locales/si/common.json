@@ -45,5 +45,56 @@
     "notificationsEmpty": "නව දැනුම්දීම් නැත",
     "viewAllNotifications": "සියලු දැනුම්දීම් බලන්න"
   },
-  "more": "තවත්"
+  "more": "තවත්",
+  "returns": {
+    "status": {
+      "requested": "විමසුම සඳහා සැපයුම්කරුගේ පිළිතුර බලා සිටී",
+      "seller_accepted": "පිළිගත්තා — භාණ්ඩය බලා සිටී",
+      "seller_rejected": "සැපයුම්කරු ප්‍රතික්ෂේප කළා",
+      "escalated": "වේදිකා කණ්ඩායම වෙත",
+      "admin_decided": "අනුමත — භාණ්ඩය බලා සිටී",
+      "item_returned": "භාණ්ඩය ලැබුණා — ආපසු ගෙවීම බාකි",
+      "refunded": "ආපසු ගෙවන ලදි",
+      "closed": "වසා දැමුවා"
+    },
+    "reason": {
+      "wrong_item": "වැරදි භාණ්ඩය",
+      "damaged": "හානි වී ඇත",
+      "not_as_described": "විස්තරයට නොගැලපේ",
+      "missing_part": "කොටසක් නැත",
+      "other": "වෙනත්"
+    },
+    "lines": {
+      "item": "භාණ්ඩය",
+      "qty": "ප්‍රමාණය",
+      "unitPrice": "ඒකක මිල",
+      "total": "එකතුව",
+      "refundValue": "ආපසු ගෙවිය යුතු භාණ්ඩ වටිනාකම"
+    },
+    "photos": {
+      "title": "ඡායාරූප",
+      "none": "ඡායාරූප අමුණා නැත"
+    },
+    "timeline": {
+      "title": "කාල රේඛාව",
+      "byCustomer": "පාරිභෝගිකයා",
+      "bySeller": "සැපයුම්කරු",
+      "byPlatform": "වේදිකා කණ්ඩායම",
+      "bySystem": "පද්ධතිය"
+    },
+    "fields": {
+      "order": "ඇණවුම",
+      "reason": "හේතුව",
+      "note": "පාරිභෝගික සටහන"
+    },
+    "payer": {
+      "platform": "වේදිකාව",
+      "seller": "සැපයුම්කරු",
+      "customer": "පාරිභෝගිකයා"
+    },
+    "method": {
+      "bank_transfer": "බැංකු මාරුව",
+      "cash": "මුදල්"
+    }
+  }
 }

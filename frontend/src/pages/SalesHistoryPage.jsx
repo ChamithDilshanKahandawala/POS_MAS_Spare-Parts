@@ -26,7 +26,7 @@ export default function SalesHistoryPage() {
 
   const receiptRef = useRef();
   const handlePrint = useReactToPrint({
-    content: () => receiptRef.current,
+    contentRef: receiptRef,
   });
 
   const fetchSales = useCallback(async () => {
@@ -103,6 +103,8 @@ export default function SalesHistoryPage() {
           <option value="Cash">Cash</option>
           <option value="Card">Card</option>
           <option value="Online">Online</option>
+          <option value="COD">COD</option>
+          <option value="KOKO">KOKO</option>
         </select>
         {(from || to || paymentFilter || sourceFilter) && (
           <button className="btn-secondary" onClick={() => { setFrom(''); setTo(''); setPaymentFilter(''); setSourceFilter(''); setPage(1); }} style={{ padding: '8px 12px', fontSize: '13px' }}>
@@ -231,9 +233,9 @@ export default function SalesHistoryPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={isAdmin ? 11 : 10} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading...</td></tr>
+                <tr><td colSpan={isAdmin ? 12 : 11} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading...</td></tr>
               ) : sales.length === 0 ? (
-                <tr><td colSpan={isAdmin ? 11 : 10} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No sales found</td></tr>
+                <tr><td colSpan={isAdmin ? 12 : 11} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No sales found</td></tr>
               ) : sales.map(s => (
                 <tr key={s._id}>
                   <td><span style={{ fontFamily: 'monospace', fontSize: '12px', color: 'var(--accent-primary)', fontWeight: 700 }}>{s.invoice_number}</span></td>

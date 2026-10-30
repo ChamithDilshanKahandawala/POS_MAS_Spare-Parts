@@ -60,6 +60,19 @@ const restrictFieldsToOwner = require('../middleware/restrictFieldsToOwner');
 const asyncHandler = require('../middleware/asyncHandler');
 const { writeLimiter, uploadLimiter } = require('../middleware/rateLimiter');
 const requireFreshStepUp = require('../middleware/requireFreshStepUp');
+const {
+  listReturns: listAdminReturns,
+  getReturn: getAdminReturn,
+  decide: decideReturn,
+  refund: refundReturn,
+  getReturnPhoto: getAdminReturnPhoto,
+} = require('../controllers/adminReturnsController');
+const { withReturnErrors } = require('../controllers/returnsHttp');
+const {
+  STATUSES: RETURN_STATUSES,
+  SHIPPING_PAYERS: RETURN_SHIPPING_PAYERS,
+  REFUND_METHODS: RETURN_REFUND_METHODS,
+} = require('../models/ReturnRequest');
 const { upload, handleUploadErrors } = require('../middleware/upload');
 const { FIELD_TYPES } = require('../models/Category');
 const { VEHICLE_TYPES } = require('../models/VehicleMake');
@@ -185,6 +198,7 @@ const updateSettingsBodySchema = z.object({
   refusedParcelChargedTo: z.enum(['platform', 'seller']).optional(),
   minimumPayoutCents: z.number().int().min(0).optional(),
   codNotReceivedAfterDays: z.number().int().min(1).max(365).optional(),
+  returnResponseDays: z.number().int().min(1).max(30).optional(),
 }).strict();
 
 // --- Catalog: categories ---
@@ -504,6 +518,39 @@ router.get(
   requirePlatform(PLATFORM_ROLES),
   validate({ query: auditLogQuerySchema }),
   asyncHandler(exportAuditLogCsv)
+);
+
+// --- Returns (Milestone 8) ---
+const adminReturnsQuerySchema = z.object({
+  status: z.enum(RETURN_STATUSES).optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+}).strict();
+const decideReturnBodySchema = z.object({
+  decision: z.enum(['uphold', 'dismiss']),
+  note: z.string().trim().min(1, 'A note is required').max(1000),
+}).strict();
+const refundReturnBodySchema = z.object({
+  payer: z.enum(RETURN_SHIPPING_PAYERS),
+  shippingCents: z.number().int().min(0).max(100000000),
+  method: z.enum(RETURN_REFUND_METHODS),
+  reference: z.string().trim().min(1, 'Enter the transfer reference or receipt number').max(100),
+}).strict();
+
+router.get('/returns', requireAuth, requirePlatform(PLATFORM_ROLES), validate({ query: adminReturnsQuerySchema }), asyncHandler(listAdminReturns));
+router.get('/returns/:id', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), asyncHandler(getAdminReturn));
+router.get('/returns/:id/photos/:index', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), asyncHandler(getAdminReturnPhoto));
+router.post(
+  '/returns/:id/decide',
+  requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'),
+  validate({ body: decideReturnBodySchema }),
+  asyncHandler(withReturnErrors(decideReturn))
+);
+router.post(
+  '/returns/:id/refund',
+  requireAuth, requirePlatform(OWNER_ONLY), requireValidObjectId('id'), requireFreshStepUp,
+  validate({ body: refundReturnBodySchema }),
+  asyncHandler(withReturnErrors(refundReturn))
 );
 
 // --- Settings ---

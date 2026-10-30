@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
 import { io } from 'socket.io-client';
 import { useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';

@@ -310,11 +310,21 @@
       "inNextPayout": "ඊළඟ ගෙවීමේදී",
       "paidThisMonth": "මෙම මාසයේ ගෙවන ලදී"
     },
-    "tabs": { "ledger": "ගිණුම් වාර්තාව", "statements": "ප්‍රකාශන", "payouts": "ගෙවීම් ඉතිහාසය" },
+    "tabs": {
+      "ledger": "ගිණුම් වාර්තාව",
+      "statements": "ප්‍රකාශන",
+      "payouts": "ගෙවීම් ඉතිහාසය"
+    },
     "noEntries": "තවම ගිණුම් වාර්තා නැත",
     "noStatements": "තවම ප්‍රකාශන නැත",
     "noPayouts": "තවම ගෙවීම් නැත",
-    "ledgerTable": { "date": "දිනය", "type": "වර්ගය", "order": "ඇණවුම", "amount": "මුදල", "status": "තත්ත්වය" },
+    "ledgerTable": {
+      "date": "දිනය",
+      "type": "වර්ගය",
+      "order": "ඇණවුම",
+      "amount": "මුදල",
+      "status": "තත්ත්වය"
+    },
     "entryType": {
       "sale": "විකුණුම",
       "commission": "කොමිසම",
@@ -324,9 +334,27 @@
       "payout": "ගෙවීම",
       "payout_reversal": "ගෙවීම ආපසු හරවන ලදී"
     },
-    "entryStatus": { "on_hold": "රඳවා ඇත", "payable": "ගෙවිය හැකි", "in_payout": "ගෙවීමේදී", "paid": "ගෙවන ලදී" },
-    "statementsTable": { "period": "කාලය", "gross": "දළ", "commission": "කොමිසම", "net": "ශුද්ධ", "status": "තත්ත්වය", "csv": "CSV" },
-    "payoutsTable": { "period": "කාලය", "net": "ශුද්ධ", "status": "තත්ත්වය", "reference": "යොමුව", "date": "දිනය" },
+    "entryStatus": {
+      "on_hold": "රඳවා ඇත",
+      "payable": "ගෙවිය හැකි",
+      "in_payout": "ගෙවීමේදී",
+      "paid": "ගෙවන ලදී"
+    },
+    "statementsTable": {
+      "period": "කාලය",
+      "gross": "දළ",
+      "commission": "කොමිසම",
+      "net": "ශුද්ධ",
+      "status": "තත්ත්වය",
+      "csv": "CSV"
+    },
+    "payoutsTable": {
+      "period": "කාලය",
+      "net": "ශුද්ධ",
+      "status": "තත්ත්වය",
+      "reference": "යොමුව",
+      "date": "දිනය"
+    },
     "payoutStatus": {
       "blocked": "අවහිර කර ඇත",
       "settled_internally": "අභ්‍යන්තරව පියවන ලදී",
@@ -515,5 +543,39 @@
     "notImported": "ආනයනය කර නැත",
     "createdCount": "කටුපිටපත් {{count}} ක් සාදන ලදී",
     "skippedCount": "{{count}} ක් මඟ හරින ලදී"
+  },
+  "returnsPage": {
+    "subtitle": "ඔබේ භාණ්ඩ සඳහා පාරිභෝගික ආපසු ගෙවීම් ඉල්ලීම්. නියමිත කාලය ඇතුළත පිළිතුරු දෙන්න.",
+    "filterAll": "සියලු තත්ත්ව",
+    "empty": "ආපසු ගෙවීම් ඉල්ලීම් නැත",
+    "view": "බලන්න",
+    "table": {
+      "request": "ඉල්ලීම",
+      "order": "ඇණවුම",
+      "reason": "හේතුව",
+      "status": "තත්ත්වය",
+      "date": "ඉල්ලූ දිනය"
+    },
+    "detail": {
+      "back": "ආපසු ගෙවීම් වෙත",
+      "notFound": "ආපසු ගෙවීම හමු නොවීය",
+      "respondBy": "{{date}} දක්වා පිළිතුරු දෙන්න",
+      "accept": "ආපසු ගෙවීම පිළිගන්න",
+      "reject": "ආපසු ගෙවීම ප්‍රතික්ෂේප කරන්න",
+      "rejectReason": "ප්‍රතික්ෂේප කිරීමේ හේතුව",
+      "rejectPlaceholder": "හේතුව පැහැදිලි කරන්න (පාරිභෝගිකයාට පෙනේ)",
+      "confirmReject": "ප්‍රතික්ෂේපය තහවුරු කරන්න",
+      "awaitingItem": "පාරිභෝගිකයා භාණ්ඩය ආපසු යවන තෙක් බලා සිටී. ලැබුණු පසු තහවුරු කරන්න.",
+      "markReceived": "භාණ්ඩය ලැබුණු ලෙස සලකුණු කරන්න",
+      "withPlatform": "මෙය තීරණය සඳහා වේදිකා කණ්ඩායම වෙත ඇත.",
+      "yourNote": "ඔබේ සටහන",
+      "platformNote": "වේදිකා සටහන",
+      "refunded": "{{date}} දින {{amount}} ආපසු ගෙවන ලදි."
+    },
+    "toast": {
+      "accepted": "ආපසු ගෙවීම පිළිගන්නා ලදි",
+      "rejected": "ආපසු ගෙවීම ප්‍රතික්ෂේප කරන ලදි",
+      "received": "භාණ්ඩය ලැබුණු ලෙස සලකුණු කරන ලදි"
+    }
   }
 }

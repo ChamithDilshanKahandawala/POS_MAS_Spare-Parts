@@ -204,3 +204,15 @@ export const approvePayoutRun = (id) => api.post(`/admin/finance/payout-runs/${i
 export const getPayoutRunExportCsvBlob = (id) => api.get(`/admin/finance/payout-runs/${id}/export.csv`, { responseType: 'blob' });
 export const markPayoutPaid = (id, bankReference) => api.post(`/admin/finance/payouts/${id}/mark-paid`, { bankReference });
 export const markPayoutFailed = (id, reason) => api.post(`/admin/finance/payouts/${id}/mark-failed`, { reason });
+
+// --- Returns (Milestone 8) ---
+export const getSellerReturns = (params) => api.get('/seller/returns', { params });
+export const getSellerReturn = (id) => api.get(`/seller/returns/${id}`);
+export const respondToSellerReturn = (id, body) => api.post(`/seller/returns/${id}/respond`, body);
+export const markSellerReturnReceived = (id) => api.post(`/seller/returns/${id}/received`, {});
+export const getSellerReturnPhotoBlob = (id, index) => api.get(`/seller/returns/${id}/photos/${index}`, { responseType: 'blob' });
+export const getAdminReturns = (params) => api.get('/admin/returns', { params });
+export const getAdminReturn = (id) => api.get(`/admin/returns/${id}`);
+export const decideAdminReturn = (id, body) => api.post(`/admin/returns/${id}/decide`, body);
+export const refundAdminReturn = (id, body) => api.post(`/admin/returns/${id}/refund`, body);
+export const getAdminReturnPhotoBlob = (id, index) => api.get(`/admin/returns/${id}/photos/${index}`, { responseType: 'blob' });

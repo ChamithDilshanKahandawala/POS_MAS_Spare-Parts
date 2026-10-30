@@ -11,7 +11,7 @@
     },
     "otherProblems": {
       "heading": "Wrong item, damaged in transit, or not as described",
-      "body": "Contact us within {{days}} days of delivery by WhatsApp or phone with photos of the item and its packaging. We'll arrange a return, exchange or refund case by case."
+      "body": "Report it from My Orders within {{days}} days of delivery, with photos of the item and its packaging. The seller responds within 2 days. If they decline, our team reviews the case and decides."
     },
     "condition": {
       "heading": "Condition",
@@ -19,7 +19,7 @@
     },
     "refundMethod": {
       "heading": "How Refunds Are Paid",
-      "body": "PLACEHOLDER — describe how refunds are issued here (e.g. bank transfer or cash)."
+      "body": "Refunds are paid by bank transfer or cash once the returned item has reached us. Return shipping is decided case by case, and we tell you before you send anything back."
     }
   },
   "cta": "Report a Problem on WhatsApp"

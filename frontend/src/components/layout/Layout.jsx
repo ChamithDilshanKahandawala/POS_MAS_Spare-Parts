@@ -11,9 +11,11 @@ const PAGE_TITLES = {
   '/suppliers': 'Suppliers',
   '/sales': 'Sales History',
   '/web-orders': 'Web Orders',
+  '/whatsapp-orders': 'WhatsApp Orders',
   '/analytics': 'Analytics',
   '/alerts': 'Low Stock Alerts',
   '/users': 'Staff Management',
+  '/ecommerce-customers': 'Web Customers',
 };
 
 export default function Layout() {

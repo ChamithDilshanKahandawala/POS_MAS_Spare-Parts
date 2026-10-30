@@ -37,6 +37,7 @@ const PayoutRun = require('../models/PayoutRun');
 const Payout = require('../models/Payout');
 const CourierColumnMapping = require('../models/CourierColumnMapping');
 const CodRemittanceRow = require('../models/CodRemittanceRow');
+const ReturnRequest = require('../models/ReturnRequest');
 
 // Deliberately not config/db.js's connectDB() — that guard requires the
 // database to be exactly apexora_dev (it's built for the main app) and
@@ -75,6 +76,7 @@ async function wipeDatabase() {
     Payout.deleteMany({}),
     CourierColumnMapping.deleteMany({}),
     CodRemittanceRow.deleteMany({}),
+    ReturnRequest.deleteMany({}),
   ]);
 }
 
@@ -133,5 +135,6 @@ module.exports = {
   Payout,
   CourierColumnMapping,
   CodRemittanceRow,
+  ReturnRequest,
   mongoose,
 };

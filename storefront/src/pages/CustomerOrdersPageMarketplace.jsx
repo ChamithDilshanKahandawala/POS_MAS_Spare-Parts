@@ -2,8 +2,9 @@ import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { Package, Truck, Clock, CheckCircle, XCircle, Store, Navigation } from 'lucide-react';
-import { getMyMarketplaceOrders, cancelMyMarketplaceOrder } from '../api/marketplaceServices';
+import { getMyMarketplaceOrders, cancelMyMarketplaceOrder, getMyReturns } from '../api/marketplaceServices';
 import { formatLKR } from '../utils/formatLKR';
+import ReportProblemModal from '../components/orders/ReportProblemModal';
 
 const CANCELLABLE_STATUSES = ['new', 'confirmed'];
 
@@ -32,10 +33,22 @@ const STATUS_TEXT = {
 export default function CustomerOrdersPageMarketplace() {
   const { t } = useTranslation(['order', 'marketplace']);
   const [orders, setOrders] = useState(null);
+  const [returnsByParcel, setReturnsByParcel] = useState({});
   const [cancellingId, setCancellingId] = useState(null);
+  const [reportTarget, setReportTarget] = useState(null);
 
   const load = useCallback(() => {
-    getMyMarketplaceOrders().then(({ data }) => setOrders(data.orders)).catch(() => toast.error(t('list.failedToLoad')));
+    Promise.all([getMyMarketplaceOrders(), getMyReturns().catch(() => ({ data: { returns: [] } }))])
+      .then(([{ data }, { data: returnsData }]) => {
+        setOrders(data.orders);
+        const latest = {};
+        for (const r of returnsData.returns) {
+          const key = String(r.sellerOrder);
+          if (!latest[key] || new Date(r.createdAt) > new Date(latest[key].createdAt)) latest[key] = r;
+        }
+        setReturnsByParcel(latest);
+      })
+      .catch(() => toast.error(t('list.failedToLoad')));
   }, [t]);
 
   useEffect(() => { load(); }, [load]);
@@ -108,6 +121,19 @@ export default function CustomerOrdersPageMarketplace() {
                         <span style={{ color: 'var(--text-muted)' }}>{t('marketplaceItems.codAmount')}</span>
                         <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{formatLKR(so.codAmountCents / 100)}</span>
                       </div>
+                      {returnsByParcel[so._id] && (
+                        <div style={{ marginTop: '8px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                          {t('myReturns.returnStatus', { status: t(`myReturns.status.${returnsByParcel[so._id].status}`) })}
+                        </div>
+                      )}
+                      {so.status === 'delivered' && (
+                        <button
+                          className="btn-secondary" style={{ marginTop: '10px', fontSize: '12px' }}
+                          onClick={() => setReportTarget({ orderNumber: o.orderNumber, sellerOrderId: so._id })}
+                        >
+                          {t('myReturns.report')}
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -125,6 +151,15 @@ export default function CustomerOrdersPageMarketplace() {
             );
           })}
         </div>
+      )}
+
+      {reportTarget && (
+        <ReportProblemModal
+          orderNumber={reportTarget.orderNumber}
+          sellerOrderId={reportTarget.sellerOrderId}
+          onClose={() => setReportTarget(null)}
+          onSubmitted={() => { setReportTarget(null); load(); }}
+        />
       )}
     </div>
   );

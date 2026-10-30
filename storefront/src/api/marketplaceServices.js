@@ -46,4 +46,6 @@ export const previewCheckout = (data) => api.post('/customer/checkout/preview', 
 export const placeOrder = (data) => api.post('/customer/orders', data);
 export const getMyMarketplaceOrders = () => api.get('/customer/orders');
 export const getMyMarketplaceOrder = (orderNumber) => api.get(`/customer/orders/${orderNumber}`);
+export const getMyReturns = () => api.get('/customer/returns');
+export const createMyReturn = (formData) => api.post('/customer/returns', formData);
 export const cancelMyMarketplaceOrder = (orderNumber, data) => api.post(`/customer/orders/${orderNumber}/cancel`, data);

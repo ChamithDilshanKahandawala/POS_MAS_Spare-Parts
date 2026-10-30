@@ -7,6 +7,8 @@ const { CUSTOMER_CANCELLABLE_STATUSES } = require('../models/SellerOrder');
 const { release } = require('../services/stockReservation');
 const { notify } = require('../services/notifications');
 const SellerMember = require('../models/SellerMember');
+const { describeReturnability } = require('../services/returns');
+const { getPlatformSettings } = require('../services/platformSettings');
 
 // GET /api/customer/orders
 const listMyOrders = async (req, res) => {
@@ -27,7 +29,11 @@ const getMyOrder = async (req, res) => {
   const order = await Order.findOne({ orderNumber: req.params.orderNumber, customer: req.user._id }).lean();
   if (!order) return res.status(404).json({ message: 'Order not found' });
   const sellerOrders = await SellerOrder.find({ order: order._id }).populate('seller', 'name displayName slug').lean();
-  res.json({ order, sellerOrders });
+  const settings = await getPlatformSettings();
+  const withReturnability = await Promise.all(
+    sellerOrders.map(async (so) => ({ ...so, returnability: await describeReturnability(so, settings) }))
+  );
+  res.json({ order, sellerOrders: withReturnability });
 };
 
 // POST /api/customer/orders/:orderNumber/cancel — cancels every parcel at

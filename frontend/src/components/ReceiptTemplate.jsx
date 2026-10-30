@@ -7,6 +7,10 @@ const ReceiptTemplate = forwardRef(({ sale }, ref) => {
     return Number(amount || 0).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
+  const formattedDate = sale.createdAt
+    ? new Date(sale.createdAt).toLocaleString('en-LK', { timeZone: 'Asia/Colombo', dateStyle: 'medium', timeStyle: 'short' })
+    : 'N/A';
+
   const isCash = sale.payment_method === 'Cash';
   const isCOD = sale.payment_method === 'COD';
   
@@ -43,7 +47,7 @@ const ReceiptTemplate = forwardRef(({ sale }, ref) => {
         <div className="separator-heavy"></div>
         <div className="left">
           <div>Invoice: {sale.invoice_number}</div>
-          <div>Date:    {sale.createdAt}</div>
+          <div>Date:    {formattedDate}</div>
           <div>Cashier: {sale.cashier_name || 'Admin'}</div>
           {sale.sale_source !== 'shop' && (
             <div>Source:  {sale.sale_source === 'whatsapp' ? 'WhatsApp' : 'Online'}</div>

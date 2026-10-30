@@ -39,6 +39,13 @@ const notificationSchema = new mongoose.Schema(
         // --- Milestone 7 ---
         'payout.paid', // seller owner — a payout was sent
         'payout.failed', // seller owner — a payout attempt failed
+        // --- Milestone 8 ---
+        'return.requested', // seller owner — a customer requested a return
+        'return.accepted', // customer — the seller accepted the return
+        'return.rejected', // customer — the seller rejected it; it goes to platform review
+        'return.escalated', // customer + seller owner — no seller response in time, platform will decide
+        'return.decided', // customer + seller owner — platform decided (refund or dismissed)
+        'return.refunded', // customer + seller owner — the refund was paid
       ],
     },
     title: { type: String, required: true },

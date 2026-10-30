@@ -56,6 +56,7 @@ export default function SettingsPage() {
         prohibitedKeywords: form.prohibitedKeywords,
         onlineOrderingEnabled: !!form.onlineOrderingEnabled,
         autoCancelAfterHours: Number(form.autoCancelAfterHours),
+        returnResponseDays: Number(form.returnResponseDays),
         courierName: form.courierName,
         deliveryRates: form.deliveryRates,
         refusedParcelChargedTo: form.refusedParcelChargedTo,
@@ -165,6 +166,7 @@ export default function SettingsPage() {
         <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '-8px' }}>{t('settings.ordering.enableHint')}</div>
 
         <NumberField label={t('settings.ordering.autoCancelAfterHours')} value={form.autoCancelAfterHours} onChange={field('autoCancelAfterHours')} disabled={!isPlatformOwner} />
+        <NumberField label={t('settings.ordering.returnResponseDays')} value={form.returnResponseDays} onChange={field('returnResponseDays')} disabled={!isPlatformOwner} />
         <TextField label={t('settings.ordering.courierName')} value={form.courierName} onChange={field('courierName')} disabled={!isPlatformOwner} />
 
         {isPlatformOwner && (

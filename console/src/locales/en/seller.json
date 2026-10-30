@@ -307,11 +307,21 @@
       "inNextPayout": "In next payout",
       "paidThisMonth": "Paid this month"
     },
-    "tabs": { "ledger": "Ledger", "statements": "Statements", "payouts": "Payout history" },
+    "tabs": {
+      "ledger": "Ledger",
+      "statements": "Statements",
+      "payouts": "Payout history"
+    },
     "noEntries": "No ledger entries yet",
     "noStatements": "No statements yet",
     "noPayouts": "No payouts yet",
-    "ledgerTable": { "date": "Date", "type": "Type", "order": "Order", "amount": "Amount", "status": "Status" },
+    "ledgerTable": {
+      "date": "Date",
+      "type": "Type",
+      "order": "Order",
+      "amount": "Amount",
+      "status": "Status"
+    },
     "entryType": {
       "sale": "Sale",
       "commission": "Commission",
@@ -321,9 +331,27 @@
       "payout": "Payout",
       "payout_reversal": "Payout reversed"
     },
-    "entryStatus": { "on_hold": "On hold", "payable": "Payable", "in_payout": "In payout", "paid": "Paid" },
-    "statementsTable": { "period": "Period", "gross": "Gross", "commission": "Commission", "net": "Net", "status": "Status", "csv": "CSV" },
-    "payoutsTable": { "period": "Period", "net": "Net", "status": "Status", "reference": "Reference", "date": "Date" },
+    "entryStatus": {
+      "on_hold": "On hold",
+      "payable": "Payable",
+      "in_payout": "In payout",
+      "paid": "Paid"
+    },
+    "statementsTable": {
+      "period": "Period",
+      "gross": "Gross",
+      "commission": "Commission",
+      "net": "Net",
+      "status": "Status",
+      "csv": "CSV"
+    },
+    "payoutsTable": {
+      "period": "Period",
+      "net": "Net",
+      "status": "Status",
+      "reference": "Reference",
+      "date": "Date"
+    },
     "payoutStatus": {
       "blocked": "Blocked",
       "settled_internally": "Settled internally",
@@ -512,5 +540,39 @@
     "notImported": "Not imported",
     "createdCount": "{{count}} draft(s) created",
     "skippedCount": "{{count}} skipped"
+  },
+  "returnsPage": {
+    "subtitle": "Customer return requests for your items. Respond within the deadline.",
+    "filterAll": "All statuses",
+    "empty": "No return requests",
+    "view": "View",
+    "table": {
+      "request": "Request",
+      "order": "Order",
+      "reason": "Reason",
+      "status": "Status",
+      "date": "Requested"
+    },
+    "detail": {
+      "back": "Back to returns",
+      "notFound": "Return not found",
+      "respondBy": "Respond by {{date}}",
+      "accept": "Accept return",
+      "reject": "Reject return",
+      "rejectReason": "Reason for rejecting",
+      "rejectPlaceholder": "Explain why (shown to the customer)",
+      "confirmReject": "Confirm rejection",
+      "awaitingItem": "Waiting for the customer to send the item back. Confirm once it arrives.",
+      "markReceived": "Mark item received",
+      "withPlatform": "This return is with the platform team for a decision.",
+      "yourNote": "Your note",
+      "platformNote": "Platform note",
+      "refunded": "Refunded {{amount}} on {{date}}."
+    },
+    "toast": {
+      "accepted": "Return accepted",
+      "rejected": "Return rejected",
+      "received": "Item marked as received"
+    }
   }
 }

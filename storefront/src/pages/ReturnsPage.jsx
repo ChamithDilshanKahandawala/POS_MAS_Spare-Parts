@@ -3,9 +3,7 @@ import { PackageCheck, Zap, Camera, Package, Banknote, MessageCircle } from 'luc
 import { SHOP_INFO, RETURN_WINDOW_DAYS } from '../config/store';
 import useDocumentMeta from '../hooks/useDocumentMeta';
 
-// Draft — to be reviewed by the shop owner (and ideally a native Sinhala/
-// Tamil speaker for the si/ta copy) before this is treated as the shop's
-// real, binding returns policy.
+// si/ta copy is a draft — have a native speaker review it before launch.
 const POINT_ICONS = { electronics: Zap, otherProblems: Camera, condition: Package, refundMethod: Banknote };
 
 export default function ReturnsPage() {
@@ -33,7 +31,6 @@ export default function ReturnsPage() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '24px' }}>
         {pointKeys.map((key) => {
           const Icon = POINT_ICONS[key];
-          const isPlaceholder = key === 'refundMethod';
           return (
             <div key={key} className="glass-card" style={{ padding: '22px 24px', borderRadius: '18px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
@@ -42,8 +39,7 @@ export default function ReturnsPage() {
               </div>
               <p style={{
                 fontSize: '13.5px', lineHeight: 1.7,
-                color: isPlaceholder ? 'var(--text-muted)' : 'var(--text-secondary)',
-                fontStyle: isPlaceholder ? 'italic' : 'normal',
+                color: 'var(--text-secondary)',
               }}>
                 {key === 'otherProblems' ? t(`points.${key}.body`, { days: RETURN_WINDOW_DAYS }) : t(`points.${key}.body`)}
               </p>

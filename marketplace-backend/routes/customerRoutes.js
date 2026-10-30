@@ -9,6 +9,9 @@ const {
 } = require('../controllers/customerController');
 const { preview: previewCheckout, create: createOrder } = require('../controllers/checkoutController');
 const { listMyOrders, getMyOrder, cancelMyOrder } = require('../controllers/customerOrdersController');
+const { createReturn, listMyReturns, getMyReturn, getMyReturnPhoto } = require('../controllers/customerReturnsController');
+const { withReturnErrors } = require('../controllers/returnsHttp');
+const { uploadMedia } = require('../middleware/uploadMedia');
 const { requireAuth } = require('../middleware/authMiddleware');
 const { writeLimiter } = require('../middleware/rateLimiter');
 const { validate, requireValidObjectId } = require('../middleware/validate');
@@ -98,5 +101,11 @@ router.post(
   validate({ params: orderNumberParamsSchema, body: cancelOrderBodySchema }),
   asyncHandler(cancelMyOrder)
 );
+
+// --- Returns (Milestone 8) ---
+router.get('/returns', asyncHandler(listMyReturns));
+router.post('/returns', uploadMedia.array('photos', 5), asyncHandler(withReturnErrors(createReturn)));
+router.get('/returns/:id', requireValidObjectId('id'), asyncHandler(getMyReturn));
+router.get('/returns/:id/photos/:index', requireValidObjectId('id'), asyncHandler(getMyReturnPhoto));
 
 module.exports = router;
