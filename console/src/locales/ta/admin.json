@@ -519,7 +519,10 @@
       "refused_parcel_charge": "நிராகரிக்கப்பட்ட பார்சல் கட்டணம்",
       "adjustment": "சரிசெய்தல்",
       "payout": "கொடுப்பனவு",
-      "payout_reversal": "கொடுப்பனவு மீட்டெடுக்கப்பட்டது"
+      "payout_reversal": "கொடுப்பனவு மீட்டெடுக்கப்பட்டது",
+      "return_refund": "திருப்பிச் செலுத்துதல்",
+      "return_commission_reversal": "கமிஷன் திருப்பம் (திருப்பம்)",
+      "return_shipping": "திருப்பி அனுப்பும் கட்டணம்"
     },
     "entryStatus": {
       "on_hold": "நிலுவையில்",

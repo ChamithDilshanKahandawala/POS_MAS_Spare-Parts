@@ -296,6 +296,11 @@ test('a rejected return dismissed by the platform releases its line for a new re
 
   await sellerAuth(request(app).post(`/api/seller/returns/${rid}/respond`), sellerA, tokens.aOwner).send({ accept: false, note: 'Item is fine' }).expect(200);
 
+  const queue = await request(app).get('/api/admin/returns').set('Authorization', `Bearer ${tokens.staff}`).expect(200);
+  const queued = queue.body.returns.find((r) => r._id === rid);
+  assert.ok(queued, 'a seller-rejected return is in the default admin queue');
+  assert.equal(queued.seller.name, sellerA.name, 'the queue shows which seller the return belongs to');
+
   const decideNoNote = await request(app).post(`/api/admin/returns/${rid}/decide`).set('Authorization', `Bearer ${tokens.staff}`).send({ decision: 'dismiss', note: '' });
   assert.equal(decideNoNote.status, 400);
 

@@ -482,6 +482,18 @@ html[lang="ta"] .data-table th, html[lang="ta"] .badge, html[lang="ta"] .console
   .catalog-layout { grid-template-columns: 1fr; }
 }
 
+/* Detail pages: main content + side panel, stacked on narrow screens. */
+.detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .detail-layout { grid-template-columns: minmax(0, 1fr); }
+}
+
 /* Field editor modal: content + live preview side by side on desktop,
    stacked (preview below the form) on narrow screens so nothing runs off
    the edge of the modal. */

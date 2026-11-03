@@ -519,7 +519,10 @@
       "refused_parcel_charge": "ප්‍රතික්ෂේප කළ පාර්සල ගාස්තුව",
       "adjustment": "සකස් කිරීම",
       "payout": "ගෙවීම",
-      "payout_reversal": "ගෙවීම ආපසු හරවන ලදී"
+      "payout_reversal": "ගෙවීම ආපසු හරවන ලදී",
+      "return_refund": "ආපසු ගෙවීම",
+      "return_commission_reversal": "කොමිස් ආපසු හැරවීම (ආපසු යැවීම)",
+      "return_shipping": "ආපසු යැවීමේ ගාස්තුව"
     },
     "entryStatus": {
       "on_hold": "රඳවා ඇත",

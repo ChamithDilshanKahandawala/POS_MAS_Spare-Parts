@@ -329,7 +329,10 @@
       "refused_parcel_charge": "Refused parcel charge",
       "adjustment": "Adjustment",
       "payout": "Payout",
-      "payout_reversal": "Payout reversed"
+      "payout_reversal": "Payout reversed",
+      "return_refund": "Return refund",
+      "return_commission_reversal": "Commission reversed (return)",
+      "return_shipping": "Return shipping"
     },
     "entryStatus": {
       "on_hold": "On hold",

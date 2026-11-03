@@ -11,6 +11,8 @@ const Seller = require('../models/Seller');
 const SellerMember = require('../models/SellerMember');
 const Order = require('../models/Order');
 const SellerOrder = require('../models/SellerOrder');
+const ReturnRequest = require('../models/ReturnRequest');
+const { deleteFile } = require('../services/storage');
 const { getPlatformSettings } = require('../services/platformSettings');
 
 const SELLER2_SLUG = 'e2e-test-seller-2';
@@ -35,6 +37,9 @@ async function main() {
   // test run — scoped to the throwaway e2e customer, never a real one.
   const customer = await User.findOne({ email: 'e2e-customer@test.apexora' }).select('_id').lean();
   if (customer) {
+    const returns = await ReturnRequest.find({ customer: customer._id }).select('photos').lean();
+    returns.forEach((r) => r.photos.forEach((p) => deleteFile(p.path)));
+    await ReturnRequest.deleteMany({ customer: customer._id });
     await SellerOrder.deleteMany({ customer: customer._id });
     await Order.deleteMany({ customer: customer._id });
   }

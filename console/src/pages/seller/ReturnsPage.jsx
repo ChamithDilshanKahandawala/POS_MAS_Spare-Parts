@@ -48,7 +48,7 @@ export default function ReturnsPage() {
       <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>{t('returnsPage.subtitle')}</p>
 
       <div style={{ display: 'flex', gap: '10px', marginBottom: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
-        <select className="input-field" style={{ width: 'auto' }} value={status} onChange={(e) => updateParam('status', e.target.value)}>
+        <select className="input-field" style={{ width: 'auto', maxWidth: '100%' }} value={status} onChange={(e) => updateParam('status', e.target.value)}>
           <option value="">{t('returnsPage.filterAll')}</option>
           {RETURN_STATUSES.map((s) => (
             <option key={s} value={s}>{t(`common:returns.status.${s}`)}</option>

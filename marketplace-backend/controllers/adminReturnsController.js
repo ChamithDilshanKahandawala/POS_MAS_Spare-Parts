@@ -16,7 +16,7 @@ const listReturns = async (req, res) => {
   const filter = status ? { status } : { status: { $in: QUEUE_STATUSES } };
   const safeLimit = Math.min(Number(limit) || 20, 100);
   const [returns, total] = await Promise.all([
-    ReturnRequest.find(filter).sort({ updatedAt: 1 }).skip((page - 1) * safeLimit).limit(safeLimit).lean(),
+    ReturnRequest.find(filter).sort({ updatedAt: 1 }).skip((page - 1) * safeLimit).limit(safeLimit).populate('seller', 'name slug').lean(),
     ReturnRequest.countDocuments(filter),
   ]);
   res.json({ returns, total, page: Number(page), limit: safeLimit });

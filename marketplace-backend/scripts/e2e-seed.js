@@ -72,12 +72,20 @@ async function main() {
     password: await bcrypt.hash('E2ESeller2Pass123!', 10), isActive: true,
   });
   await SellerMember.create({ user: seller2Owner._id, seller: seller2._id, role: 'seller_owner' });
-  const [listingC] = await Listing.create([{
+  const [listingC, listingD] = await Listing.create([{
     seller: seller2._id, categoryId: category._id, status: 'published', stock: 10,
     priceCents: 95000, brand: 'Generic', condition: 'new', weightGrams: 300,
     title: { en: 'E2E Seller 2 Test Part', si: '', ta: '' },
     description: { en: 'A second seller listing for multi-seller cart E2E testing.', si: '', ta: '' },
     sku: `${SKU_PREFIX}C`, publishedAt: new Date(),
+  }, {
+    // Milestone 8: a second seller-2 line, so the returns spec has a
+    // two-line parcel from a non-POS seller (restock is checkable).
+    seller: seller2._id, categoryId: category._id, status: 'published', stock: 10,
+    priceCents: 45000, brand: 'Generic', condition: 'new', weightGrams: 200,
+    title: { en: 'E2E Seller 2 Return Part', si: '', ta: '' },
+    description: { en: 'A second seller-2 listing for returns E2E testing.', si: '', ta: '' },
+    sku: `${SKU_PREFIX}D`, publishedAt: new Date(),
   }]);
 
   const email = 'e2e-customer@test.apexora';
@@ -107,7 +115,7 @@ async function main() {
     makeId: make._id.toString(), makeName: make.name, modelName: model.name,
     seller1Id: seller._id.toString(), seller1OwnerToken,
     seller2Id: seller2._id.toString(), seller2OwnerToken: signAccessToken(seller2Owner),
-    listingAId: listingA._id.toString(), listingBId: listingB._id.toString(), listingCId: listingC._id.toString(),
+    listingAId: listingA._id.toString(), listingBId: listingB._id.toString(), listingCId: listingC._id.toString(), listingDId: listingD._id.toString(),
     wasOnlineOrderingEnabled,
   };
   console.log(JSON.stringify(output));

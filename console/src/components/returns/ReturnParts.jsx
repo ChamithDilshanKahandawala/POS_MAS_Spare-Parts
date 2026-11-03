@@ -17,33 +17,35 @@ export function ReturnLines({ lines }) {
   const { t, i18n } = useTranslation('common');
   const total = lines.reduce((sum, l) => sum + l.unitPriceCents * l.qty, 0);
   return (
-    <table className="data-table">
-      <thead>
-        <tr>
-          <th>{t('returns.lines.item')}</th>
-          <th>{t('returns.lines.qty')}</th>
-          <th>{t('returns.lines.unitPrice')}</th>
-          <th>{t('returns.lines.total')}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {lines.map((line) => (
-          <tr key={line.sellerOrderItem}>
-            <td>
-              <div style={{ fontWeight: 600 }}>{line.title?.[i18n.language] || line.title?.en || line.sku}</div>
-              {line.sku && <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{line.sku}</div>}
-            </td>
-            <td>{line.qty}</td>
-            <td>{formatLKR(line.unitPriceCents)}</td>
-            <td style={{ fontWeight: 700 }}>{formatLKR(line.unitPriceCents * line.qty)}</td>
+    <div style={{ overflowX: 'auto' }}>
+      <table className="data-table">
+        <thead>
+          <tr>
+            <th>{t('returns.lines.item')}</th>
+            <th>{t('returns.lines.qty')}</th>
+            <th>{t('returns.lines.unitPrice')}</th>
+            <th>{t('returns.lines.total')}</th>
           </tr>
-        ))}
-        <tr>
-          <td colSpan={3} style={{ textAlign: 'right', fontWeight: 700 }}>{t('returns.lines.refundValue')}</td>
-          <td style={{ fontWeight: 800 }}>{formatLKR(total)}</td>
-        </tr>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {lines.map((line) => (
+            <tr key={line.sellerOrderItem}>
+              <td>
+                <div style={{ fontWeight: 600 }}>{line.title?.[i18n.language] || line.title?.en || line.sku}</div>
+                {line.sku && <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{line.sku}</div>}
+              </td>
+              <td>{line.qty}</td>
+              <td>{formatLKR(line.unitPriceCents)}</td>
+              <td style={{ fontWeight: 700 }}>{formatLKR(line.unitPriceCents * line.qty)}</td>
+            </tr>
+          ))}
+          <tr>
+            <td colSpan={3} style={{ textAlign: 'right', fontWeight: 700 }}>{t('returns.lines.refundValue')}</td>
+            <td style={{ fontWeight: 800 }}>{formatLKR(total)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   );
 }
 

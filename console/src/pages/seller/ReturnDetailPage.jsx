@@ -66,7 +66,7 @@ export default function ReturnDetailPage() {
         <ReturnStatusBadge status={r.status} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: '20px', alignItems: 'start' }}>
+      <div className="detail-layout">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: 0 }}>
           <div className="glass-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div style={{ fontSize: '13px' }}><strong>{t('common:returns.fields.order')}:</strong> <span style={{ fontFamily: 'monospace' }}>{r.orderNumber}</span></div>
