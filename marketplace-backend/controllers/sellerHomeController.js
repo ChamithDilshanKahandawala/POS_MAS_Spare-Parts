@@ -26,18 +26,17 @@ function buildChecklist(seller, hasAnyListing) {
 // don't exist yet — ordersToday/pendingPayout are null, never 0, so the
 // UI can't mistake "no data yet" for "zero today").
 const getHome = async (req, res) => {
-  const seller = await Seller.findById(req.sellerId).lean();
+  // Independent reads share one round trip.
+  const [seller, hasAnyListing] = await Promise.all([
+    Seller.findById(req.sellerId).lean(),
+    // "List your first product" means actually submitted it, not just
+    // started a draft.
+    Listing.exists({ seller: req.sellerId, status: { $ne: 'draft' } }),
+  ]);
   if (!seller) return res.status(404).json({ message: 'Seller not found' });
 
-  // "List your first product" means actually submitted it, not just
-  // started a draft.
-  const hasAnyListing = await Listing.exists({ seller: req.sellerId, status: { $ne: 'draft' } });
-
-  // Follow-up — only ever non-zero for a POS-connected seller (see
-  // services/posRecordedReminder.js, the job this count mirrors); 0 for
-  // everyone else, not null, since "not recorded in POS" is a real,
-  // always-answerable question once Milestone 6 exists, unlike
-  // ordersToday/pendingPayout below.
+  // Only ever non-zero for a POS-connected seller (see
+  // services/posRecordedReminder.js, the job this count mirrors).
   const notRecordedInPosCount = seller.posConnection?.enabled
     ? await SellerOrder.countDocuments({ seller: req.sellerId, status: { $in: ['shipped', 'delivered'] }, posRecorded: false })
     : 0;

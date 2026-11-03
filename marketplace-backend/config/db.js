@@ -50,7 +50,7 @@ const connectDB = async () => {
       process.exit(1);
     }
 
-    const conn = await mongoose.connect(process.env.MONGO_URI);
+    const conn = await mongoose.connect(process.env.MONGO_URI, { minPoolSize: 5 });
     const dbName = conn.connection.name;
 
     // Database name only — never the host/credentials, even in dev logs.
