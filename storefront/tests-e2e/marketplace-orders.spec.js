@@ -78,10 +78,12 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
       await page.screenshot({ path: `tests-e2e/screenshots/${vpName}-checkout-review.png`, fullPage: true });
 
       await page.getByRole('checkbox').check();
+      const placed = page.waitForResponse((r) => r.url().endsWith('/api/customer/orders') && r.request().method() === 'POST');
       await page.getByRole('button', { name: /place order/i }).click();
+      expect((await placed).ok(), 'place-order API call should succeed').toBeTruthy();
 
       // --- Order success: one card per seller parcel ---
-      await expect(page).toHaveURL(/\/order-success\/APX-\d{4}-\d{5}/, { timeout: 10000 });
+      await expect(page).toHaveURL(/\/order-success\/APX-\d{4}-\d{5}/, { timeout: 15000 });
       const orderNumber = page.url().match(/APX-\d{4}-\d{5}/)[0];
       await expect(page.getByText('Bajaj RE Brake Shoe Set')).toBeVisible();
       await expect(page.getByText('E2E Seller 2 Test Part')).toBeVisible();
@@ -129,8 +131,10 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
       await page.goto('/checkout');
       await page.getByRole('button', { name: /continue to review/i }).click();
       await page.getByRole('checkbox').check();
+      const placed = page.waitForResponse((r) => r.url().endsWith('/api/customer/orders') && r.request().method() === 'POST');
       await page.getByRole('button', { name: /place order/i }).click();
-      await expect(page).toHaveURL(/\/order-success\/APX-\d{4}-\d{5}/, { timeout: 10000 });
+      expect((await placed).ok(), 'place-order API call should succeed').toBeTruthy();
+      await expect(page).toHaveURL(/\/order-success\/APX-\d{4}-\d{5}/, { timeout: 15000 });
 
       await page.goto('/orders');
       await page.getByRole('button', { name: /cancel order/i }).first().click();

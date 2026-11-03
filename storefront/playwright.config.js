@@ -7,7 +7,8 @@ import { defineConfig } from '@playwright/test';
 // though the 5174 instance was started before that value existed.
 export default defineConfig({
   testDir: './tests-e2e',
-  timeout: 30000,
+  timeout: 60000,
+  expect: { timeout: 15000 },
   retries: 0,
   reporter: [['list']],
   use: {

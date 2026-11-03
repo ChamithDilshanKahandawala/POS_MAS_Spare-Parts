@@ -8,6 +8,30 @@
 
 This repository contains a complete spare-parts business platform built for a retail shop with an internal POS, a public storefront, and a local thermal printing bridge. The system is designed to keep inventory synchronized, protect financial visibility by role, and support shop operations end-to-end from sales to analytics to printing.
 
+## Apexora Marketplace — Dev Quick Start
+
+The marketplace (`marketplace-backend/`, `console/`, `storefront/`) runs separately from the POS apps below. Run each command in its own terminal.
+
+| App | Folder | Command | Port |
+| --- | --- | --- | --- |
+| Marketplace API | `marketplace-backend` | `npm run dev` | 5002 |
+| Admin + Seller console | `console` | `npm run dev` | 5175 |
+| Storefront | `storefront` | `npm run dev` | 5174 |
+
+First run: `npm install` in each folder, then seed the dev database (`apexora_dev`) from `marketplace-backend`:
+
+```bash
+npm run seed:dev
+```
+
+Seed logins (all passwords `DevPass123!`): `owner@apexora.test` (platform owner), `staff@apexora.test` (platform staff), `seller-a-owner@apexora.test`, `seller-a-staff@apexora.test`, `seller-b-owner@apexora.test`, `seller-c-owner@apexora.test` (suspended store), `customer@apexora.test`.
+
+Login is two-step. The OTP code is printed in the marketplace-api terminal (`OTP for <email>: <code>`).
+
+Checks: `npm test` (backend, uses an in-memory MongoDB) and `npm run lint` in each app; Playwright specs live in `storefront/tests-e2e` (`npx playwright test`, uses its own port 5199).
+
+Before starting a dev server, check that an old one is not still holding the port: `lsof -i :5002` (or `:5174`, `:5175`), then stop the stale `nodemon` / `vite` process.
+
 ## Contents
 
 - Overview
