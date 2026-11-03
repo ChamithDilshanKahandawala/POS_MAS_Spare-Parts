@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { ArrowLeft, ShieldCheck } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/useCart';
 import useIsMobile from '../hooks/useIsMobile';
 import useLiveStock from '../hooks/useLiveStock';
 import CartLineItem from '../components/cart/CartLineItem';

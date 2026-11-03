@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { Search, ArrowRight, ShieldCheck, Truck, CheckCircle, Zap, Package, Store, ChevronRight } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/useCart';
 import ProductGrid from '../components/product/ProductGrid';
 import VehiclePicker from '../components/VehiclePicker';
 import { getListings, getCategoryTree } from '../api/marketplaceServices';

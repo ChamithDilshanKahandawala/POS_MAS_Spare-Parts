@@ -3,10 +3,11 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { registerUser } from '../api/services';
 import toast from 'react-hot-toast';
 import { User, Mail, Lock, Phone, ArrowRight, CheckCircle2, ShieldCheck } from 'lucide-react';
-import GoogleAuthButton, { hasGoogleAuth } from '../components/GoogleAuthButton';
+import GoogleAuthButton from '../components/GoogleAuthButton';
+import { hasGoogleAuth } from '../utils/googleAuth';
 import ApexoraWordmark from '../components/layout/ApexoraWordmark';
 import { Trans, useTranslation } from 'react-i18next';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { isMarketplace } from '../api/dataSource';
 
 export default function RegisterPage() {

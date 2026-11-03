@@ -6,7 +6,7 @@ import { useNavigate, Link } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ShoppingCart, ShieldCheck } from 'lucide-react';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '../../context/useCart';
 import useIsMobile from '../../hooks/useIsMobile';
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion';
 import useLiveStock from '../../hooks/useLiveStock';

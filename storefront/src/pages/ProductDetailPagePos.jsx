@@ -6,7 +6,7 @@ import {
   MessageCircle, Package, AlertTriangle,
 } from 'lucide-react';
 import { getProductById, getProducts } from '../api/services';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/useCart';
 import useLiveStock from '../hooks/useLiveStock';
 import useIsMobile from '../hooks/useIsMobile';
 import QuantityStepper from '../components/cart/QuantityStepper';

@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { Eye, EyeOff, UserPlus, Mail, Lock, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
-import GoogleAuthButton, { hasGoogleAuth } from '../components/GoogleAuthButton';
+import GoogleAuthButton from '../components/GoogleAuthButton';
+import { hasGoogleAuth } from '../utils/googleAuth';
 import ApexoraWordmark from '../components/layout/ApexoraWordmark';
 import { isMarketplace } from '../api/dataSource';
 

@@ -1,9 +1,9 @@
 import { useState, lazy, Suspense } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
-import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/useAuth';
+import { useTheme } from '../../context/useTheme';
+import { useCart } from '../../context/useCart';
 import { ShoppingBag, LogOut, Package, Moon, Sun, ShoppingCart, Menu, X, User, ChevronDown, LayoutGrid, Phone, Truck, Download } from 'lucide-react';
 import useInstallPrompt from '../../hooks/useInstallPrompt';
 import Footer from './footer';

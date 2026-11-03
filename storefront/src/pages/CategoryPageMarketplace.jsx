@@ -6,7 +6,7 @@ import { ChevronRight, SlidersHorizontal, X, Check, AlertTriangle, Package } fro
 import { useTranslation } from 'react-i18next';
 import { getListings, getCategoryTree } from '../api/marketplaceServices';
 import { normalizeListing, listingFitsVehicle, localizedPick } from '../api/marketplaceAdapters';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/useCart';
 import useIsMobile from '../hooks/useIsMobile';
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
 import useSelectedVehicle from '../hooks/useSelectedVehicle';

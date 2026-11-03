@@ -1,8 +1,8 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { CartContext } from './useCart';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
-const CartContext = createContext(null);
 
 export const CartProvider = ({ children }) => {
   // CartProvider is a regular component (not a hook/util file), so this
@@ -92,4 +92,3 @@ export const CartProvider = ({ children }) => {
   );
 };
 
-export const useCart = () => useContext(CartContext);

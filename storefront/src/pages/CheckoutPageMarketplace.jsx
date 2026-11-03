@@ -6,7 +6,7 @@ import {
   ArrowLeft, MessageCircle, ShoppingCart, Clock, MapPin, Truck, ShieldCheck,
   Loader2, Plus, Star, AlertTriangle, ChevronRight,
 } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/useCart';
 import { getItemSeller } from '../api/marketplaceAdapters';
 import {
   getPublicSettings, getCustomerAddresses, createCustomerAddress,

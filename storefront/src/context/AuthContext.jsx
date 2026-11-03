@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from 'react';
+import { useState } from 'react';
+import { AuthContext } from './useAuth';
 import { loginUser, googleLogin } from '../api/services';
 import { isMarketplace } from '../api/dataSource';
 import {
@@ -7,7 +8,6 @@ import {
   logoutCustomer,
 } from '../api/marketplaceServices';
 
-const AuthContext = createContext(null);
 
 // Marketplace's /api/auth/me shape ({ id, name, email, platformRole,
 // phone, preferredLanguage }) onto the SAME shape every existing
@@ -144,4 +144,3 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);

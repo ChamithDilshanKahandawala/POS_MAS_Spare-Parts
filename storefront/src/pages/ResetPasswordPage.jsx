@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Lock, Eye, EyeOff, CheckCircle2, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import ApexoraWordmark from '../components/layout/ApexoraWordmark';
 
 // Marketplace-only — reached via the link printed to the marketplace-

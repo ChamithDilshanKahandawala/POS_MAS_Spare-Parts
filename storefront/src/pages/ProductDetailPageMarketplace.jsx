@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { getListingById, getRelatedListings, getCategoryTree, getVehicleMakes, buildMediaUrl } from '../api/marketplaceServices';
 import { normalizeListing, listingFitsVehicle, fitmentRangeLabel, localizedPick } from '../api/marketplaceAdapters';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/useCart';
 import useIsMobile from '../hooks/useIsMobile';
 import useSelectedVehicle from '../hooks/useSelectedVehicle';
 import QuantityStepper from '../components/cart/QuantityStepper';

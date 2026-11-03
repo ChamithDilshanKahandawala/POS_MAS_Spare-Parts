@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getProducts } from '../api/services';
 import toast from 'react-hot-toast';
 import { Search, ShoppingCart, X, ArrowRight, ShieldCheck, Package, Truck, CheckCircle, Zap } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/useCart';
 import ProductGrid from '../components/product/ProductGrid';
 import { formatLKR } from '../utils/formatLKR';
 import { slugify } from '../utils/slugify';

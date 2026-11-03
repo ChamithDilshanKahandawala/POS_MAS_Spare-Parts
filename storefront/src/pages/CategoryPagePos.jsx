@@ -6,7 +6,7 @@ import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronRight, SlidersHorizontal, X, Check, AlertTriangle, Package } from 'lucide-react';
 import { getProducts } from '../api/services';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/useCart';
 import useLiveStock from '../hooks/useLiveStock';
 import useIsMobile from '../hooks/useIsMobile';
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';

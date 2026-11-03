@@ -9,7 +9,6 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 // whole app, so no other route pays for it even when it is configured.
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-export const hasGoogleAuth = Boolean(CLIENT_ID);
 
 export default function GoogleAuthButton({ onSuccess, onError }) {
   if (!CLIENT_ID) return null;

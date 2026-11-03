@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import ApexoraWordmark from '../components/layout/ApexoraWordmark';
 
 // Marketplace-only — never routed to in pos mode (there is no forgot/

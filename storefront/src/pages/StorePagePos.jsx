@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Phone, MessageCircle, MapPin, Clock, BadgeCheck, Package, ChevronRight } from 'lucide-react';
 import { getProducts } from '../api/services';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/useCart';
 import { getSellerBySlug, formatPhoneDisplay, CATEGORIES } from '../config/store';
 import { isShopOpenNow } from '../utils/openStatus';
 import ProductGrid from '../components/product/ProductGrid';

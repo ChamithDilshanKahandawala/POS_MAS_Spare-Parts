@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Phone, MessageCircle, MapPin, Clock, BadgeCheck, Package, ChevronRight, Store } from 'lucide-react';
 import { getStorePage, getListings, getCategoryTree, buildStoreLogoUrl, buildStoreBannerUrl } from '../api/marketplaceServices';
 import { normalizeListing, localizedPick } from '../api/marketplaceAdapters';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/useCart';
 import ProductGrid from '../components/product/ProductGrid';
 import useDocumentMeta from '../hooks/useDocumentMeta';
 

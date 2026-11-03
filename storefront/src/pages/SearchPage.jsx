@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Search, ChevronRight, Package, AlertTriangle } from 'lucide-react';
 import { getListings } from '../api/marketplaceServices';
 import { normalizeListing, listingFitsVehicle } from '../api/marketplaceAdapters';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/useCart';
 import useSelectedVehicle from '../hooks/useSelectedVehicle';
 import ProductGrid from '../components/product/ProductGrid';
 import VehicleFilterBar from '../components/VehicleFilterBar';
