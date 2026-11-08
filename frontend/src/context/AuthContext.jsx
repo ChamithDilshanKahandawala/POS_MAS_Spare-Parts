@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { loginUser } from '../api/services';
 
 const AuthContext = createContext(null);
@@ -27,10 +27,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  // Stable identity, so pages can list it as an effect dependency.
+  const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('posUser');
-  };
+  }, []);
 
   const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
 

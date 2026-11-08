@@ -13,7 +13,7 @@ const EMPTY_FORM = {
 };
 
 export default function InventoryPage() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, logout } = useAuth();
   const [products, setProducts] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -32,7 +32,6 @@ export default function InventoryPage() {
   const [jsonImporting, setJsonImporting] = useState(false);
   const [jsonResults, setJsonResults] = useState(null); // [{sku_code, name, status, message}] after a run
   const fileInputRef = useRef(null);
-  const barcodeRef = useRef(null);
   const barcodeBuffer = useRef('');
   const barcodeTimer = useRef(null);
 
@@ -60,7 +59,17 @@ export default function InventoryPage() {
     setLoading(true);
     try {
       const { data } = await getProducts({ search, category, page, limit: 15 });
-      setProducts(data.products);
+      // The product list also allows anonymous access, so an expired or
+      // rejected login token doesn't 401 here — the API just leaves out
+      // buying prices. An admin seeing that means the session is no longer
+      // valid: send them to log in again instead of showing a broken page.
+      if (isAdmin && data.products?.length && data.products.every((p) => p.buying_price === undefined)) {
+        toast.error('Your session has expired — please log in again');
+        logout();
+        window.location.href = '/login';
+        return;
+      }
+      setProducts(data.products || []);
       setTotal(data.total);
       setPages(data.pages);
     } catch {
@@ -68,7 +77,7 @@ export default function InventoryPage() {
     } finally {
       setLoading(false);
     }
-  }, [search, category, page]);
+  }, [search, category, page, isAdmin, logout]);
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
@@ -180,6 +189,8 @@ export default function InventoryPage() {
   };
 
   const margin = (bp, sp) => bp && sp ? (((sp - bp) / sp) * 100).toFixed(1) : '0';
+  // A missing number shows as "—" rather than crashing the whole page.
+  const rs = (v) => (typeof v === 'number' ? `Rs. ${v.toLocaleString()}` : '—');
   const columnCount = isAdmin ? 9 : 6;
 
   return (
@@ -279,8 +290,8 @@ export default function InventoryPage() {
                   </td>
                   <td><span style={{ fontFamily: 'monospace', fontSize: '12px', color: 'var(--accent-primary)' }}>{p.sku_code}</span></td>
                   <td><span className="badge badge-purple">{p.category}</span></td>
-                  {isAdmin && <td style={{ color: 'var(--text-secondary)' }}>Rs. {p.buying_price.toLocaleString()}</td>}
-                  <td style={{ fontWeight: 600 }}>Rs. {p.selling_price.toLocaleString()}</td>
+                  {isAdmin && <td style={{ color: 'var(--text-secondary)' }}>{rs(p.buying_price)}</td>}
+                  <td style={{ fontWeight: 600 }}>{rs(p.selling_price)}</td>
                   {isAdmin && <td><span className="badge badge-green">{margin(p.buying_price, p.selling_price)}%</span></td>}
                   <td>
                     <span className={`badge ${p.stock_quantity === 0 ? 'badge-red' : p.stock_quantity <= p.low_stock_threshold ? 'badge-yellow' : 'badge-green'}`}>
