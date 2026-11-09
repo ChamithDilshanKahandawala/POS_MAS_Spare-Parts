@@ -1,0 +1,15 @@
+{
+  "marketplace-backend": {
+    "zod": {
+      "reason": "Fix needs zod v4 (breaking API). Request bodies are capped at 200 KB and every array schema has a max, which bounds the memory issue. Migrate to v4 before the expiry.",
+      "until": "2026-12-31"
+    }
+  },
+  "console": {},
+  "storefront": {
+    "xlsx": {
+      "reason": "No patched release exists. The package is not imported anywhere in storefront/src; remove it from package.json (pending owner approval).",
+      "until": "2026-11-30"
+    }
+  }
+}

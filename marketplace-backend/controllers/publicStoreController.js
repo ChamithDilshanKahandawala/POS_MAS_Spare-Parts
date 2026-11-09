@@ -35,7 +35,9 @@ function getPublicMediaHandlerFor(field) {
     const seller = await Seller.findOne({ slug: req.params.slug, status: 'active' }).select(field).lean();
     if (!seller || !seller[field]?.path) return res.status(404).json({ message: 'Not found' });
     res.set('Content-Type', 'image/jpeg');
-    res.send(readFile(seller[field].path));
+    // Same URL after a re-upload, so shared caches only keep it briefly.
+    res.set('Cache-Control', 'public, max-age=300');
+    res.send(await readFile(seller[field].path));
   };
 }
 

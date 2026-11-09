@@ -38,7 +38,7 @@ async function main() {
   const customer = await User.findOne({ email: 'e2e-customer@test.apexora' }).select('_id').lean();
   if (customer) {
     const returns = await ReturnRequest.find({ customer: customer._id }).select('photos').lean();
-    returns.forEach((r) => r.photos.forEach((p) => deleteFile(p.path)));
+    await Promise.all(returns.flatMap((r) => r.photos.map((p) => deleteFile(p.path))));
     await ReturnRequest.deleteMany({ customer: customer._id });
     await SellerOrder.deleteMany({ customer: customer._id });
     await Order.deleteMany({ customer: customer._id });

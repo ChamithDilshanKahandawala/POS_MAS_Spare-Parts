@@ -42,9 +42,11 @@ function runTests() {
     // another file just created (discovered the hard way, back when
     // this ran against a shared remote database). One file at a time
     // removes the race entirely.
-    testChild = spawn('node', ['--test', '--test-timeout=30000', '--test-concurrency=1'], {
+    testChild = spawn('node', ['--test', '--test-timeout=30000', '--test-concurrency=1', ...process.argv.slice(2)], {
       cwd: path.join(__dirname, '..'),
-      env: { ...process.env, NODE_ENV: 'test' },
+      // OTP throttling has its own tests (which tighten these per test);
+      // every other test logs users in back to back.
+      env: { OTP_RESEND_COOLDOWN_SECONDS: '0', OTP_DAILY_LIMIT: '1000', ...process.env, NODE_ENV: 'test' },
       stdio: 'inherit',
     });
     testChild.on('exit', (code, signal) => resolve(signal ? 1 : (code ?? 1)));

@@ -9,13 +9,14 @@ const crypto = require('crypto');
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 12; // recommended length for GCM
 
-function getKey() {
-  const secret = process.env.POS_KEY_ENCRYPTION_SECRET;
+function keyFrom(secret, name) {
   if (!secret || secret.length !== 64) {
-    throw new Error('POS_KEY_ENCRYPTION_SECRET must be set to a 32-byte hex string (64 hex characters)');
+    throw new Error(`${name} must be set to a 32-byte hex string (64 hex characters)`);
   }
   return Buffer.from(secret, 'hex');
 }
+
+const getKey = () => keyFrom(process.env.POS_KEY_ENCRYPTION_SECRET, 'POS_KEY_ENCRYPTION_SECRET');
 
 // Returns a single string ("iv:authTag:ciphertext", all hex) so the
 // whole thing fits in one schema field.
@@ -27,13 +28,35 @@ function encrypt(plaintext) {
   return `${iv.toString('hex')}:${authTag.toString('hex')}:${ciphertext.toString('hex')}`;
 }
 
+function decryptWith(key, ivHex, authTagHex, ciphertextHex) {
+  const decipher = crypto.createDecipheriv(ALGORITHM, key, Buffer.from(ivHex, 'hex'));
+  decipher.setAuthTag(Buffer.from(authTagHex, 'hex'));
+  return Buffer.concat([decipher.update(Buffer.from(ciphertextHex, 'hex')), decipher.final()]).toString('utf8');
+}
+
+// Key rotation: values written under POS_KEY_ENCRYPTION_SECRET_PREVIOUS
+// still decrypt until scripts/rotate-pos-key.js has re-encrypted them.
 function decrypt(encrypted) {
   const [ivHex, authTagHex, ciphertextHex] = String(encrypted).split(':');
   if (!ivHex || !authTagHex || !ciphertextHex) throw new Error('Malformed encrypted value');
-  const decipher = crypto.createDecipheriv(ALGORITHM, getKey(), Buffer.from(ivHex, 'hex'));
-  decipher.setAuthTag(Buffer.from(authTagHex, 'hex'));
-  const plaintext = Buffer.concat([decipher.update(Buffer.from(ciphertextHex, 'hex')), decipher.final()]);
-  return plaintext.toString('utf8');
+  try {
+    return decryptWith(getKey(), ivHex, authTagHex, ciphertextHex);
+  } catch (err) {
+    const previous = process.env.POS_KEY_ENCRYPTION_SECRET_PREVIOUS;
+    if (!previous) throw err;
+    return decryptWith(keyFrom(previous, 'POS_KEY_ENCRYPTION_SECRET_PREVIOUS'), ivHex, authTagHex, ciphertextHex);
+  }
 }
 
-module.exports = { encrypt, decrypt };
+// True when the value was written with the current key (rotation done for it).
+function isCurrentKey(encrypted) {
+  const [ivHex, authTagHex, ciphertextHex] = String(encrypted).split(':');
+  try {
+    decryptWith(getKey(), ivHex, authTagHex, ciphertextHex);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+module.exports = { encrypt, decrypt, isCurrentKey };

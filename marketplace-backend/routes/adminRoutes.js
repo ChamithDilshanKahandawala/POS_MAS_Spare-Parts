@@ -68,6 +68,16 @@ const {
   getReturnPhoto: getAdminReturnPhoto,
 } = require('../controllers/adminReturnsController');
 const { withReturnErrors } = require('../controllers/returnsHttp');
+const { listMessages, retry: retryMessage } = require('../controllers/messagesController');
+const {
+  listCustomers, getCustomer, deactivateCustomer, reactivateCustomer, sendCustomerPasswordReset,
+} = require('../controllers/adminCustomersController');
+const {
+  listContent, saveDraft: saveContentDraft, createBanner, uploadBannerImage, publish: publishContent,
+  unpublish: unpublishContent, deleteBanner, getAdminImage: getContentImage,
+} = require('../controllers/contentController');
+const { BANNER_LANGUAGES } = require('../models/ContentBlock');
+const { STATUSES: MESSAGE_STATUSES, CHANNELS: MESSAGE_CHANNELS } = require('../models/MessageOutbox');
 const {
   STATUSES: RETURN_STATUSES,
   SHIPPING_PAYERS: RETURN_SHIPPING_PAYERS,
@@ -188,7 +198,7 @@ const updateSettingsBodySchema = z.object({
   supportPhone: z.string().optional(),
   supportEmail: z.string().optional(),
   supportWhatsapp: z.string().optional(),
-  prohibitedKeywords: z.array(z.string().trim().min(1)).optional(),
+  prohibitedKeywords: z.array(z.string().trim().min(1).max(100)).max(200).optional(),
   // --- Milestone 6 ---
   onlineOrderingEnabled: z.boolean().optional(),
   deliveryRates: z.record(z.enum(SRI_LANKA_DISTRICTS), deliveryRateZod).optional(),
@@ -199,6 +209,7 @@ const updateSettingsBodySchema = z.object({
   minimumPayoutCents: z.number().int().min(0).optional(),
   codNotReceivedAfterDays: z.number().int().min(1).max(365).optional(),
   returnResponseDays: z.number().int().min(1).max(30).optional(),
+  dispatchWithinHours: z.number().int().min(1).max(336).optional(),
 }).strict();
 
 // --- Catalog: categories ---
@@ -224,7 +235,7 @@ const attributeFieldZod = z.object({
   helpText: localizedZod().optional(),
   type: z.enum(FIELD_TYPES),
   required: z.boolean().optional(),
-  options: z.array(fieldOptionZod).optional(),
+  options: z.array(fieldOptionZod).max(200).optional(),
   unit: z.string().optional(),
   min: z.number().nullable().optional(),
   max: z.number().nullable().optional(),
@@ -257,15 +268,15 @@ const createCategoryBodySchema = z.object({
   warrantyRule: warrantyRuleZod.optional(),
   regulated: z.boolean().nullable().optional(),
   reviewRequired: z.boolean().nullable().optional(),
-  prohibitedKeywords: z.array(z.string().trim().min(1)).optional(),
-  attributeSchema: z.array(attributeFieldZod).optional(),
+  prohibitedKeywords: z.array(z.string().trim().min(1).max(100)).max(200).optional(),
+  attributeSchema: z.array(attributeFieldZod).max(100).optional(),
 }).strict();
 
 const updateCategoryBodySchema = createCategoryBodySchema.partial();
 
 const reorderCategoriesBodySchema = z.object({
   parentId: z.string().regex(OBJECT_ID_RE).nullable(),
-  orderedIds: z.array(z.string().regex(OBJECT_ID_RE)).min(1),
+  orderedIds: z.array(z.string().regex(OBJECT_ID_RE)).min(1).max(500),
 }).strict();
 
 // --- Listings (Milestone 3) ---
@@ -281,7 +292,7 @@ const listingQueueQuerySchema = z.object({
 }).strict();
 
 const rejectListingBodySchema = z.object({
-  reasons: z.array(z.enum(REJECTION_REASONS)).min(1, 'At least one reason is required'),
+  reasons: z.array(z.enum(REJECTION_REASONS)).min(1, 'At least one reason is required').max(20),
   note: z.string().trim().max(2000).optional(),
 }).strict();
 
@@ -313,7 +324,7 @@ const createMakeBodySchema = z.object({
   name: z.string().trim().min(1),
   type: z.enum(VEHICLE_TYPES),
   active: z.boolean().optional(),
-  models: z.array(vehicleModelZod).optional(),
+  models: z.array(vehicleModelZod).max(500).optional(),
 }).strict();
 
 const updateMakeBodySchema = createMakeBodySchema.partial();
@@ -861,5 +872,54 @@ router.post(
   validate({ body: markFailedBodySchema }),
   asyncHandler(markFailedRoute)
 );
+
+// --- Messages (Milestone 9) — outgoing email/SMS log and retry.
+const messagesQuerySchema = z.object({
+  status: z.enum(MESSAGE_STATUSES).optional(),
+  channel: z.enum(MESSAGE_CHANNELS).optional(),
+  template: z.string().trim().max(60).optional(),
+  q: z.string().trim().max(100).optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+}).strict();
+router.get('/messages', requireAuth, requirePlatform(PLATFORM_ROLES), validate({ query: messagesQuerySchema }), asyncHandler(listMessages));
+router.post('/messages/:id/retry', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), validate({ body: z.object({}).strict() }), asyncHandler(retryMessage));
+
+// --- Customers (Milestone 10)
+const customersQuerySchema = z.object({
+  q: z.string().trim().max(100).optional(),
+  status: z.enum(['active', 'deactivated']).optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+}).strict();
+const customerReasonSchema = z.object({ reason: z.string().trim().min(3, 'Give a reason').max(500) }).strict();
+router.get('/customers', requireAuth, requirePlatform(PLATFORM_ROLES), validate({ query: customersQuerySchema }), asyncHandler(listCustomers));
+router.get('/customers/:id', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), asyncHandler(getCustomer));
+router.post('/customers/:id/deactivate', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), validate({ body: customerReasonSchema }), asyncHandler(deactivateCustomer));
+router.post('/customers/:id/reactivate', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), validate({ body: customerReasonSchema }), asyncHandler(reactivateCustomer));
+router.post('/customers/:id/send-password-reset', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), validate({ body: z.object({}).strict() }), asyncHandler(sendCustomerPasswordReset));
+
+// --- Content (Milestone 10) — drafts never reach the storefront; publish
+// and unpublish are audited.
+const localizedText = (max) => z.object({ en: z.string().max(max).optional(), si: z.string().max(max).optional(), ta: z.string().max(max).optional() }).strict();
+const contentLink = z.string().trim().max(500).refine((v) => v === '' || /^\/(?!\/)/.test(v) || /^https?:\/\//.test(v), 'Link must start with / or http(s)://');
+const contentDraftSchema = z.object({
+  title: localizedText(200).optional(),
+  body: localizedText(20000).optional(),
+  text: localizedText(200).optional(),
+  link: contentLink.optional(),
+  language: z.enum(BANNER_LANGUAGES).optional(),
+  startsAt: z.coerce.date().nullable().optional(),
+  endsAt: z.coerce.date().nullable().optional(),
+  sortOrder: z.number().int().min(0).max(1000).optional(),
+}).strict();
+router.get('/content', requireAuth, requirePlatform(PLATFORM_ROLES), asyncHandler(listContent));
+router.post('/content/banners', requireAuth, requirePlatform(PLATFORM_ROLES), validate({ body: contentDraftSchema }), asyncHandler(createBanner));
+router.put('/content/:id', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), validate({ body: contentDraftSchema }), asyncHandler(saveContentDraft));
+router.post('/content/:id/image', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), uploadLimiter, handleUploadErrors(upload.single('file')), asyncHandler(uploadBannerImage));
+router.get('/content/:id/image', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), validate({ query: z.object({ version: z.enum(['draft', 'published']).optional() }).strict() }), asyncHandler(getContentImage));
+router.post('/content/:id/publish', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), validate({ body: z.object({}).strict() }), asyncHandler(publishContent));
+router.post('/content/:id/unpublish', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), validate({ body: z.object({}).strict() }), asyncHandler(unpublishContent));
+router.delete('/content/:id', requireAuth, requirePlatform(PLATFORM_ROLES), requireValidObjectId('id'), asyncHandler(deleteBanner));
 
 module.exports = router;

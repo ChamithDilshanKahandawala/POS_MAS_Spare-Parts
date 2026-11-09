@@ -89,6 +89,11 @@ const platformSettingsSchema = new mongoose.Schema(
     // Days a seller has to accept or reject a return request before it
     // auto-escalates to platform staff (services/returnEscalation.js).
     returnResponseDays: { type: Number, default: 2, min: 1 },
+
+    // --- Milestone 10: seller performance ---
+    // A parcel counts as dispatched on time when it ships within this many
+    // hours of the order being placed.
+    dispatchWithinHours: { type: Number, default: 48, min: 1 },
   },
   { timestamps: true }
 );

@@ -17,14 +17,14 @@
     "platformStaff": "தள ஊழியர்கள்",
     "auditLog": "தணிக்கைப் பதிவு",
     "settings": "அமைப்புகள்",
-    "myStore": "எனது கடை"
+    "myStore": "எனது கடை",
+    "messages": "செய்திகள்"
   },
   "switcher": {
     "adminArea": "நிர்வாகி",
     "myStoreArea": "எனது கடை",
     "switchStore": "கடையை மாற்று"
   },
-  "comingSoon": "மைல்கல் {{milestone}} க்குப் பிறகு கிடைக்கும்",
   "logout": "வெளியேறு",
   "loading": "ஏற்றுகிறது…",
   "error": {

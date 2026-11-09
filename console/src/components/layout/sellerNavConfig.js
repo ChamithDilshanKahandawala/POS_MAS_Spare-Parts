@@ -12,7 +12,7 @@ export const SELLER_NAV_ITEMS = [
   { key: 'orders', path: '/seller/orders', icon: ShoppingCart, primary: true },
   { key: 'returns', path: '/seller/returns', icon: RotateCcw },
   { key: 'finance', path: '/seller/finance', icon: Wallet, primary: true },
-  { key: 'performance', path: '/seller/performance', icon: TrendingUp, comingSoonMilestone: 10 },
+  { key: 'performance', path: '/seller/performance', icon: TrendingUp },
   { key: 'categoriesFees', path: '/seller/categories', icon: Tags },
   { key: 'settings', path: '/seller/settings', icon: Store },
   { key: 'staff', path: '/seller/staff', icon: Users, ownerOnly: true },

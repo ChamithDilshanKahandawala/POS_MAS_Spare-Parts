@@ -40,12 +40,12 @@ function csvEscape(value) {
 }
 
 // GET /api/admin/audit-log/export.csv — same filters as the list route,
-// no pagination (the whole filtered set).
+// no pagination, capped at the newest 10,000 rows (narrow the dates for more).
 const exportAuditLogCsv = async (req, res) => {
   const { actor, action, targetType, from, to } = req.query;
   const query = buildQuery({ actor, action, targetType, from, to });
 
-  const entries = await AuditLog.find(query).populate('actor', 'name email').sort({ createdAt: -1 }).lean();
+  const entries = await AuditLog.find(query).populate('actor', 'name email').sort({ createdAt: -1 }).limit(10000).lean();
 
   const header = ['Time (UTC)', 'Actor', 'Role', 'Action', 'Target type', 'Target ID', 'Summary'];
   const rows = entries.map((e) => [

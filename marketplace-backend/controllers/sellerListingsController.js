@@ -336,8 +336,8 @@ const deleteListing = async (req, res) => {
   const media = await Media.find({ listing: listing._id }).lean();
   for (const m of media) {
     for (const size of ['thumb', 'medium', 'large']) {
-      deleteFile(m.variants[size].webp);
-      deleteFile(m.variants[size].jpg);
+      await deleteFile(m.variants[size].webp);
+      await deleteFile(m.variants[size].jpg);
     }
   }
   await Media.deleteMany({ listing: listing._id });

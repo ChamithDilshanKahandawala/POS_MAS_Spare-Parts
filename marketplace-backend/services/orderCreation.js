@@ -10,6 +10,7 @@ const { computeParcelWeight, computeFeeCents } = require('./deliveryFee');
 const { reserve } = require('./stockReservation');
 const { nextOrderNumber, sellerOrderNumber } = require('./orderNumbers');
 const { notify } = require('./notifications');
+const { queueMessage } = require('./messaging');
 const SellerMember = require('../models/SellerMember');
 
 const POS_STALE_AFTER_MS = 30 * 60 * 1000; // Part C: 30 minutes
@@ -260,6 +261,17 @@ async function attemptPlaceOrder({ customer, address, customerNote, items, idemp
       deliveryTotalCents,
       grandTotalCents: itemsTotalCents + deliveryTotalCents,
     }], { session });
+
+    // Email/SMS rows commit with the order or not at all (the worker sends
+    // them after commit); in-app notifications stay outside, below.
+    const rupees = (cents) => (cents / 100).toFixed(2);
+    await queueMessage({ userId: customer._id, template: 'order.placed', vars: { orderNumber, amount: rupees(order.grandTotalCents) }, session });
+    for (const so of sellerOrderDocs) {
+      const owner = await SellerMember.findOne({ seller: so.seller, role: 'seller_owner', status: 'active' }).select('user').session(session).lean();
+      if (owner) {
+        await queueMessage({ userId: owner.user, template: 'order.new', vars: { orderNumber: so.orderNumber, itemCount: so.items.length, amount: rupees(so.codAmountCents) }, session });
+      }
+    }
 
     await session.commitTransaction();
 

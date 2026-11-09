@@ -1,10 +1,12 @@
 import { useTranslation } from 'react-i18next';
+import { usePublishedPage } from '../hooks/useSiteContent';
+import PublishedInfoPage from '../components/content/PublishedInfoPage';
 import { Truck, CheckCircle2, XCircle, MessageCircle, Info } from 'lucide-react';
 import { SHOP_INFO, DELIVERY_OPTIONS } from '../config/store';
 import { formatAmount } from '../utils/formatLKR';
 import useDocumentMeta from '../hooks/useDocumentMeta';
 
-export default function DeliveryPage() {
+function DeliveryPageBuiltIn() {
   const { t } = useTranslation('delivery');
   useDocumentMeta(`${t('metaTitle')} | ${SHOP_INFO.name}`, t('metaDescription'));
 
@@ -90,4 +92,12 @@ export default function DeliveryPage() {
       </a>
     </div>
   );
+}
+
+// Admin → Content can replace this page per language; without a published
+// version the built-in copy above is shown.
+export default function DeliveryPage() {
+  const { i18n } = useTranslation();
+  const published = usePublishedPage('delivery', i18n.language);
+  return published ? <PublishedInfoPage page={published} /> : <DeliveryPageBuiltIn />;
 }

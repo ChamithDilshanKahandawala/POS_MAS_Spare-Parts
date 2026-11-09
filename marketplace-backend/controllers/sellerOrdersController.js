@@ -10,6 +10,7 @@ const SellerOrder = require('../models/SellerOrder');
 const Seller = require('../models/Seller');
 const { consume, release, restock } = require('../services/stockReservation');
 const { notify } = require('../services/notifications');
+const { queueMessage } = require('../services/messaging');
 const { logAction } = require('../services/auditLog');
 const { postDeliveryLedgerEntries } = require('../services/ledger');
 const LedgerEntry = require('../models/LedgerEntry');
@@ -185,9 +186,11 @@ const transitionOrder = async (req, res) => {
       }
     }
   }
+  const outgoing = [];
   if (transition.to === 'delivered') {
     order.deliveredAt = new Date();
     await notify({ userId: order.customer, type: 'order.delivered', title: `Order ${order.orderNumber} was delivered`, link: '/orders' });
+    outgoing.push({ userId: order.customer, template: 'order.delivered', vars: { orderNumber: order.orderNumber } });
   }
   if (transition.to === 'cancelled') {
     order.cancelReason = reason || '';
@@ -211,8 +214,10 @@ const transitionOrder = async (req, res) => {
   }
   if (transition.to === 'shipped') {
     await notify({ userId: order.customer, type: 'order.shipped', title: `Order ${order.orderNumber} has shipped`, body: trackingNumber ? `Tracking: ${trackingNumber}` : '', link: '/orders' });
+    outgoing.push({ userId: order.customer, template: 'order.shipped', vars: { orderNumber: order.orderNumber, courier: order.courier || courier, trackingNumber: trackingNumber || order.trackingNumber, amount: (order.codAmountCents / 100).toFixed(2) } });
   }
   await order.save();
+  for (const message of outgoing) await queueMessage(message);
 
   // Milestone 7 Part A.2 — posts the sale+commission ledger entries
   // exactly once, atomically claimed inside the service itself (see

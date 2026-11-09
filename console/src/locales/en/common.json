@@ -14,14 +14,14 @@
     "platformStaff": "Platform staff",
     "auditLog": "Audit log",
     "settings": "Settings",
-    "myStore": "My store"
+    "myStore": "My store",
+    "messages": "Messages"
   },
   "switcher": {
     "adminArea": "Admin",
     "myStoreArea": "My store",
     "switchStore": "Switch store"
   },
-  "comingSoon": "Available after Milestone {{milestone}}",
   "logout": "Log out",
   "loading": "Loading…",
   "error": {

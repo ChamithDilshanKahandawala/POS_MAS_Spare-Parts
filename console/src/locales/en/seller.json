@@ -577,5 +577,76 @@
       "rejected": "Return rejected",
       "received": "Item marked as received"
     }
+  },
+  "notificationPrefs": {
+    "title": "Email and SMS",
+    "intro": "Choose which updates reach you outside the console. You always see everything here in Notifications.",
+    "group": "Updates",
+    "saved": "Preference saved",
+    "alwaysOn": "Login codes and security messages are always sent.",
+    "noPhone": "Add a phone number to your account to get SMS.",
+    "channel": {
+      "email": "Email",
+      "sms": "SMS"
+    },
+    "groups": {
+      "orders": {
+        "label": "Orders",
+        "hint": "New orders and cancellations"
+      },
+      "returns": {
+        "label": "Returns",
+        "hint": "Return requests and decisions"
+      },
+      "payouts": {
+        "label": "Payouts",
+        "hint": "Payouts sent or failed"
+      }
+    },
+    "phoneLabel": "Mobile number",
+    "phoneNone": "Not added",
+    "phoneAdd": "Add number",
+    "phoneChange": "Change",
+    "phoneSave": "Save number",
+    "phoneSaved": "Mobile number saved",
+    "passwordPlaceholder": "Current password",
+    "phoneHint": "Login codes are sent to this number by SMS. Leave it empty to get codes by email instead."
+  },
+  "performance": {
+    "subtitle": "How your store is doing. Today updates live; earlier days are refreshed every night.",
+    "range": "Date range",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "vsPrevious": "vs previous period",
+    "noChange": "No change",
+    "noComparison": "No earlier period to compare",
+    "kpi": {
+      "sales": "Sales",
+      "orders": "Orders",
+      "aov": "Average order",
+      "cancellationRate": "Cancellation rate",
+      "returnRate": "Return rate",
+      "onTime": "On-time dispatch"
+    },
+    "hints": {
+      "cancellationRate": "{{count}} cancelled",
+      "returnRate": "{{returns}} returns / {{delivered}} delivered",
+      "onTime": "{{onTime}} of {{shipped}} shipped on time"
+    },
+    "charts": {
+      "sales": "Daily sales",
+      "orders": "Daily orders"
+    },
+    "showTable": "Show as table",
+    "hideTable": "Hide table",
+    "table": {
+      "day": "Day",
+      "cancelled": "Cancelled",
+      "listing": "Listing",
+      "qty": "Sold"
+    },
+    "topListings": "Top listings",
+    "noSales": "No sales in this period",
+    "viewsNote": "Listing views aren't tracked yet, so they aren't shown."
   }
 }

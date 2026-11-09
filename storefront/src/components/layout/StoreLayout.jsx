@@ -17,6 +17,7 @@ import { CATEGORIES } from '../../config/store';
 import { isMarketplace } from '../../api/dataSource';
 import { localizedPick } from '../../api/marketplaceAdapters';
 import useMarketplaceCategories from '../../hooks/useMarketplaceCategories';
+import useSiteContent, { pickLocalized } from '../../hooks/useSiteContent';
 
 // framer-motion (the CartDrawer's slide/fade transitions) is ~110 KB on its
 // own — StoreLayout is the one component every single route mounts, so an
@@ -29,6 +30,9 @@ const CartDrawer = lazy(() => import('../cart/CartDrawer'));
 
 export default function StoreLayout() {
   const { t, i18n } = useTranslation('common');
+  const siteContent = useSiteContent();
+  const announcement = siteContent?.announcement;
+  const announcementText = pickLocalized(announcement?.text, i18n.language);
   const { user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const { cart, setIsCartOpen } = useCart();
@@ -75,7 +79,13 @@ export default function StoreLayout() {
         color: 'white', textAlign: 'center', padding: '6px 16px',
         fontSize: '12px', fontWeight: 600, letterSpacing: '0.3px',
       }}>
-        {isMarketplace ? t('marketplace:announcementBar') : t('announcementBar')}
+        {announcementText ? (
+          announcement.link
+            ? (announcement.link.startsWith('/')
+              ? <Link to={announcement.link} style={{ color: 'inherit', textDecoration: 'underline' }}>{announcementText}</Link>
+              : <a href={announcement.link} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>{announcementText}</a>)
+            : announcementText
+        ) : (isMarketplace ? t('marketplace:announcementBar') : t('announcementBar'))}
       </div>
 
       {/* ── Main Navbar ── */}

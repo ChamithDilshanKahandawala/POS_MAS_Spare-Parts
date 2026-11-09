@@ -11,6 +11,7 @@ import { normalizeListing, listingFitsVehicle, localizedPick } from '../api/mark
 import useSelectedVehicle from '../hooks/useSelectedVehicle';
 import useDocumentMeta from '../hooks/useDocumentMeta';
 import InstallCard from '../components/InstallCard';
+import HomeBanners from '../components/content/HomeBanners';
 
 // Milestone 5 Part D.1 — home page in marketplace mode: real category
 // tree, a vehicle picker, latest listings, and featured stores (derived
@@ -63,6 +64,7 @@ export default function StorefrontPageMarketplace() {
 
   return (
     <div className="animate-fade">
+      <HomeBanners language={i18n.language} />
       {/* Hero */}
       <div style={{
         background: 'var(--hero-gradient)', borderRadius: '20px', padding: '48px 40px', color: 'white',

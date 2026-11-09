@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
-const { generateOtpCode, hashOtpCode, verifyOtpCode, otpExpiryDate } = require('../services/otpCode');
+const { verifyOtpCode } = require('../services/otpCode');
+const { issueOtp } = require('../services/otpDelivery');
 
 // Milestone 7 — the admin-side counterpart of
 // controllers/sellerBankController.js's stepUpStart/stepUpVerify. Same
@@ -18,14 +19,7 @@ const stepUpStart = async (req, res) => {
   const match = await bcrypt.compare(password, user.password);
   if (!match) return res.status(401).json({ message: 'Incorrect password' });
 
-  const code = generateOtpCode();
-  user.stepUpOtpHash = await hashOtpCode(code);
-  user.stepUpOtpExpiresAt = otpExpiryDate();
-  await user.save();
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`\n🔐 Step-up code for ${user.email}: ${code} (expires in 5 min)\n`);
-  }
+  const code = await issueOtp(user, 'stepup');
 
   const response = { message: 'Code sent' };
   if (process.env.NODE_ENV === 'test') response.debugOtpCode = code;

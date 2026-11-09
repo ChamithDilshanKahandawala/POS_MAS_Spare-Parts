@@ -109,7 +109,6 @@
       "empty": "This seller has no listings yet",
       "view": "View"
     },
-    "comingSoonTab": "Available after a later milestone",
     "bank": {
       "status": {
         "none": "Not set up",
@@ -161,6 +160,17 @@
         "status": "Status",
         "updated": "Listings updated"
       }
+    },
+    "ordersTab": {
+      "empty": "No orders for this seller yet",
+      "order": "Order",
+      "date": "Date",
+      "customer": "Customer",
+      "cod": "COD",
+      "status": "Status",
+      "pagination": "Page {{page}} of {{pages}} · {{total}} parcels",
+      "prev": "Previous",
+      "next": "Next"
     }
   },
   "applications": {
@@ -307,7 +317,8 @@
       "enableHint": "While off, marketplace checkout shows the \"coming soon — order on WhatsApp\" screen instead of taking real orders.",
       "autoCancelAfterHours": "Auto-cancel unconfirmed orders after (hours)",
       "courierName": "Courier name",
-      "returnResponseDays": "Return responses: seller has (days) before the platform decides"
+      "returnResponseDays": "Return responses: seller has (days) before the platform decides",
+      "dispatchWithinHours": "Dispatch deadline (hours after the order, for on-time rate)"
     },
     "deliveryRates": {
       "heading": "Delivery rates by district",
@@ -779,6 +790,157 @@
     "toast": {
       "decided": "Decision recorded",
       "refunded": "Refund recorded"
+    }
+  },
+  "messagesPage": {
+    "subtitle": "Every email and SMS the platform sends. Recipients are partly hidden; codes and links are never stored.",
+    "allStatuses": "All statuses",
+    "allChannels": "Email and SMS",
+    "empty": "No messages yet",
+    "failedBanner": "{{count}} failed — show them",
+    "retry": "Retry",
+    "retried": "Queued to send again",
+    "error": "Error",
+    "redacted": "This message contained a code or link, which is never stored, so it can't be resent. Ask the person to request a new one.",
+    "attempts": "{{count}} attempts",
+    "pagination": "Page {{page}} of {{pages}}",
+    "status": {
+      "pending": "Queued",
+      "sending": "Sending",
+      "sent": "Sent",
+      "failed": "Failed"
+    },
+    "channel": {
+      "email": "Email",
+      "sms": "SMS"
+    },
+    "table": {
+      "date": "Date",
+      "channel": "Channel",
+      "template": "Message",
+      "to": "To",
+      "status": "Status",
+      "provider": "Provider"
+    }
+  },
+  "customersPage": {
+    "subtitle": "Customer accounts: orders, returns and account status. Phones and street addresses are partly hidden.",
+    "search": "Search name, email or phone",
+    "searchButton": "Search",
+    "allStatuses": "All accounts",
+    "empty": "No customers found",
+    "sellerBadge": "Also a seller",
+    "lastOrder": "Last {{date}}",
+    "view": "View",
+    "pagination": "Page {{page}} of {{pages}} · {{total}} customers",
+    "status": {
+      "active": "Active",
+      "deactivated": "Deactivated"
+    },
+    "table": {
+      "name": "Name",
+      "contact": "Contact",
+      "orders": "Orders",
+      "joined": "Joined",
+      "status": "Status"
+    },
+    "detail": {
+      "back": "Back to customers",
+      "notFound": "Customer not found",
+      "orders": "Orders",
+      "spent": "Spent",
+      "returns": "Returns",
+      "joined": "Joined",
+      "ordersTitle": "Recent orders",
+      "noOrders": "No orders yet",
+      "order": "Order",
+      "date": "Date",
+      "total": "Total",
+      "parcels": "Parcels",
+      "returnsTitle": "Returns",
+      "noReturns": "No returns",
+      "contact": "Contact",
+      "language": "Language",
+      "addresses": "Saved addresses",
+      "accountTitle": "Account",
+      "deactivatedOn": "Deactivated {{date}}",
+      "reasonPlaceholder": "Reason (required, saved in the audit log)",
+      "deactivate": "Deactivate account",
+      "reactivate": "Reactivate account",
+      "deactivateHint": "Deactivating signs the customer out everywhere and blocks login until reactivated.",
+      "sendReset": "Email a password reset link",
+      "sendResetHint": "Staff never see or set passwords. The customer chooses a new one from the link."
+    },
+    "toast": {
+      "deactivated": "Account deactivated",
+      "reactivated": "Account reactivated",
+      "resetSent": "Reset link sent"
+    }
+  },
+  "contentPage": {
+    "subtitle": "Info pages, homepage banners and the announcement bar. Edits are drafts until you publish; unpublished pages show the storefront's built-in text.",
+    "tabs": {
+      "pages": "Info pages",
+      "banners": "Homepage banners",
+      "announcement": "Announcement bar"
+    },
+    "pages": {
+      "about": "About",
+      "delivery": "Delivery",
+      "returns": "Returns",
+      "terms": "Terms",
+      "privacy": "Privacy"
+    },
+    "status": {
+      "notPublished": "Not published",
+      "unpublishedChanges": "Draft changes",
+      "published": "Published"
+    },
+    "publishedOn": "Live since {{date}}",
+    "language": "Language",
+    "languages": {
+      "en": "English",
+      "si": "Sinhala",
+      "ta": "Tamil"
+    },
+    "fields": {
+      "title": "Title",
+      "headline": "Headline (also the image description)",
+      "text": "Announcement text",
+      "body": "Page text",
+      "link": "Link (a site path like /delivery, or https://…)",
+      "audience": "Show to",
+      "startsAt": "Show from (optional)",
+      "endsAt": "Show until (optional)"
+    },
+    "audience": {
+      "all": "Every language",
+      "en": "English readers",
+      "si": "Sinhala readers",
+      "ta": "Tamil readers"
+    },
+    "markupHint": "Blank line = new paragraph. ## Heading, ### Smaller heading, - bullet point, **bold**, [link text](/path).",
+    "fallbackHint": "Leave a language empty to show the English version to those readers.",
+    "addBanner": "Add banner",
+    "noBanners": "No banners yet",
+    "untitledBanner": "Untitled banner",
+    "noImage": "No image yet",
+    "uploadImage": "Upload image",
+    "imageHint": "Wide images work best (about 1600 × 480). JPG, PNG or WebP.",
+    "saveDraft": "Save draft",
+    "preview": "Preview",
+    "hidePreview": "Hide preview",
+    "previewLabel": "Preview · {{lang}}",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "delete": "Delete",
+    "confirmDelete": "Delete this banner? This can't be undone.",
+    "toast": {
+      "saved": "Draft saved",
+      "published": "Published",
+      "unpublished": "Unpublished",
+      "imageUploaded": "Image uploaded",
+      "deleted": "Banner deleted"
     }
   }
 }

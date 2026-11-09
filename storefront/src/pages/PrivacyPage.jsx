@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import { usePublishedPage } from '../hooks/useSiteContent';
+import PublishedInfoPage from '../components/content/PublishedInfoPage';
 import { SHOP_INFO, PLATFORM_INFO } from '../config/store';
 import useDocumentMeta from '../hooks/useDocumentMeta';
 
@@ -22,7 +24,7 @@ function BulletList({ items }) {
   );
 }
 
-export default function PrivacyPage() {
+function PrivacyPageBuiltIn() {
   const { t } = useTranslation('privacy');
   useDocumentMeta(`${t('metaTitle')} | ${PLATFORM_INFO.name}`, t('metaDescription'));
 
@@ -80,4 +82,12 @@ export default function PrivacyPage() {
       </p>
     </div>
   );
+}
+
+// Admin → Content can replace this page per language; without a published
+// version the built-in copy above is shown.
+export default function PrivacyPage() {
+  const { i18n } = useTranslation();
+  const published = usePublishedPage('privacy', i18n.language);
+  return published ? <PublishedInfoPage page={published} /> : <PrivacyPageBuiltIn />;
 }

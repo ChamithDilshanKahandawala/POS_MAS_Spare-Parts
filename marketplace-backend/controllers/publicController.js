@@ -31,7 +31,7 @@ const submitApplication = async (req, res) => {
     if (!detected) {
       return res.status(400).json({ message: `${field}: file is not a valid PDF, JPG, or PNG` });
     }
-    const storedPath = saveFile(file.buffer, detected.ext);
+    const storedPath = await saveFile(file.buffer, detected.ext);
     documents.push({
       type: DOC_FIELD_TO_TYPE[field],
       filename: file.originalname,

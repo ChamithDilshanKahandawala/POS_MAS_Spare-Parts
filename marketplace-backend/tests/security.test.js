@@ -269,13 +269,24 @@ test('?limit=100000 against a real list endpoint is capped, not honored literall
 // of the suite (which depends on NODE_ENV=test for its own DB guard
 // rails) is never affected.
 
+// A stub provider stands in for the real email/SMS gateway: the console
+// provider refuses to send under NODE_ENV=production by design.
 async function withNodeEnv(value, fn) {
+  const { setProviderForTests } = require('../services/messaging');
+  const stub = { name: 'stub', async send() { return { id: 'stub' }; } };
   const original = process.env.NODE_ENV;
+  const log = console.log;
   process.env.NODE_ENV = value;
+  setProviderForTests('email', stub);
+  setProviderForTests('sms', stub);
+  console.log = () => {};
   try {
     return await fn();
   } finally {
     process.env.NODE_ENV = original;
+    setProviderForTests('email', null);
+    setProviderForTests('sms', null);
+    console.log = log;
   }
 }
 

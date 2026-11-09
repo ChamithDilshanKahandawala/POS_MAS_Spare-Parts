@@ -6,6 +6,7 @@ const Seller = require('../models/Seller');
 const SellerMember = require('../models/SellerMember');
 const { getPlatformSettings } = require('./platformSettings');
 const { notify } = require('./notifications');
+const { queueMessage } = require('./messaging');
 
 async function ownerUserId(sellerId) {
   const owner = await SellerMember.findOne({ seller: sellerId, role: 'seller_owner', status: 'active' }).select('user').lean();
@@ -245,6 +246,7 @@ async function markPaid(payoutId, { bankReference, paidDate }) {
       body: `Bank reference: ${bankReference}`,
       link: '/seller/finance',
     });
+    await queueMessage({ userId: ownerId, template: 'payout.paid', vars: { amount: (payout.netCents / 100).toFixed(2), reference: bankReference } });
   }
   return payout;
 }
@@ -278,6 +280,7 @@ async function markFailed(payoutId, { reason }) {
       body: reason,
       link: '/seller/finance',
     });
+    await queueMessage({ userId: ownerId, template: 'payout.failed', vars: { amount: (payout.netCents / 100).toFixed(2), reason } });
   }
   return payout;
 }
@@ -303,7 +306,10 @@ async function checkAndGenerateWeeklyRun() {
 function startPayoutRunJob() {
   if (jobTimer) return;
   jobTimer = setInterval(() => {
-    checkAndGenerateWeeklyRun().catch((err) => console.error('[payoutRuns] weekly job failed:', err.message));
+    checkAndGenerateWeeklyRun().catch((err) => {
+      console.error('[payoutRuns] weekly job failed:', err.message);
+      require('./opsAlerts').reportJobFailure('payout-run', err);
+    });
   }, JOB_CHECK_INTERVAL_MS);
   jobTimer.unref?.();
 }

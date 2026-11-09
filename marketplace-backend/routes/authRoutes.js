@@ -2,7 +2,7 @@ const express = require('express');
 const { z } = require('zod');
 const router = express.Router();
 
-const { register, forgotPassword, resetPassword, login, verifyOtp, refresh, logout, getMe } = require('../controllers/authController');
+const { register, forgotPassword, resetPassword, login, verifyOtp, refresh, logout, getMe, updateMyPhone } = require('../controllers/authController');
 const { requireAuth } = require('../middleware/authMiddleware');
 const { authLimiter } = require('../middleware/rateLimiter');
 const { validate } = require('../middleware/validate');
@@ -55,5 +55,10 @@ router.post('/verify-otp', authLimiter, validate({ body: verifyOtpSchema }), asy
 router.post('/refresh', authLimiter, validate({ body: refreshSchema }), asyncHandler(refresh));
 router.post('/logout', requireAuth, asyncHandler(logout));
 router.get('/me', requireAuth, asyncHandler(getMe));
+const updatePhoneSchema = z.object({
+  phone: z.string().trim().max(20),
+  password: z.string().min(1),
+}).strict();
+router.patch('/me/phone', requireAuth, authLimiter, validate({ body: updatePhoneSchema }), asyncHandler(updateMyPhone));
 
 module.exports = router;

@@ -206,6 +206,10 @@ const sellerOrderSchema = new mongoose.Schema(
 sellerOrderSchema.index({ seller: 1, status: 1, createdAt: -1 });
 // Customer's own order list/detail.
 sellerOrderSchema.index({ customer: 1, createdAt: -1 });
+// Parcels of one order (customer order detail, checkout, My orders).
+sellerOrderSchema.index({ order: 1 });
+// Seller → Performance aggregations over a date range.
+sellerOrderSchema.index({ seller: 1, createdAt: -1 });
 // The auto-cancel sweep's own query.
 sellerOrderSchema.index({ status: 1, autoCancelAt: 1 });
 // The "not yet recorded in POS" sweep and the Seller Orders filter of

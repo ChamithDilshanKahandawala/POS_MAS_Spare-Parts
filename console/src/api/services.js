@@ -216,3 +216,34 @@ export const getAdminReturn = (id) => api.get(`/admin/returns/${id}`);
 export const decideAdminReturn = (id, body) => api.post(`/admin/returns/${id}/decide`, body);
 export const refundAdminReturn = (id, body) => api.post(`/admin/returns/${id}/refund`, body);
 export const getAdminReturnPhotoBlob = (id, index) => api.get(`/admin/returns/${id}/photos/${index}`, { responseType: 'blob' });
+
+// --- Messaging (Milestone 9) ---
+export const getAdminMessages = (params) => api.get('/admin/messages', { params });
+export const retryAdminMessage = (id) => api.post(`/admin/messages/${id}/retry`, {});
+export const getMyNotificationPrefs = () => api.get('/seller/me/notification-preferences');
+export const updateMyNotificationPrefs = (body) => api.patch('/seller/me/notification-preferences', body);
+export const updateMyPhone = (body) => api.patch('/auth/me/phone', body);
+
+// --- Customers (Milestone 10) ---
+export const getAdminCustomers = (params) => api.get('/admin/customers', { params });
+export const getAdminCustomer = (id) => api.get(`/admin/customers/${id}`);
+export const deactivateAdminCustomer = (id, reason) => api.post(`/admin/customers/${id}/deactivate`, { reason });
+export const reactivateAdminCustomer = (id, reason) => api.post(`/admin/customers/${id}/reactivate`, { reason });
+export const sendAdminCustomerPasswordReset = (id) => api.post(`/admin/customers/${id}/send-password-reset`, {});
+
+// --- Performance (Milestone 10) ---
+export const getSellerPerformance = (days) => api.get('/seller/performance', { params: { days } });
+
+// --- Content (Milestone 10) ---
+export const getAdminContent = () => api.get('/admin/content');
+export const saveAdminContentDraft = (id, body) => api.put(`/admin/content/${id}`, body);
+export const createAdminBanner = (body) => api.post('/admin/content/banners', body);
+export const uploadAdminBannerImage = (id, file) => {
+  const form = new FormData();
+  form.append('file', file);
+  return api.post(`/admin/content/${id}/image`, form, { headers: { 'Content-Type': 'multipart/form-data' } });
+};
+export const getAdminContentImageBlob = (id, version = 'draft') => api.get(`/admin/content/${id}/image`, { params: { version }, responseType: 'blob' });
+export const publishAdminContent = (id) => api.post(`/admin/content/${id}/publish`, {});
+export const unpublishAdminContent = (id) => api.post(`/admin/content/${id}/unpublish`, {});
+export const deleteAdminBanner = (id) => api.delete(`/admin/content/${id}`);

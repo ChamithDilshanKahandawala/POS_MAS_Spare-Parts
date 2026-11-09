@@ -43,7 +43,7 @@ const createReturn = async (req, res) => {
 
   const processed = await Promise.all(files.map((f) => processReturnPhoto(f.buffer)));
   if (processed.some((p) => !p)) return res.status(400).json({ message: 'Each photo must be a real JPG, PNG, or WebP image' });
-  const photoPaths = processed.map((p) => saveFile(p.buffer, p.ext, 'return-photos'));
+  const photoPaths = await Promise.all(processed.map((p) => saveFile(p.buffer, p.ext, 'return-photos')));
 
   try {
     const request = await createReturnRequest({
@@ -56,14 +56,14 @@ const createReturn = async (req, res) => {
     });
     return res.status(201).json({ returnRequest: request });
   } catch (err) {
-    photoPaths.forEach(deleteFile);
+    await Promise.all(photoPaths.map(deleteFile));
     throw err;
   }
 };
 
 // GET /api/customer/returns
 const listMyReturns = async (req, res) => {
-  const returns = await ReturnRequest.find({ customer: req.user._id }).sort({ createdAt: -1 }).lean();
+  const returns = await ReturnRequest.find({ customer: req.user._id }).sort({ createdAt: -1 }).limit(100).lean();
   res.json({ returns });
 };
 

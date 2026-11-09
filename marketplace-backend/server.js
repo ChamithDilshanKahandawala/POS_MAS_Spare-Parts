@@ -25,6 +25,12 @@ const { startReturnEscalationJob } = require('./services/returnEscalation');
 const { startPosRecordedReminderJob } = require('./services/posRecordedReminder');
 const { startLedgerMaturityJob } = require('./services/ledgerMaturity');
 const { startPayoutRunJob } = require('./services/payoutRuns');
+const { startMessageOutboxJob } = require('./services/messaging');
+const { startSellerStatsJob } = require('./services/sellerStats');
+const { startOpsAlertsJob, collectHealth } = require('./services/opsAlerts');
+const { requestContext } = require('./middleware/requestContext');
+const { errorHandler } = require('./middleware/errorHandler');
+const logger = require('./utils/logger');
 
 // Discovered while running the Playwright suite against this server:
 // a transient MongoDB Atlas network blip (PoolClearedOnNetworkError)
@@ -34,12 +40,13 @@ const { startPayoutRunJob } = require('./services/payoutRuns');
 // default in modern Node. Log it instead of going down; the driver
 // reconnects and retries on its own once the network recovers.
 process.on('unhandledRejection', (reason) => {
-  console.error('[unhandledRejection]', reason);
+  logger.error('unhandledRejection', { error: String(reason?.message || reason), stack: reason?.stack });
 });
 
 const app = express();
 
 app.set('trust proxy', 1);
+app.use(requestContext);
 app.use(helmet());
 
 const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
@@ -51,7 +58,9 @@ app.use(cors({
   origin(origin, callback) {
     // No Origin header (curl, server-to-server, same-origin) — allow.
     if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(new Error('Not allowed by CORS'));
+    const err = new Error('Not allowed by CORS');
+    err.statusCode = 403;
+    return callback(err);
   },
   credentials: true,
 }));
@@ -67,6 +76,16 @@ app.use(express.json({ limit: '200kb' }));
 
 app.get('/', (req, res) => res.json({ message: 'Apexora marketplace API' }));
 
+// Uptime checks: 200 when the database answers, 503 otherwise. Counts only —
+// nothing here identifies a user or order.
+const health = async (req, res) => {
+  const result = await collectHealth().catch(() => ({ ok: false, db: 'down' }));
+  res.set('Cache-Control', 'no-store');
+  res.status(result.ok ? 200 : 503).json(result);
+};
+app.get('/health', health);
+app.get('/api/health', health);
+
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/seller', sellerRoutes);
@@ -76,14 +95,7 @@ app.use('/api/customer', customerRoutes);
 
 app.use((req, res) => res.status(404).json({ message: 'Route not found' }));
 
-// Centralized error handler — a thrown/rejected error in any route lands
-// here instead of crashing the process or leaking a stack trace to the
-// client.
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.statusCode || 500).json({ message: err.message || 'Server error' });
-});
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5002;
 
@@ -100,6 +112,9 @@ async function start() {
   startPosRecordedReminderJob();
   startLedgerMaturityJob();
   startPayoutRunJob();
+  startMessageOutboxJob();
+  startSellerStatsJob();
+  startOpsAlertsJob();
 }
 
 if (require.main === module) {

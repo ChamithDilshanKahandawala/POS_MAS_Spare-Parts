@@ -20,7 +20,7 @@ const listOrders = async (req, res) => {
   if (seller) filter.seller = seller;
   if (status) filter.status = status === 'cancelled' ? { $in: ['cancelled', 'delivery_failed', 'returned'] } : status;
   if (district) filter['shippingAddress.district'] = district;
-  if (search) filter.orderNumber = { $regex: search, $options: 'i' };
+  if (search) filter.orderNumber = { $regex: search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), $options: 'i' };
   if (refundNeeded === 'true') filter.refundNeeded = true;
   if (from || to) {
     filter.createdAt = {};

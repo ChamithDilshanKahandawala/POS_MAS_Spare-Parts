@@ -38,6 +38,9 @@ const userSchema = new mongoose.Schema(
     preferredLanguage: { type: String, enum: ['en', 'si', 'ta'], default: 'en' },
     platformRole: { type: String, enum: ['none', 'platform_staff', 'platform_owner'], default: 'none' },
     isActive: { type: Boolean, default: true },
+    // Milestone 10 — set when platform staff deactivate a customer account.
+    deactivatedAt: { type: Date, default: null },
+    deactivationReason: { type: String, default: '' },
 
     // Max 10, enforced in controllers/customerController.js — the schema
     // itself doesn't cap array length.
@@ -72,8 +75,25 @@ const userSchema = new mongoose.Schema(
     stepUpOtpHash: { type: String, default: null },
     stepUpOtpExpiresAt: { type: Date, default: null },
     stepUpVerifiedAt: { type: Date, default: null },
+
+    // OTP send throttling (services/otpDelivery.js), shared by login and
+    // step-up codes. otpSendDay is the Colombo calendar day the count is for.
+    otpLastSentAt: { type: Date, default: null },
+    otpSendDay: { type: String, default: null },
+    otpSendCount: { type: Number, default: 0 },
+
+    // Email/SMS opt-outs per group. Security and account messages ignore
+    // these — see services/messageTemplates.js.
+    notificationPrefs: {
+      orders: { email: { type: Boolean, default: true }, sms: { type: Boolean, default: true } },
+      returns: { email: { type: Boolean, default: true }, sms: { type: Boolean, default: true } },
+      payouts: { email: { type: Boolean, default: true }, sms: { type: Boolean, default: true } },
+    },
   },
   { timestamps: true }
 );
+
+// Admin → Customers list: newest first, filtered by role and status.
+userSchema.index({ platformRole: 1, isActive: 1, createdAt: -1 });
 
 module.exports = mongoose.model('User', userSchema);

@@ -10,8 +10,21 @@ function signAccessToken(user) {
   return jwt.sign({ id: user._id.toString() }, process.env.JWT_ACCESS_SECRET, { expiresIn: ACCESS_TOKEN_TTL });
 }
 
+// Key rotation: tokens signed with the previous secret stay valid while
+// *_PREVIOUS is set (at least one refresh-token lifetime), so rotating a
+// secret doesn't sign everyone out. Only a bad signature falls through —
+// an expired token is expired under either key.
+function verifyWithRotation(token, current, previous) {
+  try {
+    return jwt.verify(token, current);
+  } catch (err) {
+    if (!previous || err.name !== 'JsonWebTokenError') throw err;
+    return jwt.verify(token, previous);
+  }
+}
+
 function verifyAccessToken(token) {
-  return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+  return verifyWithRotation(token, process.env.JWT_ACCESS_SECRET, process.env.JWT_ACCESS_SECRET_PREVIOUS);
 }
 
 // "View as seller" — an admin reading a seller's own Seller Center in
@@ -42,7 +55,7 @@ function signRefreshToken(user) {
 }
 
 function verifyRefreshTokenSignature(token) {
-  return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+  return verifyWithRotation(token, process.env.JWT_REFRESH_SECRET, process.env.JWT_REFRESH_SECRET_PREVIOUS);
 }
 
 async function issueRefreshToken(user) {

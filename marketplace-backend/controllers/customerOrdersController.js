@@ -12,8 +12,9 @@ const { getPlatformSettings } = require('../services/platformSettings');
 
 // GET /api/customer/orders
 const listMyOrders = async (req, res) => {
-  const orders = await Order.find({ customer: req.user._id }).sort({ createdAt: -1 }).lean();
-  const sellerOrders = await SellerOrder.find({ customer: req.user._id }).lean();
+  // Newest 100 — the storefront has no paging for "My orders" yet.
+  const orders = await Order.find({ customer: req.user._id }).sort({ createdAt: -1 }).limit(100).lean();
+  const sellerOrders = await SellerOrder.find({ order: { $in: orders.map((o) => o._id) } }).lean();
   const byOrder = new Map();
   for (const so of sellerOrders) {
     const key = String(so.order);

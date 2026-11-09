@@ -46,6 +46,8 @@ const notificationSchema = new mongoose.Schema(
         'return.escalated', // customer + seller owner — no seller response in time, platform will decide
         'return.decided', // customer + seller owner — platform decided (refund or dismissed)
         'return.refunded', // customer + seller owner — the refund was paid
+        // --- Milestone 11 ---
+        'ops.alert', // platform owners — outbox backlog, failed payouts, failed jobs
       ],
     },
     title: { type: String, required: true },

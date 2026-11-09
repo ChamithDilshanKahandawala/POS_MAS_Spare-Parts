@@ -1,4 +1,5 @@
 const SellerApplication = require('../models/SellerApplication');
+const { queueMessage, sendNow } = require('../services/messaging');
 const Seller = require('../models/Seller');
 const { logAction } = require('../services/auditLog');
 const { createInvite } = require('../services/invites');
@@ -42,7 +43,7 @@ const getApplicationDocument = async (req, res) => {
   const document = application.documents.find((d) => d.type === req.params.type);
   if (!document) return res.status(404).json({ message: 'Document not found' });
 
-  const buffer = readFile(document.path);
+  const buffer = await readFile(document.path);
   res.set('Content-Type', document.mimetype);
   res.send(buffer);
 };
@@ -91,8 +92,6 @@ const addNote = async (req, res) => {
 };
 
 // POST /api/admin/applications/:id/request-info — status -> info_requested.
-// No real email provider in dev; the "email" is a console.log, same as
-// OTP codes and invite links.
 const requestInfo = async (req, res) => {
   const application = await SellerApplication.findById(req.params.id);
   if (!application) return res.status(404).json({ message: 'Application not found' });
@@ -105,7 +104,7 @@ const requestInfo = async (req, res) => {
   application.infoRequestedMessage = req.body.message;
   await application.save();
 
-  console.log(`[email:dev] To: ${application.email} — More information needed for your Apexora seller application: ${req.body.message}`);
+  await queueMessage({ to: application.email, template: 'application.info_requested', vars: { storeName: application.storeName, message: req.body.message } });
 
   await logAction({
     actor: req.user,
@@ -160,7 +159,9 @@ const approveApplication = async (req, res) => {
     sellerId: seller._id,
     invitedBy: req.user,
   });
-  console.log(`[email:dev] To: ${application.email} — Your Apexora seller application was approved! Accept your invite: /invite/${token}`);
+  // Invite links are secrets: sent immediately, never stored. A failed send
+  // shows in Admin → Messages.
+  await sendNow({ to: application.email, template: 'application.approved', vars: { storeName: application.storeName, link: `${process.env.CONSOLE_URL || 'http://localhost:5175'}/invite/${token}` } }).catch((err) => console.error('[messaging] invite email failed:', err.message));
 
   await logAction({
     actor: req.user,
@@ -189,7 +190,7 @@ const rejectApplication = async (req, res) => {
   application.rejectedReason = req.body.reason;
   await application.save();
 
-  console.log(`[email:dev] To: ${application.email} — Your Apexora seller application was not approved: ${req.body.reason}`);
+  await queueMessage({ to: application.email, template: 'application.rejected', vars: { storeName: application.storeName, reason: req.body.reason } });
 
   await logAction({
     actor: req.user,

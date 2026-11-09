@@ -1,4 +1,6 @@
 import { Trans, useTranslation } from 'react-i18next';
+import { usePublishedPage } from '../hooks/useSiteContent';
+import PublishedInfoPage from '../components/content/PublishedInfoPage';
 import { Link } from 'react-router-dom';
 import { SHOP_INFO } from '../config/store';
 import useDocumentMeta from '../hooks/useDocumentMeta';
@@ -8,7 +10,7 @@ import useDocumentMeta from '../hooks/useDocumentMeta';
 // draft status.
 const SECTION_ORDER = ['prices', 'stock', 'confirmation', 'delivery', 'returns', 'law'];
 
-export default function TermsPage() {
+function TermsPageBuiltIn() {
   const { t } = useTranslation('terms');
   useDocumentMeta(`${t('metaTitle')} | ${SHOP_INFO.name}`, t('metaDescription'));
 
@@ -39,4 +41,12 @@ export default function TermsPage() {
       ))}
     </div>
   );
+}
+
+// Admin → Content can replace this page per language; without a published
+// version the built-in copy above is shown.
+export default function TermsPage() {
+  const { i18n } = useTranslation();
+  const published = usePublishedPage('terms', i18n.language);
+  return published ? <PublishedInfoPage page={published} /> : <TermsPageBuiltIn />;
 }

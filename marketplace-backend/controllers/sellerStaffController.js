@@ -1,4 +1,5 @@
 const SellerMember = require('../models/SellerMember');
+const { sendNow } = require('../services/messaging');
 const Seller = require('../models/Seller');
 const Invite = require('../models/Invite');
 const { logAction } = require('../services/auditLog');
@@ -26,7 +27,7 @@ const inviteStaff = async (req, res) => {
   }
 
   const { invite, token } = await createInvite({ email, role: 'seller_staff', sellerId: req.sellerId, invitedBy: req.user });
-  console.log(`[email:dev] To: ${email} — You've been invited to join ${seller.name} on Apexora: /invite/${token}`);
+  await sendNow({ to: email, template: 'invite.seller_staff', vars: { storeName: seller.name, link: `${process.env.CONSOLE_URL || 'http://localhost:5175'}/invite/${token}` } }).catch((err) => console.error('[messaging] invite email failed:', err.message));
 
   await logAction({
     actor: req.user,

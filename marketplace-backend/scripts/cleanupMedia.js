@@ -33,8 +33,8 @@ async function run() {
 
   for (const media of stale) {
     for (const size of ['thumb', 'medium', 'large']) {
-      deleteFile(media.variants[size].webp);
-      deleteFile(media.variants[size].jpg);
+      await deleteFile(media.variants[size].webp);
+      await deleteFile(media.variants[size].jpg);
     }
   }
   await Media.deleteMany({ _id: { $in: stale.map((m) => m._id) } });

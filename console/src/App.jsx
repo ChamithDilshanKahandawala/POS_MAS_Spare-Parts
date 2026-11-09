@@ -16,8 +16,12 @@ import ApplicationsPage from './pages/admin/ApplicationsPage';
 import ApplicationDetailPage from './pages/admin/ApplicationDetailPage';
 import PlatformStaffPage from './pages/admin/PlatformStaffPage';
 import AuditLogPage from './pages/admin/AuditLogPage';
+import MessagesPage from './pages/admin/MessagesPage';
+import CustomersPage from './pages/admin/CustomersPage';
+import CustomerDetailPage from './pages/admin/CustomerDetailPage';
+import PerformancePage from './pages/seller/PerformancePage';
+import ContentPage from './pages/admin/ContentPage';
 import SettingsPage from './pages/admin/SettingsPage';
-import ComingSoonPage from './pages/admin/ComingSoonPage';
 import AdminReturnsPage from './pages/admin/ReturnsPage';
 import AdminReturnDetailPage from './pages/admin/ReturnDetailPage';
 import SellerReturnsPage from './pages/seller/ReturnsPage';
@@ -37,7 +41,6 @@ import ImportFromPosPage from './pages/seller/ImportFromPosPage';
 import ListingWizardPage from './pages/seller/wizard/ListingWizardPage';
 import OrdersPage from './pages/seller/OrdersPage';
 import OrderDetailPage from './pages/seller/OrderDetailPage';
-import ComingSoonSellerPage from './pages/seller/ComingSoonSellerPage';
 import AdminOrdersPage from './pages/admin/OrdersPage';
 import AdminOrderDetailPage from './pages/admin/OrderDetailPage';
 import AdminFinancePage from './pages/admin/FinancePage';
@@ -62,6 +65,7 @@ const StoreSettingsRoute = sellerRoute(StoreSettingsPage);
 const StaffRoute = sellerRoute(StaffPage);
 const ActivityLogRoute = sellerRoute(ActivityLogPage);
 const NotificationsRoute = sellerRoute(NotificationsPage);
+const PerformanceRoute = sellerRoute(PerformancePage);
 const CategoriesFeesRoute = sellerRoute(CategoriesFeesPage);
 const ProductsRoute = sellerRoute(ProductsPage);
 const ImportFromPosRoute = sellerRoute(ImportFromPosPage);
@@ -102,9 +106,11 @@ export default function App() {
                   <Route path="/admin/returns-disputes/:id" element={<AdminReturnDetailPage />} />
                   <Route path="/admin/finance" element={<AdminFinancePage />} />
                   <Route path="/admin/finance/payout-runs/:id" element={<PayoutRunDetailPage />} />
-                  <Route path="/admin/customers" element={<ComingSoonPage navKey="customers" milestone={10} />} />
-                  <Route path="/admin/content" element={<ComingSoonPage navKey="content" milestone={10} />} />
+                  <Route path="/admin/customers" element={<CustomersPage />} />
+                  <Route path="/admin/customers/:id" element={<CustomerDetailPage />} />
+                  <Route path="/admin/content" element={<ContentPage />} />
                   <Route path="/admin/audit-log" element={<AuditLogPage />} />
+                  <Route path="/admin/messages" element={<MessagesPage />} />
                   <Route path="/admin/settings" element={<SettingsPage />} />
                   <Route element={<RequirePlatformOwner />}>
                     <Route path="/admin/platform-staff" element={<PlatformStaffPage />} />
@@ -121,7 +127,7 @@ export default function App() {
                   <Route path="/seller/orders/:id" element={<OrderDetailRoute />} />
                   <Route path="/seller/returns" element={<ReturnsRoute />} />
                   <Route path="/seller/returns/:id" element={<ReturnDetailRoute />} />
-                  <Route path="/seller/performance" element={<ComingSoonSellerPage navKey="performance" milestone={10} />} />
+                  <Route path="/seller/performance" element={<PerformanceRoute />} />
                   <Route path="/seller/settings" element={<StoreSettingsRoute />} />
                   <Route path="/seller/categories" element={<CategoriesFeesRoute />} />
                   <Route path="/seller/activity" element={<ActivityLogRoute />} />

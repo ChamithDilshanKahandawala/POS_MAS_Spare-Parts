@@ -8,6 +8,7 @@ const { getPublicCategoryTree, getPublicVehicles } = require('../controllers/pub
 const { listPublicListings, getPublicListingDetail, getRelatedListings } = require('../controllers/publicListingsController');
 const { getStorePage, getStoreLogo, getStoreBanner } = require('../controllers/publicStoreController');
 const { getPublicMediaVariant } = require('../controllers/mediaController');
+const { getPublicContent, getPublicBannerImage } = require('../controllers/contentController');
 const { upload, handleUploadErrors } = require('../middleware/upload');
 const { validate, requireValidObjectId } = require('../middleware/validate');
 const asyncHandler = require('../middleware/asyncHandler');
@@ -80,6 +81,8 @@ router.post(
 
 // --- Settings (Milestone 6 Part A) ---
 router.get('/settings', asyncHandler(getPublicSettings));
+router.get('/content', asyncHandler(getPublicContent));
+router.get('/content/banners/:id/image', requireValidObjectId('id'), asyncHandler(getPublicBannerImage));
 
 // --- Catalog (Milestone 2, public) ---
 router.get('/catalog/categories', asyncHandler(getPublicCategoryTree));

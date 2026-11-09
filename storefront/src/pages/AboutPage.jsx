@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { usePublishedPage } from '../hooks/useSiteContent';
+import PublishedInfoPage from '../components/content/PublishedInfoPage';
 import { ShieldCheck, Truck, Banknote, MessageCircle, ChevronRight } from 'lucide-react';
 import { SHOP_INFO, PLATFORM_INFO, CATEGORIES, getSellerForProduct } from '../config/store';
 import { isMarketplace } from '../api/dataSource';
@@ -12,7 +14,7 @@ const WHY_US_ICONS = [ShieldCheck, Truck, Banknote, MessageCircle];
 // already softened in footer.jsx's footerTagline; marketplace:about.*
 // below replaces them in marketplace mode only. pos mode's AboutPage
 // still reads the originals unchanged.
-export default function AboutPage() {
+function AboutPageBuiltIn() {
   const { t } = useTranslation(['about', 'platform', 'marketplace']);
   const aboutSubtitle = isMarketplace ? t('marketplace:about.subtitle') : t('platform:aboutApexoraSubtitle');
   const aboutBody = isMarketplace ? t('marketplace:about.body') : t('platform:aboutApexoraBody');
@@ -126,4 +128,12 @@ export default function AboutPage() {
       </div>
     </div>
   );
+}
+
+// Admin → Content can replace this page per language; without a published
+// version the built-in copy above is shown.
+export default function AboutPage() {
+  const { i18n } = useTranslation();
+  const published = usePublishedPage('about', i18n.language);
+  return published ? <PublishedInfoPage page={published} /> : <AboutPageBuiltIn />;
 }

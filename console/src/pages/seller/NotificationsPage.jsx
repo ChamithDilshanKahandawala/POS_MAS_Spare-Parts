@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../../api/services';
 import EmptyState from '../../components/EmptyState';
+import NotificationPreferences from '../../components/messaging/NotificationPreferences';
 
 export default function NotificationsPage() {
   const { t, i18n } = useTranslation(['seller', 'common']);
@@ -46,6 +47,8 @@ export default function NotificationsPage() {
           <button className="btn-secondary" onClick={handleMarkAll}>{t('notifications.markAllRead')}</button>
         )}
       </div>
+
+      <NotificationPreferences />
 
       {result.entries.length === 0 ? (
         <EmptyState title={t('notifications.noNotifications')} />

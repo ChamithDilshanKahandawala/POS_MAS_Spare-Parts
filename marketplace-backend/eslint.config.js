@@ -15,4 +15,9 @@ module.exports = [
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^_' }],
     },
   },
+  {
+    // k6 scripts: ES modules run by k6, not Node.
+    files: ['loadtest/**/*.js'],
+    languageOptions: { sourceType: 'module', globals: { __ENV: 'readonly', __VU: 'readonly', __ITER: 'readonly' } },
+  },
 ];

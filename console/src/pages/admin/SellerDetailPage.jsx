@@ -8,11 +8,12 @@ import {
   getSeller, updateSellerStatus, updateSellerOverrides, viewAsSeller,
   getSellerBankFull, verifySellerBank, rejectSellerBank, getListingQueue,
   getSellerPosStatus, updateSellerPosConnection, getFinanceSellerLedger,
+  getAdminOrders,
 } from '../../api/services';
 import { useAuth } from '../../context/useAuth';
 import EmptyState from '../../components/EmptyState';
 import { formatLKR } from '../../utils/formatLKR';
-import { formatDateTime } from '../../utils/formatDateTime';
+import { formatDate, formatDateTime } from '../../utils/formatDateTime';
 
 const STATUS_BADGE = { in_review: 'badge-yellow', active: 'badge-green', suspended: 'badge-orange', closed: 'badge-red' };
 
@@ -579,7 +580,7 @@ export default function SellerDetailPage() {
           )}
         </div>
       )}
-      {tab === 'orders' && <EmptyState icon={ShoppingCart} title={t('sellerDetail.comingSoonTab')} />}
+      {tab === 'orders' && <SellerOrdersTab sellerId={id} />}
       {tab === 'finance' && <SellerFinanceTab sellerId={id} />}
     </div>
   );
@@ -631,6 +632,58 @@ function Field({ label, value }) {
     <div>
       <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '2px' }}>{label}</div>
       <div style={{ fontSize: '13px', fontWeight: 600 }}>{value || '—'}</div>
+    </div>
+  );
+}
+
+// This seller's parcels, newest first — each opens the normal admin order page.
+function SellerOrdersTab({ sellerId }) {
+  const { t } = useTranslation(['admin', 'common']);
+  const [page, setPage] = useState(1);
+  const [result, setResult] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    getAdminOrders({ seller: sellerId, page, limit: 20 })
+      .then(({ data }) => { if (active) setResult(data); })
+      .catch(() => toast.error(t('common:error.generic')));
+    return () => { active = false; };
+  }, [sellerId, page, t]);
+
+  if (!result) return <div>{t('common:loading')}</div>;
+  if (result.orders.length === 0) return <EmptyState icon={ShoppingCart} title={t('sellerDetail.ordersTab.empty')} />;
+
+  return (
+    <div className="glass-card" style={{ padding: '20px', overflowX: 'auto' }}>
+      <table className="data-table">
+        <thead>
+          <tr>
+            <th>{t('sellerDetail.ordersTab.order')}</th>
+            <th>{t('sellerDetail.ordersTab.date')}</th>
+            <th>{t('sellerDetail.ordersTab.customer')}</th>
+            <th>{t('sellerDetail.ordersTab.cod')}</th>
+            <th>{t('sellerDetail.ordersTab.status')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {result.orders.map((o) => (
+            <tr key={o._id}>
+              <td style={{ fontFamily: 'monospace', fontSize: '12px' }}><Link to={`/admin/orders/${o._id}`}>{o.orderNumber}</Link></td>
+              <td style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{formatDate(o.createdAt)}</td>
+              <td style={{ fontSize: '12.5px' }}>{o.customer?.name || '—'}</td>
+              <td style={{ fontSize: '12.5px', fontWeight: 700 }}>{formatLKR(o.codAmountCents)}</td>
+              <td style={{ fontSize: '12.5px' }}>{t(`orders.tabs.${o.status}`)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>
+        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t('sellerDetail.ordersTab.pagination', { page, pages: Math.max(1, result.pages), total: result.total })}</span>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button className="btn-secondary" disabled={page <= 1} style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => setPage((p) => p - 1)}>{t('sellerDetail.ordersTab.prev')}</button>
+          <button className="btn-secondary" disabled={page >= result.pages} style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => setPage((p) => p + 1)}>{t('sellerDetail.ordersTab.next')}</button>
+        </div>
+      </div>
     </div>
   );
 }

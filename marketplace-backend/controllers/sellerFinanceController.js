@@ -114,6 +114,7 @@ const getStatements = async (req, res) => {
   const payouts = await Payout.find({ seller: req.sellerId })
     .populate('payoutRun', 'weekKey periodStart periodEnd status')
     .sort({ createdAt: -1 })
+    .limit(260) // five years of weekly payouts
     .lean();
   res.json({ statements: payouts });
 };
@@ -145,6 +146,7 @@ const getPayoutHistory = async (req, res) => {
   const payouts = await Payout.find({ seller: req.sellerId })
     .populate('payoutRun', 'weekKey periodStart periodEnd')
     .sort({ createdAt: -1 })
+    .limit(260) // five years of weekly payouts
     .lean();
   res.json({ payouts });
 };

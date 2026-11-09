@@ -30,11 +30,11 @@ const SAMPLE_PNG = Buffer.concat([
   Buffer.from('sample dev seed NIC photo'),
 ]);
 
-function sampleDocuments() {
+async function sampleDocuments() {
   return [
-    { type: 'br_certificate', filename: 'br-certificate.pdf', path: saveFile(SAMPLE_PDF, 'pdf'), mimetype: 'application/pdf', size: SAMPLE_PDF.length },
-    { type: 'nic_front', filename: 'nic-front.jpg', path: saveFile(SAMPLE_JPEG, 'jpg'), mimetype: 'image/jpeg', size: SAMPLE_JPEG.length },
-    { type: 'nic_back', filename: 'nic-back.png', path: saveFile(SAMPLE_PNG, 'png'), mimetype: 'image/png', size: SAMPLE_PNG.length },
+    { type: 'br_certificate', filename: 'br-certificate.pdf', path: await saveFile(SAMPLE_PDF, 'pdf'), mimetype: 'application/pdf', size: SAMPLE_PDF.length },
+    { type: 'nic_front', filename: 'nic-front.jpg', path: await saveFile(SAMPLE_JPEG, 'jpg'), mimetype: 'image/jpeg', size: SAMPLE_JPEG.length },
+    { type: 'nic_back', filename: 'nic-back.png', path: await saveFile(SAMPLE_PNG, 'png'), mimetype: 'image/png', size: SAMPLE_PNG.length },
   ];
 }
 
@@ -147,7 +147,7 @@ async function seed() {
       address: '45 Galle Road, Colombo 03',
       district: 'Colombo',
       categories: ['Engine Parts', 'Brakes'],
-      documents: sampleDocuments(),
+      documents: await sampleDocuments(),
       status: 'new',
     },
     {
@@ -161,7 +161,7 @@ async function seed() {
       address: '12 Peradeniya Road, Kandy',
       district: 'Kandy',
       categories: ['Tyres', 'Batteries'],
-      documents: sampleDocuments(),
+      documents: await sampleDocuments(),
       status: 'new',
     },
     {
@@ -175,7 +175,7 @@ async function seed() {
       address: '8 Matara Road, Galle',
       district: 'Galle',
       categories: ['Lubricants'],
-      documents: sampleDocuments(),
+      documents: await sampleDocuments(),
       status: 'info_requested',
       infoRequestedMessage: 'The BR certificate photo is blurry — please re-upload a clearer copy.',
     },

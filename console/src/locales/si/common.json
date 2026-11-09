@@ -17,14 +17,14 @@
     "platformStaff": "වේදිකා කාර්ය මණ්ඩලය",
     "auditLog": "විගණන සටහන",
     "settings": "සැකසුම්",
-    "myStore": "මගේ සාප්පුව"
+    "myStore": "මගේ සාප්පුව",
+    "messages": "පණිවිඩ"
   },
   "switcher": {
     "adminArea": "පරිපාලක",
     "myStoreArea": "මගේ සාප්පුව",
     "switchStore": "සාප්පුව මාරු කරන්න"
   },
-  "comingSoon": "සන්ධිස්ථානය {{milestone}} න් පසුව ලබා ගත හැක",
   "logout": "පිටවන්න",
   "loading": "පූරණය වෙමින්…",
   "error": {

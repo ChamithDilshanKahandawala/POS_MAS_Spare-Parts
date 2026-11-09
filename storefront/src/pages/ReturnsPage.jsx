@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import { usePublishedPage } from '../hooks/useSiteContent';
+import PublishedInfoPage from '../components/content/PublishedInfoPage';
 import { PackageCheck, Zap, Camera, Package, Banknote, MessageCircle } from 'lucide-react';
 import { SHOP_INFO, RETURN_WINDOW_DAYS } from '../config/store';
 import useDocumentMeta from '../hooks/useDocumentMeta';
@@ -6,7 +8,7 @@ import useDocumentMeta from '../hooks/useDocumentMeta';
 // si/ta copy is a draft — have a native speaker review it before launch.
 const POINT_ICONS = { electronics: Zap, otherProblems: Camera, condition: Package, refundMethod: Banknote };
 
-export default function ReturnsPage() {
+function ReturnsPageBuiltIn() {
   const { t } = useTranslation('returns');
   useDocumentMeta(`${t('metaTitle')} | ${SHOP_INFO.name}`, t('metaDescription'));
 
@@ -56,4 +58,12 @@ export default function ReturnsPage() {
       </a>
     </div>
   );
+}
+
+// Admin → Content can replace this page per language; without a published
+// version the built-in copy above is shown.
+export default function ReturnsPage() {
+  const { i18n } = useTranslation();
+  const published = usePublishedPage('returns', i18n.language);
+  return published ? <PublishedInfoPage page={published} /> : <ReturnsPageBuiltIn />;
 }

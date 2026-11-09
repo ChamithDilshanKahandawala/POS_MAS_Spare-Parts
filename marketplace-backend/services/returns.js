@@ -12,6 +12,7 @@ const SellerMember = require('../models/SellerMember');
 const { getEffectiveCategory } = require('./categoryRules');
 const { getPlatformSettings } = require('./platformSettings');
 const { notify } = require('./notifications');
+const { queueMessage } = require('./messaging');
 const { restock } = require('./stockReservation');
 const { roundHalfUp } = require('./ledger');
 
@@ -187,6 +188,18 @@ async function createReturnRequest({ customerId, sellerOrderId, reason, customer
     body: 'The customer has asked to return one or more items. Respond within the deadline.',
     link: '/seller/returns',
   });
+  const ownerId = await ownerUserId(sellerOrder.seller);
+  if (ownerId) {
+    await queueMessage({
+      userId: ownerId,
+      template: 'return.requested',
+      vars: {
+        requestNumber: request.requestNumber,
+        orderNumber: sellerOrder.orderNumber,
+        deadline: request.responseDeadlineAt.toLocaleString('en-LK', { timeZone: 'Asia/Colombo', dateStyle: 'medium', timeStyle: 'short' }),
+      },
+    });
+  }
 
   return request;
 }
@@ -285,6 +298,10 @@ async function adminDecide({ returnId, actor, actorRole, uphold, note }) {
   };
   await notify({ userId: claimed.customer, ...payload, link: '/orders' });
   await notifySellerOwner(claimed.seller, { ...payload, link: '/seller/returns' });
+  const decidedVars = { requestNumber: claimed.requestNumber, orderNumber: claimed.orderNumber, decision: claimed.decision, note };
+  await queueMessage({ userId: claimed.customer, template: 'return.decided', vars: decidedVars });
+  const decidedOwner = await ownerUserId(claimed.seller);
+  if (decidedOwner) await queueMessage({ userId: decidedOwner, template: 'return.decided', vars: decidedVars });
   return claimed;
 }
 
@@ -379,6 +396,11 @@ async function markRefunded({ returnId, actor, actorRole, payer, shippingCents, 
           { session }
         );
       }
+
+      const refundedVars = { requestNumber: claimed.requestNumber, orderNumber: claimed.orderNumber, amount: (customerRefundCents / 100).toFixed(2), reference };
+      await queueMessage({ userId: claimed.customer, template: 'return.refunded', vars: refundedVars, session });
+      const refundOwner = await SellerMember.findOne({ seller: claimed.seller, role: 'seller_owner', status: 'active' }).select('user').session(session).lean();
+      if (refundOwner) await queueMessage({ userId: refundOwner.user, template: 'return.refunded', vars: refundedVars, session });
 
       await session.commitTransaction();
       await notify({

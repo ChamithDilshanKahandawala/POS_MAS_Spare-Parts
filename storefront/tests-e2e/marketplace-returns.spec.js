@@ -91,6 +91,8 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
     test.use({ viewport });
 
     test('customer reports a problem on 2 lines with 2 photos; seller accepts and confirms receipt', async ({ page, request }) => {
+      // Checkout plus nine seller/customer writes against the remote dev DB.
+      test.slow();
       const { orderNumber, sellerOrderId } = await placeDeliveredOrder(page, request);
       const stockBefore = await sellerStock(request, seed.listingCId);
 
@@ -143,6 +145,7 @@ test.describe('returns — language spot checks (mobile)', () => {
 
   for (const lang of ['si', 'ta']) {
     test(`${lang}: report-a-problem form renders without overflow`, async ({ page, request }) => {
+      test.slow(); // places and delivers a real order first
       // Checkout runs in English (its button names are what the helper
       // clicks); the language switch applies from the orders page on.
       const { orderNumber } = await placeDeliveredOrder(page, request);

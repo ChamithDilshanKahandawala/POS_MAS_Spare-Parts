@@ -26,11 +26,30 @@ npm run seed:dev
 
 Seed logins (all passwords `DevPass123!`): `owner@apexora.test` (platform owner), `staff@apexora.test` (platform staff), `seller-a-owner@apexora.test`, `seller-a-staff@apexora.test`, `seller-b-owner@apexora.test`, `seller-c-owner@apexora.test` (suspended store), `customer@apexora.test`.
 
-Login is two-step. The OTP code is printed in the marketplace-api terminal (`OTP for <email>: <code>`).
+Login is two-step. In dev, every email and SMS (OTP codes, reset and invite links, order updates) is printed in the marketplace-api terminal as `📨 [email:console]` or `📨 [sms:console]`. A new code can be requested once a minute (max 10 a day per user). Sent messages are listed in the console under Admin → Messages.
 
 Checks: `npm test` (backend, uses an in-memory MongoDB) and `npm run lint` in each app; Playwright specs live in `storefront/tests-e2e` (`npx playwright test`, uses its own port 5199).
 
 Before starting a dev server, check that an old one is not still holding the port: `lsof -i :5002` (or `:5174`, `:5175`), then stop the stale `nodemon` / `vite` process.
+
+## Apexora Marketplace — Operations
+
+**Health and logs.** `GET /health` (also `/api/health`) returns `200` when MongoDB answers and `503` otherwise, with counts for overdue/failed messages and failed payouts — point the uptime monitor at it. Every response has an `X-Request-Id` header, and error responses include `requestId`; in production each request is logged as one JSON line (`LOG_FORMAT=json` forces this elsewhere). In production a 5xx never returns the internal error text.
+
+**Alerts.** Every 10 minutes the API checks for 20+ emails/SMS waiting over 15 minutes, 10+ failed messages in an hour, and any failed payout in the last day; background job failures (payout run, seller stats) alert too. Platform owners get an in-app notification and an `ops alert` error log line — route that log line to email/Slack in the log platform. Each alert repeats at most every 6 hours.
+
+**CI** (`.github/workflows/ci.yml`): backend lint + tests, console and storefront lint + build, and a production-dependency audit that fails on high/critical issues. Known exceptions live in `.github/audit-allowlist.json`, each with a reason and an expiry date. The Playwright job runs only when the repository variable `E2E_ENABLED=true` and the `E2E_*` secrets point at a staging database named `apexora_dev`.
+
+**Key rotation** (do it on staging first):
+1. JWT secrets — set the new value in `JWT_ACCESS_SECRET` / `JWT_REFRESH_SECRET` and move the old one to `JWT_ACCESS_SECRET_PREVIOUS` / `JWT_REFRESH_SECRET_PREVIOUS`. Deploy. After 30 days (the refresh-token lifetime) remove the `_PREVIOUS` values. To force everyone to sign in again instead, skip `_PREVIOUS`.
+2. POS key encryption — generate a new key (`node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`), set it as `POS_KEY_ENCRYPTION_SECRET`, move the old one to `POS_KEY_ENCRYPTION_SECRET_PREVIOUS`, deploy, then run `node scripts/rotate-pos-key.js` on the server. When it reports 0 failed, remove `_PREVIOUS`.
+3. Provider API keys (email, SMS) — create the new key in the provider dashboard, update the secret, deploy, then revoke the old key.
+
+**Backups and restore drill** (Atlas): turn on scheduled backups for the production cluster (daily snapshots, 7-day retention minimum, point-in-time restore if the tier allows). Once before launch, restore the latest snapshot into a new temporary cluster, point a staging API at it, check that `/health` is `200`, log in, and open a recent order and payout. Write down the date, the snapshot time and how long the restore took; delete the temporary cluster afterwards.
+
+**File storage.** `STORAGE_DRIVER=local` keeps uploads under `marketplace-backend/uploads/`; `STORAGE_DRIVER=s3` with the `S3_*` settings stores them in a private S3-compatible bucket (AWS S3 or Cloudflare R2). Records store keys like `content/<id>.jpg`. To move an existing server: set the S3 variables, run `node scripts/migrateStorage.js --dry-run`, then without `--dry-run`, then deploy with `STORAGE_DRIVER=s3`. Local files are left in place until you delete them. For a CDN, put Cloudflare (or similar) in front of the API and cache `/api/public/media/*`, `/api/public/stores/*/logo|banner` and `/api/public/content/banners/*` — those responses are already marked cacheable.
+
+**Load test:** `k6 run marketplace-backend/loadtest/k6-marketplace.js -e BASE_URL=… -e CUSTOMER_TOKENS=… -e ADDRESS_IDS=… -e LISTING_IDS=… -e CATEGORY_IDS=…` against staging only. It browses and runs checkout previews (never places orders) and fails if p95 ≥ 500 ms or errors ≥ 1%.
 
 ## Contents
 

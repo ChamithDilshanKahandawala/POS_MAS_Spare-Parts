@@ -14,11 +14,11 @@ function uploadHandlerFor(field, processFn) {
     if (!seller) return res.status(404).json({ message: 'Seller not found' });
 
     const previousPath = seller[field]?.path;
-    const storedPath = saveFile(processed.buffer, processed.ext, 'seller-media');
+    const storedPath = await saveFile(processed.buffer, processed.ext, 'seller-media');
     seller[field] = { path: storedPath, uploadedAt: new Date() };
     await seller.save();
 
-    if (previousPath) deleteFile(previousPath);
+    if (previousPath) await deleteFile(previousPath);
 
     await logAction({
       actor: req.user,
@@ -50,7 +50,7 @@ function getMediaHandlerFor(field) {
     const seller = await Seller.findById(req.sellerId).select(field).lean();
     if (!seller || !seller[field]?.path) return res.status(404).json({ message: 'Not found' });
     res.set('Content-Type', 'image/jpeg');
-    res.send(readFile(seller[field].path));
+    res.send(await readFile(seller[field].path));
   };
 }
 const getLogo = getMediaHandlerFor('logo');

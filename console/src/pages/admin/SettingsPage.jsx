@@ -57,6 +57,7 @@ export default function SettingsPage() {
         onlineOrderingEnabled: !!form.onlineOrderingEnabled,
         autoCancelAfterHours: Number(form.autoCancelAfterHours),
         returnResponseDays: Number(form.returnResponseDays),
+        dispatchWithinHours: Number(form.dispatchWithinHours),
         courierName: form.courierName,
         deliveryRates: form.deliveryRates,
         refusedParcelChargedTo: form.refusedParcelChargedTo,
@@ -167,6 +168,7 @@ export default function SettingsPage() {
 
         <NumberField label={t('settings.ordering.autoCancelAfterHours')} value={form.autoCancelAfterHours} onChange={field('autoCancelAfterHours')} disabled={!isPlatformOwner} />
         <NumberField label={t('settings.ordering.returnResponseDays')} value={form.returnResponseDays} onChange={field('returnResponseDays')} disabled={!isPlatformOwner} />
+        <NumberField label={t('settings.ordering.dispatchWithinHours')} value={form.dispatchWithinHours} onChange={field('dispatchWithinHours')} disabled={!isPlatformOwner} />
         <TextField label={t('settings.ordering.courierName')} value={form.courierName} onChange={field('courierName')} disabled={!isPlatformOwner} />
 
         {isPlatformOwner && (

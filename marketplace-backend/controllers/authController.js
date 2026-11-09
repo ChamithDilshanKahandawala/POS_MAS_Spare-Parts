@@ -1,8 +1,10 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const SellerMember = require('../models/SellerMember');
-const { generateOtpCode, hashOtpCode, verifyOtpCode, otpExpiryDate } = require('../services/otpCode');
-const { createResetToken, verifyResetToken } = require('../services/passwordReset');
+const { verifyOtpCode } = require('../services/otpCode');
+const { issueOtp } = require('../services/otpDelivery');
+const { queueMessage, toE164 } = require('../services/messaging');
+const { verifyResetToken, sendPasswordResetLink } = require('../services/passwordReset');
 const {
   signAccessToken,
   issueRefreshToken,
@@ -25,14 +27,7 @@ const register = async (req, res) => {
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await User.create({ name, email, phone, password: passwordHash, isActive: true });
 
-  const code = generateOtpCode();
-  user.otpCodeHash = await hashOtpCode(code);
-  user.otpExpiresAt = otpExpiryDate();
-  await user.save();
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`\n🔐 OTP for ${user.email}: ${code} (expires in 5 min)\n`);
-  }
+  const code = await issueOtp(user, 'login');
 
   const response = { message: 'Account created — OTP sent', userId: user._id };
   if (process.env.NODE_ENV === 'test') response.debugOtpCode = code;
@@ -42,22 +37,18 @@ const register = async (req, res) => {
 // POST /api/auth/forgot-password — always a generic 200, whether or not
 // the email exists, so this can never be used to probe which emails have
 // an account (same anti-enumeration reasoning as login's shared "Invalid
-// credentials" message). Dev/prod both have no email provider wired up
-// yet (Milestone 0's situation, unchanged) — the reset link goes to the
-// console instead, same as the OTP code.
+// credentials" message).
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
 
   if (user) {
-    const { token, tokenHash, expiresAt } = await createResetToken();
-    user.resetPasswordTokenHash = tokenHash;
-    user.resetPasswordExpiresAt = expiresAt;
-    await user.save();
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`\n🔑 Password reset link for ${user.email}: /reset-password?userId=${user._id}&token=${token} (expires in 30 min)\n`);
-    }
+    // A send failure still returns the generic message, so this can't be
+    // used to probe which emails have accounts.
+    const token = await sendPasswordResetLink(user).catch((err) => {
+      console.error('[auth] password reset email failed:', err.message);
+      return null;
+    });
 
     const response = { message: 'If that email has an account, a reset link has been sent.' };
     if (process.env.NODE_ENV === 'test') response.debugResetToken = token;
@@ -104,17 +95,7 @@ const login = async (req, res) => {
   const match = await bcrypt.compare(password, user.password);
   if (!match) return res.status(401).json({ message: 'Invalid credentials' });
 
-  const code = generateOtpCode();
-  user.otpCodeHash = await hashOtpCode(code);
-  user.otpExpiresAt = otpExpiryDate();
-  await user.save();
-
-  // Dev only: there's no email/SMS provider wired up yet (Milestone 0
-  // scope), so the code goes to the console instead. Never logged outside
-  // NODE_ENV=development.
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`\n🔐 OTP for ${user.email}: ${code} (expires in 5 min)\n`);
-  }
+  const code = await issueOtp(user, 'login');
 
   const response = { message: 'OTP sent', userId: user._id };
   // Test only: the code is bcrypt-hashed at rest, so an automated test
@@ -219,4 +200,23 @@ const getMe = async (req, res) => {
   });
 };
 
-module.exports = { register, forgotPassword, resetPassword, login, verifyOtp, refresh, logout, getMe };
+// PATCH /api/auth/me/phone — the number login and step-up codes go to, so
+// changing it needs the current password, and the account email is told.
+const updateMyPhone = async (req, res) => {
+  const { phone, password } = req.body;
+  if (phone && !toE164(phone)) return res.status(400).json({ message: 'Enter a Sri Lankan mobile number, e.g. 077 123 4567' });
+
+  const user = await User.findById(req.user._id);
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) return res.status(401).json({ message: 'Incorrect password' });
+
+  const previous = user.phone;
+  user.phone = phone ? toE164(phone) : '';
+  await user.save();
+  if (previous !== user.phone) {
+    await queueMessage({ to: user.email, language: user.preferredLanguage, template: 'security.phone_changed', vars: { phone: user.phone ? `${user.phone.slice(0, 5)}***${user.phone.slice(-2)}` : '—' } });
+  }
+  res.json({ phone: user.phone });
+};
+
+module.exports = { register, forgotPassword, resetPassword, login, verifyOtp, refresh, logout, getMe, updateMyPhone };

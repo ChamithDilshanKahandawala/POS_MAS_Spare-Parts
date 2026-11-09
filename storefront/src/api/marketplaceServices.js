@@ -49,3 +49,7 @@ export const getMyMarketplaceOrder = (orderNumber) => api.get(`/customer/orders/
 export const getMyReturns = () => api.get('/customer/returns');
 export const createMyReturn = (formData) => api.post('/customer/returns', formData);
 export const cancelMyMarketplaceOrder = (orderNumber, data) => api.post(`/customer/orders/${orderNumber}/cancel`, data);
+
+// --- Site content (Milestone 10) ---
+export const getSiteContent = () => api.get('/public/content');
+export const buildContentBannerUrl = (id, version) => `${MARKETPLACE_API_URL}/api/public/content/banners/${id}/image?v=${version}`;

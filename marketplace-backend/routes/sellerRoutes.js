@@ -25,6 +25,8 @@ const {
   getReturnPhoto: getSellerReturnPhoto,
 } = require('../controllers/sellerReturnsController');
 const { withReturnErrors } = require('../controllers/returnsHttp');
+const { getPreferences, updatePreferences } = require('../controllers/messagesController');
+const { getSellerPerformance } = require('../services/sellerStats');
 const { STATUSES: RETURN_STATUSES } = require('../models/ReturnRequest');
 const {
   getBalances, getLedger, getOrderBreakdown, getStatements, exportStatementCsv, getPayoutHistory,
@@ -489,5 +491,22 @@ router.get('/finance/orders/:id', requireAuth, requireSellerMember(OWNER), requi
 router.get('/finance/statements', requireAuth, requireSellerMember(OWNER), asyncHandler(getStatements));
 router.get('/finance/statements/:payoutId/export.csv', requireAuth, requireSellerMember(OWNER), requireValidObjectId('payoutId'), asyncHandler(exportStatementCsv));
 router.get('/finance/payouts', requireAuth, requireSellerMember(OWNER), asyncHandler(getPayoutHistory));
+
+// --- Notification preferences (Milestone 9) — each member's own switches.
+const channelPrefsSchema = z.object({ email: z.boolean().optional(), sms: z.boolean().optional() }).strict();
+const notificationPrefsSchema = z.object({
+  orders: channelPrefsSchema.optional(),
+  returns: channelPrefsSchema.optional(),
+  payouts: channelPrefsSchema.optional(),
+}).strict();
+router.get('/me/notification-preferences', requireAuth, requireSellerMember(ANY_MEMBER), asyncHandler(getPreferences));
+router.patch('/me/notification-preferences', requireAuth, requireSellerMember(ANY_MEMBER), validate({ body: notificationPrefsSchema }), asyncHandler(updatePreferences));
+
+// --- Performance (Milestone 10) — open to staff too: dispatch and
+// cancellation numbers are what they act on.
+const performanceQuerySchema = z.object({ days: z.coerce.number().int().refine((d) => [7, 30, 90].includes(d), 'days must be 7, 30 or 90').optional() }).strict();
+router.get('/performance', requireAuth, requireSellerMember(ANY_MEMBER), validate({ query: performanceQuerySchema }), asyncHandler(async (req, res) => {
+  res.json(await getSellerPerformance(req.sellerId, req.query.days || 30));
+}));
 
 module.exports = router;

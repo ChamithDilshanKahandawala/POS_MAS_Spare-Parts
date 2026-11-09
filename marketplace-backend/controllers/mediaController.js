@@ -29,10 +29,8 @@ const uploadListingMedia = async (req, res) => {
   const created = await Promise.all(processed.map(async (p) => {
     const variants = {};
     for (const size of ['thumb', 'medium', 'large']) {
-      variants[size] = {
-        webp: saveFile(p[size].webp, 'webp', MEDIA_SUBDIR),
-        jpg: saveFile(p[size].jpg, 'jpg', MEDIA_SUBDIR),
-      };
+      const [webp, jpg] = await Promise.all([saveFile(p[size].webp, 'webp', MEDIA_SUBDIR), saveFile(p[size].jpg, 'jpg', MEDIA_SUBDIR)]);
+      variants[size] = { webp, jpg };
     }
     return Media.create({ seller: req.sellerId, listing: listing._id, variants, width: p.width, height: p.height });
   }));
@@ -52,8 +50,8 @@ const deleteListingMedia = async (req, res) => {
   }
 
   for (const size of ['thumb', 'medium', 'large']) {
-    deleteFile(media.variants[size].webp);
-    deleteFile(media.variants[size].jpg);
+    await deleteFile(media.variants[size].webp);
+    await deleteFile(media.variants[size].jpg);
   }
   await media.deleteOne();
 
@@ -63,20 +61,20 @@ const deleteListingMedia = async (req, res) => {
 const CONTENT_TYPES = { webp: 'image/webp', jpg: 'image/jpeg' };
 const VALID_SIZES = ['thumb', 'medium', 'large'];
 
-function streamVariant(media, size, format, res) {
+async function streamVariant(media, size, format, res, cacheControl = 'private, max-age=86400') {
   if (!VALID_SIZES.includes(size) || !CONTENT_TYPES[format]) return res.status(404).json({ message: 'Not found' });
   const storedPath = media.variants?.[size]?.[format];
   if (!storedPath) return res.status(404).json({ message: 'Not found' });
   res.set('Content-Type', CONTENT_TYPES[format]);
-  res.set('Cache-Control', 'private, max-age=86400');
-  res.send(readFile(storedPath));
+  res.set('Cache-Control', cacheControl);
+  res.send(await readFile(storedPath));
 }
 
 // GET /api/seller/media/:id/:size/:format — own media only.
 const getSellerMediaVariant = async (req, res) => {
   const media = await Media.findOne({ _id: req.params.id, seller: req.sellerId }).lean();
   if (!media) return res.status(404).json({ message: 'Not found' });
-  streamVariant(media, req.params.size, req.params.format, res);
+  await streamVariant(media, req.params.size, req.params.format, res);
 };
 
 // GET /api/admin/listings/media/:id/:size/:format — any seller's media,
@@ -85,7 +83,7 @@ const getSellerMediaVariant = async (req, res) => {
 const getAdminMediaVariant = async (req, res) => {
   const media = await Media.findById(req.params.id).lean();
   if (!media) return res.status(404).json({ message: 'Not found' });
-  streamVariant(media, req.params.size, req.params.format, res);
+  await streamVariant(media, req.params.size, req.params.format, res);
 };
 
 // GET /api/public/media/:id/:size/:format — only ever serves a photo
@@ -102,7 +100,9 @@ const getPublicMediaVariant = async (req, res) => {
   if (!media || !media.listing) return res.status(404).json({ message: 'Not found' });
   const listing = await Listing.findOne({ _id: media.listing, status: 'published', images: media._id }).select('_id').lean();
   if (!listing) return res.status(404).json({ message: 'Not found' });
-  streamVariant(media, req.params.size, req.params.format, res);
+  // Shared caches (CDN) may keep it for an hour; a variant's bytes never
+  // change, and an unpublished listing's photo drops out within that hour.
+  await streamVariant(media, req.params.size, req.params.format, res, 'public, max-age=3600');
 };
 
 module.exports = {

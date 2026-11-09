@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const { sendNow } = require('../services/messaging');
 const Invite = require('../models/Invite');
 const { logAction } = require('../services/auditLog');
 const { createInvite } = require('../services/invites');
@@ -14,9 +15,7 @@ const listPlatformStaff = async (req, res) => {
   res.json({ staff, pendingInvites });
 };
 
-// POST /api/admin/platform-staff/invite — owner only. Link is logged to
-// the console in dev (no email provider wired up yet — same pattern as
-// OTP codes and application-decision notifications).
+// POST /api/admin/platform-staff/invite — owner only.
 const inviteStaff = async (req, res) => {
   const { email } = req.body;
 
@@ -26,7 +25,7 @@ const inviteStaff = async (req, res) => {
   }
 
   const { invite, token } = await createInvite({ email, role: 'platform_staff', invitedBy: req.user });
-  console.log(`[email:dev] To: ${email} — You've been invited to join Apexora platform staff: /invite/${token}`);
+  await sendNow({ to: email, template: 'invite.platform_staff', vars: { link: `${process.env.CONSOLE_URL || 'http://localhost:5175'}/invite/${token}` } }).catch((err) => console.error('[messaging] invite email failed:', err.message));
 
   await logAction({
     actor: req.user,
